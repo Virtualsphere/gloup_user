@@ -1,0 +1,302 @@
+import 'dart:io';
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/validators.dart';
+import 'package:tressy/features/auth/presentation/widgets/apple_signin_button.dart';
+import 'package:tressy/features/auth/presentation/widgets/country_code_selector.dart';
+import 'package:tressy/features/auth/presentation/widgets/google_signin_button.dart';
+import 'package:tressy/features/auth/presentation/widgets/phone_input_field.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
+import 'package:tressy/shared/widgets/theme_toggle_button.dart';
+
+/// Login page
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _LoginPageContent();
+  }
+}
+
+class _LoginPageContent extends StatefulWidget {
+  const _LoginPageContent();
+
+  @override
+  State<_LoginPageContent> createState() => _LoginPageContentState();
+}
+
+class _LoginPageContentState extends State<_LoginPageContent> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _phoneController = TextEditingController();
+  String _countryCode = '+91';
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _onCountryChanged(CountryCode countryCode) {
+    setState(() {
+      _countryCode = countryCode.dialCode ?? '+91';
+    });
+  }
+
+  void _handleLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // TODO: Implement actual login/send OTP logic
+      final completePhone = '$_countryCode${_phoneController.text}';
+      print('Login clicked with phone: $completePhone');
+
+      // Simulate API call
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          // Navigate to OTP page with phone number
+          GoRouter.of(context).push(
+            RouteNames.otp,
+            extra: completePhone,
+          );
+
+          CustomToast.showSuccess(context, "OTP sent to $completePhone");
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = context.screenHeight;
+    final backgroundHeight = screenHeight * 0.25;
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: context.colorScheme.surface,
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: backgroundHeight,
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isDarkMode
+                    ? AppColors.black.withValues(alpha: 0.6)
+                    : Colors.transparent,
+                BlendMode.darken,
+              ),
+              child: Image.asset(
+                'assets/images/login_bg.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          // Overlapping Card Container - Full Width
+          Positioned(
+            top: backgroundHeight - 50,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(AppSizes.radiusXL),
+                  topRight: Radius.circular(AppSizes.radiusXL),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDarkMode
+                        ? AppColors.black.withValues(alpha: 0.3)
+                        : AppColors.black.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSizes.paddingL),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppSizes.heightXL,
+                      // Title
+                      Text(
+                        'Welcome Back!',
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      AppSizes.heightM,
+                      // Subtitle
+                      Text(
+                        'Enter Mobile Number to Get OTP for Login',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                      AppSizes.heightXXL,
+
+                      // Mobile Number Input with Country Code
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Country Code Selector
+                          CountryCodeSelector(
+                            onChanged: _onCountryChanged,
+                            initialSelection: 'IN',
+                          ),
+
+                          AppSizes.widthS,
+                          // Mobile Number Input Field
+                          Expanded(
+                            child: PhoneInputField(
+                              controller: _phoneController,
+                              hintText: 'Mobile Number',
+                              maxLength: 10,
+                              validator: Validators.indianPhone,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      AppSizes.heightXL,
+
+                      // Login Button
+                      PrimaryButton(
+                        text: 'Login',
+                        isLoading: _isLoading,
+                        onPressed: _handleLogin,
+                      ),
+
+                      AppSizes.heightXL,
+
+                      // Or Divider
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.border,
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingM,
+                            ),
+                            child: Text(
+                              'or',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.border,
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      AppSizes.heightL,
+
+                      // Google Sign-In Button
+                      GoogleSignInButton(
+                        onPressed: () {
+                          // TODO: Implement Google sign-in
+                          print('Google sign-in clicked');
+                        },
+                      ),
+
+                      // Apple Sign-In Button (iOS/macOS only)
+                      if (Platform.isIOS || Platform.isMacOS) ...[
+                        AppSizes.heightM,
+                        AppleSignInButton(
+                          onPressed: () {
+                            // TODO: Implement Apple sign-in
+                            print('Apple sign-in clicked');
+                          },
+                        ),
+                      ],
+
+                      AppSizes.heightL,
+
+                      // Continue as Guest Button
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            // TODO: Navigate to main dashboard as guest
+                            print('Continue as guest clicked');
+                          },
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingL,
+                              vertical: AppSizes.paddingM,
+                            ),
+                          ),
+                          child: Text(
+                            'Continue as Guest',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      AppSizes.heightL,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Theme Toggle Button - Top Right
+          Positioned(
+            top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
+            right: AppSizes.paddingM,
+            child: const ThemeToggleButton(),
+          ),
+        ],
+      ),
+    );
+  }
+}

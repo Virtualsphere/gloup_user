@@ -1,0 +1,186 @@
+{
+  "project_info": {
+    "project_number": "719761552533",
+    "project_id": "gloup-a3374",
+    "storage_bucket": "gloup-a3374.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719761552533:android:468daf10968a39c88a979c",
+        "android_client_info": {
+          "package_name": "com.gloup.partner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF3Q4S3f08WL3BNTNMceU9YhlFFOJIZDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "719761552533-9leg5hejsah74r2rdsukn63ltvi3bicu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gloup.user"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719761552533:android:7bad18e0dd0ca48d8a979c",
+        "android_client_info": {
+          "package_name": "com.gloup.partnerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF3Q4S3f08WL3BNTNMceU9YhlFFOJIZDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "719761552533-9leg5hejsah74r2rdsukn63ltvi3bicu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gloup.user"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719761552533:android:a92455be763121ea8a979c",
+        "android_client_info": {
+          "package_name": "com.gloup.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF3Q4S3f08WL3BNTNMceU9YhlFFOJIZDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "719761552533-9leg5hejsah74r2rdsukn63ltvi3bicu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gloup.user"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719761552533:android:5d02d553c84fdcb08a979c",
+        "android_client_info": {
+          "package_name": "com.gloup.userapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719761552533-fmtf4hpuatec4q0837shjrtt0po6slvc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "9ffb7700b55c97da1d00e0bce78938e24b22443d"
+          }
+        },
+        {
+          "client_id": "719761552533-mc2pfjm5igsudjl3oou0q325llr76dr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "b987db8ce80bdf1208f9167a86c8dd3bcda39cbb"
+          }
+        },
+        {
+          "client_id": "719761552533-nan850ffo12hnddq0m6uc3rmjq89pbq0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "1cff35f60f8a71a4748c378c72fe4ab48f448c43"
+          }
+        },
+        {
+          "client_id": "719761552533-t6pgnev0nsh04r19vpm73c4elfdkvq70.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "5cbe0d2b82bd7cf49657fb30f7409137b40f64d3"
+          }
+        },
+        {
+          "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF3Q4S3f08WL3BNTNMceU9YhlFFOJIZDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "719761552533-9leg5hejsah74r2rdsukn63ltvi3bicu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gloup.user"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
