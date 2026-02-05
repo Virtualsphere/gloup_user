@@ -185,7 +185,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             vertical: AppSizes.paddingM,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                            borderRadius: BorderRadius.circular(AppSizes.radiusS),
                           ),
                         ),
                         child: Text(

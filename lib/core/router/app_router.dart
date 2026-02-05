@@ -3,6 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
 import 'package:tressy/features/auth/presentation/pages/otp_page.dart';
+import 'package:tressy/features/bookings/presentation/pages/bookings_page.dart';
+import 'package:tressy/features/explore/presentation/pages/explore_page.dart';
+import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart';
+import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
@@ -54,15 +58,55 @@ class AppRouter {
       },
     ),
 
-    // // Main app with bottom navigation
-    // StatefulShellRoute.indexedStack(
-    //   builder: (context, state, navigationShell) {
-    //     return MainScaffold(navigationShell: navigationShell);
-    //   },
-    //   branches: [
-    //   ],
-    // ),
-    // // Add more routes here
+    // Main app with bottom navigation
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return MainScaffold(navigationShell: navigationShell);
+      },
+      branches: [
+        // Home branch
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RouteNames.home,
+              name: RouteNames.home,
+              builder: (context, state) => const HomePage(),
+            ),
+          ],
+        ),
+        // Explore branch
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RouteNames.explore,
+              name: RouteNames.explore,
+              builder: (context, state) => const ExplorePage(),
+            ),
+          ],
+        ),
+        // Favorites branch
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RouteNames.favorites,
+              name: RouteNames.favorites,
+              builder: (context, state) => const FavoritesPage(),
+            ),
+          ],
+        ),
+        // Bookings branch
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RouteNames.bookings,
+              name: RouteNames.bookings,
+              builder: (context, state) => const BookingsPage(),
+            ),
+          ],
+        ),
+      ],
+    ),
+    // Add more routes here
   ];
 }
 

@@ -14,10 +14,11 @@ class RouteNames {
   static const String login = '/login';
   static const String otp = '/otp';
 
-  // Main App Routes
+  // Main App Routes (Shell Routes with Bottom Nav)
   static const String home = '/home';
-  static const String calendar = '/calendar';
-  static const String profile = '/profile';
+  static const String explore = '/explore';
+  static const String favorites = '/favorites';
+  static const String bookings = '/bookings';
 
   // Add your feature routes here
   // static const String yourFeature = '/your-feature';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Extension methods for BuildContext
 extension ContextExtensions on BuildContext {
@@ -65,4 +66,34 @@ extension ContextExtensions on BuildContext {
 
   /// Check if can pop
   bool get canPop => Navigator.of(this).canPop();
+
+  /// Navigate to a route using GoRouter
+  void goTo(String route, {Object? extra}) {
+    GoRouter.of(this).go(route, extra: extra);
+  }
+
+  /// Navigate to a named route using GoRouter
+  void goToNamed(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
+    GoRouter.of(this).goNamed(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  }
+
+  /// Push a route using GoRouter
+  Future<T?> pushTo<T extends Object?>(String route, {Object? extra}) {
+    return GoRouter.of(this).push<T>(route, extra: extra);
+  }
+
+  /// Push a named route using GoRouter
+  Future<T?> pushToNamed<T extends Object?>(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
+    return GoRouter.of(this).pushNamed<T>(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  }
+
+  /// Replace current route using GoRouter
+  void replaceWith(String route, {Object? extra}) {
+    GoRouter.of(this).replace(route, extra: extra);
+  }
+
+  /// Replace current named route using GoRouter
+  void replaceWithNamed(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
+    GoRouter.of(this).replaceNamed(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  }
 }

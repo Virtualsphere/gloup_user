@@ -78,7 +78,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             extra: completePhone,
           );
 
-          CustomToast.showSuccess(context, "OTP sent to $completePhone");
         }
       });
     }

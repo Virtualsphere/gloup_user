@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
@@ -87,9 +88,6 @@ class _OtpPageContentState extends State<_OtpPageContent> {
         _isLoading = true;
       });
       
-      // TODO: Implement OTP verification logic
-      print('Verify OTP: ${_otpController.text}');
-      
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
       
@@ -97,9 +95,12 @@ class _OtpPageContentState extends State<_OtpPageContent> {
         setState(() {
           _isLoading = false;
         });
-        
-        // TODO: Navigate to home/dashboard
+
+        // Show success message
         CustomToast.showSuccess(context, "OTP verified successfully!");
+        
+        // Navigate to home screen
+        context.goToNamed(RouteNames.home);
       }
     } else {
       CustomToast.showWarning(context, "Please enter complete OTP");
