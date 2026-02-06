@@ -16,7 +16,7 @@ class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.splash,
+    initialLocation: RouteNames.home,
     debugLogDiagnostics: true,
     routes: _routes,
     errorBuilder: (context, state) => _ErrorPage(error: state.error),

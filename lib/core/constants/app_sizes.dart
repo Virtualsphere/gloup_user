@@ -87,6 +87,7 @@ class AppSizes {
   static const double borderWidthThin = 0.5;
   static const double borderWidth = 1.0;
   static const double borderWidthThick = 2.0;
+  static const double borderWidthSmall = 1.5;
 
   // Image Sizes
   static const double imageThumbS = 40.0;

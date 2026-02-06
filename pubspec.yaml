@@ -76,6 +76,9 @@ dependencies:
   # SVG Support
   flutter_svg: ^2.0.10
 
+  # Lottie Animations
+  lottie: ^3.1.0
+
   # Loading Indicator
   shimmer: ^3.0.0
 
@@ -127,6 +130,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/splash/
+    - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
