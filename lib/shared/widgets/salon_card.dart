@@ -65,12 +65,12 @@ class _SalonCardState extends State<SalonCard> {
             ? EdgeInsets.zero
             : const EdgeInsets.only(right: AppSizes.paddingM),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          border: Border.all(
-            color: AppColors.border,
-            width: 1,
-          ),
+          // border: Border.all(
+          //   color: AppColors.border,
+          //   width: 1,
+          // ),
           boxShadow: [
             BoxShadow(
               color: AppColors.black.withValues(alpha: 0.08),

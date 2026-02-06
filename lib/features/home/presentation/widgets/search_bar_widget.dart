@@ -60,7 +60,7 @@ class SearchBarWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               child: Container(
                 decoration: BoxDecoration(
-                    color: context.theme.primaryColor.withValues(alpha: 0.1),
+                    color: context.theme.primaryColor.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(AppSizes.radiusS)),
                 padding: const EdgeInsets.all(6),
                 child: SvgPicture.asset(

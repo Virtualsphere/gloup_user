@@ -29,7 +29,7 @@ class MainScaffold extends StatelessWidget {
         ),
         child: SafeArea(
           child: Container(
-            height: 70,
+            height: 64,
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -111,16 +111,16 @@ class MainScaffold extends StatelessWidget {
                       ),
               ),
               const SizedBox(height: 4),
-              Text(
-                label,
-                style: textTheme.labelSmall?.copyWith(
-                  color: isActive
-                      ? colorScheme.primary
-                      : colorScheme.onSurface.withValues(alpha: 0.6),
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                  fontSize: 12,
-                ),
-              ),
+              // Text(
+              //   label,
+              //   style: textTheme.labelSmall?.copyWith(
+              //     color: isActive
+              //         ? colorScheme.primary
+              //         : colorScheme.onSurface.withValues(alpha: 0.6),
+              //     fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+              //     fontSize: 12,
+              //   ),
+              // ),
             ],
           ),
         ),

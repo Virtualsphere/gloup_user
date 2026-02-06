@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../shared/extensions/context_extensions.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategorySection extends StatefulWidget {
   const CategorySection({super.key});
@@ -12,7 +12,7 @@ class CategorySection extends StatefulWidget {
 }
 
 class _CategorySectionState extends State<CategorySection> {
-  int _selectedIndex = 0; // 0 for Premium, 1+ for other categories
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class _CategorySectionState extends State<CategorySection> {
       child: Row(
         children: [
           // Sticky Premium Category
-          // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
+          _buildPremiumCategory(context, isActive: _selectedIndex == 0),
           // Horizontally Scrollable Categories
           Expanded(
             child: ListView(
@@ -105,15 +105,19 @@ class _CategorySectionState extends State<CategorySection> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                ),
+                    color: AppColors.warning.withValues(alpha: 0.05),
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusM),
+                    border: Border.all(
+                      color: AppColors.warning.withValues(alpha: 0.8),
+                      width: AppSizes.borderWidthThick,
+                    )),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   child: Lottie.asset(
-                    'assets/animations/premium_crown.json',
-                    width: 56,
-                    height: 56,
+                    'assets/animations/premium_anim.json',
+                    width: 64,
+                    height: 64,
                     fit: BoxFit.cover,
                     // Fallback to icon if Lottie file not found
                     errorBuilder: (context, error, stackTrace) {
@@ -204,7 +208,7 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   fontSize: AppSizes.fontS,
-                  color: isActive ? AppColors.primary : null,
+                  color: AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

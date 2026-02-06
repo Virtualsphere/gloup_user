@@ -250,7 +250,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         GoogleSignInButton(
                           onPressed: () {
                             // TODO: Implement Google sign-in
-                            print('Google sign-in clicked');
                           },
                         ),
 
@@ -260,7 +259,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                           AppleSignInButton(
                             onPressed: () {
                               // TODO: Implement Apple sign-in
-                              print('Apple sign-in clicked');
                             },
                           ),
                         ],
@@ -271,8 +269,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              // TODO: Navigate to main dashboard as guest
-                              print('Continue as guest clicked');
+                              context.pushTo(RouteNames.home);
                             },
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
