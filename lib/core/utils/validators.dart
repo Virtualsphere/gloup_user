@@ -1,4 +1,4 @@
-import '../constants/app_strings.dart';
+import 'package:tressy/core/constants/app_strings.dart';
 
 /// Common validation utilities
 class Validators {

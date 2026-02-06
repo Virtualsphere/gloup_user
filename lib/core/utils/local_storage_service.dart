@@ -5,8 +5,6 @@ class LocalStorageService {
   static const String _keyOnboardingCompleted = 'onboarding_completed';
   static const String _keyIsLoggedIn = 'is_logged_in';
   static const String _keyAccessToken = 'access_token';
-  static const String _keyRefreshToken = 'refresh_token';
-  static const String _keyIsNewUser = 'is_new_user';
 
   static SharedPreferences? _preferences;
 
@@ -44,23 +42,11 @@ class LocalStorageService {
     await _prefs.setString(_keyAccessToken, token);
   }
 
-  static String? get refreshToken => _prefs.getString(_keyRefreshToken);
-  
-  static Future<void> setRefreshToken(String token) async {
-    await _prefs.setString(_keyRefreshToken, token);
-  }
 
   static Future<void> clearTokens() async {
     await _prefs.remove(_keyAccessToken);
-    await _prefs.remove(_keyRefreshToken);
   }
 
-  // User Info
-  static bool get isNewUser => _prefs.getBool(_keyIsNewUser) ?? false;
-  
-  static Future<void> setIsNewUser(bool value) async {
-    await _prefs.setBool(_keyIsNewUser, value);
-  }
 
   // Clear all data (logout)
   static Future<void> clearAll() async {

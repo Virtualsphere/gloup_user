@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 
-/// Read-only search bar with settings icon
 class SearchBarWidget extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onSettingsTap;
@@ -64,7 +64,7 @@ class SearchBarWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSizes.radiusS)),
                 padding: const EdgeInsets.all(6),
                 child: SvgPicture.asset(
-                  'assets/icons/ic_settings.svg',
+                  AppIcons.icSettings,
                   width: AppSizes.iconM,
                   height: AppSizes.iconM,
                 ),

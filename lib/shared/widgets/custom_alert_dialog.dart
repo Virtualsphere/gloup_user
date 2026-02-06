@@ -3,8 +3,6 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Custom Alert Dialog Widget
-/// Shows a dialog with title, description, cancel and submit buttons
 class CustomAlertDialog extends StatelessWidget {
   final String title;
   final String description;

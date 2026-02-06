@@ -1,4 +1,3 @@
-/// App string constants
 class AppStrings {
   AppStrings._();
 

@@ -11,12 +11,11 @@ import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.da
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
-/// App router configuration using GoRouter
 class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.home,
+    initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
     routes: _routes,
     errorBuilder: (context, state) => _ErrorPage(error: state.error),

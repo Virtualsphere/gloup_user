@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_images.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class SplashPage extends StatefulWidget {
@@ -18,11 +20,20 @@ class _SplashPageState extends State<SplashPage> {
     _navigateToNextScreen();
   }
 
-  /// Navigate to onboarding screen after 2 seconds
   void _navigateToNextScreen() {
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        context.go(RouteNames.onboarding);
+        final hasCompletedOnboarding = LocalStorageService.hasCompletedOnboarding;
+        final isLoggedIn = LocalStorageService.isLoggedIn;
+
+        if (!hasCompletedOnboarding) {
+          context.go(RouteNames.onboarding);
+        } else if (!isLoggedIn) {
+          context.go(RouteNames.login);
+        } else {
+          // User is logged in - go to home
+          context.go(RouteNames.home);
+        }
       }
     });
   }
@@ -41,8 +52,8 @@ class _SplashPageState extends State<SplashPage> {
       body: Center(
         child: Image.asset(
           isDarkMode
-            ? 'assets/logos/logo_dark.png'
-            : 'assets/logos/logo.png',
+            ? AppImages.logoDark
+            : AppImages.logo,
           width: context.screenWidth * 0.6,
           fit: BoxFit.contain,
         ),

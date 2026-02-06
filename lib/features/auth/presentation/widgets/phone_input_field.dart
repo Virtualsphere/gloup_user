@@ -9,7 +9,6 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/custom_alert_dialog.dart';
 
-/// Phone Input Field Widget
 class PhoneInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;

@@ -10,7 +10,6 @@ import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Home page - Main landing page
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

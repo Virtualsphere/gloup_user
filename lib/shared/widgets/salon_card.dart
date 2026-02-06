@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../extensions/context_extensions.dart';
 
-/// Salon card widget with carousel, favorite, rating, and location
 class SalonCard extends StatefulWidget {
   final String salonName;
   final String salonImage;
@@ -172,7 +172,7 @@ class _SalonCardState extends State<SalonCard> {
               ),
               child: Center(
                 child: SvgPicture.asset(
-                  'assets/icons/ic_crown.svg',
+                  AppIcons.icCrown,
                   width: 18,
                   height: 18,
                   colorFilter: const ColorFilter.mode(

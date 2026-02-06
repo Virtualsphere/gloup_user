@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Extension methods for BuildContext
 extension ContextExtensions on BuildContext {
   /// Get theme data
   ThemeData get theme => Theme.of(this);

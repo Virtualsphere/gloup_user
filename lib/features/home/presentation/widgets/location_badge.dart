@@ -3,7 +3,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 
-/// Location badge widget with icon and two-line address
 class LocationBadge extends StatelessWidget {
   final String location;
   final String? addressLine2;

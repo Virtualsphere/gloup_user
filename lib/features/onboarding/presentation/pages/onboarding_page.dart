@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_images.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -17,9 +19,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _currentPage = 0;
 
   final List<String> _onboardingBackgrounds = [
-    'assets/splash/splash_bg_01.png',
-    'assets/splash/splash_bg_02.png',
-    'assets/splash/splash_bg_03.png',
+    AppImages.onBoardingBg01,
+    AppImages.onBoardingBg02,
+    AppImages.onBoardingBg03,
   ];
 
   final List<Map<String, String>> _onboardingContent = [
@@ -66,9 +68,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  void _navigateToLogin() {
+  void _navigateToLogin() async {
+    // Mark onboarding as completed
+    await LocalStorageService.setOnboardingCompleted(true);
+    
     // Navigate to login or auth screen
-    context.go(RouteNames.login);
+    if (mounted) {
+      context.go(RouteNames.login);
+    }
   }
 
   @override

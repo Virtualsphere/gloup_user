@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Apple Sign-In Button Widget
-/// Outlined button with Apple logo for Apple authentication
 class AppleSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -67,7 +66,7 @@ class AppleSignInButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SvgPicture.asset(
-                    'assets/icons/ic_apple.svg',
+                    AppIcons.icApple,
                     width: 24,
                     height: 24,
                     colorFilter: ColorFilter.mode(

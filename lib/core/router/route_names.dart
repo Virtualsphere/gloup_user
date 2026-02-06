@@ -1,14 +1,9 @@
-/// Route name constants
 class RouteNames {
   RouteNames._();
 
   // Root
   static const String splash = '/';
   static const String onboarding = '/onboarding';
-
-  // Example feature
-  static const String example = '/example';
-  static const String exampleDetail = '/example/detail';
 
   // Auth
   static const String login = '/login';
@@ -19,7 +14,4 @@ class RouteNames {
   static const String explore = '/explore';
   static const String favorites = '/favorites';
   static const String bookings = '/bookings';
-
-  // Add your feature routes here
-  // static const String yourFeature = '/your-feature';
 }

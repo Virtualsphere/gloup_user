@@ -1,4 +1,3 @@
-/// Extension methods for String
 extension StringExtensions on String {
   /// Check if string is empty or null
   bool get isEmptyOrNull => trim().isEmpty;

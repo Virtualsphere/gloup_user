@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Base failure class
 abstract class Failure extends Equatable {
   final String message;
 

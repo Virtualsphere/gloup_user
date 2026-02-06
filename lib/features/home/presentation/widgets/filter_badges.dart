@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 
-/// Horizontally scrollable filter badges with primary filter button
 class FilterBadges extends StatefulWidget {
   const FilterBadges({super.key});
 
@@ -62,7 +62,7 @@ class _FilterBadgesState extends State<FilterBadges> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
-              'assets/icons/ic_settings.svg',
+              AppIcons.icSettings,
               width: 16,
               height: 16,
               colorFilter: const ColorFilter.mode(

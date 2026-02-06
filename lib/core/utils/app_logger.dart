@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-/// App logger utility
 class AppLogger {
   AppLogger._();
 

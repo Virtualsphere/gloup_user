@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Explore page - Browse and discover
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
 

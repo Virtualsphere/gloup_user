@@ -3,8 +3,6 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Primary Button Widget
-/// Reusable button with loading state, customizable colors and text
 class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;

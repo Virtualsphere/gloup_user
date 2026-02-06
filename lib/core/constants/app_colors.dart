@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// App color constants
-/// Primary: Black & White
-/// Secondary: Light Violet
-/// Tertiary: Gold
 class AppColors {
   AppColors._();
 

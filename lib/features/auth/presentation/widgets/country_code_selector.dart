@@ -4,8 +4,6 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Country Code Selector Widget
-/// Shows flag and country code with rounded border on left side
 class CountryCodeSelector extends StatelessWidget {
   final Function(CountryCode) onChanged;
   final String initialSelection;

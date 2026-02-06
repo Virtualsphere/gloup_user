@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// Main scaffold with bottom navigation
 class MainScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -36,32 +36,32 @@ class MainScaffold extends StatelessWidget {
               children: [
                 _buildNavItem(
                   context: context,
-                  iconPath: 'assets/icons/ic_home.svg',
-                  iconPathFill: 'assets/icons/ic_home_fill.svg',
+                  iconPath: AppIcons.icHome,
+                  iconPathFill: AppIcons.icHomeFill,
                   label: 'Home',
                   index: 0,
                   isActive: navigationShell.currentIndex == 0,
                 ),
                 _buildNavItem(
                   context: context,
-                  iconPath: 'assets/icons/ic_search.svg',
-                  iconPathFill: 'assets/icons/ic_search_fill.svg',
+                  iconPath: AppIcons.icSearch,
+                  iconPathFill: AppIcons.icSearchFill,
                   label: 'Explore',
                   index: 1,
                   isActive: navigationShell.currentIndex == 1,
                 ),
                 _buildNavItem(
                   context: context,
-                  iconPath: 'assets/icons/ic_heart.svg',
-                  iconPathFill: 'assets/icons/ic_heart_fill.svg',
+                  iconPath: AppIcons.icHeart,
+                  iconPathFill: AppIcons.icHeartFill,
                   label: 'Favorites',
                   index: 2,
                   isActive: navigationShell.currentIndex == 2,
                 ),
                 _buildNavItem(
                   context: context,
-                  iconPath: 'assets/icons/ic_calendar.svg',
-                  iconPathFill: 'assets/icons/ic_calendar_fill.svg',
+                  iconPath: AppIcons.icCalendar,
+                  iconPathFill: AppIcons.icCalendarFill,
                   label: 'Bookings',
                   index: 3,
                   isActive: navigationShell.currentIndex == 3,

@@ -4,7 +4,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 
-/// Horizontally scrollable category section with sticky Premium category
 class CategorySection extends StatefulWidget {
   const CategorySection({super.key});
 

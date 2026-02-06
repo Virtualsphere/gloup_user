@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Bookings page - User appointments and reservations
 class BookingsPage extends StatelessWidget {
   const BookingsPage({super.key});
 

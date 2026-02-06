@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Favorites page - Saved items
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
 

@@ -3,7 +3,6 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../extensions/context_extensions.dart';
 
-/// Reusable section header with title, subtitle, and optional "See All" action
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? subtitle;

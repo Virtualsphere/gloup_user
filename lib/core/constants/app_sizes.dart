@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// App size constants for consistent spacing and sizing
 class AppSizes {
   AppSizes._();
 

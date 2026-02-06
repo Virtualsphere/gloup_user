@@ -6,12 +6,6 @@ import 'package:tressy/core/constants/app_colors.dart';
 /// Custom Toast Widget
 /// Shows custom styled toast messages at the bottom of the screen
 class CustomToast {
-  /// Show a custom toast message
-  /// 
-  /// [context] - BuildContext for initializing FToast
-  /// [message] - The message to display
-  /// [isError] - Whether this is an error message (default: false)
-  /// [isSuccess] - Whether this is a success message (default: true)
   static void show(
     BuildContext context, {
     required String message,

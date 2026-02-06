@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 
-/// Loading indicator widget
 class LoadingWidget extends StatelessWidget {
   final String? message;
   final Color? color;

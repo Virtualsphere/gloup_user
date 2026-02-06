@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
-/// A button widget to toggle between light and dark themes
 class ThemeToggleButton extends StatelessWidget {
   const ThemeToggleButton({super.key});
 
@@ -15,7 +15,7 @@ class ThemeToggleButton extends StatelessWidget {
 
     return IconButton(
       icon: SvgPicture.asset(
-        isDarkMode ? 'assets/icons/ic_sun.svg' : 'assets/icons/ic_moon.svg',
+        isDarkMode ? AppIcons.icSun : AppIcons.icMoon,
         width: 24,
         height: 24,
       ),

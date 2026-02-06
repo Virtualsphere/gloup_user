@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'auth_interceptor.dart';
-import 'interceptor.dart';
+import 'package:tressy/core/network/interceptor.dart';
 
 class DioClient {
   late final Dio _dio;
@@ -12,7 +11,6 @@ class DioClient {
               sendTimeout: const Duration(seconds: 60),
               receiveTimeout: const Duration(seconds: 60)),
         )..interceptors.addAll([
-          AuthInterceptor(Dio()), // Auth interceptor for token management
           LoggerInterceptor(),    // Logger interceptor for debugging
         ]);
 
