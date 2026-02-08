@@ -122,46 +122,53 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         children: [
           // Fixed carousel
           _buildCarousel(context, carouselHeight, isDarkMode),
-          // Overlapping card with collapsible header
-          Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppSizes.radiusL),
-                topRight: Radius.circular(AppSizes.radiusL),
+          // Overlapping card with sticky title and scrollable content
+          Column(
+            children: [
+              // Sticky title and crown section
+              Container(
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(AppSizes.radiusL),
+                    topRight: Radius.circular(AppSizes.radiusL),
+                  ),
+                ),
+                child: _buildTitleAndCrownSection(context, isDarkMode),
               ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: CustomScrollView(
-              controller: _contentScrollController,
-              slivers: [
-                // Collapsible title and crown section
-                SliverToBoxAdapter(
-                  child: _buildTitleAndCrownSection(context, isDarkMode),
-                ),
-                // Scrollable info section (location, time, languages)
-                SliverToBoxAdapter(
-                  child: _buildScrollableInfoSection(context, isDarkMode),
-                ),
-                // Sticky tabs
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _StickyTabBarDelegate(
-                    child: _buildTabBar(isDarkMode),
-                    isDarkMode: isDarkMode,
+              // Scrollable content with sticky tabs
+              Expanded(
+                child: Container(
+                  color: context.colorScheme.surface,
+                  child: CustomScrollView(
+                    controller: _contentScrollController,
+                    slivers: [
+                      // Scrollable info section (location, time, languages)
+                      SliverToBoxAdapter(
+                        child: _buildScrollableInfoSection(context, isDarkMode),
+                      ),
+                      // Sticky tabs
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _StickyTabBarDelegate(
+                          child: _buildTabBar(isDarkMode),
+                          isDarkMode: isDarkMode,
+                        ),
+                      ),
+                      // Tab content sections
+                      SliverPadding(
+                        padding: const EdgeInsets.all(AppSizes.paddingL),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate(
+                            _buildTabSections(isDarkMode),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                // Tab content sections
-                SliverPadding(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate(
-                      _buildTabSections(isDarkMode),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -327,8 +334,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       padding: const EdgeInsets.only(
         left: AppSizes.paddingL,
         right: AppSizes.paddingL,
-        top: AppSizes.paddingXL,
-        bottom: AppSizes.paddingL,
+        top: AppSizes.paddingL,
+        bottom: AppSizes.paddingM,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
