@@ -118,57 +118,51 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
-      body: Stack(
+      body: Column(
         children: [
-          // Fixed carousel
           _buildCarousel(context, carouselHeight, isDarkMode),
-          // Overlapping card with sticky title and scrollable content
-          Column(
-            children: [
-              // Sticky title and crown section
-              Container(
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusL),
-                    topRight: Radius.circular(AppSizes.radiusL),
-                  ),
-                ),
-                child: _buildTitleAndCrownSection(context, isDarkMode),
+          // Sticky title and crown section
+          Container(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppSizes.radiusL),
+                topRight: Radius.circular(AppSizes.radiusL),
               ),
-              // Scrollable content with sticky tabs
-              Expanded(
-                child: Container(
-                  color: context.colorScheme.surface,
-                  child: CustomScrollView(
-                    controller: _contentScrollController,
-                    slivers: [
-                      // Scrollable info section (location, time, languages)
-                      SliverToBoxAdapter(
-                        child: _buildScrollableInfoSection(context, isDarkMode),
-                      ),
-                      // Sticky tabs
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _StickyTabBarDelegate(
-                          child: _buildTabBar(isDarkMode),
-                          isDarkMode: isDarkMode,
-                        ),
-                      ),
-                      // Tab content sections
-                      SliverPadding(
-                        padding: const EdgeInsets.all(AppSizes.paddingL),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate(
-                            _buildTabSections(isDarkMode),
-                          ),
-                        ),
-                      ),
-                    ],
+            ),
+            child: _buildTitleAndCrownSection(context, isDarkMode),
+          ),
+          // Scrollable content with sticky tabs
+          Expanded(
+            child: Container(
+              color: context.colorScheme.surface,
+              child: CustomScrollView(
+                controller: _contentScrollController,
+                slivers: [
+                  // Scrollable info section (location, time, languages)
+                  SliverToBoxAdapter(
+                    child: _buildScrollableInfoSection(context, isDarkMode),
                   ),
-                ),
+                  // Sticky tabs
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _StickyTabBarDelegate(
+                      child: _buildTabBar(isDarkMode),
+                      isDarkMode: isDarkMode,
+                    ),
+                  ),
+                  // Tab content sections
+                  SliverPadding(
+                    padding: const EdgeInsets.all(AppSizes.paddingL),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate(
+                        _buildTabSections(isDarkMode),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ],
       ),
@@ -177,154 +171,189 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   Widget _buildCarousel(
       BuildContext context, double carouselHeight, bool isDarkMode) {
-    return SizedBox(
-      height: carouselHeight,
-      child: Stack(
-        children: [
-          // Carousel
-          CarouselSlider(
-            options: CarouselOptions(
-              height: carouselHeight,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 3),
-              autoPlayAnimationDuration: const Duration(milliseconds: 800),
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentImageIndex = index;
-                });
-              },
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 30 overlapping cards behind carousel
+        ...List.generate(30, (index) {
+          final reverseIndex = 29 - index; // Reverse so bottom cards render first
+          final scale = 1.0 - (reverseIndex * 0.008); // Gradually decrease scale
+          final topOffset = reverseIndex * 2.0; // Stack offset from top
+
+          return Positioned(
+            top: topOffset,
+            left: 20 + (reverseIndex * 1.5),
+            right: 20 + (reverseIndex * 1.5),
+            child: Transform.scale(
+              scale: scale,
+              child: Container(
+                height: carouselHeight - 40,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.textSecondary.withValues(alpha: 0.1)
+                      : AppColors.white,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                  border: Border.all(
+                    color: isDarkMode
+                        ? AppColors.textSecondary.withValues(alpha: 0.2)
+                        : AppColors.textSecondary.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            items: _carouselImages.map((imageUrl) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                    ),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          child: const Icon(
-                            Icons.image,
-                            color: AppColors.primary,
-                            size: 80,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+          );
+        }),
+        // Carousel on top
+        CarouselSlider(
+          options: CarouselOptions(
+            height: carouselHeight,
+            viewportFraction: 1.0,
+            enableInfiniteScroll: true,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentImageIndex = index;
+              });
+            },
+          ),
+          items: _carouselImages.map((imageUrl) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                  ),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        child: const Icon(
+                          Icons.image,
+                          color: AppColors.primary,
+                          size: 80,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          }).toList(),
+        ),
+        // Carousel indicators
+        Positioned(
+          bottom: 70,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _carouselImages.asMap().entries.map((entry) {
+              return Container(
+                width: _currentImageIndex == entry.key ? 24 : 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: _currentImageIndex == entry.key
+                      ? AppColors.white
+                      : AppColors.white.withValues(alpha: 0.5),
+                ),
               );
             }).toList(),
           ),
-          // Carousel indicators
-          Positioned(
-            bottom: 70,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _carouselImages.asMap().entries.map((entry) {
-                return Container(
-                  width: _currentImageIndex == entry.key ? 24 : 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: _currentImageIndex == entry.key
-                        ? AppColors.white
-                        : AppColors.white.withValues(alpha: 0.5),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+        ),
 
-          // Back button
-          Positioned(
-            top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-            left: AppSizes.paddingM,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.black.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
+        // Back button
+        Positioned(
+          top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
+          left: AppSizes.paddingM,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.black.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: const EdgeInsets.all(AppSizes.paddingXS),
+              constraints: const BoxConstraints(),
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: AppColors.white,
+                size: AppSizes.iconS,
               ),
-              child: IconButton(
-                padding: const EdgeInsets.all(AppSizes.paddingXS),
-                constraints: const BoxConstraints(),
-                icon: const Icon(
-                  Icons.arrow_back_ios_new,
-                  color: AppColors.white,
-                  size: AppSizes.iconS,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          // Share and Favorite buttons (top right)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-            right: AppSizes.paddingM,
-            child: Row(
-              children: [
-                // Share button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.black.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    padding: const EdgeInsets.all(AppSizes.paddingXS),
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(
-                      Icons.share,
-                      color: AppColors.white,
-                      size: AppSizes.iconS,
-                    ),
-                    onPressed: () {
-                      // TODO: Implement share functionality
-                    },
-                  ),
+        ),
+        // Share and Favorite buttons (top right)
+        Positioned(
+          top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
+          right: AppSizes.paddingM,
+          child: Row(
+            children: [
+              // Share button
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: AppSizes.spaceS),
-                // Favorite button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.black.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
+                child: IconButton(
+                  padding: const EdgeInsets.all(AppSizes.paddingXS),
+                  constraints: const BoxConstraints(),
+                  icon: const Icon(
+                    Icons.share,
+                    color: AppColors.white,
+                    size: AppSizes.iconS,
                   ),
-                  child: IconButton(
-                    padding: const EdgeInsets.all(AppSizes.paddingXS),
-                    constraints: const BoxConstraints(),
-                    icon: SvgPicture.asset(
-                      _isFavorite
-                          ? 'assets/icons/ic_heart_fill.svg'
-                          : 'assets/icons/ic_heart.svg',
-                      width: AppSizes.iconS,
-                      height: AppSizes.iconS,
-                      colorFilter: ColorFilter.mode(
-                        _isFavorite ? Colors.red : AppColors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
-                    },
-                  ),
+                  onPressed: () {
+                    // TODO: Implement share functionality
+                  },
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: AppSizes.spaceS),
+              // Favorite button
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  padding: const EdgeInsets.all(AppSizes.paddingXS),
+                  constraints: const BoxConstraints(),
+                  icon: SvgPicture.asset(
+                    _isFavorite
+                        ? 'assets/icons/ic_heart_fill.svg'
+                        : 'assets/icons/ic_heart.svg',
+                    width: AppSizes.iconS,
+                    height: AppSizes.iconS,
+                    colorFilter: ColorFilter.mode(
+                      _isFavorite ? Colors.red : AppColors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isFavorite = !_isFavorite;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -645,8 +674,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                     color: isSelected
                         ? AppColors.primary
                         : (isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary),
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary),
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
