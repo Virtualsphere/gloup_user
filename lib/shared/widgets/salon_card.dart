@@ -18,6 +18,7 @@ class SalonCard extends StatefulWidget {
   final String? serviceName;
   final double? servicePrice;
   final List<String>? categories;
+  final List<String>? languageCodes;
   final bool isFullWidth;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteToggle;
@@ -35,6 +36,7 @@ class SalonCard extends StatefulWidget {
     this.serviceName,
     this.servicePrice,
     this.categories,
+    this.languageCodes,
     this.isFullWidth = false,
     this.onTap,
     this.onFavoriteToggle,
@@ -47,6 +49,22 @@ class SalonCard extends StatefulWidget {
 class _SalonCardState extends State<SalonCard> {
   int _currentImageIndex = 0;
   late bool _isFavorite;
+
+  // Language icon paths map
+  static const Map<String, String> languageIcons = {
+    'ta': AppIcons.icTamil,
+    'ml': AppIcons.icMalayalam,
+    'hi': AppIcons.icHindi,
+    'te': AppIcons.icTelugu,
+    'kn': AppIcons.icKannada,
+    'bn': AppIcons.icBengali,
+    'gu': AppIcons.icGujarati,
+    'en': AppIcons.icEnglish,
+  };
+
+  String? getLanguageIcon(String languageCode) {
+    return languageIcons[languageCode];
+  }
 
   @override
   void initState() {
@@ -413,8 +431,18 @@ class _SalonCardState extends State<SalonCard> {
                   fontSize: AppSizes.fontS,
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
+                  width: 4,
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: AppColors.textSecondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
               // Distance
-              const SizedBox(width: 4),
               Text(
                 '${widget.distance.toStringAsFixed(1)} KM',
                 style: context.textTheme.bodySmall?.copyWith(
@@ -425,11 +453,13 @@ class _SalonCardState extends State<SalonCard> {
             ],
           ),
           const SizedBox(height: AppSizes.spaceS),
-          // Category badges row (separate)
-          if (widget.categories != null && widget.categories!.isNotEmpty) ...[
+          // Language and Category badges row (separate)
+          if ((widget.languageCodes != null && widget.languageCodes!.isNotEmpty) ||
+              (widget.categories != null && widget.categories!.isNotEmpty)) ...[
             const SizedBox(height: AppSizes.spaceS),
             Row(
               children: [
+                _buildLanguageBadges(),
                 const Spacer(),
                 _buildCategoryBadges(),
               ],
@@ -440,14 +470,69 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
+  Widget _buildLanguageBadges() {
+    final languageCodes = widget.languageCodes ?? [];
+    // Filter only languages that have icons available
+    final availableLanguages = languageCodes
+        .where((code) => getLanguageIcon(code) != null)
+        .toList();
+    
+    if (availableLanguages.isEmpty) return const SizedBox.shrink();
+    
+    final displayLanguages = availableLanguages.take(3).toList();
+    final hasMoreLanguages = availableLanguages.length > 3;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Language badges (max 2)
+        ...displayLanguages.asMap().entries.map((entry) {
+          final languageCode = entry.value;
+          final index = entry.key;
+          final iconPath = getLanguageIcon(languageCode);
+          if (iconPath == null) return const SizedBox.shrink();
+          
+          return Padding(
+            padding: EdgeInsets.only(right: index < displayLanguages.length - 1 ? 10 : 6),
+            child: SvgPicture.asset(
+              iconPath,
+              width: 14,
+              height: 14,
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            ),
+          );
+        }),
+        // More languages indicator
+        // if (hasMoreLanguages)
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 6),
+        //     child: Text(
+        //       '+${availableLanguages.length - 2}',
+        //       style: context.textTheme.bodySmall?.copyWith(
+        //         color: AppColors.primary,
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.w700,
+        //         height: 1.2,
+        //       ),
+        //     ),
+        //   ),
+      ],
+    );
+  }
+
   Widget _buildCategoryBadges() {
-    final categories = widget.categories!;
+    final categories = widget.categories ?? [];
     final displayCategories = categories.take(2).toList();
-    final hasMore = categories.length > 2;
+    final hasMoreCategories = categories.length > 2;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Category badges
         ...displayCategories.map((category) => Container(
               margin: const EdgeInsets.only(left: 6),
               padding: const EdgeInsets.symmetric(
@@ -467,7 +552,7 @@ class _SalonCardState extends State<SalonCard> {
                 ),
               ),
             )),
-        if (hasMore)
+        if (hasMoreCategories)
           Container(
             margin: const EdgeInsets.only(left: 6),
             padding: const EdgeInsets.symmetric(

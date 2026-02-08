@@ -42,12 +42,22 @@ class LocationBadge extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  location,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textLight,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      location,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: AppColors.textLight,
+                      size: AppSizes.iconS,
+                    ),
+                  ],
                 ),
                 if (addressLine2 != null && addressLine2!.isNotEmpty)
                   Text(
@@ -58,12 +68,6 @@ class LocationBadge extends StatelessWidget {
                     ),
                   ),
               ],
-            ),
-            const SizedBox(width: 4),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              color: AppColors.textLight,
-              size: AppSizes.iconS,
             ),
           ],
         ),

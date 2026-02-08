@@ -14,4 +14,7 @@ class RouteNames {
   static const String explore = '/explore';
   static const String favorites = '/favorites';
   static const String bookings = '/bookings';
+
+  // Salon Details
+  static const String salonDetails = '/salon-details';
 }

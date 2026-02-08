@@ -16,9 +16,11 @@ class SectionHeader extends StatelessWidget {
     this.subtitle,
     this.onSeeAllTap,
     this.seeAllText = 'See All',
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: AppSizes.paddingM,
-      vertical: AppSizes.paddingS,
+    this.padding = const EdgeInsets.only(
+      left: AppSizes.paddingM,
+      right: AppSizes.paddingXS,
+      top: AppSizes.paddingS,
+      bottom:  AppSizes.paddingS,
     ),
   });
 
@@ -28,6 +30,7 @@ class SectionHeader extends StatelessWidget {
       padding: padding!,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Title and subtitle section
           Expanded(
@@ -37,7 +40,7 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: context.textTheme.titleLarge?.copyWith(
+                  style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: AppSizes.fontXL,
                     color: AppColors.textPrimary,

@@ -8,6 +8,7 @@ import 'package:tressy/features/explore/presentation/pages/explore_page.dart';
 import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:tressy/features/salon_details/presentation/pages/salon_details_page.dart';
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
@@ -104,6 +105,18 @@ class AppRouter {
           ],
         ),
       ],
+    ),
+    // Salon Details route
+    GoRoute(
+      path: RouteNames.salonDetails,
+      name: RouteNames.salonDetails,
+      builder: (context, state) {
+        // Get salon data from extra
+        final Map<String, dynamic>? salonData = state.extra as Map<String, dynamic>?;
+        return SalonDetailsPage(
+          salonId: salonData?['salonId'] as String?,
+        );
+      },
     ),
     // Add more routes here
   ];

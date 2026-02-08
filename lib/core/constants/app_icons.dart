@@ -20,4 +20,14 @@ class AppIcons {
   static const icSettings = 'assets/icons/ic_settings.svg';
   static const icMoon = 'assets/icons/ic_moon.svg';
   static const icSun = 'assets/icons/ic_sun.svg';
+
+  // Language icons
+  static const icTamil = 'assets/icons/ic_ta.svg';
+  static const icMalayalam = 'assets/icons/ic_ml.svg';
+  static const icHindi = 'assets/icons/ic_hi.svg';
+  static const icTelugu = 'assets/icons/ic_te.svg';
+  static const icKannada = 'assets/icons/ic_kn.svg';
+  static const icBengali = 'assets/icons/ic_bn.svg';
+  static const icGujarati = 'assets/icons/ic_gu.svg';
+  static const icEnglish = 'assets/icons/ic_en.svg';
 }

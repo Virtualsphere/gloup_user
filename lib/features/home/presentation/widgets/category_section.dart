@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
@@ -13,63 +14,82 @@ class CategorySection extends StatefulWidget {
 
 class _CategorySectionState extends State<CategorySection> {
   int _selectedIndex = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    // Simulate loading delay (replace with actual API call)
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 120,
       color: AppColors.background,
-      child: Row(
-        children: [
-          // Sticky Premium Category
-          _buildPremiumCategory(context, isActive: _selectedIndex == 0),
-          // Horizontally Scrollable Categories
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: AppSizes.paddingS),
+      child: _isLoading
+          ? _buildCategoryShimmer()
+          : Row(
               children: [
-                _buildCategory(
-                  context,
-                  'Haircut',
-                  'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=200',
-                  index: 1,
-                ),
-                _buildCategory(
-                  context,
-                  'Massage',
-                  'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200',
-                  index: 2,
-                ),
-                _buildCategory(
-                  context,
-                  'Trim',
-                  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
-                  index: 3,
-                ),
-                _buildCategory(
-                  context,
-                  'Facial',
-                  'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200',
-                  index: 4,
-                ),
-                _buildCategory(
-                  context,
-                  'Manicure',
-                  'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200',
-                  index: 5,
-                ),
-                _buildCategory(
-                  context,
-                  'Spa',
-                  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200',
-                  index: 6,
+                // Sticky Premium Category
+                // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
+                // Horizontally Scrollable Categories
+                Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.only(right: AppSizes.paddingS),
+                    children: [
+                      _buildCategory(
+                        context,
+                        'Haircut',
+                        'https://i.ibb.co/DJFgdD9/hairstyle-regular-haircut-boy-fashion-cut-dd815c363530becbce13c36d531e489c.png',
+                        index: 1,
+                      ),
+                      _buildCategory(
+                        context,
+                        'Massage',
+                        'https://i.ibb.co/FkXC1jGQ/pngwing-com.png',
+                        index: 2,
+                      ),
+                      _buildCategory(
+                        context,
+                        'Trim',
+                        'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
+                        index: 3,
+                      ),
+                      _buildCategory(
+                        context,
+                        'Facial',
+                        'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200',
+                        index: 4,
+                      ),
+                      _buildCategory(
+                        context,
+                        'Manicure',
+                        'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200',
+                        index: 5,
+                      ),
+                      _buildCategory(
+                        context,
+                        'Spa',
+                        'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200',
+                        index: 6,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -106,8 +126,7 @@ class _CategorySectionState extends State<CategorySection> {
                 height: 64,
                 decoration: BoxDecoration(
                     color: AppColors.warning.withValues(alpha: 0.05),
-                    borderRadius:
-                        BorderRadius.circular(AppSizes.radiusM),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     border: Border.all(
                       color: AppColors.warning.withValues(alpha: 0.8),
                       width: AppSizes.borderWidthThick,
@@ -115,7 +134,7 @@ class _CategorySectionState extends State<CategorySection> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   child: Lottie.asset(
-                    'assets/animations/premium_anim.json',
+                    'assets/animations/premium_crown.json',
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,
@@ -124,7 +143,7 @@ class _CategorySectionState extends State<CategorySection> {
                       return const Icon(
                         Icons.workspace_premium,
                         color: AppColors.warning,
-                        size: 28,
+                        size: 40,
                       );
                     },
                   ),
@@ -216,6 +235,72 @@ class _CategorySectionState extends State<CategorySection> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Build shimmer effect for categories loading
+  Widget _buildCategoryShimmer() {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Row(
+        children: [
+          // Premium Category Shimmer
+          _buildCategoryItemShimmer(isPremium: true),
+          // Regular Categories Shimmer
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(right: AppSizes.paddingS),
+              itemCount: 6,
+              itemBuilder: (context, index) {
+                return _buildCategoryItemShimmer();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build single category item shimmer
+  Widget _buildCategoryItemShimmer({bool isPremium = false}) {
+    return Container(
+      width: isPremium ? 75 : 80,
+      margin: EdgeInsets.only(
+        left: isPremium ? AppSizes.paddingM : AppSizes.paddingS,
+        top: AppSizes.paddingS,
+        bottom: 0,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Image placeholder
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+              ),
+            ),
+            const SizedBox(height: AppSizes.spaceXS),
+            // Text placeholder
+            Container(
+              width: isPremium ? 50 : 60,
+              height: 12,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ],
         ),
       ),
     );
