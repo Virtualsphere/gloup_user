@@ -346,108 +346,63 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         color: context.colorScheme.surface,
       ),
       padding: EdgeInsets.only(
+        left: AppSizes.paddingM,
+        right: AppSizes.paddingM,
         top: MediaQuery.of(context).padding.top,
       ),
-      child: Stack(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Carousel images
-          CarouselSlider(
-            options: CarouselOptions(
-              height: double.infinity,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              // Only auto-play when expanded
-              autoPlayInterval: const Duration(seconds: 3),
-              autoPlayAnimationDuration: const Duration(milliseconds: 800),
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentImageIndex = index;
-                });
-              },
+          // Back button
+          IconButton(
+            padding: const EdgeInsets.all(AppSizes.paddingXS),
+            constraints: const BoxConstraints(),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: isDarkMode ? AppColors.white : AppColors.black,
+              size: AppSizes.iconS,
             ),
-            items: _carouselImages.map((imageUrl) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: AppColors.background,
-                    ),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          child: const Icon(
-                            Icons.image,
-                            color: AppColors.primary,
-                            size: 80,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-            }).toList(),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-
+          // Share and Favorite buttons
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Back button
+              // Share button
               IconButton(
                 padding: const EdgeInsets.all(AppSizes.paddingXS),
                 constraints: const BoxConstraints(),
                 icon: Icon(
-                  Icons.arrow_back_ios_new,
+                  Icons.share,
                   color: isDarkMode ? AppColors.white : AppColors.black,
                   size: AppSizes.iconS,
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  // TODO: Implement share functionality
+                },
               ),
-              // Share and Favorite buttons
-              Row(
-                children: [
-                  // Share button
-                  IconButton(
-                    padding: const EdgeInsets.all(AppSizes.paddingXS),
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      Icons.share,
-                      color: isDarkMode ? AppColors.white : AppColors.black,
-                      size: AppSizes.iconS,
-                    ),
-                    onPressed: () {
-                      // TODO: Implement share functionality
-                    },
+              const SizedBox(width: AppSizes.spaceXS),
+              // Favorite button
+              IconButton(
+                padding: const EdgeInsets.all(AppSizes.paddingXS),
+                constraints: const BoxConstraints(),
+                icon: SvgPicture.asset(
+                  _isFavorite
+                      ? 'assets/icons/ic_heart_fill.svg'
+                      : 'assets/icons/ic_heart.svg',
+                  width: AppSizes.iconS,
+                  height: AppSizes.iconS,
+                  colorFilter: ColorFilter.mode(
+                    _isFavorite
+                        ? Colors.red
+                        : (isDarkMode ? AppColors.white : AppColors.black),
+                    BlendMode.srcIn,
                   ),
-                  const SizedBox(width: AppSizes.spaceXS),
-                  // Favorite button
-                  IconButton(
-                    padding: const EdgeInsets.all(AppSizes.paddingXS),
-                    constraints: const BoxConstraints(),
-                    icon: SvgPicture.asset(
-                      _isFavorite
-                          ? 'assets/icons/ic_heart_fill.svg'
-                          : 'assets/icons/ic_heart.svg',
-                      width: AppSizes.iconS,
-                      height: AppSizes.iconS,
-                      colorFilter: ColorFilter.mode(
-                        _isFavorite
-                            ? Colors.red
-                            : (isDarkMode ? AppColors.white : AppColors.black),
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
-                    },
-                  ),
-                ],
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isFavorite = !_isFavorite;
+                  });
+                },
               ),
             ],
           ),
