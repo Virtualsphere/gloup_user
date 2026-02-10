@@ -22,6 +22,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   bool _isFavorite = false;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
+  int _activeTabIndex = 0;
 
   // Carousel images from Unsplash
   final List<String> _carouselImages = [
@@ -29,6 +30,17 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800',
     'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
     'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800',
+  ];
+
+  // Tab sections
+  final List<String> _tabs = [
+    'Services',
+    'About',
+    'Ambients',
+    'Team',
+    'Reviews',
+    'Opening Hours',
+    'Location',
   ];
 
   @override
@@ -108,26 +120,34 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
           ),
 
-          // Sticky Title, Crown, and Info Section (Combined)
+          // Sticky Title, Crown, Info Section, and Tab Bar (Combined)
           SliverPersistentHeader(
             pinned: true,
             delegate: _StickyHeaderDelegate(
               child: Container(
                 color: context.colorScheme.surface,
-                padding: const EdgeInsets.all(AppSizes.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTitleAndCrownSection(context, isDarkMode),
-                    AppSizes.heightL,
-                    _buildInfoSection(context, isDarkMode),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM, vertical: AppSizes.paddingM),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTitleAndCrownSection(context, isDarkMode),
+                          AppSizes.heightL,
+                          _buildInfoSection(context, isDarkMode),
+                        ],
+                      ),
+                    ),
+                    _buildTabBar(context, isDarkMode),
                   ],
                 ),
               ),
             ),
           ),
 
-          // Content below sticky header
+          // Content below tab bar
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(AppSizes.paddingM),
@@ -326,63 +346,108 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         color: context.colorScheme.surface,
       ),
       padding: EdgeInsets.only(
-        left: AppSizes.paddingM,
-        right: AppSizes.paddingM,
         top: MediaQuery.of(context).padding.top,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          // Back button
-          IconButton(
-            padding: const EdgeInsets.all(AppSizes.paddingXS),
-            constraints: const BoxConstraints(),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: isDarkMode ? AppColors.white : AppColors.black,
-              size: AppSizes.iconS,
+          // Carousel images
+          CarouselSlider(
+            options: CarouselOptions(
+              height: double.infinity,
+              viewportFraction: 1.0,
+              enableInfiniteScroll: true,
+              // Only auto-play when expanded
+              autoPlayInterval: const Duration(seconds: 3),
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentImageIndex = index;
+                });
+              },
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            items: _carouselImages.map((imageUrl) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: AppColors.background,
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          child: const Icon(
+                            Icons.image,
+                            color: AppColors.primary,
+                            size: 80,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            }).toList(),
           ),
-          // Share and Favorite buttons
+
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Share button
+              // Back button
               IconButton(
                 padding: const EdgeInsets.all(AppSizes.paddingXS),
                 constraints: const BoxConstraints(),
                 icon: Icon(
-                  Icons.share,
+                  Icons.arrow_back_ios_new,
                   color: isDarkMode ? AppColors.white : AppColors.black,
                   size: AppSizes.iconS,
                 ),
-                onPressed: () {
-                  // TODO: Implement share functionality
-                },
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              const SizedBox(width: AppSizes.spaceXS),
-              // Favorite button
-              IconButton(
-                padding: const EdgeInsets.all(AppSizes.paddingXS),
-                constraints: const BoxConstraints(),
-                icon: SvgPicture.asset(
-                  _isFavorite
-                      ? 'assets/icons/ic_heart_fill.svg'
-                      : 'assets/icons/ic_heart.svg',
-                  width: AppSizes.iconS,
-                  height: AppSizes.iconS,
-                  colorFilter: ColorFilter.mode(
-                    _isFavorite
-                        ? Colors.red
-                        : (isDarkMode ? AppColors.white : AppColors.black),
-                    BlendMode.srcIn,
+              // Share and Favorite buttons
+              Row(
+                children: [
+                  // Share button
+                  IconButton(
+                    padding: const EdgeInsets.all(AppSizes.paddingXS),
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      Icons.share,
+                      color: isDarkMode ? AppColors.white : AppColors.black,
+                      size: AppSizes.iconS,
+                    ),
+                    onPressed: () {
+                      // TODO: Implement share functionality
+                    },
                   ),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isFavorite = !_isFavorite;
-                  });
-                },
+                  const SizedBox(width: AppSizes.spaceXS),
+                  // Favorite button
+                  IconButton(
+                    padding: const EdgeInsets.all(AppSizes.paddingXS),
+                    constraints: const BoxConstraints(),
+                    icon: SvgPicture.asset(
+                      _isFavorite
+                          ? 'assets/icons/ic_heart_fill.svg'
+                          : 'assets/icons/ic_heart.svg',
+                      width: AppSizes.iconS,
+                      height: AppSizes.iconS,
+                      colorFilter: ColorFilter.mode(
+                        _isFavorite
+                            ? Colors.red
+                            : (isDarkMode ? AppColors.white : AppColors.black),
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isFavorite = !_isFavorite;
+                      });
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -675,19 +740,85 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       ),
     );
   }
+
+  // Build horizontal scrollable tab bar
+  Widget _buildTabBar(BuildContext context, bool isDarkMode) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode
+                ? AppColors.textSecondary.withValues(alpha: 0.2)
+                : AppColors.textSecondary.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        child: Row(
+          children: _tabs.asMap().entries.map((entry) {
+            final index = entry.key;
+            final tab = entry.value;
+            final isActive = _activeTabIndex == index;
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _activeTabIndex = index;
+                });
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingS,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingS,
+                  vertical: AppSizes.paddingM,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isActive ? AppColors.primary : Colors.transparent,
+                      width: 3,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  tab,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: isActive
+                        ? AppColors.primary
+                        : (isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary),
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
 }
 
-// Sticky Header Delegate for Title, Crown, and Info Section (Combined)
+// Sticky Header Delegate for Title, Crown, Info Section, and Tab Bar (Combined)
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
   _StickyHeaderDelegate({required this.child});
 
   @override
-  double get minExtent => 250.0; // Increased height for combined sections
+  double get minExtent => 306.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
-  double get maxExtent => 250.0; // Same as min for fixed height
+  double get maxExtent => 306.0; // Same as min for fixed height
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
