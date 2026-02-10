@@ -23,6 +23,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
   int _activeTabIndex = 0;
+  int _activeServiceCategoryIndex = 0; // For service category badges
 
   // Carousel images from Unsplash
   final List<String> _carouselImages = [
@@ -43,6 +44,29 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     'Location',
   ];
 
+  // Service categories
+  final List<String> _serviceCategories = [
+    'Featured',
+    'Combo Offers',
+    'Men\'s Package',
+    'Women\'s Package',
+    'Hair Styling',
+    'Spa & Massage',
+    'Facial',
+    'Makeup',
+  ];
+
+  // Global keys for each section to track their positions
+  final Map<String, GlobalKey> _sectionKeys = {
+    'Services': GlobalKey(),
+    'About': GlobalKey(),
+    'Ambients': GlobalKey(),
+    'Team': GlobalKey(),
+    'Reviews': GlobalKey(),
+    'Opening Hours': GlobalKey(),
+    'Location': GlobalKey(),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -58,7 +82,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   void _onScroll() {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.35;
+    final carouselHeight = screenHeight * 0.30;
 
     // Check if scrolled past the carousel
     final isCollapsed = _scrollController.hasClients &&
@@ -69,12 +93,60 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         _isCollapsed = isCollapsed;
       });
     }
+
+    // Update active tab based on scroll position
+    _updateActiveTab();
+  }
+
+  void _updateActiveTab() {
+    if (!_scrollController.hasClients) return;
+
+    int newActiveIndex = 0;
+
+    // Find which section is currently visible
+    for (int i = _tabs.length - 1; i >= 0; i--) {
+      final key = _sectionKeys[_tabs[i]];
+      if (key?.currentContext != null) {
+        final RenderBox renderBox = key!.currentContext!.findRenderObject() as RenderBox;
+        final position = renderBox.localToGlobal(Offset.zero);
+        
+        // Check if section is visible in viewport (accounting for sticky headers ~400px)
+        if (position.dy <= 450) {
+          newActiveIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (newActiveIndex != _activeTabIndex) {
+      setState(() {
+        _activeTabIndex = newActiveIndex;
+      });
+    }
+  }
+
+  void _scrollToSection(int index) {
+    final key = _sectionKeys[_tabs[index]];
+    if (key?.currentContext != null) {
+      final RenderBox renderBox = key!.currentContext!.findRenderObject() as RenderBox;
+      final position = renderBox.localToGlobal(Offset.zero);
+      final scrollOffset = _scrollController.offset;
+      
+      // Calculate target scroll position (offset for sticky headers ~400px)
+      final targetScroll = scrollOffset + position.dy - 420;
+
+      _scrollController.animateTo(
+        targetScroll.clamp(0.0, _scrollController.position.maxScrollExtent),
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.35;
+    final carouselHeight = screenHeight * 0.30;
     final collapsedHeight = screenHeight * 0.08; // 8% when collapsed
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
@@ -130,7 +202,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM, vertical: AppSizes.paddingM),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.paddingM,
+                        vertical: AppSizes.paddingM,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -140,6 +215,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         ],
                       ),
                     ),
+                    AppSizes.heightS,
                     _buildTabBar(context, isDarkMode),
                   ],
                 ),
@@ -147,35 +223,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
           ),
 
-          // Content below tab bar
+          // Content sections
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSizes.paddingM),
-              child: Column(
-                children: [
-                  // Dummy content to demonstrate scrolling
-                  Container(
-                    height: 800,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : AppColors.surface,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusL),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'More content here...\n(Services, Reviews, etc.)',
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            child: Column(
+              children: _tabs.map((tab) => _buildSection(tab, isDarkMode)).toList(),
             ),
           ),
         ],
@@ -665,7 +716,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
           ],
         ),
-        AppSizes.heightM,
       ],
     );
   }
@@ -696,6 +746,144 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     );
   }
 
+  // Build a content section
+  Widget _buildSection(String title, bool isDarkMode) {
+    return Container(
+      key: _sectionKeys[title],
+      padding: const EdgeInsets.all(AppSizes.paddingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section title
+          Text(
+            title,
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimary,
+            ),
+          ),
+          AppSizes.heightM,
+          // Section content
+          if (title == 'Services')
+            _buildServicesSection(isDarkMode)
+          else
+            Container(
+              height: 500,
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? AppColors.surfaceDark.withValues(alpha: 0.5)
+                    : AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                border: Border.all(
+                  color: isDarkMode
+                      ? AppColors.textSecondary.withValues(alpha: 0.2)
+                      : AppColors.textSecondary.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  '$title content goes here...\n\n(Add your real content here)',
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          AppSizes.heightL,
+        ],
+      ),
+    );
+  }
+
+  // Build Services section with category badges
+  Widget _buildServicesSection(bool isDarkMode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Horizontal scrollable category badges
+        SizedBox(
+          height: 35,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _serviceCategories.length,
+            itemBuilder: (context, index) {
+              final category = _serviceCategories[index];
+              final isActive = _activeServiceCategoryIndex == index;
+              
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _activeServiceCategoryIndex = index;
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.paddingM,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? AppColors.primary
+                        : (isDarkMode
+                            ? AppColors.textSecondary.withValues(alpha: 0.2)
+                            : AppColors.textSecondary.withValues(alpha: 0.15)),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                  ),
+                  child: Center(
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        color: isActive
+                            ? AppColors.white
+                            : (isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary),
+                        fontSize: AppSizes.fontS,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        AppSizes.heightL,
+        // Services list placeholder
+        Container(
+          height: 400,
+          decoration: BoxDecoration(
+            color: isDarkMode
+                ? AppColors.surfaceDark.withValues(alpha: 0.5)
+                : AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusL),
+            border: Border.all(
+              color: isDarkMode
+                  ? AppColors.textSecondary.withValues(alpha: 0.2)
+                  : AppColors.textSecondary.withValues(alpha: 0.1),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Services for "${_serviceCategories[_activeServiceCategoryIndex]}" category\n\n(Service cards will appear here)',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   // Build horizontal scrollable tab bar
   Widget _buildTabBar(BuildContext context, bool isDarkMode) {
     return Container(
@@ -722,17 +910,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
             return GestureDetector(
               onTap: () {
-                setState(() {
-                  _activeTabIndex = index;
-                });
+                _scrollToSection(index);
               },
               child: Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingS,
-                ),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingS,
-                  vertical: AppSizes.paddingM,
+                  horizontal: AppSizes.paddingL,
+                  vertical: AppSizes.paddingS,
                 ),
                 decoration: BoxDecoration(
                   border: Border(
@@ -770,10 +953,10 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   _StickyHeaderDelegate({required this.child});
 
   @override
-  double get minExtent => 306.0; // Height for combined sections + tab bar (250 + 56)
+  double get minExtent => 280.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
-  double get maxExtent => 306.0; // Same as min for fixed height
+  double get maxExtent => 280.0; // Same as min for fixed height
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
