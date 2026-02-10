@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
@@ -30,7 +31,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   bool _isCollapsed = false;
   int _activeTabIndex = 0;
   int _activeServiceCategoryIndex = 0; // For service category badges
-  int _activeReviewFilterIndex = 0; // For review filter badges (0 = All, 1-5 = stars)
+  int _activeReviewFilterIndex =
+      0; // For review filter badges (0 = All, 1-5 = stars)
+  bool _isLoading = true; // Loading state for shimmer
 
   // Carousel images from Unsplash
   final List<String> _carouselImages = [
@@ -78,6 +81,17 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _loadSalonDetails();
+  }
+
+  Future<void> _loadSalonDetails() async {
+    // Simulate loading delay (replace with actual API call)
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -114,9 +128,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     for (int i = _tabs.length - 1; i >= 0; i--) {
       final key = _sectionKeys[_tabs[i]];
       if (key?.currentContext != null) {
-        final RenderBox renderBox = key!.currentContext!.findRenderObject() as RenderBox;
+        final RenderBox renderBox =
+            key!.currentContext!.findRenderObject() as RenderBox;
         final position = renderBox.localToGlobal(Offset.zero);
-        
+
         // Check if section is visible in viewport (accounting for sticky headers ~400px)
         if (position.dy <= 450) {
           newActiveIndex = i;
@@ -135,10 +150,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   void _scrollToSection(int index) {
     final key = _sectionKeys[_tabs[index]];
     if (key?.currentContext != null) {
-      final RenderBox renderBox = key!.currentContext!.findRenderObject() as RenderBox;
+      final RenderBox renderBox =
+          key!.currentContext!.findRenderObject() as RenderBox;
       final position = renderBox.localToGlobal(Offset.zero);
       final scrollOffset = _scrollController.offset;
-      
+
       // Calculate target scroll position (offset for sticky headers ~400px)
       final targetScroll = scrollOffset + position.dy - 420;
 
@@ -186,8 +202,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 final isFullyExpanded = currentHeight > collapsedHeight + 50;
 
                 return FlexibleSpaceBar(
-                  background: _buildCarousel(
-                      context, carouselHeight, isDarkMode, isFullyExpanded),
+                  background: _isLoading
+                      ? _buildCarouselShimmer(context, isDarkMode)
+                      : _buildCarousel(
+                          context, carouselHeight, isDarkMode, isFullyExpanded),
                   collapseMode: CollapseMode.pin,
                   centerTitle: false,
                   titlePadding: EdgeInsets.zero,
@@ -208,20 +226,22 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.paddingM,
-                        vertical: AppSizes.paddingM,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildTitleAndCrownSection(context, isDarkMode),
-                          AppSizes.heightL,
-                          _buildInfoSection(context, isDarkMode),
-                        ],
-                      ),
-                    ),
+                    _isLoading
+                        ? _buildHeaderShimmer(context, isDarkMode)
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingM,
+                              vertical: AppSizes.paddingM,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildTitleAndCrownSection(context, isDarkMode),
+                                AppSizes.heightL,
+                                _buildInfoSection(context, isDarkMode),
+                              ],
+                            ),
+                          ),
                     AppSizes.heightS,
                     _buildTabBar(context, isDarkMode),
                   ],
@@ -233,7 +253,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           // Content sections
           SliverToBoxAdapter(
             child: Column(
-              children: _tabs.map((tab) => _buildSection(tab, isDarkMode)).toList(),
+              children:
+                  _tabs.map((tab) => _buildSection(tab, isDarkMode)).toList(),
             ),
           ),
         ],
@@ -392,6 +413,104 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Build shimmer effect for carousel loading
+  Widget _buildCarouselShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+      ),
+    );
+  }
+
+  /// Build shimmer effect for header (title, info, tabs)
+  Widget _buildHeaderShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title shimmer
+            Container(
+              width: 200,
+              height: 24,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            AppSizes.heightS,
+            // Badges shimmer
+            Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                AppSizes.widthS,
+                Container(
+                  width: 80,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ],
+            ),
+            AppSizes.heightL,
+            // Info shimmer lines
+            Container(
+              width: double.infinity,
+              height: 16,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            AppSizes.heightS,
+            Container(
+              width: double.infinity,
+              height: 16,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            AppSizes.heightS,
+            Container(
+              width: 250,
+              height: 16,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            AppSizes.heightS,
+            Container(
+                width: 280,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(4),
+                )),
+            AppSizes.heightS,
+          ],
+        ),
+      ),
     );
   }
 
@@ -773,8 +892,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 style: context.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDarkMode
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimary,
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                 ),
               ),
               if (title == 'Team' || title == 'Reviews')
@@ -842,21 +961,423 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   // Build About section
   Widget _buildAboutSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildAboutShimmer(context, isDarkMode);
+    }
+
     return Text(
       'We offer premium salon and spa services exclusively for men. Our experienced team provides top-quality haircuts, grooming, facials, and relaxation treatments in a modern, comfortable environment. Walk-ins welcome.',
       textAlign: TextAlign.left,
       style: context.textTheme.bodyMedium?.copyWith(
-        color: isDarkMode
-            ? AppColors.textSecondaryDark
-            : AppColors.textSecondary,
+        color:
+            isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
         fontSize: 14,
         height: 1.6,
       ),
     );
   }
 
+  /// Build shimmer effect for opening hours section
+  Widget _buildOpeningHoursShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Column(
+        children: List.generate(
+          7,
+          (index) => Container(
+            margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
+            padding: const EdgeInsets.all(AppSizes.paddingM),
+            child: Row(
+              children: [
+                // Dot shimmer
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: AppSizes.paddingM),
+                // Day shimmer
+                Expanded(
+                  child: Container(
+                    width: 80,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                // Hours shimmer
+                Container(
+                  width: 120,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build shimmer effect for reviews section
+  Widget _buildReviewsShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Review summary shimmer
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left side - rating
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    AppSizes.heightS,
+                    Container(
+                      width: 100,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSizes.paddingL),
+              // Right side - progress bars
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: List.generate(
+                    5,
+                    (index) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppSizes.spaceS),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: AppColors.border,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.paddingS),
+                          Expanded(
+                            child: Container(
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: AppColors.border,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.paddingS),
+                          Container(
+                            width: 30,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: AppColors.border,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          AppSizes.heightL,
+          // Filter badges shimmer
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  width: 80,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusCircular),
+                  ),
+                );
+              },
+            ),
+          ),
+          AppSizes.heightL,
+          // Review cards shimmer
+          ...List.generate(
+            3,
+            (index) => Container(
+              margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+              padding: const EdgeInsets.all(AppSizes.paddingM),
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? AppColors.textSecondary.withValues(alpha: 0.2)
+                    : AppColors.textSecondary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      // Avatar
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: AppSizes.paddingM),
+                      // Name and time
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: AppColors.border,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              width: 60,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: AppColors.border,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Stars
+                      Container(
+                        width: 80,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSizes.heightM,
+                  // Review text
+                  Container(
+                    width: double.infinity,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  AppSizes.heightS,
+                  Container(
+                    width: double.infinity,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  AppSizes.heightS,
+                  Container(
+                    width: 200,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build shimmer effect for team section
+  Widget _buildTeamShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final cardWidth =
+              (constraints.maxWidth - (AppSizes.paddingL * 3)) / 4;
+
+          return Wrap(
+            spacing: AppSizes.paddingL,
+            runSpacing: AppSizes.paddingL,
+            children: List.generate(
+              4,
+              (index) => SizedBox(
+                width: cardWidth,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Profile circle shimmer
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    AppSizes.heightS,
+                    // Name shimmer
+                    Container(
+                      width: 60,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Role shimmer
+                    Container(
+                      width: 50,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build shimmer effect for ambients section
+  Widget _buildAmbientsShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final cardWidth =
+              (constraints.maxWidth - (AppSizes.paddingM * 2)) / 3;
+
+          return Wrap(
+            spacing: AppSizes.paddingM,
+            runSpacing: AppSizes.paddingM,
+            children: List.generate(
+              6,
+              (index) => SizedBox(
+                width: cardWidth,
+                child: Container(
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build shimmer effect for about section
+  Widget _buildAboutShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 14,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          AppSizes.heightS,
+          Container(
+            width: double.infinity,
+            height: 14,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          AppSizes.heightS,
+          Container(
+            width: double.infinity,
+            height: 14,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          AppSizes.heightS,
+          Container(
+            width: 250,
+            height: 14,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Build Ambients section
   Widget _buildAmbientsSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildAmbientsShimmer(context, isDarkMode);
+    }
+
     final List<Map<String, dynamic>> ambients = [
       {'icon': Icons.wifi, 'label': 'Free WiFi'},
       {'icon': Icons.ac_unit, 'label': 'Air Conditioned'},
@@ -890,26 +1411,34 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   // Build Team section
   Widget _buildTeamSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildTeamShimmer(context, isDarkMode);
+    }
+
     final List<Map<String, String>> teamMembers = [
       {
         'name': 'John Doe',
         'role': 'Senior Stylist',
-        'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
       },
       {
         'name': 'Mike Smith',
         'role': 'Hair Specialist',
-        'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
       },
       {
         'name': 'David Brown',
         'role': 'Barber',
-        'image': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200',
       },
       {
         'name': 'Robert Wilson',
         'role': 'Spa Therapist',
-        'image': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200',
       },
     ];
 
@@ -938,18 +1467,190 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   // Build Location section
   Widget _buildLocationSection(bool isDarkMode) {
-    return LocationWidget(
-      latitude: 13.0827,
-      longitude: 80.2707,
-      address: '123 Main Street, Downtown Area, City Center, State 12345',
+    return _isLoading
+        ? _buildLocationShimmer(context, isDarkMode)
+        : LocationWidget(
+            latitude: 13.0827,
+            longitude: 80.2707,
+            address: '123 Main Street, Downtown Area, City Center, State 12345',
+          );
+  }
+
+  /// Build shimmer effect for services section
+  Widget _buildServicesShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Category badges shimmer
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusCircular),
+                  ),
+                );
+              },
+            ),
+          ),
+          AppSizes.heightL,
+          // Service cards shimmer
+          ...List.generate(
+            3,
+            (index) => Container(
+              margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+              padding: const EdgeInsets.all(AppSizes.paddingM),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                border: Border.all(
+                  color: AppColors.border.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: AppColors.border,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        AppSizes.heightS,
+                        Container(
+                          width: 80,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: AppColors.border,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        AppSizes.heightS,
+                        Container(
+                          width: 100,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: AppColors.border,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build shimmer effect for location section
+  Widget _buildLocationShimmer(BuildContext context, bool isDarkMode) {
+    return Shimmer.fromColors(
+      baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+      highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Map shimmer
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(AppSizes.radiusL),
+            ),
+          ),
+          AppSizes.heightL,
+          // Address shimmer
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              AppSizes.widthS,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    AppSizes.heightXS,
+                    Container(
+                      width: 200,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          AppSizes.heightL,
+          // Button shimmer
+          Container(
+            width: double.infinity,
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(AppSizes.radiusL),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // Build Opening Hours section
   Widget _buildOpeningHoursSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildOpeningHoursShimmer(context, isDarkMode);
+    }
+
     // Get current day
     final today = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
-    
+
     final List<Map<String, dynamic>> openingHours = [
       {'day': 'Monday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 1},
       {'day': 'Tuesday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 2},
@@ -1041,6 +1742,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   // Build Reviews section
   Widget _buildReviewsSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildReviewsShimmer(context, isDarkMode);
+    }
+
     final Map<int, int> starCounts = {
       5: 120,
       4: 50,
@@ -1098,7 +1803,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusCircular),
                   ),
                   child: Center(
                     child: Row(
@@ -1117,7 +1823,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                           const SizedBox(width: 4),
                         ],
                         Text(
-                          index == 0 ? '$label ($count)' : '${6 - index} ($count)',
+                          index == 0
+                              ? '$label ($count)'
+                              : '${6 - index} ($count)',
                           style: TextStyle(
                             color: isActive
                                 ? AppColors.white
@@ -1144,33 +1852,40 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               userName: 'John Doe',
               timeAgo: '2 days ago',
               rating: 5.0,
-              reviewText: 'Excellent service! The staff was very professional and friendly. My haircut turned out perfect. Highly recommend this salon!',
+              reviewText:
+                  'Excellent service! The staff was very professional and friendly. My haircut turned out perfect. Highly recommend this salon!',
             ),
             ReviewCard(
               userName: 'Sarah Miller',
-              userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+              userImage:
+                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
               timeAgo: '5 days ago',
               rating: 4.5,
-              reviewText: 'Great experience overall. The ambiance is nice and the service was good. Will definitely come back!',
+              reviewText:
+                  'Great experience overall. The ambiance is nice and the service was good. Will definitely come back!',
             ),
             ReviewCard(
               userName: 'Mike Johnson',
               timeAgo: '1 week ago',
               rating: 5.0,
-              reviewText: 'Best salon in town! The stylist really understood what I wanted. Very happy with the result.',
+              reviewText:
+                  'Best salon in town! The stylist really understood what I wanted. Very happy with the result.',
             ),
             ReviewCard(
               userName: 'Emily Davis',
-              userImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
+              userImage:
+                  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
               timeAgo: '2 weeks ago',
               rating: 4.0,
-              reviewText: 'Good service and reasonable prices. The place is clean and well-maintained.',
+              reviewText:
+                  'Good service and reasonable prices. The place is clean and well-maintained.',
             ),
             ReviewCard(
               userName: 'Robert Brown',
               timeAgo: '3 weeks ago',
               rating: 5.0,
-              reviewText: 'Amazing experience! The team is skilled and attentive. Highly recommended!',
+              reviewText:
+                  'Amazing experience! The team is skilled and attentive. Highly recommended!',
             ),
             // See all button
             AppSizes.heightS,
@@ -1223,6 +1938,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   // Build Services section with category badges
   Widget _buildServicesSection(bool isDarkMode) {
+    if (_isLoading) {
+      return _buildServicesShimmer(context, isDarkMode);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1235,7 +1954,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             itemBuilder: (context, index) {
               final category = _serviceCategories[index];
               final isActive = _activeServiceCategoryIndex == index;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -1253,7 +1972,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                    borderRadius:
+                        BorderRadius.circular(AppSizes.radiusCircular),
                   ),
                   child: Center(
                     child: Text(
@@ -1384,13 +2104,15 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   _StickyHeaderDelegate({required this.child});
 
   @override
-  double get minExtent => 280.0; // Height for combined sections + tab bar (250 + 56)
+  double get minExtent =>
+      280.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
   double get maxExtent => 280.0; // Same as min for fixed height
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 
