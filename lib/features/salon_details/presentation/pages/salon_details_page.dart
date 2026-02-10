@@ -804,6 +804,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             _buildTeamSection(isDarkMode)
           else if (title == 'Reviews')
             _buildReviewsSection(isDarkMode)
+          else if (title == 'Opening Hours')
+            _buildOpeningHoursSection(isDarkMode)
           else
             Container(
               height: 500,
@@ -928,6 +930,100 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           }).toList(),
         );
       },
+    );
+  }
+
+  // Build Opening Hours section
+  Widget _buildOpeningHoursSection(bool isDarkMode) {
+    // Get current day
+    final today = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
+    
+    final List<Map<String, dynamic>> openingHours = [
+      {'day': 'Monday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 1},
+      {'day': 'Tuesday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 2},
+      {'day': 'Wednesday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 3},
+      {'day': 'Thursday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 4},
+      {'day': 'Friday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 5},
+      {'day': 'Saturday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 6},
+      {'day': 'Sunday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 7},
+    ];
+
+    return Column(
+      children: openingHours.map((dayInfo) {
+        final isToday = dayInfo['dayNumber'] == today;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
+          padding: const EdgeInsets.all(AppSizes.paddingM),
+          decoration: BoxDecoration(
+            color: isToday
+                ? AppColors.info.withValues(alpha: 0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          ),
+          child: Row(
+            children: [
+              // Green dot indicator
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: AppColors.success,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: AppSizes.paddingM),
+              // Day name with Today text
+              Expanded(
+                child: isToday
+                    ? RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${dayInfo['day']} ',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'Today',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.info,
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.fontXS,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Text(
+                        dayInfo['day'] as String,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                          fontSize: 14,
+                        ),
+                      ),
+              ),
+              // Hours
+              Text(
+                dayInfo['hours'] as String,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
