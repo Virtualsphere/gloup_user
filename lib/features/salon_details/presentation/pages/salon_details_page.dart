@@ -4,6 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/features/salon_details/presentation/widgets/service_card.dart';
+import 'package:tressy/features/salon_details/presentation/widgets/ambient_card.dart';
+import 'package:tressy/features/salon_details/presentation/widgets/team_member_card.dart';
+import 'package:tressy/shared/widgets/review_summary_widget.dart';
+import 'package:tressy/shared/widgets/review_card.dart';
 
 class SalonDetailsPage extends StatefulWidget {
   final String? salonId;
@@ -24,6 +29,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   bool _isCollapsed = false;
   int _activeTabIndex = 0;
   int _activeServiceCategoryIndex = 0; // For service category badges
+  int _activeReviewFilterIndex = 0; // For review filter badges (0 = All, 1-5 = stars)
 
   // Carousel images from Unsplash
   final List<String> _carouselImages = [
@@ -750,24 +756,54 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   Widget _buildSection(String title, bool isDarkMode) {
     return Container(
       key: _sectionKeys[title],
-      padding: const EdgeInsets.all(AppSizes.paddingL),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingL,
+        vertical: AppSizes.paddingM,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section title
-          Text(
-            title,
-            style: context.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDarkMode
-                  ? AppColors.textPrimaryDark
-                  : AppColors.textPrimary,
-            ),
+          // Section title with optional "View all"
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
+                ),
+              ),
+              if (title == 'Team' || title == 'Reviews')
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Navigate to full team/reviews page
+                  },
+                  child: Text(
+                    'See all',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: AppColors.primary,
+                      fontSize: AppSizes.fontM,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
           ),
           AppSizes.heightM,
           // Section content
           if (title == 'Services')
             _buildServicesSection(isDarkMode)
+          else if (title == 'About')
+            _buildAboutSection(isDarkMode)
+          else if (title == 'Ambients')
+            _buildAmbientsSection(isDarkMode)
+          else if (title == 'Team')
+            _buildTeamSection(isDarkMode)
+          else if (title == 'Reviews')
+            _buildReviewsSection(isDarkMode)
           else
             Container(
               height: 500,
@@ -794,9 +830,286 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 ),
               ),
             ),
-          AppSizes.heightL,
         ],
       ),
+    );
+  }
+
+  // Build About section
+  Widget _buildAboutSection(bool isDarkMode) {
+    return Text(
+      'We offer premium salon and spa services exclusively for men. Our experienced team provides top-quality haircuts, grooming, facials, and relaxation treatments in a modern, comfortable environment. Walk-ins welcome.',
+      textAlign: TextAlign.left,
+      style: context.textTheme.bodyMedium?.copyWith(
+        color: isDarkMode
+            ? AppColors.textSecondaryDark
+            : AppColors.textSecondary,
+        fontSize: 14,
+        height: 1.6,
+      ),
+    );
+  }
+
+  // Build Ambients section
+  Widget _buildAmbientsSection(bool isDarkMode) {
+    final List<Map<String, dynamic>> ambients = [
+      {'icon': Icons.wifi, 'label': 'Free WiFi'},
+      {'icon': Icons.ac_unit, 'label': 'Air Conditioned'},
+      {'icon': Icons.local_parking, 'label': 'Parking Available'},
+      {'icon': Icons.credit_card, 'label': 'Card Payment'},
+      {'icon': Icons.wheelchair_pickup, 'label': 'Wheelchair Accessible'},
+      {'icon': Icons.coffee, 'label': 'Complimentary Beverages'},
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate width for 3 cards per row
+        final cardWidth = (constraints.maxWidth - (AppSizes.paddingM * 2)) / 3;
+
+        return Wrap(
+          spacing: AppSizes.paddingM,
+          runSpacing: AppSizes.paddingM,
+          children: ambients.map((ambient) {
+            return SizedBox(
+              width: cardWidth,
+              child: AmbientCard(
+                icon: ambient['icon'] as IconData,
+                label: ambient['label'] as String,
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  // Build Team section
+  Widget _buildTeamSection(bool isDarkMode) {
+    final List<Map<String, String>> teamMembers = [
+      {
+        'name': 'John Doe',
+        'role': 'Senior Stylist',
+        'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+      },
+      {
+        'name': 'Mike Smith',
+        'role': 'Hair Specialist',
+        'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
+      },
+      {
+        'name': 'David Brown',
+        'role': 'Barber',
+        'image': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200',
+      },
+      {
+        'name': 'Robert Wilson',
+        'role': 'Spa Therapist',
+        'image': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200',
+      },
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate width for 4 profiles per row
+        final cardWidth = (constraints.maxWidth - (AppSizes.paddingL * 3)) / 4;
+
+        return Wrap(
+          spacing: AppSizes.paddingL,
+          runSpacing: AppSizes.paddingL,
+          children: teamMembers.map((member) {
+            return SizedBox(
+              width: cardWidth,
+              child: TeamMemberCard(
+                name: member['name']!,
+                role: member['role']!,
+                imageUrl: member['image']!,
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  // Build Reviews section
+  Widget _buildReviewsSection(bool isDarkMode) {
+    final Map<int, int> starCounts = {
+      5: 120,
+      4: 50,
+      3: 20,
+      2: 8,
+      1: 3,
+    };
+    final int totalReviews = 201;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Review summary
+        ReviewSummaryWidget(
+          averageRating: 4.5,
+          totalReviews: totalReviews,
+          starCounts: starCounts,
+        ),
+        AppSizes.heightL,
+        // Filter badges
+        SizedBox(
+          height: 36,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6, // All + 5 stars
+            itemBuilder: (context, index) {
+              final isActive = _activeReviewFilterIndex == index;
+              String label;
+              int count;
+
+              if (index == 0) {
+                label = 'All';
+                count = totalReviews;
+              } else {
+                final stars = 6 - index; // 5, 4, 3, 2, 1
+                label = '$stars ★';
+                count = starCounts[stars] ?? 0;
+              }
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _activeReviewFilterIndex = index;
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.paddingL,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? AppColors.primary
+                        : (isDarkMode
+                            ? AppColors.textSecondary.withValues(alpha: 0.2)
+                            : AppColors.textSecondary.withValues(alpha: 0.15)),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (index > 0) ...[
+                          Icon(
+                            Icons.star,
+                            size: 14,
+                            color: isActive
+                                ? AppColors.white
+                                : (isDarkMode
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondary),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        Text(
+                          index == 0 ? '$label ($count)' : '${6 - index} ($count)',
+                          style: TextStyle(
+                            color: isActive
+                                ? AppColors.white
+                                : (isDarkMode
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondary),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        AppSizes.heightL,
+        // Reviews list (show only 5)
+        Column(
+          children: [
+            ReviewCard(
+              userName: 'John Doe',
+              timeAgo: '2 days ago',
+              rating: 5.0,
+              reviewText: 'Excellent service! The staff was very professional and friendly. My haircut turned out perfect. Highly recommend this salon!',
+            ),
+            ReviewCard(
+              userName: 'Sarah Miller',
+              userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+              timeAgo: '5 days ago',
+              rating: 4.5,
+              reviewText: 'Great experience overall. The ambiance is nice and the service was good. Will definitely come back!',
+            ),
+            ReviewCard(
+              userName: 'Mike Johnson',
+              timeAgo: '1 week ago',
+              rating: 5.0,
+              reviewText: 'Best salon in town! The stylist really understood what I wanted. Very happy with the result.',
+            ),
+            ReviewCard(
+              userName: 'Emily Davis',
+              userImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
+              timeAgo: '2 weeks ago',
+              rating: 4.0,
+              reviewText: 'Good service and reasonable prices. The place is clean and well-maintained.',
+            ),
+            ReviewCard(
+              userName: 'Robert Brown',
+              timeAgo: '3 weeks ago',
+              rating: 5.0,
+              reviewText: 'Amazing experience! The team is skilled and attentive. Highly recommended!',
+            ),
+            // See all button
+            AppSizes.heightS,
+            OutlinedButton(
+              onPressed: () {
+                // TODO: Navigate to all reviews page
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: isDarkMode
+                      ? AppColors.textSecondary.withValues(alpha: 0.3)
+                      : AppColors.textSecondary.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingL,
+                  vertical: AppSizes.paddingM,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'See all ($totalReviews reviews)',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: AppSizes.spaceS),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: isDarkMode
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -807,7 +1120,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       children: [
         // Horizontal scrollable category badges
         SizedBox(
-          height: 35,
+          height: 36,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: _serviceCategories.length,
@@ -854,31 +1167,41 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           ),
         ),
         AppSizes.heightL,
-        // Services list placeholder
-        Container(
-          height: 400,
-          decoration: BoxDecoration(
-            color: isDarkMode
-                ? AppColors.surfaceDark.withValues(alpha: 0.5)
-                : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            border: Border.all(
-              color: isDarkMode
-                  ? AppColors.textSecondary.withValues(alpha: 0.2)
-                  : AppColors.textSecondary.withValues(alpha: 0.1),
+        // Services list
+        Column(
+          children: [
+            ServiceCard(
+              serviceName: "Men's Haircut",
+              duration: '30 min',
+              price: 299,
+              isPopular: true,
             ),
-          ),
-          child: Center(
-            child: Text(
-              'Services for "${_serviceCategories[_activeServiceCategoryIndex]}" category\n\n(Service cards will appear here)',
-              textAlign: TextAlign.center,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-              ),
+            ServiceCard(
+              serviceName: "Hair Styling & Spa Treatment",
+              duration: '45 min',
+              price: 599,
+              originalPrice: 799,
+              discountPercentage: '25%',
             ),
-          ),
+            ServiceCard(
+              serviceName: "Beard Trim & Styling",
+              duration: '20 min',
+              price: 149,
+            ),
+            ServiceCard(
+              serviceName: "Premium Hair Color",
+              duration: '90 min',
+              price: 1499,
+              originalPrice: 1999,
+              discountPercentage: '25%',
+              isPopular: true,
+            ),
+            ServiceCard(
+              serviceName: "Hair Spa & Deep Conditioning",
+              duration: '60 min',
+              price: 899,
+            ),
+          ],
         ),
       ],
     );
