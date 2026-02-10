@@ -28,9 +28,9 @@ class _HomePageState extends State<HomePage> {
   bool _isSalonsLoading = true;
 
   final List<String> _carouselImages = [
-    // 'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTF4ZGU1M25uampzemN4N3RnOGJlNjR1NjFlZXN6OTZqMWJpZnRlbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/35ELYo9Ng4PxpzWhwH/giphy.gif',
+    'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTF4ZGU1M25uampzemN4N3RnOGJlNjR1NjFlZXN6OTZqMWJpZnRlbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/35ELYo9Ng4PxpzWhwH/giphy.gif',
     // Modern salon interior
-    // 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800',
+    'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800',
     // Hair styling
     'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
     // Manicure/nail service

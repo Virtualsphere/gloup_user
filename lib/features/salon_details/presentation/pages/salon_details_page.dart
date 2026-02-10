@@ -7,6 +7,7 @@ import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/service_card.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/ambient_card.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/team_member_card.dart';
+import 'package:tressy/features/salon_details/presentation/widgets/location_widget.dart';
 import 'package:tressy/shared/widgets/review_summary_widget.dart';
 import 'package:tressy/shared/widgets/review_card.dart';
 
@@ -806,6 +807,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             _buildReviewsSection(isDarkMode)
           else if (title == 'Opening Hours')
             _buildOpeningHoursSection(isDarkMode)
+          else if (title == 'Location')
+            _buildLocationSection(isDarkMode)
           else
             Container(
               height: 500,
@@ -930,6 +933,15 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           }).toList(),
         );
       },
+    );
+  }
+
+  // Build Location section
+  Widget _buildLocationSection(bool isDarkMode) {
+    return LocationWidget(
+      latitude: 13.0827,
+      longitude: 80.2707,
+      address: '123 Main Street, Downtown Area, City Center, State 12345',
     );
   }
 

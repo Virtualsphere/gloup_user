@@ -52,14 +52,8 @@ class _CategorySectionState extends State<CategorySection> {
                       _buildCategory(
                         context,
                         'Haircut',
-                        'https://i.ibb.co/DJFgdD9/hairstyle-regular-haircut-boy-fashion-cut-dd815c363530becbce13c36d531e489c.png',
+                        'https://static.vecteezy.com/system/resources/previews/058/263/014/large_2x/men-s-hairstyle-and-beard-grooming-guide-a-perfect-look-for-modern-men-free-png.png',
                         index: 1,
-                      ),
-                      _buildCategory(
-                        context,
-                        'Massage',
-                        'https://i.ibb.co/FkXC1jGQ/pngwing-com.png',
-                        index: 2,
                       ),
                       _buildCategory(
                         context,

@@ -48,6 +48,9 @@ dependencies:
 
   # Network
   dio: ^5.4.0
+  
+  # Maps
+  google_maps_flutter: ^2.5.0
 
   # Routing
   go_router: ^13.0.0
