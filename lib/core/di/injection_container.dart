@@ -19,6 +19,11 @@ import 'package:tressy/features/home/domain/usecases/get_popular_services_usecas
 import 'package:tressy/features/home/domain/usecases/get_recommended_salons_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_top_salons_usecase.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
+import 'package:tressy/features/salon_details/data/datasources/salon_detail_remote_datasource.dart';
+import 'package:tressy/features/salon_details/data/repositories/salon_detail_repository_impl.dart';
+import 'package:tressy/features/salon_details/domain/repositories/salon_detail_repository.dart';
+import 'package:tressy/features/salon_details/domain/usecases/get_salon_details_usecase.dart';
+import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -90,5 +95,26 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<HomeDataSource>(
     () => HomeDataSourceImpl(),
+  );
+
+  // Salon Details Feature
+  // BLoC
+  sl.registerFactory<SalonDetailBloc>(() => SalonDetailBloc(
+        getSalonDetailsUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<GetSalonDetailsUseCase>(
+    () => GetSalonDetailsUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SalonDetailRepository>(
+    () => SalonDetailRepositoryImpl(sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<SalonDetailRemoteDataSource>(
+    () => SalonDetailRemoteDataSourceImpl(sl()),
   );
 }
