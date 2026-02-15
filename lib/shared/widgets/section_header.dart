@@ -26,6 +26,7 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Padding(
       padding: padding!,
       child: Row(
@@ -43,7 +44,7 @@ class SectionHeader extends StatelessWidget {
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: AppSizes.fontXL,
-                    color: AppColors.textPrimary,
+                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                   ),
                 ),
                 if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -76,15 +77,15 @@ class SectionHeader extends StatelessWidget {
                     Text(
                       seeAllText!,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                         fontWeight: FontWeight.w600,
                         fontSize: AppSizes.fontM,
                       ),
                     ),
                     const SizedBox(width: AppSizes.spaceXS),
-                    const Icon(
+                     Icon(
                       Icons.arrow_forward_ios,
-                      color: AppColors.primary,
+                      color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                       size: 14,
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_icons.dart';
+import 'package:tressy/shared/widgets/theme_toggle_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
@@ -22,6 +23,7 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -32,7 +34,7 @@ class SearchBarWidget extends StatelessWidget {
               vertical: AppSizes.paddingS,
             ),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
         ),
         child: Row(
@@ -41,8 +43,10 @@ class SearchBarWidget extends StatelessWidget {
               'assets/icons/ic_search.svg',
               width: AppSizes.iconM,
               height: AppSizes.iconM,
-              colorFilter: const ColorFilter.mode(
-                AppColors.textSecondary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -51,7 +55,8 @@ class SearchBarWidget extends StatelessWidget {
               child: Text(
                 'Search for salons, parlors, or massages...',
                 style: context.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textHint,
+                  color:
+                      isDarkMode ? AppColors.textHintDark : AppColors.textHint,
                 ),
               ),
             ),
@@ -60,16 +65,23 @@ class SearchBarWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               child: Container(
                 decoration: BoxDecoration(
-                    color: context.theme.primaryColor.withValues(alpha: 0.05),
+                    color: isDarkMode
+                        ? AppColors.primaryDark.withValues(alpha: 0.05)
+                        : AppColors.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(AppSizes.radiusS)),
                 padding: const EdgeInsets.all(6),
                 child: SvgPicture.asset(
                   AppIcons.icSettings,
-                  width: AppSizes.iconM,
-                  height: AppSizes.iconM,
+                  width: AppSizes.iconS,
+                  height: AppSizes.iconS,
+                  colorFilter: ColorFilter.mode(
+                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
+            // ThemeToggleButton(),
           ],
         ),
       ),

@@ -62,6 +62,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
+    final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return BlocProvider(
       create: (context) => sl<HomeBloc>()
@@ -70,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           longitude: 72.8777,
         )),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.colorScheme.surface,
         body: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             return CustomScrollView(
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                   expandedHeight: carouselHeight,
                   collapsedHeight: 70,
                   toolbarHeight: 70,
-                  backgroundColor: AppColors.background,
+                  backgroundColor: context.colorScheme.surface,
                   surfaceTintColor: Colors.transparent,
                   elevation: 0,
                   shape: _isCollapsed

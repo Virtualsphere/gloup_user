@@ -34,9 +34,11 @@ class _CategorySectionState extends State<CategorySection> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+
     return Container(
       height: 120,
-      color: AppColors.background,
+      color: context.colorScheme.surface,
       child: _isLoading
           ? _buildCategoryShimmer()
           : Row(
@@ -162,6 +164,7 @@ class _CategorySectionState extends State<CategorySection> {
 
   Widget _buildCategory(BuildContext context, String title, String imageUrl,
       {required int index}) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     final bool isActive = _selectedIndex == index;
 
     return Container(
@@ -174,7 +177,7 @@ class _CategorySectionState extends State<CategorySection> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isActive ? AppColors.primary : Colors.transparent,
+            color: isActive ?  ( isDarkMode ?  AppColors.primaryDark : AppColors.primary) : Colors.transparent,
             width: 2.5,
           ),
         ),
@@ -221,7 +224,7 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   fontSize: AppSizes.fontS,
-                  color: AppColors.primary,
+                  color: isDarkMode ?  AppColors.primaryDark : AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

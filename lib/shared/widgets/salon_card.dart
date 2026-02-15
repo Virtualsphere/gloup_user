@@ -74,6 +74,7 @@ class _SalonCardState extends State<SalonCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return InkWell(
       onTap: widget.onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -83,7 +84,7 @@ class _SalonCardState extends State<SalonCard> {
             ? EdgeInsets.zero
             : const EdgeInsets.only(right: AppSizes.paddingM),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           // border: Border.all(
           //   color: AppColors.border,
@@ -91,7 +92,7 @@ class _SalonCardState extends State<SalonCard> {
           // ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.08),
+              color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -103,9 +104,9 @@ class _SalonCardState extends State<SalonCard> {
           children: [
             _buildImageCarousel(),
             SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
-            _buildSalonInfo(),
+            _buildSalonInfo(isDarkMode),
             SizedBox(height: widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
-            _buildRatingAndDistance(),
+            _buildRatingAndDistance(isDarkMode),
             SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
           ],
         ),
@@ -321,7 +322,7 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildSalonInfo() {
+  Widget _buildSalonInfo(bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       child: Row(
@@ -366,7 +367,7 @@ class _SalonCardState extends State<SalonCard> {
                   widget.salonName,
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                     height: 1.3,
                   ),
                   maxLines: 2,
@@ -391,14 +392,14 @@ class _SalonCardState extends State<SalonCard> {
                 style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontM,
-                  color: AppColors.textPrimary,
+                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 ),
               ),
               const SizedBox(width: 2),
               Text(
                 '(${widget.reviewCount})',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: AppSizes.fontXS,
                 ),
               ),
@@ -409,7 +410,7 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildRatingAndDistance() {
+  Widget _buildRatingAndDistance(bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       child: Column(
@@ -418,16 +419,16 @@ class _SalonCardState extends State<SalonCard> {
           // Location row
           Row(
             children: [
-              const Icon(
+               Icon(
                 Icons.location_on,
-                color: AppColors.primary,
+                color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 size: 14,
               ),
               const SizedBox(width: 4),
               Text(
                 'Koramangala, Bengalore',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: AppSizes.fontS,
                 ),
               ),
@@ -436,8 +437,8 @@ class _SalonCardState extends State<SalonCard> {
                 child: Container(
                   width: 4,
                   height: 4,
-                  decoration: const BoxDecoration(
-                    color: AppColors.textSecondary,
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -446,7 +447,7 @@ class _SalonCardState extends State<SalonCard> {
               Text(
                 '${widget.distance.toStringAsFixed(1)} KM',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: AppSizes.fontS,
                 ),
               ),
@@ -459,9 +460,9 @@ class _SalonCardState extends State<SalonCard> {
             const SizedBox(height: AppSizes.spaceS),
             Row(
               children: [
-                _buildLanguageBadges(),
+                _buildLanguageBadges(isDarkMode),
                 const Spacer(),
-                _buildCategoryBadges(),
+                _buildCategoryBadges(isDarkMode),
               ],
             ),
           ],
@@ -470,7 +471,7 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildLanguageBadges() {
+  Widget _buildLanguageBadges(bool isDarkMode) {
     final languageCodes = widget.languageCodes ?? [];
     // Filter only languages that have icons available
     final availableLanguages = languageCodes
@@ -499,8 +500,8 @@ class _SalonCardState extends State<SalonCard> {
               iconPath,
               width: 14,
               height: 14,
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
@@ -524,7 +525,7 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildCategoryBadges() {
+  Widget _buildCategoryBadges(bool isDarkMode) {
     final categories = widget.categories ?? [];
     final displayCategories = categories.take(2).toList();
     final hasMoreCategories = categories.length > 2;
@@ -540,13 +541,13 @@ class _SalonCardState extends State<SalonCard> {
                 vertical: 6,
               ),
               decoration: BoxDecoration(
-                color: AppColors.textSecondary.withValues(alpha: 0.15),
+                color: isDarkMode ? AppColors.textSecondaryDark.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               ),
               child: Text(
                 category,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -560,13 +561,13 @@ class _SalonCardState extends State<SalonCard> {
               vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: AppColors.textSecondary.withValues(alpha: 0.15),
+              color: isDarkMode ? AppColors.textSecondaryDark.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             ),
             child: Text(
               '+${categories.length - 2}',
               style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondary,
+                color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),

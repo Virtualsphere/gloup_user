@@ -37,6 +37,7 @@ class _FilterBadgesState extends State<FilterBadges> {
   }
 
   Widget _buildPrimaryFilterButton(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return InkWell(
       onTap: () {
         // Show filter bottom sheet or dialog
@@ -48,11 +49,13 @@ class _FilterBadgesState extends State<FilterBadges> {
           vertical: AppSizes.paddingXS,
         ),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
           borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.3),
+              color: isDarkMode
+                  ? AppColors.primaryDark.withValues(alpha: 0.1)
+                  : AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -65,8 +68,8 @@ class _FilterBadgesState extends State<FilterBadges> {
               AppIcons.icSettings,
               width: 16,
               height: 16,
-              colorFilter: const ColorFilter.mode(
-                AppColors.white,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primary : AppColors.primaryDark,
                 BlendMode.srcIn,
               ),
             ),
@@ -74,15 +77,15 @@ class _FilterBadgesState extends State<FilterBadges> {
             Text(
               'Filter',
               style: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.white,
+                color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
                 fontWeight: FontWeight.w600,
                 fontSize: AppSizes.fontS,
               ),
             ),
             const SizedBox(width: AppSizes.spaceXS),
-            const Icon(
+            Icon(
               Icons.keyboard_arrow_down,
-              color: AppColors.white,
+              color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
               size: 16,
             ),
           ],
@@ -92,6 +95,7 @@ class _FilterBadgesState extends State<FilterBadges> {
   }
 
   Widget _buildFilterChip(BuildContext context, String label) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     final bool isSelected = _selectedFilter == label;
 
     return Padding(
@@ -109,17 +113,19 @@ class _FilterBadgesState extends State<FilterBadges> {
             vertical: AppSizes.paddingS,
           ),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.background,
+            color: isSelected
+                ? (isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) :  AppColors.primary.withValues(alpha: 0.1))
+                : context.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? (isDarkMode ? AppColors.primaryDark:  AppColors.primary) :(isDarkMode ? AppColors.borderDark:  AppColors.border),
               width: isSelected ? 1.5 : 1.0,
             ),
           ),
           child: Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              color: isSelected ? (isDarkMode ? AppColors.primaryDark:  AppColors.primary) : (isDarkMode ? AppColors.primaryDark:  AppColors.primary) ,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               fontSize: AppSizes.fontS,
             ),
