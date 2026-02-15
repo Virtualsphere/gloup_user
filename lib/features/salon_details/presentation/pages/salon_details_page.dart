@@ -314,24 +314,55 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           items: images.map((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
-                return Container(
+                return SizedBox(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppColors.background,
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        child: const Icon(
-                          Icons.image,
-                          color: AppColors.primary,
-                          size: 80,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top : 0,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              child: const Icon(
+                                Icons.image,
+                                color: AppColors.primary,
+                                size: 80,
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin:
+                              Alignment.topCenter,
+                              end: Alignment
+                                  .bottomCenter,
+                              colors: [
+                                AppColors.black
+                                    .withValues(
+                                    alpha: 0.85),
+                                AppColors.black
+                                    .withValues(
+                                    alpha: 0.05),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },

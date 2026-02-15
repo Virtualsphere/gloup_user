@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider(
       create: (context) => sl<HomeBloc>()
         ..add(const LoadAllHomeDataEvent(
-          latitude: 19.0760, // Mumbai coordinates as default - TODO: Get actual user location
+          latitude: 19.0760,
           longitude: 72.8777,
         )),
       child: Scaffold(
@@ -117,7 +117,8 @@ class _HomePageState extends State<HomePage> {
                                       height: double.infinity,
                                       viewportFraction: 1.0,
                                       autoPlay: true,
-                                      autoPlayInterval: const Duration(seconds: 3),
+                                      autoPlayInterval:
+                                          const Duration(seconds: 3),
                                       autoPlayAnimationDuration: const Duration(
                                         milliseconds: 800,
                                       ),
@@ -133,23 +134,60 @@ class _HomePageState extends State<HomePage> {
                                         builder: (BuildContext context) {
                                           return SizedBox(
                                             width: double.infinity,
-                                            child: Image.network(
-                                              banner.imageUrl,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) {
-                                                return Container(
-                                                  color: AppColors.primary.withValues(
-                                                    alpha: 0.2,
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
+                                                  top: 0,
+                                                  bottom: 0,
+                                                  left: 0,
+                                                  right: 0,
+                                                  child: Image.network(
+                                                    banner.imageUrl,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Container(
+                                                        color: AppColors.primary
+                                                            .withValues(
+                                                          alpha: 0.2,
+                                                        ),
+                                                        child: const Center(
+                                                          child: Icon(
+                                                            Icons.cut,
+                                                            size: 80,
+                                                            color:
+                                                                AppColors.white,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.cut,
-                                                      size: 80,
-                                                      color: AppColors.white,
+                                                ),
+                                                Positioned(
+                                                  top: 0,
+                                                  bottom: 0,
+                                                  left: 0,
+                                                  right: 0,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                        colors: [
+                                                          AppColors.black
+                                                              .withValues(
+                                                                  alpha: 0.85),
+                                                          AppColors.black
+                                                              .withValues(
+                                                                  alpha: 0.05),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                );
-                                              },
+                                                ),
+                                              ],
                                             ),
                                           );
                                         },
@@ -157,321 +195,319 @@ class _HomePageState extends State<HomePage> {
                                     }).toList(),
                                   ),
 
-                  // Dark gradient overlay
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppColors.black.withValues(alpha: 0.9),
-                          AppColors.black.withValues(alpha: 0.05),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Location and Profile on top of carousel
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.paddingM,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: AppSizes.spaceS),
-                          // Location and profile row
-                          Row(
-                            children: [
-                              LocationBadge(
-                                location: 'Mumbai',
-                                addressLine2: 'Andheri West',
-                                onTap: () {},
-                              ),
-                              const Spacer(),
-                              InkWell(
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusCircular,
-                                ),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white.withValues(
-                                      alpha: 0.95,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.black.withValues(
-                                          alpha: 0.1,
-                                        ),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'D',
-                                      style: TextStyle(
-                                        fontSize: AppSizes.fontL,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          // Search bar below location
-                          SearchBarWidget(onTap: () {}, onSettingsTap: () {}),
-                          AppSizes.heightM,
-                          if (state.carouselBanners.isNotEmpty)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: state.carouselBanners.asMap().entries.map((
-                                entry,
-                              ) {
-                                return Container(
-                                  width: _currentCarouselIndex == entry.key
-                                      ? 24.0
-                                      : 8.0,
-                                  height: 8.0,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4.0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: _currentCarouselIndex == entry.key
-                                        ? AppColors.white
-                                        : AppColors.white.withValues(alpha: 0.4),
-                                  ),
-                                );
-                              }).toList(),
+                        // Location and Profile on top of carousel
+                        SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingM,
                             ),
-                          AppSizes.heightM,
-                        ],
-                      ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: AppSizes.spaceS),
+                                // Location and profile row
+                                Row(
+                                  children: [
+                                    LocationBadge(
+                                      location: 'Mumbai',
+                                      addressLine2: 'Andheri West',
+                                      onTap: () {},
+                                    ),
+                                    const Spacer(),
+                                    InkWell(
+                                      onTap: () {},
+                                      borderRadius: BorderRadius.circular(
+                                        AppSizes.radiusCircular,
+                                      ),
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.white.withValues(
+                                            alpha: 0.95,
+                                          ),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppColors.black.withValues(
+                                                alpha: 0.1,
+                                              ),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            'D',
+                                            style: TextStyle(
+                                              fontSize: AppSizes.fontL,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                // Search bar below location
+                                SearchBarWidget(
+                                    onTap: () {}, onSettingsTap: () {}),
+                                AppSizes.heightM,
+                                if (state.carouselBanners.isNotEmpty)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: state.carouselBanners
+                                        .asMap()
+                                        .entries
+                                        .map((
+                                      entry,
+                                    ) {
+                                      return Container(
+                                        width:
+                                            _currentCarouselIndex == entry.key
+                                                ? 24.0
+                                                : 8.0,
+                                        height: 8.0,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 4.0,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          color:
+                                              _currentCarouselIndex == entry.key
+                                                  ? AppColors.white
+                                                  : AppColors.white
+                                                      .withValues(alpha: 0.4),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                AppSizes.heightM,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    collapseMode: CollapseMode.parallax,
                   ),
-                ],
-              ),
-              collapseMode: CollapseMode.parallax,
-            ),
-          ),
+                ),
 
-          SliverToBoxAdapter(child: AppSizes.heightS),
+                SliverToBoxAdapter(child: AppSizes.heightS),
 
-          // Sticky Category Section
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _CategorySectionDelegate(),
-          ),
+                // Sticky Category Section
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _CategorySectionDelegate(),
+                ),
 
-          SliverToBoxAdapter(child: AppSizes.heightS),
+                SliverToBoxAdapter(child: AppSizes.heightS),
 
-          // Filter Badges Section
-          const SliverToBoxAdapter(child: FilterBadges()),
+                // Filter Badges Section
+                const SliverToBoxAdapter(child: FilterBadges()),
 
-          SliverToBoxAdapter(child: AppSizes.heightS),
+                SliverToBoxAdapter(child: AppSizes.heightS),
 
-          // Popular Services Nearby Section Header
-          SliverToBoxAdapter(
-            child: SectionHeader(
-              title: 'Popular Services Nearby',
-              subtitle: 'Based on your location',
-              onSeeAllTap: () {
-                // Navigate to see all popular services
-              },
-            ),
-          ),
-
-          SliverToBoxAdapter(child: AppSizes.heightS),
-
-          // Horizontal Scrollable Salon Cards - Popular Services
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 300,
-              child: state.isPopularServicesLoading
-                  ? HomeShimmers.buildSalonCardsShimmer(context)
-                  : state.popularServices.isEmpty
-                      ? const Center(child: Text('No popular services found'))
-                      : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.paddingM),
-                      itemCount: state.popularServices.length,
-                      itemBuilder: (context, index) {
-                        final salon = state.popularServices[index];
-                        return SalonCard(
-                          salonName: salon.salonName,
-                          salonImage: salon.salonImage,
-                          images: salon.images,
-                          rating: salon.rating,
-                          reviewCount: salon.reviewCount,
-                          distance: salon.distance,
-                          isPremium: salon.isPremium,
-                          isFavorite: salon.isFavorite,
-                          serviceName: salon.serviceName,
-                          servicePrice: salon.servicePrice,
-                          categories: salon.categories,
-                          languageCodes: salon.languageCodes,
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonDetails,
-                              extra: {
-                                'salonId': salon.id,
-                                'salonName': salon.salonName,
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ),
-
-          // Content spacing
-          SliverToBoxAdapter(child: AppSizes.heightL),
-
-          // Top Salons Section Header
-          SliverToBoxAdapter(
-            child: SectionHeader(
-              title: 'Top Salons',
-              subtitle: 'Highest rated salons in your area',
-              onSeeAllTap: () {
-                // Navigate to see all top salons
-              },
-            ),
-          ),
-
-          SliverToBoxAdapter(child: AppSizes.heightS),
-          // Horizontal Scrollable Salon Cards - Top Salons
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 300,
-              child: state.isTopSalonsLoading
-                  ? HomeShimmers.buildSalonCardsShimmer(context)
-                  : state.topSalons.isEmpty
-                      ? const Center(child: Text('No top salons found'))
-                      : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.paddingM),
-                      itemCount: state.topSalons.length,
-                      itemBuilder: (context, index) {
-                        final salon = state.topSalons[index];
-                        return SalonCard(
-                          salonName: salon.salonName,
-                          salonImage: salon.salonImage,
-                          images: salon.images,
-                          rating: salon.rating,
-                          reviewCount: salon.reviewCount,
-                          distance: salon.distance,
-                          isPremium: salon.isPremium,
-                          isFavorite: salon.isFavorite,
-                          serviceName: salon.serviceName,
-                          servicePrice: salon.servicePrice,
-                          categories: salon.categories,
-                          languageCodes: salon.languageCodes,
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonDetails,
-                              extra: {
-                                'salonId': salon.id,
-                                'salonName': salon.salonName,
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ),
-
-          // Bottom spacing
-          SliverToBoxAdapter(child: AppSizes.heightXXL),
-
-          // Recommended for You Section Header
-          SliverToBoxAdapter(
-            child: SectionHeader(
-              title: 'Recommended for You',
-              subtitle: 'Based on your preferences',
-              onSeeAllTap: () {
-                // Navigate to see all recommendations
-              },
-            ),
-          ),
-
-          SliverToBoxAdapter(child: AppSizes.heightS),
-
-          // Vertical Full-Width Salon Cards
-          state.isRecommendedSalonsLoading
-              ? SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: AppSizes.paddingM),
-                        child: HomeShimmers.buildVerticalSalonCardShimmer(context),
-                      ),
-                      childCount: 3,
-                    ),
+                // Popular Services Nearby Section Header
+                SliverToBoxAdapter(
+                  child: SectionHeader(
+                    title: 'Popular Services Nearby',
+                    subtitle: 'Based on your location',
+                    onSeeAllTap: () {
+                      // Navigate to see all popular services
+                    },
                   ),
-                )
-              : state.recommendedSalons.isEmpty
-                  ? const SliverToBoxAdapter(
-                      child: Center(child: Text('No recommendations found')),
-                    )
-                  : SliverPadding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final salon = state.recommendedSalons[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
-                              child: SalonCard(
-                                salonName: salon.salonName,
-                                salonImage: salon.salonImage,
-                                images: salon.images,
-                                rating: salon.rating,
-                                reviewCount: salon.reviewCount,
-                                distance: salon.distance,
-                                isPremium: salon.isPremium,
-                                isFavorite: salon.isFavorite,
-                                serviceName: salon.serviceName,
-                                servicePrice: salon.servicePrice,
-                                categories: salon.categories,
-                                languageCodes: salon.languageCodes,
-                                isFullWidth: true,
-                                onTap: () {
-                                  GoRouter.of(context).push(
-                                    RouteNames.salonDetails,
-                                    extra: {
-                                      'salonId': salon.id,
-                                      'salonName': salon.salonName,
+                ),
+
+                SliverToBoxAdapter(child: AppSizes.heightS),
+
+                // Horizontal Scrollable Salon Cards - Popular Services
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 300,
+                    child: state.isPopularServicesLoading
+                        ? HomeShimmers.buildSalonCardsShimmer(context)
+                        : state.popularServices.isEmpty
+                            ? const Center(
+                                child: Text('No popular services found'))
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSizes.paddingM),
+                                itemCount: state.popularServices.length,
+                                itemBuilder: (context, index) {
+                                  final salon = state.popularServices[index];
+                                  return SalonCard(
+                                    salonName: salon.salonName,
+                                    salonImage: salon.salonImage,
+                                    images: salon.images,
+                                    rating: salon.rating,
+                                    reviewCount: salon.reviewCount,
+                                    distance: salon.distance,
+                                    isPremium: salon.isPremium,
+                                    isFavorite: salon.isFavorite,
+                                    serviceName: salon.serviceName,
+                                    servicePrice: salon.servicePrice,
+                                    categories: salon.categories,
+                                    languageCodes: salon.languageCodes,
+                                    onTap: () {
+                                      GoRouter.of(context).push(
+                                        RouteNames.salonDetails,
+                                        extra: {
+                                          'salonId': salon.id,
+                                          'salonName': salon.salonName,
+                                        },
+                                      );
                                     },
                                   );
                                 },
                               ),
-                            );
-                          },
-                          childCount: state.recommendedSalons.length,
-                        ),
-                      ),
-                    ),
+                  ),
+                ),
 
-          // Bottom spacing
-          SliverToBoxAdapter(child: AppSizes.heightXXL),
+                // Content spacing
+                SliverToBoxAdapter(child: AppSizes.heightL),
+
+                // Top Salons Section Header
+                SliverToBoxAdapter(
+                  child: SectionHeader(
+                    title: 'Top Salons',
+                    subtitle: 'Highest rated salons in your area',
+                    onSeeAllTap: () {
+                      // Navigate to see all top salons
+                    },
+                  ),
+                ),
+
+                SliverToBoxAdapter(child: AppSizes.heightS),
+                // Horizontal Scrollable Salon Cards - Top Salons
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 300,
+                    child: state.isTopSalonsLoading
+                        ? HomeShimmers.buildSalonCardsShimmer(context)
+                        : state.topSalons.isEmpty
+                            ? const Center(child: Text('No top salons found'))
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSizes.paddingM),
+                                itemCount: state.topSalons.length,
+                                itemBuilder: (context, index) {
+                                  final salon = state.topSalons[index];
+                                  return SalonCard(
+                                    salonName: salon.salonName,
+                                    salonImage: salon.salonImage,
+                                    images: salon.images,
+                                    rating: salon.rating,
+                                    reviewCount: salon.reviewCount,
+                                    distance: salon.distance,
+                                    isPremium: salon.isPremium,
+                                    isFavorite: salon.isFavorite,
+                                    serviceName: salon.serviceName,
+                                    servicePrice: salon.servicePrice,
+                                    categories: salon.categories,
+                                    languageCodes: salon.languageCodes,
+                                    onTap: () {
+                                      GoRouter.of(context).push(
+                                        RouteNames.salonDetails,
+                                        extra: {
+                                          'salonId': salon.id,
+                                          'salonName': salon.salonName,
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                  ),
+                ),
+
+                // Bottom spacing
+                SliverToBoxAdapter(child: AppSizes.heightXXL),
+
+                // Recommended for You Section Header
+                SliverToBoxAdapter(
+                  child: SectionHeader(
+                    title: 'Recommended for You',
+                    subtitle: 'Based on your preferences',
+                    onSeeAllTap: () {
+                      // Navigate to see all recommendations
+                    },
+                  ),
+                ),
+
+                SliverToBoxAdapter(child: AppSizes.heightS),
+
+                // Vertical Full-Width Salon Cards
+                state.isRecommendedSalonsLoading
+                    ? SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingM),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: AppSizes.paddingM),
+                              child: HomeShimmers.buildVerticalSalonCardShimmer(
+                                  context),
+                            ),
+                            childCount: 3,
+                          ),
+                        ),
+                      )
+                    : state.recommendedSalons.isEmpty
+                        ? const SliverToBoxAdapter(
+                            child:
+                                Center(child: Text('No recommendations found')),
+                          )
+                        : SliverPadding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.paddingM),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final salon = state.recommendedSalons[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: AppSizes.paddingM),
+                                    child: SalonCard(
+                                      salonName: salon.salonName,
+                                      salonImage: salon.salonImage,
+                                      images: salon.images,
+                                      rating: salon.rating,
+                                      reviewCount: salon.reviewCount,
+                                      distance: salon.distance,
+                                      isPremium: salon.isPremium,
+                                      isFavorite: salon.isFavorite,
+                                      serviceName: salon.serviceName,
+                                      servicePrice: salon.servicePrice,
+                                      categories: salon.categories,
+                                      languageCodes: salon.languageCodes,
+                                      isFullWidth: true,
+                                      onTap: () {
+                                        GoRouter.of(context).push(
+                                          RouteNames.salonDetails,
+                                          extra: {
+                                            'salonId': salon.id,
+                                            'salonName': salon.salonName,
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                childCount: state.recommendedSalons.length,
+                              ),
+                            ),
+                          ),
+
+                // Bottom spacing
+                SliverToBoxAdapter(child: AppSizes.heightXXL),
               ],
             );
           },
