@@ -1,0 +1,81 @@
+import 'package:equatable/equatable.dart';
+
+/// Carousel Banner Entity
+class CarouselBannerEntity extends Equatable {
+  final String id;
+  final String imageUrl;
+
+  const CarouselBannerEntity({
+    required this.id,
+    required this.imageUrl,
+  });
+
+  @override
+  List<Object?> get props => [id, imageUrl];
+}
+
+/// Category Entity
+class CategoryEntity extends Equatable {
+  final String id;
+  final String label;
+  final String? imageUrl;
+
+  const CategoryEntity({
+    required this.id,
+    required this.label,
+    this.imageUrl,
+  });
+
+  @override
+  List<Object?> get props => [id, label, imageUrl];
+}
+
+/// Salon Entity
+class SalonEntity extends Equatable {
+  final String id;
+  final String salonName;
+  final String salonImage;
+  final List<String> images;
+  final double rating;
+  final int reviewCount;
+  final double distance; // in km
+  final bool isPremium;
+  final bool isFavorite;
+  final String? serviceName;
+  final double? servicePrice;
+  final List<String> categories;
+  final List<String> languageCodes;
+
+  const SalonEntity({
+    required this.id,
+    required this.salonName,
+    required this.salonImage,
+    required this.images,
+    required this.rating,
+    required this.reviewCount,
+    required this.distance,
+    this.isPremium = false,
+    this.isFavorite = false,
+    this.serviceName,
+    this.servicePrice,
+    required this.categories,
+    required this.languageCodes,
+  });
+
+  @override
+  List<Object?> get props => [
+        id,
+        salonName,
+        salonImage,
+        images,
+        rating,
+        reviewCount,
+        distance,
+        isPremium,
+        isFavorite,
+        serviceName,
+        servicePrice,
+        categories,
+        languageCodes,
+      ];
+}

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
+import 'package:tressy/features/home/presentation/bloc/home_event.dart';
+import 'package:tressy/features/home/presentation/bloc/home_state.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
@@ -24,49 +29,11 @@ class _HomePageState extends State<HomePage> {
   int _currentCarouselIndex = 0;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
-  bool _isCarouselLoading = true;
-  bool _isSalonsLoading = true;
-
-  final List<String> _carouselImages = [
-    'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTF4ZGU1M25uampzemN4N3RnOGJlNjR1NjFlZXN6OTZqMWJpZnRlbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/35ELYo9Ng4PxpzWhwH/giphy.gif',
-    // Modern salon interior
-    'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800',
-    // Hair styling
-    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
-    // Manicure/nail service
-    'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800',
-    // Hair coloring
-    'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=800',
-    // Beauty spa treatment
-  ];
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    // Simulate loading carousel images and salons
-    _loadCarousel();
-    _loadSalons();
-  }
-
-  Future<void> _loadCarousel() async {
-    // Simulate loading delay (replace with actual API call)
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      setState(() {
-        _isCarouselLoading = false;
-      });
-    }
-  }
-
-  Future<void> _loadSalons() async {
-    // Simulate loading delay (replace with actual API call)
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      setState(() {
-        _isSalonsLoading = false;
-      });
-    }
   }
 
   @override
@@ -94,91 +61,101 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.35; // 30% for carousel
+    final carouselHeight = screenHeight * 0.35; // 35% for carousel
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          // SliverAppBar with carousel
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: carouselHeight,
-            collapsedHeight: 70,
-            toolbarHeight: 70,
-            backgroundColor: AppColors.background,
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            shape: _isCollapsed
-                ? Border(
-                    bottom: BorderSide(
-                      color: AppColors.border,
-                      width: AppSizes.borderWidthThin,
-                    ),
-                  )
-                : null,
-            // Show only search bar when collapsed
-            title: _isCollapsed
-                ? SearchBarWidget(
-                    onTap: () {},
-                    onSettingsTap: () {},
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSizes.paddingS,
-                    ),
-                  )
-                : null,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Carousel with shimmer loading
-                  _isCarouselLoading
-                      ? HomeShimmers.buildCarouselShimmer(context)
-                      : CarouselSlider(
-                          options: CarouselOptions(
-                            height: double.infinity,
-                            viewportFraction: 1.0,
-                            autoPlay: true,
-                            autoPlayInterval: const Duration(seconds: 3),
-                            autoPlayAnimationDuration: const Duration(
-                              milliseconds: 800,
-                            ),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentCarouselIndex = index;
-                              });
-                            },
+    return BlocProvider(
+      create: (context) => sl<HomeBloc>()
+        ..add(const LoadAllHomeDataEvent(
+          latitude: 19.0760, // Mumbai coordinates as default - TODO: Get actual user location
+          longitude: 72.8777,
+        )),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            return CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                // SliverAppBar with carousel
+                SliverAppBar(
+                  pinned: true,
+                  expandedHeight: carouselHeight,
+                  collapsedHeight: 70,
+                  toolbarHeight: 70,
+                  backgroundColor: AppColors.background,
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
+                  shape: _isCollapsed
+                      ? Border(
+                          bottom: BorderSide(
+                            color: AppColors.border,
+                            width: AppSizes.borderWidthThin,
                           ),
-                          items: _carouselImages.map((imageUrl) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: AppColors.primary.withValues(
-                                          alpha: 0.2,
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.cut,
-                                            size: 80,
-                                            color: AppColors.white,
-                                          ),
-                                        ),
+                        )
+                      : null,
+                  // Show only search bar when collapsed
+                  title: _isCollapsed
+                      ? SearchBarWidget(
+                          onTap: () {},
+                          onSettingsTap: () {},
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSizes.paddingS,
+                          ),
+                        )
+                      : null,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Carousel with shimmer loading
+                        state.isCarouselLoading
+                            ? HomeShimmers.buildCarouselShimmer(context)
+                            : state.carouselBanners.isEmpty
+                                ? HomeShimmers.buildCarouselShimmer(context)
+                                : CarouselSlider(
+                                    options: CarouselOptions(
+                                      height: double.infinity,
+                                      viewportFraction: 1.0,
+                                      autoPlay: true,
+                                      autoPlayInterval: const Duration(seconds: 3),
+                                      autoPlayAnimationDuration: const Duration(
+                                        milliseconds: 800,
+                                      ),
+                                      autoPlayCurve: Curves.fastOutSlowIn,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentCarouselIndex = index;
+                                        });
+                                      },
+                                    ),
+                                    items: state.carouselBanners.map((banner) {
+                                      return Builder(
+                                        builder: (BuildContext context) {
+                                          return SizedBox(
+                                            width: double.infinity,
+                                            child: Image.network(
+                                              banner.imageUrl,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Container(
+                                                  color: AppColors.primary.withValues(
+                                                    alpha: 0.2,
+                                                  ),
+                                                  child: const Center(
+                                                    child: Icon(
+                                                      Icons.cut,
+                                                      size: 80,
+                                                      color: AppColors.white,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
                                       );
-                                    },
+                                    }).toList(),
                                   ),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        ),
 
                   // Dark gradient overlay
                   Container(
@@ -254,28 +231,29 @@ class _HomePageState extends State<HomePage> {
                           // Search bar below location
                           SearchBarWidget(onTap: () {}, onSettingsTap: () {}),
                           AppSizes.heightM,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: _carouselImages.asMap().entries.map((
-                              entry,
-                            ) {
-                              return Container(
-                                width: _currentCarouselIndex == entry.key
-                                    ? 24.0
-                                    : 8.0,
-                                height: 8.0,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 4.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: _currentCarouselIndex == entry.key
-                                      ? AppColors.white
-                                      : AppColors.white.withValues(alpha: 0.4),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+                          if (state.carouselBanners.isNotEmpty)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: state.carouselBanners.asMap().entries.map((
+                                entry,
+                              ) {
+                                return Container(
+                                  width: _currentCarouselIndex == entry.key
+                                      ? 24.0
+                                      : 8.0,
+                                  height: 8.0,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: _currentCarouselIndex == entry.key
+                                        ? AppColors.white
+                                        : AppColors.white.withValues(alpha: 0.4),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           AppSizes.heightM,
                         ],
                       ),
@@ -315,122 +293,45 @@ class _HomePageState extends State<HomePage> {
 
           SliverToBoxAdapter(child: AppSizes.heightS),
 
-          // Horizontal Scrollable Salon Cards
+          // Horizontal Scrollable Salon Cards - Popular Services
           SliverToBoxAdapter(
             child: SizedBox(
               height: 300,
-              child: _isSalonsLoading
+              child: state.isPopularServicesLoading
                   ? HomeShimmers.buildSalonCardsShimmer(context)
-                  : ListView(
+                  : state.popularServices.isEmpty
+                      ? const Center(child: Text('No popular services found'))
+                      : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingM),
-                      children: [
-                        SalonCard(
-                          salonName: 'Luxury Hair & Spa Studio',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                            'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
-                            'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-                            'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400',
-                          ],
-                          rating: 4.5,
-                          reviewCount: 201,
-                          distance: 1.2,
-                          isPremium: true,
-                          serviceName: 'Haircut',
-                          servicePrice: 59,
-                          categories: ['Haircut', 'Spa', 'Massage', 'Facial'],
-                          languageCodes: ['ta', 'en', 'hi'],
-                          // Tamil, English, Hindi
+                      itemCount: state.popularServices.length,
+                      itemBuilder: (context, index) {
+                        final salon = state.popularServices[index];
+                        return SalonCard(
+                          salonName: salon.salonName,
+                          salonImage: salon.salonImage,
+                          images: salon.images,
+                          rating: salon.rating,
+                          reviewCount: salon.reviewCount,
+                          distance: salon.distance,
+                          isPremium: salon.isPremium,
+                          isFavorite: salon.isFavorite,
+                          serviceName: salon.serviceName,
+                          servicePrice: salon.servicePrice,
+                          categories: salon.categories,
+                          languageCodes: salon.languageCodes,
                           onTap: () {
                             GoRouter.of(context).push(
                               RouteNames.salonDetails,
                               extra: {
-                                'salonId': 'salon_1',
-                                'salonName': 'Luxury Hair & Spa Studio',
+                                'salonId': salon.id,
+                                'salonName': salon.salonName,
                               },
                             );
                           },
-                        ),
-                        SalonCard(
-                          salonName: 'Glamour Beauty Lounge',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                            'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
-                          ],
-                          rating: 4.8,
-                          reviewCount: 156,
-                          distance: 2.5,
-                          isPremium: false,
-                          isFavorite: true,
-                          serviceName: 'Facial',
-                          servicePrice: 299,
-                          categories: ['Facial', 'Makeup'],
-                          languageCodes: ['hi', 'en'],
-                          // Hindi, English
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonDetails,
-                              extra: {
-                                'salonId': 'salon_2',
-                                'salonName': 'Glamour Beauty Lounge',
-                              },
-                            );
-                          },
-                        ),
-                        SalonCard(
-                          salonName: 'Elite Gentleman\'s Barber Shop',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400',
-                            'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400',
-                          ],
-                          rating: 4.7,
-                          reviewCount: 89,
-                          distance: 0.8,
-                          isPremium: true,
-                          serviceName: 'Trim',
-                          servicePrice: 79,
-                          categories: ['Haircut', 'Trim', 'Shave'],
-                          languageCodes: ['ml', 'en', 'ta'],
-                          // Malayalam, English, Tamil
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonDetails,
-                              extra: {
-                                'salonId': 'salon_3',
-                                'salonName': 'Elite Gentleman\'s Barber Shop',
-                              },
-                            );
-                          },
-                        ),
-                        SalonCard(
-                          salonName: 'Serenity Spa & Wellness',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400',
-                            'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-                          ],
-                          rating: 4.9,
-                          reviewCount: 312,
-                          distance: 3.1,
-                          isPremium: false,
-                          serviceName: 'Massage',
-                          servicePrice: 499,
-                          categories: ['Spa', 'Massage'],
-                          languageCodes: ['te', 'hi', 'en'],
-                          // Telugu, Hindi, English
-                          onTap: () {},
-                        ),
-                      ],
+                        );
+                      },
                     ),
             ),
           ),
@@ -454,93 +355,41 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: SizedBox(
               height: 300,
-              child: _isSalonsLoading
+              child: state.isTopSalonsLoading
                   ? HomeShimmers.buildSalonCardsShimmer(context)
-                  : ListView(
+                  : state.topSalons.isEmpty
+                      ? const Center(child: Text('No top salons found'))
+                      : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingM),
-                      children: [
-                        SalonCard(
-                          salonName: 'Royal Beauty Parlour',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                            'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
-                          ],
-                          rating: 4.9,
-                          reviewCount: 458,
-                          distance: 2.3,
-                          isPremium: true,
-                          serviceName: 'Bridal Makeup',
-                          servicePrice: 1999,
-                          categories: ['Makeup', 'Bridal', 'Facial', 'Spa'],
-                          languageCodes: ['kn', 'en', 'hi', 'ta'],
-                          // Kannada, English, Hindi, Tamil
-                          onTap: () {},
-                        ),
-                        SalonCard(
-                          salonName: 'Modern Hair Studio',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400',
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                          ],
-                          rating: 4.8,
-                          reviewCount: 324,
-                          distance: 1.5,
-                          isPremium: false,
-                          serviceName: 'Hair Color',
-                          servicePrice: 399,
-                          categories: ['Haircut', 'Color'],
-                          languageCodes: ['bn', 'en', 'hi'],
-                          // Bengali, English, Hindi
-                          onTap: () {},
-                        ),
-                        SalonCard(
-                          salonName: 'Bliss Spa & Wellness Center',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-                            'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400',
-                            'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-                          ],
-                          rating: 4.9,
-                          reviewCount: 567,
-                          distance: 3.8,
-                          isPremium: true,
-                          isFavorite: true,
-                          serviceName: 'Thai Massage',
-                          servicePrice: 899,
-                          categories: ['Spa', 'Massage', 'Therapy'],
-                          languageCodes: ['gu', 'hi', 'en'],
-                          // Gujarati, Hindi, English
-                          onTap: () {},
-                        ),
-                        SalonCard(
-                          salonName: 'Gentlemen\'s Club Barbershop',
-                          salonImage:
-                              'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
-                          images: [
-                            'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400',
-                            'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400',
-                          ],
-                          rating: 4.7,
-                          reviewCount: 198,
-                          distance: 1.9,
-                          isPremium: false,
-                          serviceName: 'Beard Style',
-                          servicePrice: 149,
-                          categories: ['Haircut', 'Beard', 'Shave'],
-                          languageCodes: ['hi', 'en'],
-                          // Hindi, English
-                          onTap: () {},
-                        ),
-                      ],
+                      itemCount: state.topSalons.length,
+                      itemBuilder: (context, index) {
+                        final salon = state.topSalons[index];
+                        return SalonCard(
+                          salonName: salon.salonName,
+                          salonImage: salon.salonImage,
+                          images: salon.images,
+                          rating: salon.rating,
+                          reviewCount: salon.reviewCount,
+                          distance: salon.distance,
+                          isPremium: salon.isPremium,
+                          isFavorite: salon.isFavorite,
+                          serviceName: salon.serviceName,
+                          servicePrice: salon.servicePrice,
+                          categories: salon.categories,
+                          languageCodes: salon.languageCodes,
+                          onTap: () {
+                            GoRouter.of(context).push(
+                              RouteNames.salonDetails,
+                              extra: {
+                                'salonId': salon.id,
+                                'salonName': salon.salonName,
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
             ),
           ),
@@ -562,7 +411,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(child: AppSizes.heightS),
 
           // Vertical Full-Width Salon Cards
-          _isSalonsLoading
+          state.isRecommendedSalonsLoading
               ? SliverPadding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
@@ -577,127 +426,56 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 )
-              : SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      SalonCard(
-                        salonName: 'Naturals Unisex Salon & Spa',
-                        salonImage:
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200',
-                        images: [
-                          'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                          'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
-                          'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-                          'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400',
-                        ],
-                        rating: 4.6,
-                        reviewCount: 892,
-                        distance: 1.8,
-                        isPremium: true,
-                        serviceName: 'Hair Spa',
-                        servicePrice: 799,
-                        categories: ['Haircut', 'Spa', 'Facial', 'Massage'],
-                        languageCodes: ['hi', 'en', 'ta'],
-                        // Hindi, English, Tamil
-                        isFullWidth: true,
-                        onTap: () {},
+              : state.recommendedSalons.isEmpty
+                  ? const SliverToBoxAdapter(
+                      child: Center(child: Text('No recommendations found')),
+                    )
+                  : SliverPadding(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final salon = state.recommendedSalons[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                              child: SalonCard(
+                                salonName: salon.salonName,
+                                salonImage: salon.salonImage,
+                                images: salon.images,
+                                rating: salon.rating,
+                                reviewCount: salon.reviewCount,
+                                distance: salon.distance,
+                                isPremium: salon.isPremium,
+                                isFavorite: salon.isFavorite,
+                                serviceName: salon.serviceName,
+                                servicePrice: salon.servicePrice,
+                                categories: salon.categories,
+                                languageCodes: salon.languageCodes,
+                                isFullWidth: true,
+                                onTap: () {
+                                  GoRouter.of(context).push(
+                                    RouteNames.salonDetails,
+                                    extra: {
+                                      'salonId': salon.id,
+                                      'salonName': salon.salonName,
+                                    },
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          childCount: state.recommendedSalons.length,
+                        ),
                       ),
-                      AppSizes.heightM,
-                      SalonCard(
-                        salonName: 'Lakme Salon',
-                        salonImage:
-                            'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200',
-                        images: [
-                          'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
-                          'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
-                          'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-                        ],
-                        rating: 4.5,
-                        reviewCount: 1234,
-                        distance: 2.1,
-                        isPremium: false,
-                        isFavorite: true,
-                        serviceName: 'Manicure',
-                        servicePrice: 349,
-                        categories: ['Nail Art', 'Pedicure'],
-                        languageCodes: ['hi', 'en', 'bn'],
-                        // Hindi, English, Bengali
-                        isFullWidth: true,
-                        onTap: () {},
-                      ),
-                      AppSizes.heightM,
-                      SalonCard(
-                        salonName: 'Groom & Style Men\'s Salon',
-                        salonImage:
-                            'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
-                        images: [
-                          'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400',
-                          'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400',
-                        ],
-                        rating: 4.7,
-                        reviewCount: 456,
-                        distance: 0.9,
-                        isPremium: true,
-                        serviceName: 'Royal Shave',
-                        servicePrice: 199,
-                        categories: ['Haircut', 'Shave', 'Trim'],
-                        languageCodes: ['hi', 'en'],
-                        // Hindi, English
-                        isFullWidth: true,
-                        onTap: () {},
-                      ),
-                      AppSizes.heightM,
-                      SalonCard(
-                        salonName: 'Aroma Thai Spa',
-                        salonImage:
-                            'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200',
-                        images: [
-                          'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400',
-                          'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-                          'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-                        ],
-                        rating: 4.8,
-                        reviewCount: 678,
-                        distance: 3.2,
-                        isPremium: false,
-                        serviceName: 'Body Massage',
-                        servicePrice: 1299,
-                        categories: ['Spa', 'Massage', 'Therapy', 'Wellness'],
-                        languageCodes: ['en', 'ta', 'ml'],
-                        // English, Tamil, Malayalam
-                        isFullWidth: true,
-                        onTap: () {},
-                      ),
-                      AppSizes.heightM,
-                      SalonCard(
-                        salonName: 'Enrich Salon & Academy',
-                        salonImage:
-                            'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200',
-                        images: [
-                          'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-                          'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400',
-                        ],
-                        rating: 4.6,
-                        reviewCount: 543,
-                        distance: 2.7,
-                        isPremium: true,
-                        serviceName: 'Keratin',
-                        servicePrice: 2499,
-                        categories: ['Hair Treatment', 'Smoothing'],
-                        languageCodes: ['kn', 'te', 'en', 'hi'],
-                        // Kannada, Telugu, English, Hindi
-                        isFullWidth: true,
-                        onTap: () {},
-                      ),
-                    ]),
-                  ),
-                ),
+                    ),
 
           // Bottom spacing
           SliverToBoxAdapter(child: AppSizes.heightXXL),
-        ],
+              ],
+            );
+          },
+        ),
       ),
     );
   }
