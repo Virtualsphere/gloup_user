@@ -13,7 +13,7 @@ class CategorySection extends StatefulWidget {
 }
 
 class _CategorySectionState extends State<CategorySection> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   bool _isLoading = true;
 
   @override
@@ -34,8 +34,6 @@ class _CategorySectionState extends State<CategorySection> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-
     return Container(
       height: 120,
       color: context.colorScheme.surface,
@@ -90,6 +88,7 @@ class _CategorySectionState extends State<CategorySection> {
   }
 
   Widget _buildPremiumCategory(BuildContext context, {required bool isActive}) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       width: 75,
       margin: const EdgeInsets.only(
@@ -100,7 +99,7 @@ class _CategorySectionState extends State<CategorySection> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isActive ? AppColors.primary : Colors.transparent,
+            color:  isActive ?  ( isDarkMode ?  AppColors.primaryDark : AppColors.primary) : Colors.transparent,
             width: 2.5,
           ),
         ),
@@ -151,7 +150,7 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontS,
-                  color: isActive ? AppColors.primary : null,
+                  color: isActive ? isDarkMode ?  AppColors.primaryDark : AppColors.primary : null,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -190,7 +189,7 @@ class _CategorySectionState extends State<CategorySection> {
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
+          padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
