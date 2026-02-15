@@ -5,12 +5,14 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/features/salon_details/presentation/widgets/service_card.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/ambient_card.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/team_member_card.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/location_widget.dart';
 import 'package:tressy/shared/widgets/review_summary_widget.dart';
 import 'package:tressy/shared/widgets/review_card.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
+import 'package:tressy/features/salon_details/data/models/salon_detail_model.dart';
+import 'package:tressy/features/salon_details/data/models/salon_mock_data.dart';
 
 class SalonDetailsPage extends StatefulWidget {
   final String? salonId;
@@ -34,14 +36,33 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   int _activeReviewFilterIndex =
       0; // For review filter badges (0 = All, 1-5 = stars)
   bool _isLoading = true; // Loading state for shimmer
-
-  // Carousel images from Unsplash
-  final List<String> _carouselImages = [
-    'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800',
-    'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800',
-    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
-    'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800',
-  ];
+  
+  // Salon data from mock
+  late SalonDetailModel _salonData;
+  
+  // Track selected services
+  final Map<String, ServiceModel> _selectedServices = {};
+  
+  // Method to add/remove service
+  void _toggleService(ServiceModel service) {
+    setState(() {
+      if (_selectedServices.containsKey(service.id)) {
+        _selectedServices.remove(service.id);
+      } else {
+        _selectedServices[service.id] = service;
+      }
+    });
+  }
+  
+  // Calculate total price
+  double get _totalPrice {
+    return _selectedServices.values.fold(0.0, (sum, service) => sum + service.price);
+  }
+  
+  // Get service count
+  int get _serviceCount {
+    return _selectedServices.length;
+  }
 
   // Tab sections
   final List<String> _tabs = [
@@ -52,18 +73,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     'Reviews',
     'Opening Hours',
     'Location',
-  ];
-
-  // Service categories
-  final List<String> _serviceCategories = [
-    'Featured',
-    'Combo Offers',
-    'Men\'s Package',
-    'Women\'s Package',
-    'Hair Styling',
-    'Spa & Massage',
-    'Facial',
-    'Makeup',
   ];
 
   // Global keys for each section to track their positions
@@ -89,6 +98,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
       setState(() {
+        _salonData = SalonMockData.getSalonDetails();
         _isLoading = false;
       });
     }
@@ -103,7 +113,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   void _onScroll() {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.30;
+    final carouselHeight = screenHeight * 0.35;
 
     // Check if scrolled past the carousel
     final isCollapsed = _scrollController.hasClients &&
@@ -169,94 +179,105 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.30;
+    final carouselHeight = screenHeight * 0.35;
     final collapsedHeight = screenHeight * 0.08; // 8% when collapsed
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          // SliverAppBar with carousel
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: carouselHeight,
-            collapsedHeight: collapsedHeight,
-            backgroundColor: context.colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            shape: _isCollapsed
-                ? Border(
-                    bottom: BorderSide(
-                      color: AppColors.border,
-                      width: AppSizes.borderWidthThin,
+      body: Stack(
+        children: [
+          // Main scrollable content
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              // SliverAppBar with carousel
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: carouselHeight,
+                collapsedHeight: collapsedHeight,
+                backgroundColor: context.colorScheme.surface,
+                surfaceTintColor: Colors.transparent,
+                elevation: 0,
+                shape: _isCollapsed
+                    ? Border(
+                        bottom: BorderSide(
+                          color: AppColors.border,
+                          width: AppSizes.borderWidthThin,
+                        ),
+                      )
+                    : null,
+                automaticallyImplyLeading: false,
+                flexibleSpace: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Calculate the shrink offset to determine collapse state
+                    final currentHeight = constraints.maxHeight;
+                    final isFullyExpanded = currentHeight > collapsedHeight + 50;
+
+                    return FlexibleSpaceBar(
+                      background: _isLoading
+                          ? _buildCarouselShimmer(context, isDarkMode)
+                          : _buildCarousel(
+                              context, carouselHeight, isDarkMode, isFullyExpanded),
+                      collapseMode: CollapseMode.pin,
+                      centerTitle: false,
+                      titlePadding: EdgeInsets.zero,
+                      title: !isFullyExpanded
+                          ? _buildCollapsedHeader(context, isDarkMode)
+                          : null,
+                    );
+                  },
+                ),
+              ),
+
+              // Sticky Title, Crown, Info Section, and Tab Bar (Combined)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyHeaderDelegate(
+                  child: Container(
+                    color: context.colorScheme.surface,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _isLoading
+                            ? _buildHeaderShimmer(context, isDarkMode)
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSizes.paddingM,
+                                  vertical: AppSizes.paddingM,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildTitleAndCrownSection(context, isDarkMode),
+                                    AppSizes.heightL,
+                                    _buildInfoSection(context, isDarkMode),
+                                  ],
+                                ),
+                              ),
+                        AppSizes.heightS,
+                        _buildTabBar(context, isDarkMode),
+                      ],
                     ),
-                  )
-                : null,
-            automaticallyImplyLeading: false,
-            flexibleSpace: LayoutBuilder(
-              builder: (context, constraints) {
-                // Calculate the shrink offset to determine collapse state
-                final currentHeight = constraints.maxHeight;
-                final isFullyExpanded = currentHeight > collapsedHeight + 50;
+                  ),
+                ),
+              ),
 
-                return FlexibleSpaceBar(
-                  background: _isLoading
-                      ? _buildCarouselShimmer(context, isDarkMode)
-                      : _buildCarousel(
-                          context, carouselHeight, isDarkMode, isFullyExpanded),
-                  collapseMode: CollapseMode.pin,
-                  centerTitle: false,
-                  titlePadding: EdgeInsets.zero,
-                  title: !isFullyExpanded
-                      ? _buildCollapsedHeader(context, isDarkMode)
-                      : null,
-                );
-              },
-            ),
-          ),
-
-          // Sticky Title, Crown, Info Section, and Tab Bar (Combined)
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _StickyHeaderDelegate(
-              child: Container(
-                color: context.colorScheme.surface,
+              // Content sections
+              SliverToBoxAdapter(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _isLoading
-                        ? _buildHeaderShimmer(context, isDarkMode)
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingM,
-                              vertical: AppSizes.paddingM,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildTitleAndCrownSection(context, isDarkMode),
-                                AppSizes.heightL,
-                                _buildInfoSection(context, isDarkMode),
-                              ],
-                            ),
-                          ),
-                    AppSizes.heightS,
-                    _buildTabBar(context, isDarkMode),
+                    ..._tabs.map((tab) => _buildSection(tab, isDarkMode)),
+                    // Add bottom padding to prevent content from being hidden behind bottom nav
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Content sections
-          SliverToBoxAdapter(
-            child: Column(
-              children:
-                  _tabs.map((tab) => _buildSection(tab, isDarkMode)).toList(),
-            ),
-          ),
+          
+          // Positioned bottom navigation bar
+          _buildBottomNavBar(context, isDarkMode),
         ],
       ),
     );
@@ -264,6 +285,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
   Widget _buildCarousel(BuildContext context, double carouselHeight,
       bool isDarkMode, bool isFullyExpanded) {
+    final images = _isLoading ? [] : _salonData.images;
+    
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -283,7 +306,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               });
             },
           ),
-          items: _carouselImages.map((imageUrl) {
+          items: images.map((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -312,14 +335,14 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         ),
 
         // Carousel indicators - only show when expanded
-        if (isFullyExpanded)
+        if (isFullyExpanded && images.isNotEmpty)
           Positioned(
             bottom: 20,
             left: 0,
             right: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: _carouselImages.asMap().entries.map((entry) {
+              children: images.asMap().entries.map((entry) {
                 return Container(
                   width: _currentImageIndex == entry.key ? 24 : 8,
                   height: 8,
@@ -597,7 +620,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           children: [
             Expanded(
               child: Text(
-                'Luxury Hair & Spa Studio',
+                _salonData.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodyLarge?.copyWith(
@@ -611,24 +634,25 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
             AppSizes.widthM,
             // NEW Badge
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingM,
-                vertical: AppSizes.paddingXS,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.info,
-                borderRadius: BorderRadius.circular(AppSizes.radiusL),
-              ),
-              child: Text(
-                'NEW',
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+            if (_salonData.isNew)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingM,
+                  vertical: AppSizes.paddingXS,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.info,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                ),
+                child: Text(
+                  'NEW',
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         AppSizes.heightM,
@@ -636,33 +660,34 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         Row(
           children: [
             // Premium crown badge
-            Container(
-              width: AppSizes.iconL,
-              height: AppSizes.iconL,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFFFC02E),
-                    Color(0xFFC88C00),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            if (_salonData.isPremium)
+              Container(
+                width: AppSizes.iconL,
+                height: AppSizes.iconL,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFFFC02E),
+                      Color(0xFFC88C00),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
                 ),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/icons/ic_crown.svg',
-                  width: AppSizes.iconXS,
-                  height: AppSizes.iconXS,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.white,
-                    BlendMode.srcIn,
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_crown.svg',
+                    width: AppSizes.iconXS,
+                    height: AppSizes.iconXS,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.white,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
-            ),
-            AppSizes.widthM,
+            if (_salonData.isPremium) AppSizes.widthM,
             // Rating badge
             Container(
               padding: const EdgeInsets.symmetric(
@@ -685,7 +710,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '4.5',
+                    _salonData.rating.toString(),
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -696,7 +721,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    '(201)',
+                    '(${_salonData.reviewCount})',
                     style: context.textTheme.bodySmall?.copyWith(
                       color: isDarkMode
                           ? AppColors.textSecondaryDark
@@ -719,7 +744,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Unisex',
+                  _salonData.gender,
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: isDarkMode
                         ? AppColors.textSecondaryDark
@@ -756,7 +781,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             AppSizes.widthS,
             Expanded(
               child: Text(
-                '123 Main Street, Downtown Area, City Center, State 12345',
+                _salonData.address,
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: isDarkMode
                       ? AppColors.textSecondaryDark
@@ -784,9 +809,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
             AppSizes.widthS,
             Text(
-              'Open',
+              _salonData.isOpen ? 'Open' : 'Closed',
               style: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.success,
+                color: _salonData.isOpen ? AppColors.success : AppColors.error,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -804,7 +829,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
             AppSizes.widthS,
             Text(
-              '06:30 AM - 9:30 PM',
+              '${_salonData.openingTime} - ${_salonData.closingTime}',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
@@ -833,11 +858,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               child: Wrap(
                 spacing: AppSizes.spaceS,
                 runSpacing: AppSizes.spaceS,
-                children: [
-                  _buildLanguageBadge('Tamil', isDarkMode),
-                  _buildLanguageBadge('English', isDarkMode),
-                  _buildLanguageBadge('Hindi', isDarkMode),
-                ],
+                children: _salonData.languages
+                    .map((lang) => _buildLanguageBadge(lang, isDarkMode))
+                    .toList(),
               ),
             ),
           ],
@@ -867,6 +890,84 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               : AppColors.textSecondary,
           fontSize: 12,
           fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  // Build bottom navigation bar
+  Widget _buildBottomNavBar(BuildContext context, bool isDarkMode) {
+    // Only show if there are selected services
+    if (_serviceCount == 0) {
+      return const SizedBox.shrink();
+    }
+    
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.all(AppSizes.margin),
+        child: Container(
+          padding: const EdgeInsets.all(AppSizes.paddingM),
+          decoration: BoxDecoration(
+            color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
+            borderRadius: BorderRadius.circular(AppSizes.radius),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Left side - Service info and price
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                        fontSize: AppSizes.fontS,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '₹${_totalPrice.toStringAsFixed(0)}',
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textPrimary
+                            : AppColors.textPrimaryDark,
+                        fontSize: AppSizes.fontL,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AppSizes.widthM,
+              SizedBox(
+                width: 130,
+                child: PrimaryButton(
+                  text: 'Book Now',
+                  backgroundColor: AppColors.info,
+                  onPressed: () {
+                    // TODO: Navigate to booking page
+                  },
+                  height: 48,
+                  fontSize: AppSizes.fontM,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -966,7 +1067,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     }
 
     return Text(
-      'We offer premium salon and spa services exclusively for men. Our experienced team provides top-quality haircuts, grooming, facials, and relaxation treatments in a modern, comfortable environment. Walk-ins welcome.',
+      _salonData.about,
       textAlign: TextAlign.left,
       style: context.textTheme.bodyMedium?.copyWith(
         color:
@@ -1378,14 +1479,25 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       return _buildAmbientsShimmer(context, isDarkMode);
     }
 
-    final List<Map<String, dynamic>> ambients = [
-      {'icon': Icons.wifi, 'label': 'Free WiFi'},
-      {'icon': Icons.ac_unit, 'label': 'Air Conditioned'},
-      {'icon': Icons.local_parking, 'label': 'Parking Available'},
-      {'icon': Icons.credit_card, 'label': 'Card Payment'},
-      {'icon': Icons.wheelchair_pickup, 'label': 'Wheelchair Accessible'},
-      {'icon': Icons.coffee, 'label': 'Complimentary Beverages'},
-    ];
+    // Map icon names from model to IconData
+    IconData getIconData(String iconName) {
+      switch (iconName) {
+        case 'wifi':
+          return Icons.wifi;
+        case 'ac_unit':
+          return Icons.ac_unit;
+        case 'local_parking':
+          return Icons.local_parking;
+        case 'credit_card':
+          return Icons.credit_card;
+        case 'wheelchair_pickup':
+          return Icons.wheelchair_pickup;
+        case 'coffee':
+          return Icons.coffee;
+        default:
+          return Icons.check_circle;
+      }
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1395,12 +1507,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         return Wrap(
           spacing: AppSizes.paddingM,
           runSpacing: AppSizes.paddingM,
-          children: ambients.map((ambient) {
+          children: _salonData.ambients.map((ambient) {
             return SizedBox(
               width: cardWidth,
               child: AmbientCard(
-                icon: ambient['icon'] as IconData,
-                label: ambient['label'] as String,
+                icon: getIconData(ambient.icon),
+                label: ambient.label,
               ),
             );
           }).toList(),
@@ -1415,33 +1527,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       return _buildTeamShimmer(context, isDarkMode);
     }
 
-    final List<Map<String, String>> teamMembers = [
-      {
-        'name': 'John Doe',
-        'role': 'Senior Stylist',
-        'image':
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-      },
-      {
-        'name': 'Mike Smith',
-        'role': 'Hair Specialist',
-        'image':
-            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-      },
-      {
-        'name': 'David Brown',
-        'role': 'Barber',
-        'image':
-            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200',
-      },
-      {
-        'name': 'Robert Wilson',
-        'role': 'Spa Therapist',
-        'image':
-            'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200',
-      },
-    ];
-
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate width for 4 profiles per row
@@ -1450,13 +1535,13 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         return Wrap(
           spacing: AppSizes.paddingL,
           runSpacing: AppSizes.paddingL,
-          children: teamMembers.map((member) {
+          children: _salonData.teamMembers.map((member) {
             return SizedBox(
               width: cardWidth,
               child: TeamMemberCard(
-                name: member['name']!,
-                role: member['role']!,
-                imageUrl: member['image']!,
+                name: member.name,
+                role: member.role,
+                imageUrl: member.imageUrl,
               ),
             );
           }).toList(),
@@ -1470,9 +1555,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     return _isLoading
         ? _buildLocationShimmer(context, isDarkMode)
         : LocationWidget(
-            latitude: 13.0827,
-            longitude: 80.2707,
-            address: '123 Main Street, Downtown Area, City Center, State 12345',
+            latitude: _salonData.location.latitude,
+            longitude: _salonData.location.longitude,
+            address: _salonData.location.address,
           );
   }
 
@@ -1651,19 +1736,23 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     // Get current day
     final today = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
 
-    final List<Map<String, dynamic>> openingHours = [
-      {'day': 'Monday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 1},
-      {'day': 'Tuesday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 2},
-      {'day': 'Wednesday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 3},
-      {'day': 'Thursday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 4},
-      {'day': 'Friday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 5},
-      {'day': 'Saturday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 6},
-      {'day': 'Sunday', 'hours': '6:00 AM - 9:00 PM', 'dayNumber': 7},
+    final List<String> daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
     ];
 
     return Column(
-      children: openingHours.map((dayInfo) {
-        final isToday = dayInfo['dayNumber'] == today;
+      children: daysOfWeek.asMap().entries.map((entry) {
+        final index = entry.key;
+        final day = entry.value;
+        final dayNumber = index + 1; // 1-7 for Monday-Sunday
+        final isToday = dayNumber == today;
+        final hours = _salonData.openingHours[day] ?? 'Closed';
 
         return Container(
           margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
@@ -1693,7 +1782,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: '${dayInfo['day']} ',
+                              text: '$day ',
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: isDarkMode
                                     ? AppColors.textPrimaryDark
@@ -1714,7 +1803,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         ),
                       )
                     : Text(
-                        dayInfo['day'] as String,
+                        day,
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: isDarkMode
                               ? AppColors.textPrimaryDark
@@ -1725,7 +1814,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               ),
               // Hours
               Text(
-                dayInfo['hours'] as String,
+                hours,
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: isDarkMode
                       ? AppColors.textSecondaryDark
@@ -1746,21 +1835,15 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       return _buildReviewsShimmer(context, isDarkMode);
     }
 
-    final Map<int, int> starCounts = {
-      5: 120,
-      4: 50,
-      3: 20,
-      2: 8,
-      1: 3,
-    };
-    final int totalReviews = 201;
+    final starCounts = SalonMockData.getStarCounts();
+    final totalReviews = _salonData.reviewCount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Review summary
         ReviewSummaryWidget(
-          averageRating: 4.5,
+          averageRating: _salonData.rating,
           totalReviews: totalReviews,
           starCounts: starCounts,
         ),
@@ -1848,45 +1931,15 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         // Reviews list (show only 5)
         Column(
           children: [
-            ReviewCard(
-              userName: 'John Doe',
-              timeAgo: '2 days ago',
-              rating: 5.0,
-              reviewText:
-                  'Excellent service! The staff was very professional and friendly. My haircut turned out perfect. Highly recommend this salon!',
-            ),
-            ReviewCard(
-              userName: 'Sarah Miller',
-              userImage:
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-              timeAgo: '5 days ago',
-              rating: 4.5,
-              reviewText:
-                  'Great experience overall. The ambiance is nice and the service was good. Will definitely come back!',
-            ),
-            ReviewCard(
-              userName: 'Mike Johnson',
-              timeAgo: '1 week ago',
-              rating: 5.0,
-              reviewText:
-                  'Best salon in town! The stylist really understood what I wanted. Very happy with the result.',
-            ),
-            ReviewCard(
-              userName: 'Emily Davis',
-              userImage:
-                  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
-              timeAgo: '2 weeks ago',
-              rating: 4.0,
-              reviewText:
-                  'Good service and reasonable prices. The place is clean and well-maintained.',
-            ),
-            ReviewCard(
-              userName: 'Robert Brown',
-              timeAgo: '3 weeks ago',
-              rating: 5.0,
-              reviewText:
-                  'Amazing experience! The team is skilled and attentive. Highly recommended!',
-            ),
+            ..._salonData.reviews.map((review) {
+              return ReviewCard(
+                userName: review.userName,
+                userImage: review.userImage,
+                timeAgo: review.timeAgo,
+                rating: review.rating,
+                reviewText: review.reviewText,
+              );
+            }),
             // See all button
             AppSizes.heightS,
             OutlinedButton(
@@ -1942,6 +1995,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       return _buildServicesShimmer(context, isDarkMode);
     }
 
+    final serviceCategories = SalonMockData.getServiceCategories();
+    final currentCategory = serviceCategories[_activeServiceCategoryIndex];
+    final filteredServices = SalonMockData.getServicesByCategory(currentCategory);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1950,9 +2007,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           height: 36,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: _serviceCategories.length,
+            itemCount: serviceCategories.length,
             itemBuilder: (context, index) {
-              final category = _serviceCategories[index];
+              final category = serviceCategories[index];
               final isActive = _activeServiceCategoryIndex == index;
 
               return GestureDetector(
@@ -1997,41 +2054,225 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         AppSizes.heightL,
         // Services list
         Column(
+          children: filteredServices
+              .map((service) => _buildServiceCardWithCallback(
+                    service: service,
+                    isDarkMode: isDarkMode,
+                  ))
+              .toList(),
+        ),
+      ],
+    );
+  }
+  
+  // Helper method to build service card with callback
+  Widget _buildServiceCardWithCallback({
+    required ServiceModel service,
+    required bool isDarkMode,
+  }) {
+    final isSelected = _selectedServices.containsKey(service.id);
+    
+    return GestureDetector(
+      onTap: () => _toggleService(service),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        decoration: BoxDecoration(
+          color: isDarkMode
+              ? AppColors.surfaceDark.withValues(alpha: 0.5)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(
+            color: isDarkMode
+                ? AppColors.textSecondary.withValues(alpha: 0.2)
+                : AppColors.textSecondary.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ServiceCard(
-              serviceName: "Men's Haircut",
-              duration: '30 min',
-              price: 299,
-              isPopular: true,
+            // Left side - Expanded
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Row 1: Service title + Popular badge
+                  Row(
+                    children: [
+                      // Service title
+                      Flexible(
+                        child: Text(
+                          service.name,
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      // Popular badge (optional)
+                      if (service.isPopular) ...[
+                        const SizedBox(width: AppSizes.spaceS),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingS,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.info.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                          ),
+                          child: Text(
+                            'Popular',
+                            style: TextStyle(
+                              color: AppColors.info,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  AppSizes.heightS,
+                  // Row 2: Clock icon + duration
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_clock.svg',
+                        width: 14,
+                        height: 14,
+                        colorFilter: ColorFilter.mode(
+                          isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: AppSizes.spaceXS),
+                      Text(
+                        service.duration,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSizes.heightS,
+                  // Row 3: Price + Discount badge
+                  Row(
+                    children: [
+                      // Current price
+                      Text(
+                        '₹${service.price.toStringAsFixed(0)}',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                          fontSize: 16,
+                        ),
+                      ),
+                      // Original price (strikethrough)
+                      if (service.originalPrice != null) ...[
+                        const SizedBox(width: AppSizes.spaceS),
+                        Text(
+                          '₹${service.originalPrice!.toStringAsFixed(0)}',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
+                            fontSize: 12,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                      // Discount badge
+                      if (service.discountPercentage != null) ...[
+                        const SizedBox(width: AppSizes.spaceS),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingS,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_offer,
+                                color: AppColors.success,
+                                size: 10,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                '${service.discountPercentage} Off',
+                                style: TextStyle(
+                                  color: AppColors.success,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-            ServiceCard(
-              serviceName: "Hair Styling & Spa Treatment",
-              duration: '45 min',
-              price: 599,
-              originalPrice: 799,
-              discountPercentage: '25%',
-            ),
-            ServiceCard(
-              serviceName: "Beard Trim & Styling",
-              duration: '20 min',
-              price: 149,
-            ),
-            ServiceCard(
-              serviceName: "Premium Hair Color",
-              duration: '90 min',
-              price: 1499,
-              originalPrice: 1999,
-              discountPercentage: '25%',
-              isPopular: true,
-            ),
-            ServiceCard(
-              serviceName: "Hair Spa & Deep Conditioning",
-              duration: '60 min',
-              price: 899,
+            const SizedBox(width: AppSizes.paddingM),
+            // Right side - Add/Selected button
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingM,
+                vertical: AppSizes.paddingS,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected 
+                    ? (isDarkMode 
+                        ? AppColors.borderDark 
+                        : AppColors.border.withValues(alpha: 0.3))
+                    : AppColors.primary,
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isSelected ? Icons.check : Icons.add,
+                    color: isSelected
+                        ? (isDarkMode ? AppColors.white : AppColors.black)
+                        : AppColors.white,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    isSelected ? 'Selected' : 'Add',
+                    style: TextStyle(
+                      color: isSelected
+                          ? (isDarkMode ? AppColors.white : AppColors.black)
+                          : AppColors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
