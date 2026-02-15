@@ -56,7 +56,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     // );
     return await HomeMockData.simulateApiCall(
       HomeMockData.getPopularServices(),
-      delaySeconds: 10,
+      delaySeconds: 1,
     );
   }
 
@@ -76,7 +76,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     // );
     return await HomeMockData.simulateApiCall(
       HomeMockData.getTopSalons(),
-      delaySeconds: 5,
+      delaySeconds: 2,
     );
   }
 

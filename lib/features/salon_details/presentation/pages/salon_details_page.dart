@@ -26,7 +26,8 @@ class SalonDetailsPage extends StatefulWidget {
   State<SalonDetailsPage> createState() => _SalonDetailsPageState();
 }
 
-class _SalonDetailsPageState extends State<SalonDetailsPage> {
+class _SalonDetailsPageState extends State<SalonDetailsPage>
+    with SingleTickerProviderStateMixin {
   int _currentImageIndex = 0;
   bool _isFavorite = false;
   final ScrollController _scrollController = ScrollController();
@@ -43,13 +44,27 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   // Track selected services
   final Map<String, ServiceModel> _selectedServices = {};
 
+  // Animation controller for bottom nav bar
+  late AnimationController _bottomNavController;
+  late Animation<Offset> _bottomNavAnimation;
+
   // Method to add/remove service
   void _toggleService(ServiceModel service) {
     setState(() {
+      final wasEmpty = _selectedServices.isEmpty;
+      
       if (_selectedServices.containsKey(service.id)) {
         _selectedServices.remove(service.id);
+        // If removing last service, animate out
+        if (_selectedServices.isEmpty) {
+          _bottomNavController.reverse();
+        }
       } else {
         _selectedServices[service.id] = service;
+        // If adding first service, animate in
+        if (wasEmpty) {
+          _bottomNavController.forward();
+        }
       }
     });
   }
@@ -92,6 +107,20 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadSalonDetails();
+    
+    // Initialize animation controller for bottom nav bar
+    _bottomNavController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    
+    _bottomNavAnimation = Tween<Offset>(
+      begin: const Offset(0, 1), // Start from bottom (off-screen)
+      end: Offset.zero, // End at normal position
+    ).animate(CurvedAnimation(
+      parent: _bottomNavController,
+      curve: Curves.easeOutCubic,
+    ));
   }
 
   Future<void> _loadSalonDetails() async {
@@ -109,6 +138,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _bottomNavController.dispose();
     super.dispose();
   }
 
@@ -186,6 +216,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
+      bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
       body: Stack(
         children: [
           // Main scrollable content
@@ -280,9 +311,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               ),
             ],
           ),
-
-          // Positioned bottom navigation bar
-          _buildBottomNavBar(context, isDarkMode),
         ],
       ),
     );
@@ -319,7 +347,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   child: Stack(
                     children: [
                       Positioned(
-                        top : 0,
+                        top: 0,
                         bottom: 0,
                         left: 0,
                         right: 0,
@@ -346,17 +374,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              begin:
-                              Alignment.topCenter,
-                              end: Alignment
-                                  .bottomCenter,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
                               colors: [
-                                AppColors.black
-                                    .withValues(
-                                    alpha: 0.85),
-                                AppColors.black
-                                    .withValues(
-                                    alpha: 0.05),
+                                AppColors.black.withValues(alpha: 0.85),
+                                AppColors.black.withValues(alpha: 0.05),
                               ],
                             ),
                           ),
@@ -711,8 +733,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               'assets/icons/ic_location.svg',
               width: AppSizes.iconS,
               height: AppSizes.iconS,
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
@@ -740,8 +762,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               'assets/icons/ic_clock.svg',
               width: AppSizes.iconXS,
               height: AppSizes.iconXS,
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
@@ -786,8 +808,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
               'assets/icons/ic_translate.svg',
               width: AppSizes.iconS,
               height: AppSizes.iconS,
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
@@ -840,72 +862,66 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       return const SizedBox.shrink();
     }
 
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
+    return SlideTransition(
+      position: _bottomNavAnimation,
       child: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.all(AppSizes.margin),
-        child: Container(
-          padding: const EdgeInsets.all(AppSizes.paddingM),
-          decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
-            borderRadius: BorderRadius.circular(AppSizes.radius),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Left side - Service info and price
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                        fontSize: AppSizes.fontS,
-                      ),
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        decoration: BoxDecoration(
+          color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Left side - Service info and price
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
+                      fontSize: AppSizes.fontS,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '₹${_totalPrice.toStringAsFixed(0)}',
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textPrimary
-                            : AppColors.textPrimaryDark,
-                        fontSize: AppSizes.fontL,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '₹${_totalPrice.toStringAsFixed(0)}',
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textPrimary
+                          : AppColors.textPrimaryDark,
+                      fontSize: AppSizes.fontL,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              AppSizes.widthM,
-              SizedBox(
-                width: 130,
-                child: PrimaryButton(
-                  text: 'Book Now',
-                  backgroundColor: AppColors.info,
-                  onPressed: () {
-                    // TODO: Navigate to booking page
-                  },
-                  height: 48,
-                  fontSize: AppSizes.fontM,
-                ),
+            ),
+            AppSizes.widthM,
+            SizedBox(
+              width: 150,
+              child: PrimaryButton(
+                text: 'Book Now',
+                onPressed: () {
+                  // TODO: Navigate to booking page
+                },
+                backgroundColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
+                textColor: isDarkMode ? AppColors.white : AppColors.black,
+                height: 48,
+                fontSize: AppSizes.fontL,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -943,7 +959,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   child: Text(
                     'See all',
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.primary,
+                      color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                       fontSize: AppSizes.fontM,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1259,7 +1275,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? AppColors.primary
+                        ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
@@ -1275,7 +1291,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                             Icons.star,
                             size: 14,
                             color: isActive
-                                ? AppColors.white
+                                ? (isDarkMode ? AppColors.black : AppColors.white)
                                 : (isDarkMode
                                     ? AppColors.textSecondaryDark
                                     : AppColors.textSecondary),
@@ -1288,7 +1304,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                               : '${6 - index} ($count)',
                           style: TextStyle(
                             color: isActive
-                                ? AppColors.white
+                                ? (isDarkMode ? AppColors.black : AppColors.white)
                                 : (isDarkMode
                                     ? AppColors.textSecondaryDark
                                     : AppColors.textSecondary),
@@ -1403,7 +1419,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? AppColors.primary
+                        ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
@@ -1415,7 +1431,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                       category,
                       style: TextStyle(
                         color: isActive
-                            ? AppColors.white
+                            ? (isDarkMode ? AppColors.primary : AppColors.primaryDark)
                             : (isDarkMode
                                 ? AppColors.textSecondaryDark
                                 : AppColors.textSecondary),
@@ -1623,7 +1639,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                     ? (isDarkMode
                         ? AppColors.borderDark
                         : AppColors.border.withValues(alpha: 0.3))
-                    : AppColors.primary,
+                    : (isDarkMode ? AppColors.primaryDark : AppColors.primary),
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
               ),
               child: Row(
@@ -1633,7 +1649,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                     isSelected ? Icons.check : Icons.add,
                     color: isSelected
                         ? (isDarkMode ? AppColors.white : AppColors.black)
-                        : AppColors.white,
+                        : (isDarkMode ? AppColors.black : AppColors.white),
                     size: 16,
                   ),
                   const SizedBox(width: 4),
@@ -1642,7 +1658,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                     style: TextStyle(
                       color: isSelected
                           ? (isDarkMode ? AppColors.white : AppColors.black)
-                          : AppColors.white,
+                          : (isDarkMode ? AppColors.black : AppColors.white),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1692,7 +1708,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: isActive ? AppColors.primary : Colors.transparent,
+                      color: isActive
+                          ? (isDarkMode
+                              ? AppColors.primaryDark
+                              : AppColors.primary)
+                          : Colors.transparent,
                       width: 3,
                     ),
                   ),
@@ -1701,7 +1721,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   tab,
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: isActive
-                        ? AppColors.primary
+                        ? (isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary)
                         : (isDarkMode
                             ? AppColors.textSecondaryDark
                             : AppColors.textSecondary),

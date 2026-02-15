@@ -73,8 +73,8 @@ class _LocationWidgetState extends State<LocationWidget> {
               'assets/icons/ic_location.svg',
               width: AppSizes.iconS,
               height: AppSizes.iconS,
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
