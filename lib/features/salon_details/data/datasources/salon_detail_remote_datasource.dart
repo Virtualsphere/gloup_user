@@ -26,7 +26,7 @@ class SalonDetailRemoteDataSourceImpl implements SalonDetailRemoteDataSource {
     // For now, return mock data with simulated API delay
     return await _simulateApiCall(
       SalonMockData.getSalonDetails(),
-      delaySeconds: 2,
+      delaySeconds: 3,
     );
   }
 

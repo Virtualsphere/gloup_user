@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
+import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
+import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_event.dart';
+import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_state.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/salon_details_shimmers.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/salon_details/presentation/widgets/ambient_card.dart';
@@ -11,7 +17,7 @@ import 'package:tressy/features/salon_details/presentation/widgets/location_widg
 import 'package:tressy/shared/widgets/review_summary_widget.dart';
 import 'package:tressy/shared/widgets/review_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
-import 'package:tressy/features/salon_details/data/models/salon_detail_model.dart';
+import 'package:tressy/shared/widgets/error_widget.dart' as custom;
 import 'package:tressy/features/salon_details/data/models/salon_mock_data.dart';
 
 class SalonDetailsPage extends StatefulWidget {
@@ -26,33 +32,47 @@ class SalonDetailsPage extends StatefulWidget {
   State<SalonDetailsPage> createState() => _SalonDetailsPageState();
 }
 
+/// Wrapper widget with BlocProvider
+class SalonDetailsPageWrapper extends StatelessWidget {
+  final String? salonId;
+
+  const SalonDetailsPageWrapper({
+    super.key,
+    this.salonId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          sl<SalonDetailBloc>()..add(LoadSalonDetailEvent(salonId ?? '')),
+      child: SalonDetailsPage(salonId: salonId),
+    );
+  }
+}
+
 class _SalonDetailsPageState extends State<SalonDetailsPage>
     with SingleTickerProviderStateMixin {
   int _currentImageIndex = 0;
-  bool _isFavorite = false;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
   int _activeTabIndex = 0;
   int _activeServiceCategoryIndex = 0; // For service category badges
   int _activeReviewFilterIndex =
       0; // For review filter badges (0 = All, 1-5 = stars)
-  bool _isLoading = true; // Loading state for shimmer
-
-  // Salon data from mock
-  late SalonDetailModel _salonData;
 
   // Track selected services
-  final Map<String, ServiceModel> _selectedServices = {};
+  final Map<String, ServiceEntity> _selectedServices = {};
 
   // Animation controller for bottom nav bar
   late AnimationController _bottomNavController;
   late Animation<Offset> _bottomNavAnimation;
 
   // Method to add/remove service
-  void _toggleService(ServiceModel service) {
+  void _toggleService(ServiceEntity service) {
     setState(() {
       final wasEmpty = _selectedServices.isEmpty;
-      
+
       if (_selectedServices.containsKey(service.id)) {
         _selectedServices.remove(service.id);
         // If removing last service, animate out
@@ -106,14 +126,13 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _loadSalonDetails();
-    
+
     // Initialize animation controller for bottom nav bar
     _bottomNavController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    
+
     _bottomNavAnimation = Tween<Offset>(
       begin: const Offset(0, 1), // Start from bottom (off-screen)
       end: Offset.zero, // End at normal position
@@ -121,17 +140,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       parent: _bottomNavController,
       curve: Curves.easeOutCubic,
     ));
-  }
-
-  Future<void> _loadSalonDetails() async {
-    // Simulate loading delay (replace with actual API call)
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      setState(() {
-        _salonData = SalonMockData.getSalonDetails();
-        _isLoading = false;
-      });
-    }
   }
 
   @override
@@ -214,111 +222,164 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     final collapsedHeight = screenHeight * 0.08; // 8% when collapsed
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: context.colorScheme.surface,
-      bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
-      body: Stack(
-        children: [
-          // Main scrollable content
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              // SliverAppBar with carousel
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: carouselHeight,
-                collapsedHeight: collapsedHeight,
-                backgroundColor: context.colorScheme.surface,
-                surfaceTintColor: Colors.transparent,
-                elevation: 0,
-                shape: _isCollapsed
-                    ? Border(
-                        bottom: BorderSide(
-                          color: AppColors.border,
-                          width: AppSizes.borderWidthThin,
-                        ),
-                      )
-                    : null,
-                automaticallyImplyLeading: false,
-                flexibleSpace: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Calculate the shrink offset to determine collapse state
-                    final currentHeight = constraints.maxHeight;
-                    final isFullyExpanded =
-                        currentHeight > collapsedHeight + 50;
+    return BlocConsumer<SalonDetailBloc, SalonDetailState>(
+      listener: (context, state) {
+        // Show error message if any
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: context.colorScheme.surface,
+          bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
+          body: Stack(
+            children: [
+              // Main scrollable content
+              CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  // SliverAppBar with carousel
+                  SliverAppBar(
+                    pinned: true,
+                    expandedHeight: carouselHeight,
+                    collapsedHeight: collapsedHeight,
+                    backgroundColor: context.colorScheme.surface,
+                    surfaceTintColor: Colors.transparent,
+                    elevation: 0,
+                    shape: _isCollapsed
+                        ? Border(
+                            bottom: BorderSide(
+                              color: AppColors.border,
+                              width: AppSizes.borderWidthThin,
+                            ),
+                          )
+                        : null,
+                    automaticallyImplyLeading: false,
+                    flexibleSpace: LayoutBuilder(
+                      builder: (context, constraints) {
+                        // Calculate the shrink offset to determine collapse state
+                        final currentHeight = constraints.maxHeight;
+                        final isFullyExpanded =
+                            currentHeight > collapsedHeight + 50;
 
-                    return FlexibleSpaceBar(
-                      background: _isLoading
-                          ? SalonDetailsShimmers.buildCarouselShimmer(
-                              context, isDarkMode)
-                          : _buildCarousel(context, carouselHeight, isDarkMode,
-                              isFullyExpanded),
-                      collapseMode: CollapseMode.pin,
-                      centerTitle: false,
-                      titlePadding: EdgeInsets.zero,
-                      title: !isFullyExpanded
-                          ? _buildCollapsedHeader(context, isDarkMode)
-                          : null,
-                    );
-                  },
-                ),
-              ),
-
-              // Sticky Title, Crown, Info Section, and Tab Bar (Combined)
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _StickyHeaderDelegate(
-                  child: Container(
-                    color: context.colorScheme.surface,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _isLoading
-                            ? SalonDetailsShimmers.buildHeaderShimmer(
-                                context, isDarkMode)
-                            : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSizes.paddingM,
-                                  vertical: AppSizes.paddingM,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildTitleAndCrownSection(
-                                        context, isDarkMode),
-                                    AppSizes.heightL,
-                                    _buildInfoSection(context, isDarkMode),
-                                  ],
-                                ),
-                              ),
-                        AppSizes.heightS,
-                        _buildTabBar(context, isDarkMode),
-                      ],
+                        return FlexibleSpaceBar(
+                          background: state.isLoading
+                              ? SalonDetailsShimmers.buildCarouselShimmer(
+                                  context, isDarkMode)
+                              : state.salonDetail != null
+                                  ? _buildCarousel(
+                                      context,
+                                      carouselHeight,
+                                      isDarkMode,
+                                      isFullyExpanded,
+                                      state.salonDetail!)
+                                  : const SizedBox.shrink(),
+                          collapseMode: CollapseMode.pin,
+                          centerTitle: false,
+                          titlePadding: EdgeInsets.zero,
+                          title: !isFullyExpanded
+                              ? _buildCollapsedHeader(
+                                  context, isDarkMode, state)
+                              : null,
+                        );
+                      },
                     ),
                   ),
-                ),
-              ),
 
-              // Content sections
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    ..._tabs.map((tab) => _buildSection(tab, isDarkMode)),
-                    // Add bottom padding to prevent content from being hidden behind bottom nav
-                    const SizedBox(height: 100),
-                  ],
-                ),
+                  // Sticky Title, Crown, Info Section, and Tab Bar (Combined)
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _StickyHeaderDelegate(
+                      child: Container(
+                        color: context.colorScheme.surface,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            state.isLoading
+                                ? SalonDetailsShimmers.buildHeaderShimmer(
+                                    context, isDarkMode)
+                                : state.salonDetail != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppSizes.paddingM,
+                                          vertical: AppSizes.paddingM,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _buildTitleAndCrownSection(context,
+                                                isDarkMode, state.salonDetail!),
+                                            AppSizes.heightL,
+                                            _buildInfoSection(context,
+                                                isDarkMode, state.salonDetail!),
+                                          ],
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                            AppSizes.heightS,
+                            _buildTabBar(context, isDarkMode),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Content sections
+                  SliverToBoxAdapter(
+                    child: state.isLoading
+                        ? Column(
+                            children: [
+                              ..._tabs.map((tab) =>
+                                  _buildSectionShimmer(tab, isDarkMode)),
+                              const SizedBox(height: 100),
+                            ],
+                          )
+                        : state.errorMessage != null &&
+                                state.salonDetail == null
+                            ? Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.all(AppSizes.paddingXL),
+                                  child: custom.ErrorDisplayWidget(
+                                    message: state.errorMessage!,
+                                    onRetry: () {
+                                      context.read<SalonDetailBloc>().add(
+                                          LoadSalonDetailEvent(
+                                              widget.salonId ?? ''));
+                                    },
+                                  ),
+                                ),
+                              )
+                            : state.salonDetail != null
+                                ? Column(
+                                    children: [
+                                      ..._tabs.map((tab) => _buildSection(
+                                          tab, isDarkMode, state.salonDetail!)),
+                                      // Add bottom padding to prevent content from being hidden behind bottom nav
+                                      const SizedBox(height: 100),
+                                    ],
+                                  )
+                                : const SizedBox.shrink(),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildCarousel(BuildContext context, double carouselHeight,
-      bool isDarkMode, bool isFullyExpanded) {
-    final images = _isLoading ? [] : _salonData.images;
+      bool isDarkMode, bool isFullyExpanded, SalonDetailEntity salonDetail) {
+    final images = salonDetail.images;
 
     return Stack(
       fit: StackFit.expand,
@@ -464,31 +525,35 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               ),
               const SizedBox(width: AppSizes.spaceS),
               // Favorite button
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  padding: const EdgeInsets.all(AppSizes.paddingXS),
-                  constraints: const BoxConstraints(),
-                  icon: SvgPicture.asset(
-                    _isFavorite
-                        ? 'assets/icons/ic_heart_fill.svg'
-                        : 'assets/icons/ic_heart.svg',
-                    width: AppSizes.iconS,
-                    height: AppSizes.iconS,
-                    colorFilter: ColorFilter.mode(
-                      _isFavorite ? Colors.red : AppColors.white,
-                      BlendMode.srcIn,
+              BlocBuilder<SalonDetailBloc, SalonDetailState>(
+                builder: (context, state) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.black.withValues(alpha: 0.5),
+                      shape: BoxShape.circle,
                     ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isFavorite = !_isFavorite;
-                    });
-                  },
-                ),
+                    child: IconButton(
+                      padding: const EdgeInsets.all(AppSizes.paddingXS),
+                      constraints: const BoxConstraints(),
+                      icon: SvgPicture.asset(
+                        state.isFavorite
+                            ? 'assets/icons/ic_heart_fill.svg'
+                            : 'assets/icons/ic_heart.svg',
+                        width: AppSizes.iconS,
+                        height: AppSizes.iconS,
+                        colorFilter: ColorFilter.mode(
+                          state.isFavorite ? Colors.red : AppColors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      onPressed: () {
+                        context
+                            .read<SalonDetailBloc>()
+                            .add(const ToggleFavoriteEvent());
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -498,7 +563,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build collapsed header with buttons
-  Widget _buildCollapsedHeader(BuildContext context, bool isDarkMode) {
+  Widget _buildCollapsedHeader(
+      BuildContext context, bool isDarkMode, SalonDetailState state) {
     return Container(
       height: double.infinity,
       width: double.infinity,
@@ -546,22 +612,22 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 padding: const EdgeInsets.all(AppSizes.paddingXS),
                 constraints: const BoxConstraints(),
                 icon: SvgPicture.asset(
-                  _isFavorite
+                  state.isFavorite
                       ? 'assets/icons/ic_heart_fill.svg'
                       : 'assets/icons/ic_heart.svg',
                   width: AppSizes.iconS,
                   height: AppSizes.iconS,
                   colorFilter: ColorFilter.mode(
-                    _isFavorite
+                    state.isFavorite
                         ? Colors.red
                         : (isDarkMode ? AppColors.white : AppColors.black),
                     BlendMode.srcIn,
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    _isFavorite = !_isFavorite;
-                  });
+                  context
+                      .read<SalonDetailBloc>()
+                      .add(const ToggleFavoriteEvent());
                 },
               ),
             ],
@@ -571,7 +637,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     );
   }
 
-  Widget _buildTitleAndCrownSection(BuildContext context, bool isDarkMode) {
+  Widget _buildTitleAndCrownSection(
+      BuildContext context, bool isDarkMode, SalonDetailEntity salonDetail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -580,7 +647,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
           children: [
             Expanded(
               child: Text(
-                _salonData.name,
+                salonDetail.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodyLarge?.copyWith(
@@ -594,7 +661,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             ),
             AppSizes.widthM,
             // NEW Badge
-            if (_salonData.isNew)
+            if (salonDetail.isNew)
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingM,
@@ -620,7 +687,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         Row(
           children: [
             // Premium crown badge
-            if (_salonData.isPremium)
+            if (salonDetail.isPremium)
               Container(
                 width: AppSizes.iconL,
                 height: AppSizes.iconL,
@@ -647,7 +714,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                 ),
               ),
-            if (_salonData.isPremium) AppSizes.widthM,
+            if (salonDetail.isPremium) AppSizes.widthM,
             // Rating badge
             Container(
               padding: const EdgeInsets.symmetric(
@@ -670,7 +737,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _salonData.rating.toString(),
+                    salonDetail.rating.toString(),
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -681,7 +748,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    '(${_salonData.reviewCount})',
+                    '(${salonDetail.reviewCount})',
                     style: context.textTheme.bodySmall?.copyWith(
                       color: isDarkMode
                           ? AppColors.textSecondaryDark
@@ -704,7 +771,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  _salonData.gender,
+                  salonDetail.gender,
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: isDarkMode
                         ? AppColors.textSecondaryDark
@@ -721,7 +788,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     );
   }
 
-  Widget _buildInfoSection(BuildContext context, bool isDarkMode) {
+  Widget _buildInfoSection(
+      BuildContext context, bool isDarkMode, SalonDetailEntity salonDetail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -741,7 +809,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             AppSizes.widthS,
             Expanded(
               child: Text(
-                _salonData.address,
+                salonDetail.address,
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: isDarkMode
                       ? AppColors.textSecondaryDark
@@ -769,9 +837,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             ),
             AppSizes.widthS,
             Text(
-              _salonData.isOpen ? 'Open' : 'Closed',
+              salonDetail.isOpen ? 'Open' : 'Closed',
               style: context.textTheme.bodyMedium?.copyWith(
-                color: _salonData.isOpen ? AppColors.success : AppColors.error,
+                color: salonDetail.isOpen ? AppColors.success : AppColors.error,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -789,7 +857,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             ),
             AppSizes.widthS,
             Text(
-              '${_salonData.openingTime} - ${_salonData.closingTime}',
+              '${salonDetail.openingTime} - ${salonDetail.closingTime}',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
@@ -818,7 +886,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               child: Wrap(
                 spacing: AppSizes.spaceS,
                 runSpacing: AppSizes.spaceS,
-                children: _salonData.languages
+                children: salonDetail.languages
                     .map((lang) => _buildLanguageBadge(lang, isDarkMode))
                     .toList(),
               ),
@@ -915,7 +983,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 onPressed: () {
                   // TODO: Navigate to booking page
                 },
-                backgroundColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
+                backgroundColor:
+                    isDarkMode ? AppColors.primary : AppColors.primaryDark,
                 textColor: isDarkMode ? AppColors.white : AppColors.black,
                 height: 48,
                 fontSize: AppSizes.fontL,
@@ -927,8 +996,53 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     );
   }
 
+  // Build section shimmer during loading
+  Widget _buildSectionShimmer(String title, bool isDarkMode) {
+    return Container(
+      key: _sectionKeys[title],
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingL,
+        vertical: AppSizes.paddingM,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section title
+          Text(
+            title,
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
+            ),
+          ),
+          AppSizes.heightM,
+          // Section content shimmer
+          if (title == 'Services')
+            SalonDetailsShimmers.buildServicesShimmer(context, isDarkMode)
+          else if (title == 'About')
+            SalonDetailsShimmers.buildAboutShimmer(context, isDarkMode)
+          else if (title == 'Ambients')
+            SalonDetailsShimmers.buildAmbientsShimmer(context, isDarkMode)
+          else if (title == 'Team')
+            SalonDetailsShimmers.buildTeamShimmer(context, isDarkMode)
+          else if (title == 'Reviews')
+            SalonDetailsShimmers.buildReviewsShimmer(context, isDarkMode)
+          else if (title == 'Opening Hours')
+            SalonDetailsShimmers.buildOpeningHoursShimmer(context, isDarkMode)
+          else if (title == 'Location')
+            SalonDetailsShimmers.buildLocationShimmer(context, isDarkMode)
+          else
+            const SizedBox(height: 200),
+        ],
+      ),
+    );
+  }
+
   // Build a content section
-  Widget _buildSection(String title, bool isDarkMode) {
+  Widget _buildSection(
+      String title, bool isDarkMode, SalonDetailEntity salonDetail) {
     return Container(
       key: _sectionKeys[title],
       padding: const EdgeInsets.symmetric(
@@ -959,7 +1073,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   child: Text(
                     'See all',
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      color: isDarkMode
+                          ? AppColors.primaryDark
+                          : AppColors.primary,
                       fontSize: AppSizes.fontM,
                       fontWeight: FontWeight.w600,
                     ),
@@ -970,19 +1086,19 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
           AppSizes.heightM,
           // Section content
           if (title == 'Services')
-            _buildServicesSection(isDarkMode)
+            _buildServicesSection(isDarkMode, salonDetail)
           else if (title == 'About')
-            _buildAboutSection(isDarkMode)
+            _buildAboutSection(isDarkMode, salonDetail)
           else if (title == 'Ambients')
-            _buildAmbientsSection(isDarkMode)
+            _buildAmbientsSection(isDarkMode, salonDetail)
           else if (title == 'Team')
-            _buildTeamSection(isDarkMode)
+            _buildTeamSection(isDarkMode, salonDetail)
           else if (title == 'Reviews')
-            _buildReviewsSection(isDarkMode)
+            _buildReviewsSection(isDarkMode, salonDetail)
           else if (title == 'Opening Hours')
-            _buildOpeningHoursSection(isDarkMode)
+            _buildOpeningHoursSection(isDarkMode, salonDetail)
           else if (title == 'Location')
-            _buildLocationSection(isDarkMode)
+            _buildLocationSection(isDarkMode, salonDetail)
           else
             Container(
               height: 500,
@@ -1015,13 +1131,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build About section
-  Widget _buildAboutSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildAboutShimmer(context, isDarkMode);
-    }
-
+  Widget _buildAboutSection(bool isDarkMode, SalonDetailEntity salonDetail) {
     return Text(
-      _salonData.about,
+      salonDetail.about,
       textAlign: TextAlign.left,
       style: context.textTheme.bodyMedium?.copyWith(
         color:
@@ -1033,11 +1145,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build Ambients section
-  Widget _buildAmbientsSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildAmbientsShimmer(context, isDarkMode);
-    }
-
+  Widget _buildAmbientsSection(bool isDarkMode, SalonDetailEntity salonDetail) {
     // Map icon names from model to IconData
     IconData getIconData(String iconName) {
       switch (iconName) {
@@ -1066,7 +1174,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         return Wrap(
           spacing: AppSizes.paddingM,
           runSpacing: AppSizes.paddingM,
-          children: _salonData.ambients.map((ambient) {
+          children: salonDetail.ambients.map((ambient) {
             return SizedBox(
               width: cardWidth,
               child: AmbientCard(
@@ -1081,11 +1189,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build Team section
-  Widget _buildTeamSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildTeamShimmer(context, isDarkMode);
-    }
-
+  Widget _buildTeamSection(bool isDarkMode, SalonDetailEntity salonDetail) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate width for 4 profiles per row
@@ -1094,7 +1198,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         return Wrap(
           spacing: AppSizes.paddingL,
           runSpacing: AppSizes.paddingL,
-          children: _salonData.teamMembers.map((member) {
+          children: salonDetail.teamMembers.map((member) {
             return SizedBox(
               width: cardWidth,
               child: TeamMemberCard(
@@ -1110,22 +1214,17 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build Location section
-  Widget _buildLocationSection(bool isDarkMode) {
-    return _isLoading
-        ? SalonDetailsShimmers.buildLocationShimmer(context, isDarkMode)
-        : LocationWidget(
-            latitude: _salonData.location.latitude,
-            longitude: _salonData.location.longitude,
-            address: _salonData.location.address,
-          );
+  Widget _buildLocationSection(bool isDarkMode, SalonDetailEntity salonDetail) {
+    return LocationWidget(
+      latitude: salonDetail.location.latitude,
+      longitude: salonDetail.location.longitude,
+      address: salonDetail.location.address,
+    );
   }
 
   // Build Opening Hours section
-  Widget _buildOpeningHoursSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildOpeningHoursShimmer(context, isDarkMode);
-    }
-
+  Widget _buildOpeningHoursSection(
+      bool isDarkMode, SalonDetailEntity salonDetail) {
     // Get current day
     final today = DateTime.now().weekday; // 1 = Monday, 7 = Sunday
 
@@ -1145,7 +1244,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         final day = entry.value;
         final dayNumber = index + 1; // 1-7 for Monday-Sunday
         final isToday = dayNumber == today;
-        final hours = _salonData.openingHours[day] ?? 'Closed';
+        final hours = salonDetail.openingHours[day] ?? 'Closed';
 
         return Container(
           margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
@@ -1223,20 +1322,16 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build Reviews section
-  Widget _buildReviewsSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildReviewsShimmer(context, isDarkMode);
-    }
-
+  Widget _buildReviewsSection(bool isDarkMode, SalonDetailEntity salonDetail) {
     final starCounts = SalonMockData.getStarCounts();
-    final totalReviews = _salonData.reviewCount;
+    final totalReviews = salonDetail.reviewCount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Review summary
         ReviewSummaryWidget(
-          averageRating: _salonData.rating,
+          averageRating: salonDetail.rating,
           totalReviews: totalReviews,
           starCounts: starCounts,
         ),
@@ -1275,7 +1370,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                        ? (isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary)
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
@@ -1291,7 +1388,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                             Icons.star,
                             size: 14,
                             color: isActive
-                                ? (isDarkMode ? AppColors.black : AppColors.white)
+                                ? (isDarkMode
+                                    ? AppColors.black
+                                    : AppColors.white)
                                 : (isDarkMode
                                     ? AppColors.textSecondaryDark
                                     : AppColors.textSecondary),
@@ -1304,7 +1403,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               : '${6 - index} ($count)',
                           style: TextStyle(
                             color: isActive
-                                ? (isDarkMode ? AppColors.black : AppColors.white)
+                                ? (isDarkMode
+                                    ? AppColors.black
+                                    : AppColors.white)
                                 : (isDarkMode
                                     ? AppColors.textSecondaryDark
                                     : AppColors.textSecondary),
@@ -1324,7 +1425,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         // Reviews list (show only 5)
         Column(
           children: [
-            ..._salonData.reviews.map((review) {
+            ...salonDetail.reviews.map((review) {
               return ReviewCard(
                 userName: review.userName,
                 userImage: review.userImage,
@@ -1383,15 +1484,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   }
 
   // Build Services section with category badges
-  Widget _buildServicesSection(bool isDarkMode) {
-    if (_isLoading) {
-      return SalonDetailsShimmers.buildServicesShimmer(context, isDarkMode);
-    }
-
+  Widget _buildServicesSection(bool isDarkMode, SalonDetailEntity salonDetail) {
     final serviceCategories = SalonMockData.getServiceCategories();
     final currentCategory = serviceCategories[_activeServiceCategoryIndex];
-    final filteredServices =
-        SalonMockData.getServicesByCategory(currentCategory);
+    final filteredServices = salonDetail.services
+        .where((service) => service.category == currentCategory)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1419,7 +1517,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                        ? (isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary)
                         : (isDarkMode
                             ? AppColors.textSecondary.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.15)),
@@ -1431,7 +1531,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                       category,
                       style: TextStyle(
                         color: isActive
-                            ? (isDarkMode ? AppColors.primary : AppColors.primaryDark)
+                            ? (isDarkMode
+                                ? AppColors.primary
+                                : AppColors.primaryDark)
                             : (isDarkMode
                                 ? AppColors.textSecondaryDark
                                 : AppColors.textSecondary),
@@ -1461,7 +1563,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Helper method to build service card with callback
   Widget _buildServiceCardWithCallback({
-    required ServiceModel service,
+    required ServiceEntity service,
     required bool isDarkMode,
   }) {
     final isSelected = _selectedServices.containsKey(service.id);

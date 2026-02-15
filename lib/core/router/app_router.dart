@@ -112,8 +112,9 @@ class AppRouter {
       name: RouteNames.salonDetails,
       builder: (context, state) {
         // Get salon data from extra
-        final Map<String, dynamic>? salonData = state.extra as Map<String, dynamic>?;
-        return SalonDetailsPage(
+        final Map<String, dynamic>? salonData =
+            state.extra as Map<String, dynamic>?;
+        return SalonDetailsPageWrapper(
           salonId: salonData?['salonId'] as String?,
         );
       },
