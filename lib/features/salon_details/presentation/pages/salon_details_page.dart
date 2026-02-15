@@ -923,6 +923,21 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     );
   }
 
+  // Calculate highest offer percentage from selected services
+  int get _highestOfferPercentage {
+    if (_selectedServices.isEmpty) return 0;
+    
+    return _selectedServices.values
+        .where((service) => service.discountPercentage != null)
+        .map((service) {
+          // Parse discount percentage from string
+          final discountStr = service.discountPercentage!;
+          final discountInt = int.tryParse(discountStr.replaceAll('%', '').trim()) ?? 0;
+          return discountInt;
+        })
+        .fold<int>(0, (max, discount) => discount > max ? discount : max);
+  }
+
   // Build bottom navigation bar
   Widget _buildBottomNavBar(BuildContext context, bool isDarkMode) {
     // Only show if there are selected services
@@ -930,68 +945,113 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       return const SizedBox.shrink();
     }
 
+    final hasOffer = _highestOfferPercentage > 0;
+
     return SlideTransition(
       position: _bottomNavAnimation,
-      child: Container(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
-        decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Left side - Service info and price
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: isDarkMode
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondary,
-                      fontSize: AppSizes.fontS,
-                    ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Offer banner (conditionally shown)
+          if (hasOffer)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingM,
+                vertical: AppSizes.paddingS,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.15),
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.success.withValues(alpha: 0.3),
+                    width: 1,
                   ),
-                  const SizedBox(height: 4),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.local_offer,
+                    size: 16,
+                    color: AppColors.success,
+                  ),
+                  const SizedBox(width: 8),
                   Text(
-                    '₹${_totalPrice.toStringAsFixed(0)}',
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      color: isDarkMode
-                          ? AppColors.textPrimary
-                          : AppColors.textPrimaryDark,
-                      fontSize: AppSizes.fontL,
-                      fontWeight: FontWeight.bold,
+                    'Flat $_highestOfferPercentage% offer is waiting for you!',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: AppColors.success,
+                      fontSize: AppSizes.fontS,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
-            AppSizes.widthM,
-            SizedBox(
-              width: 150,
-              child: PrimaryButton(
-                text: 'Book Now',
-                onPressed: () {
-                  // TODO: Navigate to booking page
-                },
-                backgroundColor:
-                    isDarkMode ? AppColors.primary : AppColors.primaryDark,
-                textColor: isDarkMode ? AppColors.white : AppColors.black,
-                height: 48,
-                fontSize: AppSizes.fontL,
-              ),
+          // Main bottom nav bar
+          Container(
+            padding: const EdgeInsets.all(AppSizes.paddingM),
+            decoration: BoxDecoration(
+              color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
-          ],
-        ),
+            child: Row(
+              children: [
+                // Left side - Service info and price
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                          fontSize: AppSizes.fontS,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '₹${_totalPrice.toStringAsFixed(0)}',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.textPrimaryDark,
+                          fontSize: AppSizes.fontL,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AppSizes.widthM,
+                SizedBox(
+                  width: 150,
+                  child: PrimaryButton(
+                    text: 'Book Now',
+                    onPressed: () {
+                      // TODO: Navigate to booking page
+                    },
+                    backgroundColor:
+                        isDarkMode ? AppColors.primary : AppColors.primaryDark,
+                    textColor: isDarkMode ? AppColors.white : AppColors.black,
+                    height: 48,
+                    fontSize: AppSizes.fontL,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
