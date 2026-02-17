@@ -265,8 +265,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                       builder: (context, constraints) {
                         // Calculate the shrink offset to determine collapse state
                         final currentHeight = constraints.maxHeight;
-                        final isFullyExpanded =
-                            currentHeight > collapsedHeight + 50;
+                        final isFullyExpanded = currentHeight > collapsedHeight + 50;
 
                         return FlexibleSpaceBar(
                           background: state.isLoading
@@ -369,6 +368,108 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                 : const SizedBox.shrink(),
                   ),
                 ],
+              ),
+              
+              // Sticky action buttons (Back, Share, Favorite) - Always visible on top
+              Positioned(
+                top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Back button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: _isCollapsed 
+                              ? Colors.transparent 
+                              : AppColors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          padding: const EdgeInsets.all(AppSizes.paddingXS),
+                          constraints: const BoxConstraints(),
+                          icon: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: _isCollapsed 
+                                ? (isDarkMode ? AppColors.white : AppColors.black)
+                                : AppColors.white,
+                            size: AppSizes.iconS,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                      // Share and Favorite buttons
+                      Row(
+                        children: [
+                          // Share button
+                          Container(
+                            decoration: BoxDecoration(
+                              color: _isCollapsed 
+                                  ? Colors.transparent 
+                                  : AppColors.black.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(AppSizes.paddingXS),
+                              constraints: const BoxConstraints(),
+                              icon: Icon(
+                                Icons.share,
+                                color: _isCollapsed 
+                                    ? (isDarkMode ? AppColors.white : AppColors.black)
+                                    : AppColors.white,
+                                size: AppSizes.iconS,
+                              ),
+                              onPressed: () {
+                                // TODO: Implement share functionality
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.spaceS),
+                          // Favorite button
+                          Container(
+                            decoration: BoxDecoration(
+                              color: _isCollapsed 
+                                  ? Colors.transparent 
+                                  : AppColors.black.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: BlocBuilder<SalonDetailBloc, SalonDetailState>(
+                              builder: (context, state) {
+                                return IconButton(
+                                  padding: const EdgeInsets.all(AppSizes.paddingXS),
+                                  constraints: const BoxConstraints(),
+                                  icon: SvgPicture.asset(
+                                    state.isFavorite
+                                        ? 'assets/icons/ic_heart_fill.svg'
+                                        : 'assets/icons/ic_heart.svg',
+                                    width: AppSizes.iconS,
+                                    height: AppSizes.iconS,
+                                    colorFilter: ColorFilter.mode(
+                                      state.isFavorite 
+                                          ? Colors.red 
+                                          : (_isCollapsed 
+                                              ? (isDarkMode ? AppColors.white : AppColors.black)
+                                              : AppColors.white),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    context
+                                        .read<SalonDetailBloc>()
+                                        .add(const ToggleFavoriteEvent());
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -476,88 +577,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               }).toList(),
             ),
           ),
-
-        // Back button - always visible
-        Positioned(
-          top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-          left: AppSizes.paddingM,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.black.withValues(alpha: 0.5),
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              padding: const EdgeInsets.all(AppSizes.paddingXS),
-              constraints: const BoxConstraints(),
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                color: AppColors.white,
-                size: AppSizes.iconS,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-        ),
-        // Share and Favorite buttons (top right) - always visible
-        Positioned(
-          top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-          right: AppSizes.paddingM,
-          child: Row(
-            children: [
-              // Share button
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  padding: const EdgeInsets.all(AppSizes.paddingXS),
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(
-                    Icons.share,
-                    color: AppColors.white,
-                    size: AppSizes.iconS,
-                  ),
-                  onPressed: () {
-                    // TODO: Implement share functionality
-                  },
-                ),
-              ),
-              const SizedBox(width: AppSizes.spaceS),
-              // Favorite button
-              BlocBuilder<SalonDetailBloc, SalonDetailState>(
-                builder: (context, state) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.black.withValues(alpha: 0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      padding: const EdgeInsets.all(AppSizes.paddingXS),
-                      constraints: const BoxConstraints(),
-                      icon: SvgPicture.asset(
-                        state.isFavorite
-                            ? 'assets/icons/ic_heart_fill.svg'
-                            : 'assets/icons/ic_heart.svg',
-                        width: AppSizes.iconS,
-                        height: AppSizes.iconS,
-                        colorFilter: ColorFilter.mode(
-                          state.isFavorite ? Colors.red : AppColors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      onPressed: () {
-                        context
-                            .read<SalonDetailBloc>()
-                            .add(const ToggleFavoriteEvent());
-                      },
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
