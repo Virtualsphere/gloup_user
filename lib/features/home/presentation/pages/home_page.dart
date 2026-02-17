@@ -17,6 +17,7 @@ import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -216,7 +217,15 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     const Spacer(),
                                     InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ProfilePage(),
+                                          ),
+                                        );
+                                      },
                                       borderRadius: BorderRadius.circular(
                                         AppSizes.radiusCircular,
                                       ),
@@ -238,9 +247,9 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ],
                                         ),
-                                        child: const Center(
+                                        child: Center(
                                           child: Text(
-                                            'D',
+                                            ProfilePage.userName[0],
                                             style: TextStyle(
                                               fontSize: AppSizes.fontL,
                                               fontWeight: FontWeight.bold,
