@@ -9,6 +9,7 @@ import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:tressy/features/salon_details/presentation/pages/salon_details_page.dart';
+import 'package:tressy/features/salon_search/presentation/pages/salon_search_page.dart';
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
@@ -118,6 +119,13 @@ class AppRouter {
           salonId: salonData?['salonId'] as String?,
         );
       },
+    ),
+
+    // Salon Search route
+    GoRoute(
+      path: RouteNames.salonSearch,
+      name: RouteNames.salonSearch,
+      builder: (context, state) => SalonSearchPage()
     ),
     // Add more routes here
   ];

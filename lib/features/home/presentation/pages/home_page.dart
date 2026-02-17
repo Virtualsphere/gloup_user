@@ -1,6 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -9,14 +9,14 @@ import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:tressy/features/home/presentation/bloc/home_event.dart';
 import 'package:tressy/features/home/presentation/bloc/home_state.dart';
+import 'package:tressy/features/home/presentation/widgets/category_section.dart';
+import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
-import 'package:tressy/features/home/presentation/widgets/category_section.dart';
-import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
-import 'package:tressy/shared/widgets/section_header.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/salon_card.dart';
+import 'package:tressy/shared/widgets/section_header.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -97,7 +97,11 @@ class _HomePageState extends State<HomePage> {
                   // Show only search bar when collapsed
                   title: _isCollapsed
                       ? SearchBarWidget(
-                          onTap: () {},
+                          onTap: () {
+                            GoRouter.of(context).push(
+                              RouteNames.salonSearch ,
+                            );
+                          },
                           onSettingsTap: () {},
                           padding: const EdgeInsets.symmetric(
                             vertical: AppSizes.paddingS,

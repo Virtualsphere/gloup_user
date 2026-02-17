@@ -17,4 +17,7 @@ class RouteNames {
 
   // Salon Details
   static const String salonDetails = '/salon-details';
+
+  // Salon Search
+  static const String salonSearch = '/salon-search';
 }
