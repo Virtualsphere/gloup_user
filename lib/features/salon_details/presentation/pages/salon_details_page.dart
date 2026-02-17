@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_event.dart';
@@ -17,6 +19,7 @@ import 'package:tressy/features/salon_details/presentation/widgets/location_widg
 import 'package:tressy/shared/widgets/review_summary_widget.dart';
 import 'package:tressy/shared/widgets/review_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
+import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/error_widget.dart' as custom;
 import 'package:tressy/features/salon_details/data/models/salon_mock_data.dart';
 
@@ -964,114 +967,107 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       return const SizedBox.shrink();
     }
 
-    final hasOffer = _highestOfferPercentage > 0;
-
-    return SlideTransition(
-      position: _bottomNavAnimation,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Offer banner (conditionally shown)
-          if (hasOffer)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingM,
-                vertical: AppSizes.paddingS,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.15),
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.success.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.local_offer,
-                    size: 16,
-                    color: AppColors.success,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Flat $_highestOfferPercentage% offer is waiting for you!',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.success,
-                      fontSize: AppSizes.fontS,
-                      fontWeight: FontWeight.w600,
+    return BlocBuilder<SalonDetailBloc, SalonDetailState>(
+      builder: (context, state) {
+        return SlideTransition(
+          position: _bottomNavAnimation,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Offer banner (conditionally shown)
+              OfferBanner(discountPercentage: _highestOfferPercentage),
+              // Main bottom nav bar
+              Container(
+                padding: const EdgeInsets.all(AppSizes.paddingM),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Left side - Service info and price
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondary,
+                              fontSize: AppSizes.fontS,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '₹${_totalPrice.toStringAsFixed(0)}',
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.textPrimary
+                                  : AppColors.textPrimaryDark,
+                              fontSize: AppSizes.fontL,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    AppSizes.widthM,
+                    SizedBox(
+                      width: 150,
+                      child: PrimaryButton(
+                        text: 'Book Now',
+                        onPressed: () {
+                          // Prepare data to pass to slot booking page
+                          final salonData = {
+                            'salonId': widget.salonId,
+                            'salonName': state.salonDetail?.name,
+                            'salonImage': state.salonDetail?.images.isNotEmpty == true 
+                                ? state.salonDetail!.images.first 
+                                : null,
+                            'rating': state.salonDetail?.rating,
+                            'reviewCount': state.salonDetail?.reviewCount,
+                            'isPremium': state.salonDetail?.isPremium,
+                            'gender': state.salonDetail?.gender,
+                            'address': state.salonDetail?.address,
+                            'openingTime': state.salonDetail?.openingTime,
+                            'closingTime': state.salonDetail?.closingTime,
+                            'selectedServices': _selectedServices.values.map((service) => {
+                              'id': service.id,
+                              'name': service.name,
+                              'price': service.price,
+                              'duration': service.duration,
+                              'discountPercentage': service.discountPercentage,
+                            }).toList(),
+                          };
+                          
+                          context.pushNamed(
+                            RouteNames.slotBooking,
+                            extra: salonData,
+                          );
+                        },
+                        backgroundColor:
+                            isDarkMode ? AppColors.primary : AppColors.primaryDark,
+                        textColor: isDarkMode ? AppColors.white : AppColors.black,
+                        height: 48,
+                        fontSize: AppSizes.fontL,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          // Main bottom nav bar
-          Container(
-            padding: const EdgeInsets.all(AppSizes.paddingM),
-            decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                // Left side - Service info and price
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
-                          fontSize: AppSizes.fontS,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '₹${_totalPrice.toStringAsFixed(0)}',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textPrimary
-                              : AppColors.textPrimaryDark,
-                          fontSize: AppSizes.fontL,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                AppSizes.widthM,
-                SizedBox(
-                  width: 150,
-                  child: PrimaryButton(
-                    text: 'Book Now',
-                    onPressed: () {
-                      // TODO: Navigate to booking page
-                    },
-                    backgroundColor:
-                        isDarkMode ? AppColors.primary : AppColors.primaryDark,
-                    textColor: isDarkMode ? AppColors.white : AppColors.black,
-                    height: 48,
-                    fontSize: AppSizes.fontL,
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

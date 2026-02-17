@@ -26,7 +26,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     // Example: return await dioClient.get('/api/v1/home/carousel');
     return await HomeMockData.simulateApiCall(
       HomeMockData.getCarouselBanners(),
-      delaySeconds: 1,
+      delaySeconds: 2,
     );
   }
 
@@ -36,7 +36,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     // Example: return await dioClient.get('/api/v1/home/categories');
     return await HomeMockData.simulateApiCall(
       HomeMockData.getCategories(),
-      delaySeconds: 1,
+      delaySeconds: 2,
     );
   }
 
@@ -44,6 +44,7 @@ class HomeDataSourceImpl implements HomeDataSource {
   Future<List<SalonModel>> getPopularServices({
     required double latitude,
     required double longitude,
+    // required String gender
   }) async {
     // TODO: Replace with actual API call
     // Example: return await dioClient.get(
@@ -51,12 +52,12 @@ class HomeDataSourceImpl implements HomeDataSource {
     //   queryParameters: {
     //     'lat': latitude,
     //     'lng': longitude,
-    //     'radius': radius,
+    //     'gender': gender,
     //   },
     // );
     return await HomeMockData.simulateApiCall(
       HomeMockData.getPopularServices(),
-      delaySeconds: 1,
+      delaySeconds: 2,
     );
   }
 
@@ -86,7 +87,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     // Example: return await dioClient.get('/api/v1/home/recommended');
     return await HomeMockData.simulateApiCall(
       HomeMockData.getRecommendedSalons(),
-      delaySeconds: 3,
+      delaySeconds: 2,
     );
   }
 }

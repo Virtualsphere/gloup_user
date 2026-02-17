@@ -32,7 +32,7 @@ class AppTheme {
       foregroundColor: AppColors.white,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       iconTheme: const IconThemeData(color: AppColors.white),
-      titleTextStyle: GoogleFonts.bodoniModa(
+      titleTextStyle: GoogleFonts.outfit(
         color: AppColors.white,
         fontSize: AppSizes.fontXL,
         fontWeight: FontWeight.w600,
@@ -164,7 +164,7 @@ class AppTheme {
       foregroundColor: AppColors.white,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       iconTheme: const IconThemeData(color: AppColors.white),
-      titleTextStyle: GoogleFonts.bodoniModa(
+      titleTextStyle: GoogleFonts.outfit(
         color: AppColors.white,
         fontSize: AppSizes.fontXL,
         fontWeight: FontWeight.w600,
@@ -275,49 +275,49 @@ class AppTheme {
   static TextTheme get _textTheme {
     return TextTheme(
       // Display text - Bodoni MT (primary/elegant font for large displays)
-      displayLarge: GoogleFonts.bodoniModa(
+      displayLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontDisplay,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,
       ),
-      displayMedium: GoogleFonts.bodoniModa(
+      displayMedium: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXXL,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,
       ),
-      displaySmall: GoogleFonts.bodoniModa(
+      displaySmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXL,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,
       ),
       // Headlines - Bodoni MT (primary font for headlines)
-      headlineLarge: GoogleFonts.bodoniModa(
+      headlineLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
-      headlineMedium: GoogleFonts.bodoniModa(
+      headlineMedium: GoogleFonts.outfit(
         fontSize: AppSizes.fontXL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
-      headlineSmall: GoogleFonts.bodoniModa(
+      headlineSmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
       // Titles - Bodoni MT (primary font for titles)
-      titleLarge: GoogleFonts.bodoniModa(
+      titleLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontL,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimary,
       ),
-      titleMedium: GoogleFonts.bodoniModa(
+      titleMedium: GoogleFonts.outfit(
         fontSize: AppSizes.font,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimary,
       ),
-      titleSmall: GoogleFonts.bodoniModa(
+      titleSmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontM,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimary,
@@ -361,49 +361,49 @@ class AppTheme {
   static TextTheme get _darkTextTheme {
     return TextTheme(
       // Display text - Bodoni MT (primary/elegant font for large displays)
-      displayLarge: GoogleFonts.bodoniModa(
+      displayLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontDisplay,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimaryDark,
       ),
-      displayMedium: GoogleFonts.bodoniModa(
+      displayMedium: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXXL,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimaryDark,
       ),
-      displaySmall: GoogleFonts.bodoniModa(
+      displaySmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXL,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimaryDark,
       ),
       // Headlines - Bodoni MT (primary font for headlines)
-      headlineLarge: GoogleFonts.bodoniModa(
+      headlineLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontXXL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
-      headlineMedium: GoogleFonts.bodoniModa(
+      headlineMedium: GoogleFonts.outfit(
         fontSize: AppSizes.fontXL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
-      headlineSmall: GoogleFonts.bodoniModa(
+      headlineSmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontL,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
       // Titles - Bodoni MT (primary font for titles)
-      titleLarge: GoogleFonts.bodoniModa(
+      titleLarge: GoogleFonts.outfit(
         fontSize: AppSizes.fontL,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimaryDark,
       ),
-      titleMedium: GoogleFonts.bodoniModa(
+      titleMedium: GoogleFonts.outfit(
         fontSize: AppSizes.font,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimaryDark,
       ),
-      titleSmall: GoogleFonts.bodoniModa(
+      titleSmall: GoogleFonts.outfit(
         fontSize: AppSizes.fontM,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimaryDark,

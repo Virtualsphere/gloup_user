@@ -9,6 +9,8 @@ import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:tressy/features/salon_details/presentation/pages/salon_details_page.dart';
+import 'package:tressy/features/slot_booking/presentation/pages/slot_booking_page.dart';
+import 'package:tressy/features/booking_confirmation/presentation/pages/review_confirm_page.dart';
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
@@ -118,6 +120,30 @@ class AppRouter {
           salonId: salonData?['salonId'] as String?,
         );
       },
+      routes: [
+        // Slot Booking route (child of salon details)
+        GoRoute(
+          path: 'slot-booking',
+          name: RouteNames.slotBooking,
+          builder: (context, state) {
+            // Get salon and service data from extra
+            final data = state.extra as Map<String, dynamic>?;
+            return SlotBookingPage(bookingData: data);
+          },
+          routes: [
+            // Review & Confirm route (child of slot booking)
+            GoRoute(
+              path: 'review-confirm',
+              name: RouteNames.reviewConfirm,
+              builder: (context, state) {
+                // Get complete booking data including slot timing
+                final data = state.extra as Map<String, dynamic>?;
+                return ReviewConfirmPage(bookingData: data);
+              },
+            ),
+          ],
+        ),
+      ],
     ),
     // Add more routes here
   ];

@@ -266,28 +266,28 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         AppSizes.heightL,
 
                         // Continue as Guest Button
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              context.pushTo(RouteNames.home);
-                            },
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSizes.paddingL,
-                                vertical: AppSizes.paddingM,
-                              ),
-                            ),
-                            child: Text(
-                              'Continue as Guest',
-                              style: context.textTheme.labelLarge?.copyWith(
-                                color: isDarkMode
-                                    ? AppColors.textPrimaryDark
-                                    : AppColors.textPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Center(
+                        //   child: TextButton(
+                        //     onPressed: () {
+                        //       context.pushTo(RouteNames.home);
+                        //     },
+                        //     style: TextButton.styleFrom(
+                        //       padding: const EdgeInsets.symmetric(
+                        //         horizontal: AppSizes.paddingL,
+                        //         vertical: AppSizes.paddingM,
+                        //       ),
+                        //     ),
+                        //     child: Text(
+                        //       'Continue as Guest',
+                        //       style: context.textTheme.labelLarge?.copyWith(
+                        //         color: isDarkMode
+                        //             ? AppColors.textPrimaryDark
+                        //             : AppColors.textPrimary,
+                        //         fontWeight: FontWeight.w600,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
 
                         AppSizes.heightL,
                       ],
@@ -301,7 +301,51 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             Positioned(
               top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
               right: AppSizes.paddingM,
-              child: const ThemeToggleButton(),
+              left: AppSizes.paddingM,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const ThemeToggleButton(),
+                  InkWell(
+                    onTap: () {
+                      context.pushTo(RouteNames.home);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? AppColors.white : AppColors.primary,
+                        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.paddingL,
+                        vertical: AppSizes.paddingM,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Skip',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.primary
+                                  : AppColors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppSizes.fontM,
+                            ),
+                          ),
+                          AppSizes.widthXS,
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: isDarkMode
+                                ? AppColors.primary
+                                : AppColors.white,
+                            size: AppSizes.iconXS,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

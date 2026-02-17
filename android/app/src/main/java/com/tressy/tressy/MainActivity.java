@@ -1,15 +1,25 @@
 package com.gloup.userapp;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowManager;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import androidx.annotation.NonNull;
+import androidx.core.view.WindowCompat;
 
 public class MainActivity extends FlutterActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Enable edge-to-edge and allow Flutter to control system bars
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        }
     }
 
     @Override

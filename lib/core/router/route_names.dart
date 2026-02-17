@@ -17,4 +17,6 @@ class RouteNames {
 
   // Salon Details
   static const String salonDetails = '/salon-details';
+  static const String slotBooking = '/salon-details/slot-booking';
+  static const String reviewConfirm = '/salon-details/slot-booking/review-confirm';
 }
