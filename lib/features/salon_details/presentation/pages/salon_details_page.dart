@@ -1046,8 +1046,16 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               'price': service.price,
                               'duration': service.duration,
                               'discountPercentage': service.discountPercentage,
+                              'isPopular': service.isPopular,
                             }).toList(),
-                            "services" : state.salonDetail?.services
+                            'allServices': state.salonDetail?.services.map((service) => {
+                              'id': service.id,
+                              'name': service.name,
+                              'price': service.price,
+                              'duration': service.duration,
+                              'discountPercentage': service.discountPercentage,
+                              'isPopular': service.isPopular,
+                            }).toList()
                           };
                           
                           context.pushNamed(

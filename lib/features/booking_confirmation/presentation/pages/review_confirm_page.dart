@@ -11,6 +11,8 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/coupon
 import 'package:tressy/features/booking_confirmation/presentation/widgets/coupons_bottom_sheet.dart';
 import 'package:tressy/shared/widgets/coupon_applied_dialog.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/billing_summary_card.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/recommended_service_card.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class ReviewConfirmPage extends StatefulWidget {
   final Map<String, dynamic>? bookingData;
@@ -149,6 +151,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
           // Main content
           Expanded(
             child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 100), // Padding for bottom button
               child: Column(
                 children: [
                   if (widget.bookingData != null) ...[
@@ -462,6 +465,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     const SizedBox(height: AppSizes.spaceL),
                     // You might also like section
                     _buildSectionTitle(context, 'You might also like', isDarkMode),
+                    const SizedBox(height: AppSizes.spaceS),
+                    // Recommended services horizontal scroll
+                    _buildRecommendedServices(context, isDarkMode),
+                    const SizedBox(height: AppSizes.spaceXXXL),
                   ],
                 ],
               ),
@@ -611,6 +618,73 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendedServices(BuildContext context, bool isDarkMode) {
+    if (widget.bookingData == null) return const SizedBox.shrink();
+
+    final allServices = widget.bookingData!['allServices'] as List?;
+    final selectedServices = widget.bookingData!['selectedServices'] as List?;
+
+    if (allServices == null || allServices.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Get selected service names to filter them out
+    final selectedServiceNames = selectedServices
+        ?.map((s) => s['name'] as String?)
+        .where((name) => name != null)
+        .toSet() ?? {};
+
+    // Filter out already selected services
+    final recommendedServices = allServices.where((service) {
+      final serviceName = service['name'] as String?;
+      return serviceName != null && !selectedServiceNames.contains(serviceName);
+    }).toList();
+
+    if (recommendedServices.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      height: 140,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        itemCount: recommendedServices.length,
+        itemBuilder: (context, index) {
+          final service = recommendedServices[index];
+          final name = service['name'] as String? ?? 'N/A';
+          final duration = service['duration'] as String? ?? 'N/A';
+          final priceValue = service['price'];
+          final discountPercentage = service['discountPercentage'] as String?;
+
+          // Parse price
+          double price = 0.0;
+          if (priceValue is num) {
+            price = priceValue.toDouble();
+          } else if (priceValue is String) {
+            price = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
+          }
+
+          return RecommendedServiceCard(
+            name: name,
+            duration: duration,
+            price: price,
+            discountPercentage: discountPercentage,
+            onAdd: () {
+              // TODO: Add service to selection
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Added "$name" to booking'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
