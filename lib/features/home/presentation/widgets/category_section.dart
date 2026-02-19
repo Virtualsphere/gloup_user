@@ -6,20 +6,41 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategorySection extends StatefulWidget {
-  const CategorySection({super.key});
+  final Function(String categoryName, int categoryIndex)? onCategoryTap;
+  final int? selectedCategoryIndex;
+  final bool showActiveBorder;
+
+  const CategorySection({
+    super.key,
+    this.onCategoryTap,
+    this.selectedCategoryIndex,
+    this.showActiveBorder = true,
+  });
 
   @override
   State<CategorySection> createState() => _CategorySectionState();
 }
 
 class _CategorySectionState extends State<CategorySection> {
-  int _selectedIndex = 1;
+  late int _selectedIndex;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedCategoryIndex ?? 1;
     _loadCategories();
+  }
+
+  @override
+  void didUpdateWidget(CategorySection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedCategoryIndex != null &&
+        widget.selectedCategoryIndex != _selectedIndex) {
+      setState(() {
+        _selectedIndex = widget.selectedCategoryIndex!;
+      });
+    }
   }
 
   Future<void> _loadCategories() async {
@@ -174,18 +195,19 @@ class _CategorySectionState extends State<CategorySection> {
         bottom: 0,
       ),
       decoration: BoxDecoration(
-        border: Border(
+        border: widget.showActiveBorder ? Border(
           bottom: BorderSide(
             color: isActive ?  ( isDarkMode ?  AppColors.primaryDark : AppColors.primary) : Colors.transparent,
             width: 2.5,
           ),
-        ),
+        ) : null,
       ),
       child: InkWell(
         onTap: () {
           setState(() {
             _selectedIndex = index;
           });
+          widget.onCategoryTap?.call(title, index);
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Padding(

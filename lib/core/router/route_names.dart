@@ -22,4 +22,7 @@ class RouteNames {
 
   // Salon Search
   static const String salonSearch = '/salon-search';
+
+  // Category
+  static const String category = '/category';
 }

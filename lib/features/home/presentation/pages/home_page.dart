@@ -63,7 +63,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
-    final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return BlocProvider(
       create: (context) => sl<HomeBloc>()
@@ -316,7 +315,17 @@ class _HomePageState extends State<HomePage> {
                 // Sticky Category Section
                 SliverPersistentHeader(
                   pinned: true,
-                  delegate: _CategorySectionDelegate(),
+                  delegate: _CategorySectionDelegate(
+                    onCategoryTap: (categoryName, categoryIndex) {
+                      GoRouter.of(context).push(
+                        RouteNames.category,
+                        extra: {
+                          'categoryName': categoryName,
+                          'categoryIndex': categoryIndex,
+                        },
+                      );
+                    },
+                  ),
                 ),
 
                 SliverToBoxAdapter(child: AppSizes.heightS),
@@ -533,13 +542,21 @@ class _HomePageState extends State<HomePage> {
 
 /// Delegate for sticky category section
 class _CategorySectionDelegate extends SliverPersistentHeaderDelegate {
+  final Function(String categoryName, int categoryIndex)? onCategoryTap;
+
+  _CategorySectionDelegate({this.onCategoryTap});
+
   @override
   Widget build(
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return const CategorySection();
+    return CategorySection(
+      onCategoryTap: onCategoryTap,
+      showActiveBorder: false,
+      selectedCategoryIndex: -1, // No category selected by default on home
+    );
   }
 
   @override

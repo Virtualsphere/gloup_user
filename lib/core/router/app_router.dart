@@ -13,6 +13,7 @@ import 'package:tressy/features/slot_booking/presentation/pages/slot_booking_pag
 import 'package:tressy/features/booking_confirmation/presentation/pages/review_confirm_page.dart';
 import 'package:tressy/features/salon_search/presentation/pages/salon_search_page.dart';
 import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
+import 'package:tressy/features/category/presentation/pages/category_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
 class AppRouter {
@@ -152,6 +153,19 @@ class AppRouter {
       path: RouteNames.salonSearch,
       name: RouteNames.salonSearch,
       builder: (context, state) => SalonSearchPage()
+    ),
+    // Category route
+    GoRoute(
+      path: RouteNames.category,
+      name: RouteNames.category,
+      builder: (context, state) {
+        final Map<String, dynamic>? categoryData =
+            state.extra as Map<String, dynamic>?;
+        return CategoryPage(
+          categoryName: categoryData?['categoryName'] as String?,
+          categoryIndex: categoryData?['categoryIndex'] as int?,
+        );
+      },
     ),
     // Add more routes here
   ];
