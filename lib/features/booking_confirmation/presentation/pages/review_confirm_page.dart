@@ -32,6 +32,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   int? selectedSomeoneElseIndex; // selected index for someone else profiles
   String? selectedCouponCode;
   bool useGloupCash = true; // Gloup Cash checkbox state
+  List<Map<String, dynamic>> addedServices = []; // Track added recommended services
 
   // TODO: Replace with actual coupon data from API/state
   final List<CouponData> availableCoupons = [
@@ -65,7 +66,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
     final selectedServices = widget.bookingData!['selectedServices'] as List?;
     if (selectedServices == null || selectedServices.isEmpty) return 0.0;
 
-    return selectedServices.fold<double>(0.0, (total, service) {
+    // Combine original selected services and added services
+    final allServices = [...selectedServices, ...addedServices];
+
+    return allServices.fold<double>(0.0, (total, service) {
       final price = service['price'];
       if (price == null) return total;
       
@@ -89,7 +93,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
     final selectedServices = widget.bookingData!['selectedServices'] as List?;
     if (selectedServices == null || selectedServices.isEmpty) return 0.0;
 
-    return selectedServices.fold<double>(0.0, (total, service) {
+    // Combine original selected services and added services
+    final allServices = [...selectedServices, ...addedServices];
+
+    return allServices.fold<double>(0.0, (total, service) {
       final priceValue = service['price'];
       final discountPercentageStr = service['discountPercentage'] as String?;
       
@@ -170,11 +177,14 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                       selectedTimeSlot:
                           widget.bookingData!['selectedTimeSlot'] as String?,
                     ),
-                    // Selected services card
+                    // Selected services card (including added services)
                     SelectedServicesCard(
-                      services: (widget.bookingData!['selectedServices'] as List?)
-                              ?.cast<Map<String, dynamic>>() ??
-                          [],
+                      services: [
+                        ...((widget.bookingData!['selectedServices'] as List?)
+                                ?.cast<Map<String, dynamic>>() ??
+                            []),
+                        ...addedServices,
+                      ],
                     ),
                     const SizedBox(height: AppSizes.spaceM),
                     // Who is this booking for section
@@ -470,7 +480,6 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     const SizedBox(height: AppSizes.spaceS),
                     // Recommended services horizontal scroll
                     _buildRecommendedServices(context, isDarkMode),
-                    const SizedBox(height: AppSizes.spaceXXXL),
                   ],
                 ],
               ),
@@ -847,17 +856,37 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
             price = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
           }
 
+          final serviceId = service['id'] as String? ?? name;
+          final isAdded = addedServices.any((s) => (s['id'] ?? s['name']) == serviceId);
+
           return RecommendedServiceCard(
             name: name,
             duration: duration,
             price: price,
             discountPercentage: discountPercentage,
+            isAdded: isAdded,
             onAdd: () {
-              // TODO: Add service to selection
+              setState(() {
+                if (isAdded) {
+                  // Remove service
+                  addedServices.removeWhere((s) => (s['id'] ?? s['name']) == serviceId);
+                } else {
+                  // Add service
+                  addedServices.add({
+                    'id': serviceId,
+                    'name': name,
+                    'price': price,
+                    'duration': duration,
+                    'discountPercentage': discountPercentage,
+                    'isPopular': service['isPopular'] ?? false,
+                  });
+                }
+              });
+              
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Added "$name" to booking'),
-                  duration: const Duration(seconds: 2),
+                  content: Text(isAdded ? 'Removed "$name"' : 'Added "$name" to booking'),
+                  duration: const Duration(seconds: 1),
                 ),
               );
             },

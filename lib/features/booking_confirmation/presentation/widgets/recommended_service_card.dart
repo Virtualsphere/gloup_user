@@ -7,6 +7,7 @@ class RecommendedServiceCard extends StatelessWidget {
   final String duration;
   final double price;
   final String? discountPercentage;
+  final bool isAdded;
   final VoidCallback onAdd;
 
   const RecommendedServiceCard({
@@ -15,6 +16,7 @@ class RecommendedServiceCard extends StatelessWidget {
     required this.duration,
     required this.price,
     this.discountPercentage,
+    this.isAdded = false,
     required this.onAdd,
   });
 
@@ -122,18 +124,20 @@ class RecommendedServiceCard extends StatelessWidget {
                 ),
               ),
               
-              // Add button
+              // Add/Added button
               GestureDetector(
                 onTap: onAdd,
                 child: Container(
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
+                    color: isAdded 
+                        ? AppColors.success 
+                        : (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary),
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
-                  child: const Icon(
-                    Icons.add,
+                  child: Icon(
+                    isAdded ? Icons.check : Icons.add,
                     color: AppColors.white,
                     size: 20,
                   ),

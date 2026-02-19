@@ -35,7 +35,7 @@ class ProfileCard extends StatelessWidget {
             color: isSelected
                 ? (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary)
                 : (isDarkMode ? AppColors.borderDark : AppColors.border),
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 1 : 0.5,
           ),
         ),
         child: Row(
