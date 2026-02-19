@@ -46,7 +46,7 @@ class SelectedServicesCard extends StatelessWidget {
           ),
           // Divider before "Add more service"
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+            padding: const EdgeInsets.only(top: AppSizes.paddingM ,bottom: AppSizes.paddingM),
             child: Divider(
               color: (isDarkMode ? AppColors.borderDark : AppColors.border)
                   .withValues(alpha: 0.3),

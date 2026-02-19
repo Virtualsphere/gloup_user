@@ -131,17 +131,19 @@ class BillingSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSizes.spaceM),
 
-          // Gloup Cash
-          _buildRow(
-            context,
-            label: 'Gloup Cash',
-            value: '-₹${gloupCash.toStringAsFixed(0)}',
-            isBold: false,
-            valueBold: true,
-            valueColor: AppColors.success,
-            isDarkMode: isDarkMode,
-          ),
-          const SizedBox(height: AppSizes.spaceM),
+          // Gloup Cash (conditional)
+          if (gloupCash > 0) ...[
+            _buildRow(
+              context,
+              label: 'Gloup Cash',
+              value: '-₹${gloupCash.toStringAsFixed(0)}',
+              isBold: false,
+              valueBold: true,
+              valueColor: AppColors.success,
+              isDarkMode: isDarkMode,
+            ),
+            const SizedBox(height: AppSizes.spaceM),
+          ],
 
           const Divider(height: AppSizes.spaceM),
           const SizedBox(height: AppSizes.spaceM),

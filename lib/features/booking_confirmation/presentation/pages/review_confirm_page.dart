@@ -13,6 +13,7 @@ import 'package:tressy/shared/widgets/coupon_applied_dialog.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/billing_summary_card.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/recommended_service_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ReviewConfirmPage extends StatefulWidget {
   final Map<String, dynamic>? bookingData;
@@ -30,6 +31,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   String selectedBookingFor = 'myself'; // 'myself' or 'someone_else'
   int? selectedSomeoneElseIndex; // selected index for someone else profiles
   String? selectedCouponCode;
+  bool useGloupCash = true; // Gloup Cash checkbox state
 
   // TODO: Replace with actual coupon data from API/state
   final List<CouponData> availableCoupons = [
@@ -460,7 +462,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                       gstPercentage: 5.0,
                       platformFee: 7.0,
                       isPlatformFeeWaived: true,
-                      gloupCash: 70.0,
+                      gloupCash: useGloupCash ? 70.0 : 0.0,
                     ),
                     const SizedBox(height: AppSizes.spaceL),
                     // You might also like section
@@ -475,6 +477,182 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildGloupCashCheckbox(context, isDarkMode),
+          _buildBottomConfirmButton(context, isDarkMode),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGloupCashCheckbox(BuildContext context, bool isDarkMode) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingM,
+        vertical: AppSizes.paddingXS,
+      ),
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppSizes.radiusM),
+          topRight: Radius.circular(AppSizes.radiusM),
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+            width: 1,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: useGloupCash,
+            onChanged: (value) {
+              setState(() {
+                useGloupCash = value ?? true;
+              });
+            },
+            activeColor: isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: AppSizes.spaceS),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                text: 'Use Gloup Cash ',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary,
+                    ),
+                children: [
+                  TextSpan(
+                    text: '₹70',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.success,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomConfirmButton(BuildContext context, bool isDarkMode) {
+    // Calculate final total from billing summary
+    final serviceAmount = _totalServiceAmount;
+    final couponDiscount = selectedCouponCode != null
+        ? availableCoupons
+            .firstWhere((c) => c.couponCode == selectedCouponCode)
+            .discountAmount
+            .toDouble()
+        : 0.0;
+    final serviceDiscount = _totalServiceDiscount;
+    
+    // Calculate subtotal (after service discount and coupon)
+    double subtotal = serviceAmount - serviceDiscount;
+    if (couponDiscount > 0) {
+      subtotal -= couponDiscount;
+    }
+    
+    // Calculate GST
+    final gst = (subtotal * 5.0) / 100;
+    
+    // Platform fee (waived)
+    final platformFee = 0.0;
+    
+    // Total before Gloup Cash
+    final totalBeforeGloupCash = subtotal + gst + platformFee;
+    
+    // Gloup Cash (only if checkbox is checked)
+    final gloupCash = useGloupCash ? 70.0 : 0.0;
+    
+    // Final total
+    final finalTotal = totalBeforeGloupCash - gloupCash;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSizes.paddingM),
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            // Left side - Razorpay logo and text
+            Row(
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/ic_razorpay.svg',
+                  height: 32,
+                  width: 32,
+                ),
+                const SizedBox(width: AppSizes.spaceS),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pay via',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
+                            fontSize: 11,
+                          ),
+                    ),
+                    Text(
+                      'Razorpay',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: isDarkMode
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(width: AppSizes.spaceXL),
+            // Right side - Pay button with amount
+            Expanded(
+              child: PrimaryButton(
+                text: 'Pay ₹${finalTotal.toStringAsFixed(0)}',
+                onPressed: () {
+                  // TODO: Implement Razorpay payment
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Redirecting to payment...'),
+                      backgroundColor: AppColors.success,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                backgroundColor: AppColors.success,
+                textColor: AppColors.white,
+                height: 52,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
