@@ -1047,6 +1047,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               'duration': service.duration,
                               'discountPercentage': service.discountPercentage,
                             }).toList(),
+                            "services" : state.salonDetail?.services
                           };
                           
                           context.pushNamed(

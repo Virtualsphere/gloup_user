@@ -1,0 +1,135 @@
+import 'package:flutter/material.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/coupon_card.dart';
+
+class CouponData {
+  final int discountAmount;
+  final String couponCode;
+
+  CouponData({
+    required this.discountAmount,
+    required this.couponCode,
+  });
+}
+
+Future<String?> showCouponsBottomSheet(
+  BuildContext context, {
+  required List<CouponData> coupons,
+  String? selectedCouponCode,
+}) async {
+  return await showModalBottomSheet<String?>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => _CouponsBottomSheet(
+      coupons: coupons,
+      selectedCouponCode: selectedCouponCode,
+    ),
+  );
+}
+
+class _CouponsBottomSheet extends StatefulWidget {
+  final List<CouponData> coupons;
+  final String? selectedCouponCode;
+
+  const _CouponsBottomSheet({
+    required this.coupons,
+    this.selectedCouponCode,
+  });
+
+  @override
+  State<_CouponsBottomSheet> createState() => _CouponsBottomSheetState();
+}
+
+class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
+  String? _selectedCoupon;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCoupon = widget.selectedCouponCode;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppSizes.radiusXL),
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Top handle
+            Padding(
+              padding: const EdgeInsets.all(AppSizes.paddingL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? AppColors.borderDark
+                            : AppColors.border,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Available Coupons',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Coupons list
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingL,
+                  vertical: AppSizes.paddingS,
+                ),
+                itemCount: widget.coupons.length,
+                separatorBuilder: (context, index) => const SizedBox(height: AppSizes.spaceM),
+                itemBuilder: (context, index) {
+                  final coupon = widget.coupons[index];
+                  final isSelected = _selectedCoupon == coupon.couponCode;
+
+                  return CouponCard(
+                    discountAmount: coupon.discountAmount,
+                    couponCode: coupon.couponCode,
+                    isSelected: isSelected,
+                    onTap: () {
+                      setState(() {
+                        // Toggle: if already selected, unselect; otherwise select
+                        _selectedCoupon = isSelected ? null : coupon.couponCode;
+                      });
+                      // Close bottom sheet and return selected coupon
+                      Navigator.of(context).pop(_selectedCoupon);
+                    },
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: AppSizes.paddingL),
+          ],
+        ),
+      ),
+    );
+  }
+}

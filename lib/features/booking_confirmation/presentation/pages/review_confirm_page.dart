@@ -4,6 +4,13 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/salon_info_card.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/selected_services_card.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/profile_card.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/add_person_bottom_sheet.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/edit_person_bottom_sheet.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/coupon_card.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/coupons_bottom_sheet.dart';
+import 'package:tressy/shared/widgets/coupon_applied_dialog.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/billing_summary_card.dart';
 
 class ReviewConfirmPage extends StatefulWidget {
   final Map<String, dynamic>? bookingData;
@@ -19,6 +26,16 @@ class ReviewConfirmPage extends StatefulWidget {
 
 class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   String selectedBookingFor = 'myself'; // 'myself' or 'someone_else'
+  int? selectedSomeoneElseIndex; // selected index for someone else profiles
+  String? selectedCouponCode;
+
+  // TODO: Replace with actual coupon data from API/state
+  final List<CouponData> availableCoupons = [
+    CouponData(discountAmount: 50, couponCode: 'GLOUP2026'),
+    CouponData(discountAmount: 100, couponCode: 'SAVE100'),
+    CouponData(discountAmount: 75, couponCode: 'WELCOME75'),
+    CouponData(discountAmount: 150, couponCode: 'MEGA150'),
+  ];
 
   // Calculate highest offer percentage from selected services
   int get _highestOfferPercentage {
@@ -35,6 +52,66 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
           int.tryParse(discountStr.replaceAll('%', '').trim()) ?? 0;
       return discountInt;
     }).fold<int>(0, (max, discount) => discount > max ? discount : max);
+  }
+
+  // Calculate total service amount from selected services (original prices)
+  double get _totalServiceAmount {
+    if (widget.bookingData == null) return 0.0;
+
+    final selectedServices = widget.bookingData!['selectedServices'] as List?;
+    if (selectedServices == null || selectedServices.isEmpty) return 0.0;
+
+    return selectedServices.fold<double>(0.0, (total, service) {
+      final price = service['price'];
+      if (price == null) return total;
+      
+      // 'price' field contains the ORIGINAL price (before discount)
+      // Handle both String and numeric types
+      if (price is num) {
+        return total + price.toDouble();
+      } else if (price is String) {
+        // Remove ₹ symbol and parse
+        final parsedPrice = double.tryParse(price.replaceAll('₹', '').trim()) ?? 0.0;
+        return total + parsedPrice;
+      }
+      return total;
+    });
+  }
+
+  // Calculate total service discount from selected services
+  double get _totalServiceDiscount {
+    if (widget.bookingData == null) return 0.0;
+
+    final selectedServices = widget.bookingData!['selectedServices'] as List?;
+    if (selectedServices == null || selectedServices.isEmpty) return 0.0;
+
+    return selectedServices.fold<double>(0.0, (total, service) {
+      final priceValue = service['price'];
+      final discountPercentageStr = service['discountPercentage'] as String?;
+      
+      if (priceValue == null || discountPercentageStr == null || discountPercentageStr.isEmpty) {
+        return total;
+      }
+      
+      // Parse original price
+      double originalPrice = 0.0;
+      if (priceValue is num) {
+        originalPrice = priceValue.toDouble();
+      } else if (priceValue is String) {
+        originalPrice = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
+      }
+      
+      // Parse discount percentage
+      final discountPercent = int.tryParse(
+        discountPercentageStr.replaceAll('%', '').trim(),
+      ) ?? 0;
+      
+      if (discountPercent <= 0) return total;
+      
+      // Calculate discount amount: originalPrice * (discountPercent / 100)
+      final discountAmount = originalPrice * (discountPercent / 100);
+      return total + discountAmount;
+    });
   }
 
   @override
@@ -100,6 +177,291 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     const SizedBox(height: AppSizes.spaceS),
                     // Booking for selector (Myself / Someone else)
                     _buildBookingForSelector(context, isDarkMode),
+                    const SizedBox(height: AppSizes.spaceM),
+                    // Profile card (shown when "Myself" is selected)
+                    if (selectedBookingFor == 'myself')
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                        child: ProfileCard(
+                          name: 'John Doe', // TODO: Replace with actual user data
+                          age: 28, // TODO: Replace with actual user data
+                          gender: 'Male', // TODO: Replace with actual user data
+                          isSelected: true, // Always selected for "Myself"
+                          onEdit: () {
+                            showEditPersonBottomSheet(
+                              context,
+                              initialName: 'John Doe',
+                              initialAge: 28,
+                              initialGender: 'Male',
+                              initialPhone: null, // TODO: Get from user profile
+                              onSave: (result) {
+                                // TODO: Save updated profile to backend/local storage
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Profile updated: ${result.fullName}'),
+                                  ),
+                                );
+                                setState(() {
+                                  // Update local state if needed
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    // Someone else cards (two selectable profiles)
+                    if (selectedBookingFor == 'someone_else')
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                        child: Column(
+                          children: [
+                            ProfileCard(
+                              name: 'Priya Sharma', // TODO: Replace with actual data
+                              age: 26,
+                              gender: 'Female',
+                              isSelected: selectedSomeoneElseIndex == 0,
+                              onTap: () {
+                                setState(() {
+                                  selectedSomeoneElseIndex = 0;
+                                });
+                              },
+                              onEdit: () {
+                                showEditPersonBottomSheet(
+                                  context,
+                                  initialName: 'Priya Sharma',
+                                  initialAge: 26,
+                                  initialGender: 'Female',
+                                  initialPhone: null,
+                                  onSave: (result) {
+                                    // TODO: Update profile in list
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Profile updated: ${result.fullName}'),
+                                      ),
+                                    );
+                                    setState(() {
+                                      // Update profile data
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: AppSizes.spaceM),
+                            ProfileCard(
+                              name: 'Rahul Verma', // TODO: Replace with actual data
+                              age: 30,
+                              gender: 'Male',
+                              isSelected: selectedSomeoneElseIndex == 1,
+                              onTap: () {
+                                setState(() {
+                                  selectedSomeoneElseIndex = 1;
+                                });
+                              },
+                              onEdit: () {
+                                showEditPersonBottomSheet(
+                                  context,
+                                  initialName: 'Rahul Verma',
+                                  initialAge: 30,
+                                  initialGender: 'Male',
+                                  initialPhone: null,
+                                  onSave: (result) {
+                                    // TODO: Update profile in list
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Profile updated: ${result.fullName}'),
+                                      ),
+                                    );
+                                    setState(() {
+                                      // Update profile data
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: AppSizes.spaceM),
+                            // Add a New Person card-styled button
+                            GestureDetector(
+                              onTap: () {
+                                showAddPersonBottomSheet(
+                                  context,
+                                  onAdd: (result) {
+                                    // Example: append to list or set selection
+                                    setState(() {
+                                      selectedSomeoneElseIndex = 0; // adjust per your data model
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Added "+${result.fullName}"'),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                constraints: const BoxConstraints(minHeight: 72.0),
+                                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                                decoration: BoxDecoration(
+                                  color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                                  border: Border.all(
+                                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        color: (AppColors.primary).withValues(alpha: 0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.add,
+                                          size: 22,
+                                          color: isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSizes.spaceM),
+                                    Expanded(
+                                      child: Text(
+                                        'Add a New Person',
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: isDarkMode
+                                                  ? AppColors.textPrimaryDark
+                                                  : AppColors.textPrimary,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: AppSizes.spaceL),
+                    // Coupons & Offers section
+                    _buildSectionTitle(context, 'Coupons & Offers', isDarkMode),
+                    const SizedBox(height: AppSizes.spaceS),
+                    // Show first coupon or selected coupon
+                    if (availableCoupons.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                        child: () {
+                          // Find selected coupon or show first one
+                          final displayCoupon = selectedCouponCode != null
+                              ? availableCoupons.firstWhere(
+                                  (c) => c.couponCode == selectedCouponCode,
+                                  orElse: () => availableCoupons.first,
+                                )
+                              : availableCoupons.first;
+
+                          return CouponCard(
+                            discountAmount: displayCoupon.discountAmount,
+                            couponCode: displayCoupon.couponCode,
+                            isSelected: selectedCouponCode == displayCoupon.couponCode,
+                            onTap: () async {
+                              final newSelection = selectedCouponCode == displayCoupon.couponCode
+                                  ? null
+                                  : displayCoupon.couponCode;
+                              
+                              setState(() {
+                                selectedCouponCode = newSelection;
+                              });
+
+                              // Show success dialog when applying a coupon
+                              if (newSelection != null) {
+                                await CouponAppliedDialog.show(
+                                  context,
+                                  couponCode: displayCoupon.couponCode,
+                                  discountAmount: displayCoupon.discountAmount,
+                                );
+                              }
+                            },
+                          );
+                        }(),
+                      ),
+                    const SizedBox(height: AppSizes.spaceM),
+                    // View all coupons link
+                    if (availableCoupons.length > 1)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSizes.paddingM,
+                          vertical: AppSizes.paddingS,
+                        ),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final result = await showCouponsBottomSheet(
+                              context,
+                              coupons: availableCoupons,
+                              selectedCouponCode: selectedCouponCode,
+                            );
+                            if (result != null && result != selectedCouponCode) {
+                              setState(() {
+                                selectedCouponCode = result;
+                              });
+                              
+                              // Show success dialog when applying from bottom sheet
+                              final selectedCoupon = availableCoupons.firstWhere(
+                                (c) => c.couponCode == result,
+                              );
+                              await CouponAppliedDialog.show(
+                                context,
+                                couponCode: selectedCoupon.couponCode,
+                                discountAmount: selectedCoupon.discountAmount,
+                              );
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'View all coupons',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: isDarkMode
+                                          ? AppColors.primaryDarkTheme
+                                          : AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 20,
+                                color: isDarkMode
+                                    ? AppColors.primaryDarkTheme
+                                    : AppColors.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: AppSizes.spaceL),
+                    // Billing Summary section
+                    _buildSectionTitle(context, 'Billing Summary', isDarkMode),
+                    const SizedBox(height: AppSizes.spaceS),
+                    BillingSummaryCard(
+                      serviceAmount: _totalServiceAmount,
+                      couponDiscount: selectedCouponCode != null
+                          ? availableCoupons
+                              .firstWhere((c) => c.couponCode == selectedCouponCode)
+                              .discountAmount
+                              .toDouble()
+                          : null,
+                      appliedCouponCode: selectedCouponCode,
+                      serviceDiscount: _totalServiceDiscount,
+                      gstPercentage: 5.0,
+                      platformFee: 7.0,
+                      isPlatformFeeWaived: true,
+                      gloupCash: 70.0,
+                    ),
+                    const SizedBox(height: AppSizes.spaceL),
+                    // You might also like section
+                    _buildSectionTitle(context, 'You might also like', isDarkMode),
                   ],
                 ],
               ),
@@ -144,6 +506,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
               onTap: () {
                 setState(() {
                   selectedBookingFor = 'myself';
+                  selectedSomeoneElseIndex = null; // clear someone else selection
                 });
               },
               child: Container(
