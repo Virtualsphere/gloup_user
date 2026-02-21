@@ -1,3 +1,4 @@
+import 'package:tressy/features/category/data/models/category_model.dart';
 import 'package:tressy/features/home/data/models/home_models.dart';
 
 /// Mock data for Home Page APIs
@@ -36,30 +37,37 @@ class HomeMockData {
         CategoryModel(
           id: 'cat_002',
           label: 'Haircut',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_003',
           label: 'Spa',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_004',
           label: 'Massage',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_005',
           label: 'Facial',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_006',
           label: 'Nail Art',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_007',
           label: 'Makeup',
+          imageUrl: '',
         ),
         CategoryModel(
           id: 'cat_008',
           label: 'Waxing',
+          imageUrl: '',
         ),
       ];
   }

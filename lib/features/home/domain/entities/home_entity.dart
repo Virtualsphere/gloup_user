@@ -14,22 +14,6 @@ class CarouselBannerEntity extends Equatable {
   List<Object?> get props => [id, imageUrl];
 }
 
-/// Category Entity
-class CategoryEntity extends Equatable {
-  final String id;
-  final String label;
-  final String? imageUrl;
-
-  const CategoryEntity({
-    required this.id,
-    required this.label,
-    this.imageUrl,
-  });
-
-  @override
-  List<Object?> get props => [id, label, imageUrl];
-}
-
 /// Salon Entity
 class SalonEntity extends Equatable {
   final String id;

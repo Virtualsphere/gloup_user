@@ -5,11 +5,10 @@ import 'package:tressy/features/home/domain/entities/home_entity.dart';
 abstract class HomeRepository {
   Future<Either<Failure, List<CarouselBannerEntity>>> getCarouselBanners();
   
-  Future<Either<Failure, List<CategoryEntity>>> getCategories();
-  
   Future<Either<Failure, List<SalonEntity>>> getPopularServices({
     required double latitude,
     required double longitude,
+    String gender = 'unisex',
   });
   
   Future<Either<Failure, List<SalonEntity>>> getTopSalons({

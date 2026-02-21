@@ -10,11 +10,15 @@ import 'package:tressy/features/auth/domain/repositories/auth_repository.dart';
 import 'package:tressy/features/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:tressy/features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:tressy/features/category/data/datasources/category_remote_datasource.dart';
+import 'package:tressy/features/category/data/repositories/category_repository_impl.dart';
+import 'package:tressy/features/category/domain/repositories/category_repository.dart';
+import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart' as category_usecase;
+import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/home/data/datasources/home_datasource.dart';
 import 'package:tressy/features/home/data/repositories/home_repository_impl.dart';
 import 'package:tressy/features/home/domain/repositories/home_repository.dart';
 import 'package:tressy/features/home/domain/usecases/get_carousel_banners_usecase.dart';
-import 'package:tressy/features/home/domain/usecases/get_categories_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_popular_services_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_recommended_salons_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_top_salons_usecase.dart';
@@ -60,11 +64,31 @@ Future<void> initializeDependencies() async {
     () => AuthRemoteDataSourceImpl(sl()),
   );
 
+  // Category Feature
+  // BLoC - Registered as singleton to share state across screens
+  sl.registerLazySingleton<CategoryBloc>(() => CategoryBloc(
+        getCategoriesUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<category_usecase.GetCategoriesUseCase>(
+    () => category_usecase.GetCategoriesUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(sl()),
+  );
+
   // Home Feature
   // BLoC
   sl.registerFactory<HomeBloc>(() => HomeBloc(
         getCarouselBannersUseCase: sl(),
-        getCategoriesUseCase: sl(),
         getPopularServicesUseCase: sl(),
         getTopSalonsUseCase: sl(),
         getRecommendedSalonsUseCase: sl(),
@@ -73,9 +97,6 @@ Future<void> initializeDependencies() async {
   // Use Cases
   sl.registerLazySingleton<GetCarouselBannersUseCase>(
     () => GetCarouselBannersUseCase(sl()),
-  );
-  sl.registerLazySingleton<GetCategoriesUseCase>(
-    () => GetCategoriesUseCase(sl()),
   );
   sl.registerLazySingleton<GetPopularServicesUseCase>(
     () => GetPopularServicesUseCase(sl()),
@@ -94,7 +115,7 @@ Future<void> initializeDependencies() async {
 
   // Data Sources
   sl.registerLazySingleton<HomeDataSource>(
-    () => HomeDataSourceImpl(),
+    () => HomeDataSourceImpl(sl()),
   );
 
   // Salon Details Feature

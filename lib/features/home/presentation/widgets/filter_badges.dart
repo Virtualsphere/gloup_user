@@ -6,7 +6,14 @@ import '../../../../core/constants/app_sizes.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 
 class FilterBadges extends StatefulWidget {
-  const FilterBadges({super.key});
+  final Function(String gender)? onGenderSelected;
+  final String? initialGender;
+  
+  const FilterBadges({
+    super.key,
+    this.onGenderSelected,
+    this.initialGender,
+  });
 
   @override
   State<FilterBadges> createState() => _FilterBadgesState();
@@ -15,7 +22,28 @@ class FilterBadges extends StatefulWidget {
 class _FilterBadgesState extends State<FilterBadges> {
   String? _selectedFilter;
 
-  final List<String> _filters = ['Men', 'Women', 'Unisex', 'Kids', 'Senior'];
+  final List<Map<String, String>> _filters = [
+    {'label': 'Men', 'value': 'male'},
+    {'label': 'Women', 'value': 'female'},
+    {'label': 'Unisex', 'value': 'unisex'},
+    {'label': 'Kids', 'value': 'kids'},
+    {'label': 'Senior', 'value': 'senior'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial gender if provided (only if not null)
+    if (widget.initialGender != null && widget.initialGender!.isNotEmpty) {
+      final filter = _filters.firstWhere(
+        (f) => f['value'] == widget.initialGender,
+        orElse: () => {'label': '', 'value': ''},
+      );
+      if (filter['label']!.isNotEmpty) {
+        _selectedFilter = filter['label'];
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +58,11 @@ class _FilterBadgesState extends State<FilterBadges> {
           _buildPrimaryFilterButton(context),
           const SizedBox(width: AppSizes.spaceS),
           // Filter chips
-          ..._filters.map((filter) => _buildFilterChip(context, filter)),
+          ..._filters.map((filter) => _buildFilterChip(
+                context,
+                filter['label']!,
+                filter['value']!,
+              )),
         ],
       ),
     );
@@ -94,7 +126,7 @@ class _FilterBadgesState extends State<FilterBadges> {
     );
   }
 
-  Widget _buildFilterChip(BuildContext context, String label) {
+  Widget _buildFilterChip(BuildContext context, String label, String value) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     final bool isSelected = _selectedFilter == label;
 
@@ -105,6 +137,10 @@ class _FilterBadgesState extends State<FilterBadges> {
           setState(() {
             _selectedFilter = isSelected ? null : label;
           });
+          // Notify parent about gender selection
+          if (widget.onGenderSelected != null) {
+            widget.onGenderSelected!(isSelected ? 'unisex' : value);
+          }
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
         child: Container(

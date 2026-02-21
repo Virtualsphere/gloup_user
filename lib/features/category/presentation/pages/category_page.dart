@@ -421,9 +421,10 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
+    // No need to create BlocProvider - CategoryBloc is already provided globally
     return Scaffold(
-      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
-      appBar: AppBar(
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,

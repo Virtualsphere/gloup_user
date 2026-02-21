@@ -2,11 +2,20 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'https://api.gloup.in';
+  static const String baseUrl = 'http://192.168.1.2:5678';
+  
+  // Image Base URL - For appending to image paths from API
+  static const String imageBaseUrl = 'https://v1.gloup.in/images';
+  static const String imageProfileUrl = 'https://v1.gloup.in/profilepic';
 
   // Auth Endpoints
   static const String sendOtp = '$baseUrl/user/auth/sendOTP';
   static const String verifyOtp = '$baseUrl/user/auth/verifyOTP';
+  
+  // Home Endpoints
+  static const String getBanners = '$baseUrl/user/app/v2/getbanner';
+  static const String getCategories = '$baseUrl/user/app/v2/getallcategory';
+  static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
 
 
   // Helper method to build URLs with query parameters

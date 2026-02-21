@@ -6,10 +6,12 @@ import 'package:tressy/features/home/domain/repositories/home_repository.dart';
 class GetPopularServicesParams {
   final double latitude;
   final double longitude;
+  final String gender;
 
   GetPopularServicesParams({
     required this.latitude,
     required this.longitude,
+    this.gender = 'unisex',
   });
 }
 
@@ -24,6 +26,7 @@ class GetPopularServicesUseCase {
     return await repository.getPopularServices(
       latitude: params.latitude,
       longitude: params.longitude,
+      gender: params.gender,
     );
   }
 }

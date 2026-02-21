@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/category/domain/entities/category_entity.dart';
+import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
+import 'package:tressy/features/category/presentation/bloc/category_event.dart';
+import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategorySection extends StatefulWidget {
   final Function(String categoryName, int categoryIndex)? onCategoryTap;
   final int? selectedCategoryIndex;
   final bool showActiveBorder;
+  final List<CategoryEntity>? categories; // Optional categories passed from parent
+  final bool? isLoading; // Optional loading state
+  final String? error; // Optional error message
 
   const CategorySection({
     super.key,
     this.onCategoryTap,
     this.selectedCategoryIndex,
     this.showActiveBorder = true,
+    this.categories,
+    this.isLoading,
+    this.error,
   });
 
   @override
@@ -23,13 +34,16 @@ class CategorySection extends StatefulWidget {
 
 class _CategorySectionState extends State<CategorySection> {
   late int _selectedIndex;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.selectedCategoryIndex ?? 1;
-    _loadCategories();
+    _selectedIndex = widget.selectedCategoryIndex ?? -1;
+    
+    // Load categories if not passed directly
+    if (widget.categories == null) {
+      context.read<CategoryBloc>().add(const LoadCategoriesEvent());
+    }
   }
 
   @override
@@ -43,68 +57,70 @@ class _CategorySectionState extends State<CategorySection> {
     }
   }
 
-  Future<void> _loadCategories() async {
-    // Simulate loading delay (replace with actual API call)
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // If categories are passed directly, use them (for standalone usage)
+    if (widget.categories != null || widget.isLoading != null || widget.error != null) {
+      return _buildCategoryContent(
+        context,
+        categories: widget.categories ?? [],
+        isLoading: widget.isLoading ?? false,
+        error: widget.error,
+      );
+    }
+
+    // Otherwise, use CategoryBloc (shared across app)
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      builder: (context, state) {
+        return _buildCategoryContent(
+          context,
+          categories: state.categories,
+          isLoading: state.status == CategoryStatus.loading,
+          error: state.errorMessage,
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryContent(
+    BuildContext context, {
+    required List<CategoryEntity> categories,
+    required bool isLoading,
+    String? error,
+  }) {
     return Container(
       height: 120,
       color: context.colorScheme.surface,
-      child: _isLoading
+      child: isLoading
           ? _buildCategoryShimmer()
-          : Row(
-              children: [
-                // Sticky Premium Category
-                // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
-                // Horizontally Scrollable Categories
-                Expanded(
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(right: AppSizes.paddingS),
-                    children: [
-                      _buildCategory(
-                        context,
-                        'Haircut',
-                        'https://static.vecteezy.com/system/resources/previews/058/263/014/large_2x/men-s-hairstyle-and-beard-grooming-guide-a-perfect-look-for-modern-men-free-png.png',
-                        index: 1,
-                      ),
-                      _buildCategory(
-                        context,
-                        'Trim',
-                        'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200',
-                        index: 3,
-                      ),
-                      _buildCategory(
-                        context,
-                        'Facial',
-                        'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200',
-                        index: 4,
-                      ),
-                      _buildCategory(
-                        context,
-                        'Manicure',
-                        'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200',
-                        index: 5,
-                      ),
-                      _buildCategory(
-                        context,
-                        'Spa',
-                        'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200',
-                        index: 6,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          : error != null
+              ? _buildErrorWidget(error)
+              : categories.isEmpty
+                  ? _buildEmptyWidget()
+                  : Row(
+                      children: [
+                        // Sticky Premium Category
+                        // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
+                        // Horizontally Scrollable Categories
+                        Expanded(
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.only(right: AppSizes.paddingS),
+                            itemCount: categories.length,
+                            itemBuilder: (context, index) {
+                              final category = categories[index];
+                              return _buildCategory(
+                                context,
+                                category.label,
+                                category.imageUrl ?? '',
+                                id: category.id,
+                                index: index,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
     );
   }
 
@@ -182,8 +198,13 @@ class _CategorySectionState extends State<CategorySection> {
     );
   }
 
-  Widget _buildCategory(BuildContext context, String title, String imageUrl,
-      {required int index}) {
+  Widget _buildCategory(
+    BuildContext context,
+    String title,
+    String imageUrl, {
+    required String id,
+    required int index,
+  }) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     final bool isActive = _selectedIndex == index;
 
@@ -195,12 +216,16 @@ class _CategorySectionState extends State<CategorySection> {
         bottom: 0,
       ),
       decoration: BoxDecoration(
-        border: widget.showActiveBorder ? Border(
-          bottom: BorderSide(
-            color: isActive ?  ( isDarkMode ?  AppColors.primaryDark : AppColors.primary) : Colors.transparent,
-            width: 2.5,
-          ),
-        ) : null,
+        border: widget.showActiveBorder
+            ? Border(
+                bottom: BorderSide(
+                  color: isActive
+                      ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                      : Colors.transparent,
+                  width: 2.5,
+                ),
+              )
+            : null,
       ),
       child: InkWell(
         onTap: () {
@@ -223,20 +248,44 @@ class _CategorySectionState extends State<CategorySection> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        child: const Icon(
-                          Icons.image,
-                          color: AppColors.primary,
-                          size: 30,
+                  child: imageUrl.isNotEmpty
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              child: const Icon(
+                                Icons.image,
+                                color: AppColors.primary,
+                                size: 30,
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          child: const Icon(
+                            Icons.category,
+                            color: AppColors.primary,
+                            size: 30,
+                          ),
                         ),
-                      );
-                    },
-                  ),
                 ),
               ),
               const SizedBox(height: AppSizes.spaceXS),
@@ -245,13 +294,63 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   fontSize: AppSizes.fontS,
-                  color: isDarkMode ?  AppColors.primaryDark : AppColors.primary,
+                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build error widget when categories fail to load
+  Widget _buildErrorWidget(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: AppColors.error,
+              size: 32,
+            ),
+            const SizedBox(height: AppSizes.spaceS),
+            Text(
+              'Failed to load categories',
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppSizes.spaceXS),
+            Text(
+              error,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build empty widget when no categories available
+  Widget _buildEmptyWidget() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        child: Text(
+          'No categories available',
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
       ),

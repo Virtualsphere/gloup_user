@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
-import 'package:tressy/features/home/domain/entities/home_entity.dart';
-import 'package:tressy/features/home/domain/repositories/home_repository.dart';
+import 'package:tressy/features/category/domain/entities/category_entity.dart';
+import 'package:tressy/features/category/domain/repositories/category_repository.dart';
 
 class GetCategoriesUseCase {
-  final HomeRepository repository;
+  final CategoryRepository repository;
 
   GetCategoriesUseCase(this.repository);
 

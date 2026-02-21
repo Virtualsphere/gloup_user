@@ -1,0 +1,35 @@
+import 'package:dartz/dartz.dart';
+import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/features/category/data/datasources/category_remote_datasource.dart';
+import 'package:tressy/features/category/domain/entities/category_entity.dart';
+import 'package:tressy/features/category/domain/repositories/category_repository.dart';
+
+class CategoryRepositoryImpl implements CategoryRepository {
+  final CategoryRemoteDataSource dataSource;
+
+  CategoryRepositoryImpl(this.dataSource);
+
+  @override
+  Future<Either<Failure, List<CategoryEntity>>> getCategories() async {
+    try {
+      final models = await dataSource.getCategories();
+      final entities = models
+          .map((model) => CategoryEntity(
+                id: model.id,
+                label: model.label,
+                imageUrl: model.imageUrl,
+              ))
+          .toList();
+      return Right(entities);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
+}

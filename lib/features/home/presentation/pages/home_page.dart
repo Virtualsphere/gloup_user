@@ -30,11 +30,29 @@ class _HomePageState extends State<HomePage> {
   int _currentCarouselIndex = 0;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
+  String? _selectedGender; // No default filter
+  HomeBloc? _homeBloc;
+
+  // Chennai coordinates
+  static const double _latitude = 13.0827;
+  static const double _longitude = 80.2707;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+  }
+
+  void _onGenderChanged(String gender) {
+    setState(() {
+      _selectedGender = gender;
+    });
+    // Reload popular services with new gender filter
+    _homeBloc?.add(LoadPopularServicesEvent(
+      latitude: _latitude,
+      longitude: _longitude,
+      gender: gender,
+    ));
   }
 
   @override
@@ -65,11 +83,14 @@ class _HomePageState extends State<HomePage> {
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
 
     return BlocProvider(
-      create: (context) => sl<HomeBloc>()
-        ..add(const LoadAllHomeDataEvent(
-          latitude: 19.0760,
-          longitude: 72.8777,
-        )),
+      create: (context) {
+        _homeBloc = sl<HomeBloc>()
+          ..add(LoadAllHomeDataEvent(
+            latitude: _latitude,
+            longitude: _longitude,
+          ));
+        return _homeBloc!;
+      },
       child: Scaffold(
         backgroundColor: context.colorScheme.surface,
         body: BlocBuilder<HomeBloc, HomeState>(
@@ -331,7 +352,12 @@ class _HomePageState extends State<HomePage> {
                 SliverToBoxAdapter(child: AppSizes.heightS),
 
                 // Filter Badges Section
-                const SliverToBoxAdapter(child: FilterBadges()),
+                SliverToBoxAdapter(
+                  child: FilterBadges(
+                    initialGender: _selectedGender,
+                    onGenderSelected: _onGenderChanged,
+                  ),
+                ),
 
                 SliverToBoxAdapter(child: AppSizes.heightS),
 

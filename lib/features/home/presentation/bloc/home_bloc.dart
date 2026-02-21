@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/home/domain/usecases/get_carousel_banners_usecase.dart';
-import 'package:tressy/features/home/domain/usecases/get_categories_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_popular_services_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_top_salons_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_recommended_salons_usecase.dart';
@@ -10,20 +9,17 @@ import 'package:tressy/features/home/presentation/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetCarouselBannersUseCase getCarouselBannersUseCase;
-  final GetCategoriesUseCase getCategoriesUseCase;
   final GetPopularServicesUseCase getPopularServicesUseCase;
   final GetTopSalonsUseCase getTopSalonsUseCase;
   final GetRecommendedSalonsUseCase getRecommendedSalonsUseCase;
 
   HomeBloc({
     required this.getCarouselBannersUseCase,
-    required this.getCategoriesUseCase,
     required this.getPopularServicesUseCase,
     required this.getTopSalonsUseCase,
     required this.getRecommendedSalonsUseCase,
   }) : super(const HomeState()) {
     on<LoadCarouselBannersEvent>(_onLoadCarouselBanners);
-    on<LoadCategoriesEvent>(_onLoadCategories);
     on<LoadPopularServicesEvent>(_onLoadPopularServices);
     on<LoadTopSalonsEvent>(_onLoadTopSalons);
     on<LoadRecommendedSalonsEvent>(_onLoadRecommendedSalons);
@@ -55,30 +51,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  Future<void> _onLoadCategories(
-    LoadCategoriesEvent event,
-    Emitter<HomeState> emit,
-  ) async {
-    emit(state.copyWith(
-      isCategoriesLoading: true,
-      clearCategoriesError: true,
-    ));
-
-    final result = await getCategoriesUseCase();
-
-    result.fold(
-      (failure) => emit(state.copyWith(
-        isCategoriesLoading: false,
-        categoriesError: _mapFailureToMessage(failure),
-      )),
-      (categories) => emit(state.copyWith(
-        isCategoriesLoading: false,
-        categories: categories,
-        clearCategoriesError: true,
-      )),
-    );
-  }
-
   Future<void> _onLoadPopularServices(
     LoadPopularServicesEvent event,
     Emitter<HomeState> emit,
@@ -92,6 +64,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetPopularServicesParams(
         latitude: event.latitude,
         longitude: event.longitude,
+        gender: event.gender,
       ),
     );
 
@@ -165,9 +138,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadAllHomeDataEvent event,
     Emitter<HomeState> emit,
   ) async {
-    // Load all data simultaneously
+    // Load all data simultaneously (categories now handled by CategoryBloc)
     add(const LoadCarouselBannersEvent());
-    add(const LoadCategoriesEvent());
     add(LoadPopularServicesEvent(
       latitude: event.latitude,
       longitude: event.longitude,

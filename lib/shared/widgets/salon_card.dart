@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tressy/core/constants/app_icons.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_sizes.dart';
-import '../extensions/context_extensions.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class SalonCard extends StatefulWidget {
   final String salonName;
@@ -86,10 +86,6 @@ class _SalonCardState extends State<SalonCard> {
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          // border: Border.all(
-          //   color: AppColors.border,
-          //   width: 1,
-          // ),
           boxShadow: [
             BoxShadow(
               color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
@@ -149,10 +145,23 @@ class _SalonCardState extends State<SalonCard> {
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: AppColors.primary.withValues(alpha: 0.1),
-                          child: const Icon(
-                            Icons.image,
-                            color: AppColors.primary,
-                            size: 50,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.content_cut,
+                                color: AppColors.primary.withValues(alpha: 0.3),
+                                size: 48,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Image not available',
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.primary.withValues(alpha: 0.4),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -473,54 +482,58 @@ class _SalonCardState extends State<SalonCard> {
 
   Widget _buildLanguageBadges(bool isDarkMode) {
     final languageCodes = widget.languageCodes ?? [];
-    // Filter only languages that have icons available
-    final availableLanguages = languageCodes
-        .where((code) => getLanguageIcon(code) != null)
-        .toList();
     
-    if (availableLanguages.isEmpty) return const SizedBox.shrink();
-    
-    final displayLanguages = availableLanguages.take(3).toList();
-    final hasMoreLanguages = availableLanguages.length > 3;
+    // If no languages found, show default 'en' and 'ta'
+    final displayLanguages = languageCodes.isEmpty 
+        ? ['en', 'ta']
+        : languageCodes.take(3).toList();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Language badges (max 2)
+        // Language badges (max 3)
         ...displayLanguages.asMap().entries.map((entry) {
           final languageCode = entry.value;
           final index = entry.key;
           final iconPath = getLanguageIcon(languageCode);
-          if (iconPath == null) return const SizedBox.shrink();
           
           return Padding(
             padding: EdgeInsets.only(right: index < displayLanguages.length - 1 ? 10 : 6),
-            child: SvgPicture.asset(
-              iconPath,
-              width: 14,
-              height: 14,
-              colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                BlendMode.srcIn,
-              ),
-            ),
+            child: iconPath != null
+                ? SvgPicture.asset(
+                    iconPath,
+                    width: 14,
+                    height: 14,
+                    colorFilter: ColorFilter.mode(
+                      isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  )
+                : Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: isDarkMode 
+                          ? AppColors.primaryDark.withValues(alpha: 0.2)
+                          : AppColors.primary.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        languageCode.length >= 2 
+                            ? languageCode.substring(0, 2).toUpperCase()
+                            : languageCode.toUpperCase(),
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
           );
         }),
-        // More languages indicator
-        // if (hasMoreLanguages)
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 6),
-        //     child: Text(
-        //       '+${availableLanguages.length - 2}',
-        //       style: context.textTheme.bodySmall?.copyWith(
-        //         color: AppColors.primary,
-        //         fontSize: 16,
-        //         fontWeight: FontWeight.w700,
-        //         height: 1.2,
-        //       ),
-        //     ),
-        //   ),
       ],
     );
   }
@@ -535,6 +548,7 @@ class _SalonCardState extends State<SalonCard> {
       children: [
         // Category badges
         ...displayCategories.map((category) => Container(
+              constraints: const BoxConstraints(maxWidth: 75),
               margin: const EdgeInsets.only(left: 6),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingM,
@@ -546,6 +560,8 @@ class _SalonCardState extends State<SalonCard> {
               ),
               child: Text(
                 category,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodySmall?.copyWith(
                   color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontSize: 11,

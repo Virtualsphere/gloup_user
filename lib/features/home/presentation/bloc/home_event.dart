@@ -12,23 +12,20 @@ class LoadCarouselBannersEvent extends HomeEvent {
   const LoadCarouselBannersEvent();
 }
 
-/// Event to load categories
-class LoadCategoriesEvent extends HomeEvent {
-  const LoadCategoriesEvent();
-}
-
 /// Event to load popular services
 class LoadPopularServicesEvent extends HomeEvent {
   final double latitude;
   final double longitude;
+  final String gender;
 
   const LoadPopularServicesEvent({
     required this.latitude,
     required this.longitude,
+    this.gender = 'unisex',
   });
 
   @override
-  List<Object?> get props => [latitude, longitude];
+  List<Object?> get props => [latitude, longitude, gender];
 }
 
 /// Event to load top salons
