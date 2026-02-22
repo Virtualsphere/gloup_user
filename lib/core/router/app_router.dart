@@ -162,6 +162,20 @@ class AppRouter {
         ),
       ],
     ),
+    
+    // Category route
+    GoRoute(
+      path: RouteNames.category,
+      name: RouteNames.category,
+      builder: (context, state) {
+        final Map<String, dynamic>? categoryData =
+            state.extra as Map<String, dynamic>?;
+        return CategoryPage(
+          categoryName: categoryData?['categoryName'] as String?,
+          categoryIndex: categoryData?['categoryIndex'] as int?,
+        );
+      },
+    ),
 
     // Salon Search route
     GoRoute(

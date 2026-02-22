@@ -9,7 +9,7 @@ class CarouselBannerModel {
   });
 
   factory CarouselBannerModel.fromJson(Map<String, dynamic> json, {String? imageBaseUrl}) {
-    final imagePath = json['image'] ?? '';
+    final imagePath = json['imageUrl'] ?? '';
     final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
         ? '$imageBaseUrl/$imagePath'
         : imagePath;
