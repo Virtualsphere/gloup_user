@@ -22,4 +22,31 @@ class RouteNames {
 
   // Salon Search
   static const String salonSearch = '/salon-search';
+
+  //profile
+  static String myProfile = 'my_profile';
+
+  //support
+  static String support = 'support';
+  static String devInfo = 'dev_info';
+  static String contact = 'contact';
+  static String privacyPolicy = 'privacy_policy';
+  static String termsConditions = 'terms_conditions';
+  static String cancellation = 'cancellation';
+  static String faqs = 'faqs';
+
+  //Invite And Earn
+  static String inviteAndEarn = 'invite_and_earn';
+
+  //Settings
+  static String settings = 'settings';
+
+  //wallet
+  static String wallet = 'wallet';
+
+  //Profile
+  static String profile = 'profile';
+  static String editProfile = 'edit_profile';
+  static String pro_Favourites = 'pro_Favourites';
+  static String reviews = 'reviews';
 }

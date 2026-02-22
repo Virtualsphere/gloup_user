@@ -8,6 +8,21 @@ import 'package:tressy/features/explore/presentation/pages/explore_page.dart';
 import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:tressy/features/profile/presentation/pages/edit_profile.dart';
+import 'package:tressy/features/profile/presentation/pages/favourites.dart';
+import 'package:tressy/features/profile/presentation/pages/invite_and_earn.dart';
+import 'package:tressy/features/profile/presentation/pages/my_profile.dart';
+import 'package:tressy/features/profile/presentation/pages/my_reviews.dart';
+import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
+import 'package:tressy/features/profile/presentation/pages/settings.dart';
+import 'package:tressy/features/profile/presentation/pages/support.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/cancellation.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/contact.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/dev_info.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/faq.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/privacy_policy.dart';
+import 'package:tressy/features/profile/presentation/pages/support_screens/terms_conditions.dart';
+import 'package:tressy/features/profile/presentation/pages/wallet.dart';
 import 'package:tressy/features/salon_details/presentation/pages/salon_details_page.dart';
 import 'package:tressy/features/slot_booking/presentation/pages/slot_booking_page.dart';
 import 'package:tressy/features/booking_confirmation/presentation/pages/review_confirm_page.dart';
@@ -153,7 +168,100 @@ class AppRouter {
       name: RouteNames.salonSearch,
       builder: (context, state) => SalonSearchPage()
     ),
-    // Add more routes here
+
+    //profile
+    GoRoute(
+      path: '/my_profile',
+      name: RouteNames.myProfile,
+      builder: (context, state) => ProfilePage(),
+    ),
+    //support
+    GoRoute(
+      path: '/support',
+      name: RouteNames.support,
+      builder: (context, state) => Support(),
+      routes: [
+        GoRoute(
+          path: 'privacy_policy',
+          name: RouteNames.privacyPolicy,
+          builder: (context, state) => PrivacyPolicy(),
+        ),
+        GoRoute(
+          path: 'terms_conditions',
+          name: RouteNames.termsConditions,
+          builder: (context, state) => TermsConditions(),
+        ),
+        GoRoute(
+          path: 'cancellation',
+          name: RouteNames.cancellation,
+          builder: (context, state) => Cancellation(),
+        ),
+        GoRoute(
+          path: 'dev_info',
+          name: RouteNames.devInfo,
+          builder: (context, state) => DevInfo(),
+        ),
+        GoRoute(
+          path: 'contact',
+          name: RouteNames.contact,
+          builder: (context, state) => Contact(),
+        ),
+        GoRoute(
+          path: 'faqs',
+          name: RouteNames.faqs,
+          builder: (context, state) => Faq(),
+        ),
+      ],
+    ),
+
+    //wallet
+    GoRoute(
+      path: '/wallet',
+      name: RouteNames.wallet,
+      builder: (context, state) => Wallet(),
+    ),
+    //Invite And Earn
+    GoRoute(
+      path: '/invite_and_earn',
+      name: RouteNames.inviteAndEarn,
+      builder: (context, state) => InviteAndEarn(),
+    ),
+
+    //Settings
+    GoRoute(
+      path: '/settings',
+      name: RouteNames.settings,
+      builder: (context, state) => Settings(),
+    ),
+
+    //Profile
+    GoRoute(
+      path: '/profile',
+      name: RouteNames.profile,
+      builder: (context, state) => MyProfile(),
+      routes: [
+        GoRoute(
+          path: 'edit_profile',
+          name: RouteNames.editProfile,
+          builder: (context, state) {
+            return EditProfile();
+          },
+        ),
+      ]
+    ),
+
+    //Favourites
+    GoRoute(
+      path: '/pro_Favourites',
+      name: RouteNames.pro_Favourites,
+      builder: (context, state) => Favourites(),
+    ),
+    //Review
+    GoRoute(
+      path: '/reviews',
+      name: RouteNames.reviews,
+      builder: (context, state) => MyReviews(),
+    ),
   ];
 }
 

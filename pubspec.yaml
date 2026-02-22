@@ -100,6 +100,16 @@ dependencies:
   # Geo Locator
   geolocator: ^14.0.2
 
+  webview_flutter: ^4.13.0
+  url_launcher: ^6.3.1
+  cached_network_image: ^3.4.1
+  image_cropper: ^9.0.0
+  share_plus: ^10.1.4
+  image_picker: ^1.1.2
+  dropdown_button2: ^2.3.9
+  country_picker: ^2.0.27
+  flutter_rating_bar: ^4.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -134,7 +144,8 @@ flutter:
     - assets/logos/
     - assets/icons/
     - assets/images/
-    - assets/splash/
+    - assets/images/svg/
+    - assets/images/png/
     - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
