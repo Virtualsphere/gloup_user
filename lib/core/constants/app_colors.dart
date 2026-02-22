@@ -81,6 +81,16 @@ class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
 
+  static const Color borderColor = Color(0xFFEDEDED);
+  static const Color disabledColor = Color(0XFFF5F5F5);
+  static const Color circleGreyColor = Color(0xFFEFECEC);
+  static const Color ratingYellowDark = Color(0xFFFFDA09);
+  static const Color ratingYellowLight = Color(0xFFFFF3AD);
+  static const Color darkRed = Color(0XFFFF0202);
+  static const Color greenText = Color(0xFF00C10D);
+  static const Color secondaryColor = Color(0xFFB5B5B5);
+  static const Color scaffoldBackground = Color(0XFFFFFFFF);
+
   // Gradient Colors - Light Theme
   static const List<Color> primaryGradient = [
     primary,
