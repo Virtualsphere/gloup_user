@@ -57,6 +57,7 @@ class HomeRepositoryImpl implements HomeRepository {
                 isFavorite: model.isFavorite,
                 serviceName: model.serviceName,
                 servicePrice: model.servicePrice,
+                address: model.address,
                 categories: model.categories,
                 languageCodes: model.languageCodes,
               ))
@@ -96,6 +97,7 @@ class HomeRepositoryImpl implements HomeRepository {
                 isFavorite: model.isFavorite,
                 serviceName: model.serviceName,
                 servicePrice: model.servicePrice,
+                address: model.address,
                 categories: model.categories,
                 languageCodes: model.languageCodes,
               ))
@@ -129,6 +131,7 @@ class HomeRepositoryImpl implements HomeRepository {
                 isFavorite: model.isFavorite,
                 serviceName: model.serviceName,
                 servicePrice: model.servicePrice,
+                address: model.address,
                 categories: model.categories,
                 languageCodes: model.languageCodes,
               ))

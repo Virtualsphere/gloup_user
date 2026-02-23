@@ -27,6 +27,7 @@ class SalonEntity extends Equatable {
   final bool isFavorite;
   final String? serviceName;
   final double? servicePrice;
+  final String? address;
   final List<String> categories;
   final List<String> languageCodes;
 
@@ -42,6 +43,7 @@ class SalonEntity extends Equatable {
     this.isFavorite = false,
     this.serviceName,
     this.servicePrice,
+    required this.address,
     required this.categories,
     required this.languageCodes,
   });
@@ -59,6 +61,7 @@ class SalonEntity extends Equatable {
         isFavorite,
         serviceName,
         servicePrice,
+        address,
         categories,
         languageCodes,
       ];

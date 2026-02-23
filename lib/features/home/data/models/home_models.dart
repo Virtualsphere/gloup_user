@@ -8,12 +8,13 @@ class CarouselBannerModel {
     required this.imageUrl,
   });
 
-  factory CarouselBannerModel.fromJson(Map<String, dynamic> json, {String? imageBaseUrl}) {
+  factory CarouselBannerModel.fromJson(Map<String, dynamic> json,
+      {String? imageBaseUrl}) {
     final imagePath = json['imageUrl'] ?? '';
     final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
         ? '$imageBaseUrl/$imagePath'
         : imagePath;
-    
+
     return CarouselBannerModel(
       id: json['id']?.toString() ?? '',
       imageUrl: fullImageUrl,
@@ -37,6 +38,7 @@ class SalonModel {
   final double rating;
   final int reviewCount;
   final double distance; // in km
+  final String address;
   final bool isPremium;
   final bool isFavorite;
   final String? serviceName;
@@ -52,6 +54,7 @@ class SalonModel {
     required this.rating,
     required this.reviewCount,
     required this.distance,
+    required this.address,
     this.isPremium = false,
     this.isFavorite = false,
     this.serviceName,
@@ -60,21 +63,23 @@ class SalonModel {
     required this.languageCodes,
   });
 
-  factory SalonModel.fromJson(Map<String, dynamic> json, {String? imageBaseUrl}) {
+  factory SalonModel.fromJson(Map<String, dynamic> json,
+      {String? imageBaseUrl}) {
     // Transform salonImage with imageBaseUrl
     final salonImagePath = json['salonImage'] ?? '';
     final fullSalonImageUrl = imageBaseUrl != null && salonImagePath.isNotEmpty
         ? '$imageBaseUrl/$salonImagePath'
         : salonImagePath;
-    
+
     // Transform images array with imageBaseUrl
     final imagesList = (json['images'] as List<dynamic>?)?.map((image) {
-      final imagePath = image?.toString() ?? '';
-      return imageBaseUrl != null && imagePath.isNotEmpty
-          ? '$imageBaseUrl/$imagePath'
-          : imagePath;
-    }).toList() ?? [];
-    
+          final imagePath = image?.toString() ?? '';
+          return imageBaseUrl != null && imagePath.isNotEmpty
+              ? '$imageBaseUrl/$imagePath'
+              : imagePath;
+        }).toList() ??
+        [];
+
     return SalonModel(
       id: json['id']?.toString() ?? '',
       salonName: json['salonName'] ?? '',
@@ -87,6 +92,7 @@ class SalonModel {
       isFavorite: json['isFavorite'] ?? false,
       serviceName: json['serviceName'],
       servicePrice: json['servicePrice']?.toDouble(),
+      address: json['address'] ?? 'Not available',
       categories: List<String>.from(json['categories'] ?? []),
       languageCodes: List<String>.from(json['languageCodes'] ?? []),
     );
@@ -105,9 +111,9 @@ class SalonModel {
       'isFavorite': isFavorite,
       'serviceName': serviceName,
       'servicePrice': servicePrice,
+      'address': address,
       'categories': categories,
       'languageCodes': languageCodes,
     };
   }
 }
-

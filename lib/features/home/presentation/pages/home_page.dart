@@ -401,6 +401,7 @@ class _HomePageState extends State<HomePage> {
                                     isFavorite: salon.isFavorite,
                                     serviceName: salon.serviceName,
                                     servicePrice: salon.servicePrice,
+                                    address: salon.address,
                                     categories: salon.categories,
                                     languageCodes: salon.languageCodes,
                                     onTap: () {
@@ -459,6 +460,7 @@ class _HomePageState extends State<HomePage> {
                                     isFavorite: salon.isFavorite,
                                     serviceName: salon.serviceName,
                                     servicePrice: salon.servicePrice,
+                                    address: salon.address,
                                     categories: salon.categories,
                                     languageCodes: salon.languageCodes,
                                     onTap: () {
@@ -535,6 +537,7 @@ class _HomePageState extends State<HomePage> {
                                       isFavorite: salon.isFavorite,
                                       serviceName: salon.serviceName,
                                       servicePrice: salon.servicePrice,
+                                      address: salon.address,
                                       categories: salon.categories,
                                       languageCodes: salon.languageCodes,
                                       isFullWidth: true,

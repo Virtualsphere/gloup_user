@@ -17,6 +17,7 @@ class SalonCard extends StatefulWidget {
   final bool isFavorite;
   final String? serviceName;
   final double? servicePrice;
+  final String? address;
   final List<String>? categories;
   final List<String>? languageCodes;
   final bool isFullWidth;
@@ -35,6 +36,7 @@ class SalonCard extends StatefulWidget {
     this.isFavorite = false,
     this.serviceName,
     this.servicePrice,
+    this.address,
     this.categories,
     this.languageCodes,
     this.isFullWidth = false,
@@ -434,11 +436,15 @@ class _SalonCardState extends State<SalonCard> {
                 size: 14,
               ),
               const SizedBox(width: 4),
-              Text(
-                'Koramangala, Bengalore',
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
-                  fontSize: AppSizes.fontS,
+              Container(
+                constraints: const BoxConstraints(maxWidth: 180),
+                child: Text(
+                  widget.address ?? '',
+                  style: context.textTheme.bodySmall?.copyWith(
+                    overflow: TextOverflow.ellipsis,
+                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    fontSize: AppSizes.fontS,
+                  ),
                 ),
               ),
               Padding(
