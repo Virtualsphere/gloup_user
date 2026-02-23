@@ -50,6 +50,5 @@ class RouteNames {
   //Profile
   static String profile = 'profile';
   static String editProfile = 'edit_profile';
-  static String pro_Favourites = 'pro_Favourites';
   static String reviews = 'reviews';
 }

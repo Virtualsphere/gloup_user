@@ -9,10 +9,9 @@ import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:tressy/features/profile/presentation/pages/edit_profile.dart';
-import 'package:tressy/features/profile/presentation/pages/favourites.dart';
 import 'package:tressy/features/profile/presentation/pages/invite_and_earn.dart';
 import 'package:tressy/features/profile/presentation/pages/my_profile.dart';
-import 'package:tressy/features/profile/presentation/pages/my_reviews.dart';
+import 'package:tressy/features/my_reviews/my_reviews.dart';
 import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
 import 'package:tressy/features/profile/presentation/pages/settings.dart';
 import 'package:tressy/features/profile/presentation/pages/support.dart';
@@ -265,12 +264,6 @@ class AppRouter {
       ]
     ),
 
-    //Favourites
-    GoRoute(
-      path: '/pro_Favourites',
-      name: RouteNames.pro_Favourites,
-      builder: (context, state) => Favourites(),
-    ),
     //Review
     GoRoute(
       path: '/reviews',

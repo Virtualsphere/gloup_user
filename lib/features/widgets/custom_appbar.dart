@@ -13,7 +13,7 @@ class ActionBar extends StatelessWidget {
     this.isClearButton = false,
     this.isBackButtonDecoration = false,
     this.actionWidget,
-    this.actionBarHeight = 120,
+    this.actionBarHeight = 90,
   });
 
   final String title;
@@ -23,65 +23,34 @@ class ActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Container(
-      height: actionWidget != null ? 140 : actionBarHeight,
-      width: size.width,
-      color: AppColors.background,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (isBackButton)
-                GestureDetector(
-                  onTap: () {
-                    context.pop();
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 37,
-                    decoration: isBackButtonDecoration
-                        ? BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: .2),
-                          blurRadius: 20,
-                          spreadRadius: 0,
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: AppColors.background,
+      centerTitle: false,
+      elevation: 0,
+      leading: isBackButton
+          ? Padding(
+              padding: const EdgeInsets.only(left: 16.0,top: 10.0,bottom: 10.0),
+              child: GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  height: 35,
+                  width: 37,
+                  decoration: isBackButtonDecoration
+                      ? BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          /*boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: .2),
+                              blurRadius: 10,
+                            )
+                          ],*/
                         )
-                      ],
-                    )
-                        : BoxDecoration(color: AppColors.surfaceDark),
-                    child: Align(
-                      alignment: isBackButtonDecoration
-                          ? Alignment.center
-                          : Alignment.centerLeft,
-                      child: SvgPicture.asset(
-                        AppIcons.arrowBack,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.primary,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              if (isClearButton)
-                GestureDetector(
-                  onTap: () {
-                    context.pop();
-                  },
-                  child: Container(
-                    height: 22,
-                    width: 22,
-                    alignment: Alignment.centerRight,
+                      : const BoxDecoration(),
+                  child: Center(
                     child: SvgPicture.asset(
-                      AppIcons.cancel,
+                      AppIcons.arrowBack,
                       colorFilter: ColorFilter.mode(
                         AppColors.primary,
                         BlendMode.srcIn,
@@ -89,32 +58,24 @@ class ActionBar extends StatelessWidget {
                     ),
                   ),
                 ),
-            ],
-          ),
-          if (isBackButton)
-            SizedBox(
-                height:
-                title.length > 20 ? 10 : (actionWidget != null ? 10 : 20))
-          else
-            SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              BodyTextColors(
-                title: title,
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primary,
-                isBodoniModa: false,
               ),
-              actionWidget != null
-                  ? actionWidget!
-                  : SizedBox(height: 2, width: 2)
-            ],
-          ),
-          SizedBox(height: 20),
-        ],
+            )
+          : null,
+      title: BodyTextColors(
+        title: title,
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+        color: AppColors.primary,
+        isBodoniModa: false,
       ),
+      actions: actionWidget != null
+          ? [
+              Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: actionWidget!,
+              )
+            ]
+          : null,
     );
   }
 }
