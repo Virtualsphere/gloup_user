@@ -337,11 +337,14 @@ class _MyProfileState extends State<MyProfile> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: CustomFullButton(
-          title: 'Update Profile',
-          onTap: () async {},
+      bottomNavigationBar: Container(
+        color: AppColors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+          child: CustomFullButton(
+            title: 'Update Profile',
+            onTap: () async {},
+          ),
         ),
       ),
     );

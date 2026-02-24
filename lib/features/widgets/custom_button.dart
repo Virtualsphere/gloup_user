@@ -39,7 +39,7 @@ class CustomFullButton extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: isDisabled ? AppColors.secondary : titleColor,
+              color: isDisabled ? AppColors.textSecondaryDark : titleColor,
             ),
           ),
         ),

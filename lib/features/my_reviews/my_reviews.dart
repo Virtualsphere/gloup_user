@@ -289,7 +289,7 @@ class MyReviewContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'reviewData.reviewDescription',
+                        '${reviewData.reviewDescription}',
                         style: TextStyle(
                           fontSize: 15.0,
                           fontWeight: FontWeight.w400,
