@@ -288,7 +288,11 @@ class _HomePageState extends State<HomePage> {
                                 Spacer(),
                                 // Search bar below location
                                 SearchBarWidget(
-                                    onTap: () {}, onSettingsTap: () {}),
+                                    onTap: () {
+                                      GoRouter.of(context).push(
+                                        RouteNames.salonSearch ,
+                                      );
+                                    }, onSettingsTap: () {}),
                                 AppSizes.heightM,
                                 if (state.carouselBanners.isNotEmpty)
                                   Row(
