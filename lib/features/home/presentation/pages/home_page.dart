@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
@@ -16,6 +18,7 @@ import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
+import 'package:tressy/features/location/presentation/pages/location_page.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 
@@ -33,14 +36,123 @@ class _HomePageState extends State<HomePage> {
   String? _selectedGender; // No default filter
   HomeBloc? _homeBloc;
 
-  // Chennai coordinates
-  static const double _latitude = 13.038;
-  static const double _longitude = 80.22292;
+  // Default Chennai coordinates (fallback)
+  double _latitude = 13.038;
+  double _longitude = 80.22292;
+  String _locationCity = '';
+  String _locationArea = '';
+  bool _isLoadingLocation = true;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _locationCity = 'Mumbai';
+          _locationArea = 'Andheri West';
+          _isLoadingLocation = false;
+        });
+        debugPrint('Location services are disabled');
+        return;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            _locationCity = 'Mumbai';
+            _locationArea = 'Andheri West';
+            _isLoadingLocation = false;
+          });
+          debugPrint('Location permission denied');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _locationCity = 'Mumbai';
+          _locationArea = 'Andheri West';
+          _isLoadingLocation = false;
+        });
+        debugPrint('Location permission denied forever');
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      debugPrint('Got position: ${position.latitude}, ${position.longitude}');
+
+      // Update coordinates
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+      });
+
+      // Get address from coordinates using reverse geocoding
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
+        debugPrint('Placemarks count: ${placemarks.length}');
+
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          debugPrint('Locality: ${place.locality}');
+          debugPrint('SubLocality: ${place.subLocality}');
+          debugPrint('AdministrativeArea: ${place.administrativeArea}');
+          
+          setState(() {
+            _locationCity = place.locality ?? place.administrativeArea ?? 'Unknown City';
+            _locationArea = place.subLocality ?? place.thoroughfare ?? 'Unknown Area';
+            _isLoadingLocation = false;
+          });
+        } else {
+          setState(() {
+            _locationCity = 'Mumbai';
+            _locationArea = 'Andheri West';
+            _isLoadingLocation = false;
+          });
+        }
+      } catch (e) {
+        debugPrint('Error getting address: $e');
+        setState(() {
+          _locationCity = 'Mumbai';
+          _locationArea = 'Andheri West';
+          _isLoadingLocation = false;
+        });
+      }
+
+      // Reload home data with new coordinates
+      _homeBloc?.add(LoadAllHomeDataEvent(
+        latitude: _latitude,
+        longitude: _longitude,
+      ));
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+      setState(() {
+        _locationCity = 'Mumbai';
+        _locationArea = 'Andheri West';
+        _isLoadingLocation = false;
+      });
+    }
   }
 
   void _onGenderChanged(String gender) {
@@ -234,11 +346,69 @@ class _HomePageState extends State<HomePage> {
                                 // Location and profile row
                                 Row(
                                   children: [
-                                    LocationBadge(
-                                      location: 'Mumbai',
-                                      addressLine2: 'Andheri West',
-                                      onTap: () {},
-                                    ),
+                                    _isLoadingLocation
+                                        ? Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppSizes.paddingM,
+                                              vertical: AppSizes.paddingS,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.white.withValues(alpha: 0.95),
+                                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SizedBox(
+                                                  width: 12,
+                                                  height: 12,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                                      AppColors.primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Getting location...',
+                                                  style: context.textTheme.bodySmall?.copyWith(
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : LocationBadge(
+                                            location: _locationCity,
+                                            addressLine2: _locationArea,
+                                            onTap: () async {
+                                              // Navigate to location page
+                                              final result = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => const LocationPage(),
+                                                ),
+                                              );
+                                              
+                                              // Update location if user selected one
+                                              if (result != null && result is Map<String, dynamic>) {
+                                                setState(() {
+                                                  _locationCity = result['city'] ?? _locationCity;
+                                                  _locationArea = result['area'] ?? _locationArea;
+                                                  _latitude = result['latitude'] ?? _latitude;
+                                                  _longitude = result['longitude'] ?? _longitude;
+                                                });
+                                                
+                                                // Reload home data with new location
+                                                _homeBloc?.add(LoadAllHomeDataEvent(
+                                                  latitude: _latitude,
+                                                  longitude: _longitude,
+                                                ));
+                                              }
+                                            },
+                                          ),
                                     const Spacer(),
                                     InkWell(
                                       onTap: () {
