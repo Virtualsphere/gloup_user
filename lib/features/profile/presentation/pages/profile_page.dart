@@ -32,8 +32,24 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Expanded ensures the text column takes remaining space
-                    // and never pushes the avatar off screen
+                    SizedBox(
+                      height: 60, // same height as avatar
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () => context.pop(),
+                          child: SvgPicture.asset(
+                            AppIcons.arrowBack,
+                            height: 20.0,
+                            width: 20.0,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.primary,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20.0,),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,8 +59,8 @@ class ProfilePage extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
                               color: AppColors.textPrimary,
                             ),
                           ),
@@ -111,13 +127,6 @@ class ProfilePage extends StatelessWidget {
                       label: 'Profile',
                       onTap: () {
                         context.pushNamed(RouteNames.profile);
-                      },
-                    ),
-                    _MenuItem(
-                      icon: Icons.favorite_border,
-                      label: 'Favorites',
-                      onTap: () {
-                        context.pushNamed(RouteNames.pro_Favourites);
                       },
                     ),
                     _MenuItem(

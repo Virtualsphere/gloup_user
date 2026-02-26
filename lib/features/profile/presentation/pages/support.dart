@@ -3,11 +3,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_images.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/core/extensions/string_extensions.dart';
 import 'package:tressy/core/router/route_names.dart';
-import 'package:tressy/features/widgets/custom_appbar.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
 
 class Support extends StatelessWidget {
   const Support({super.key});
@@ -16,15 +17,19 @@ class Support extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: ProfileAppBar(
+        title: "Support",
+        centerTitle: false,
+        onBack: () {
+          Navigator.of(context).pop();
+        },
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ActionBar(
-                title: 'Support',
-                isBackButtonDecoration: true,
-              ),
+              const SizedBox(height: AppSizes.paddingL),
               Container(
                 padding: EdgeInsets.only(left: 16.0,top: 10.0,bottom: 10.0),
                 decoration: Themes.borderDecoration(),

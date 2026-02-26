@@ -7,11 +7,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
-import 'package:tressy/features/widgets/custom_appbar.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
 import 'package:tressy/features/widgets/custom_text_field.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
 
 class InviteAndEarn extends StatefulWidget {
   const InviteAndEarn({super.key});
@@ -38,150 +36,159 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(children: [
-          ActionBar(
-            title: 'Invite & Earn',
-            isBackButtonDecoration: true,
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(15),
-              children: [
-                SvgPicture.asset(AppIcons.inviteAndEarn),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text:
-                            'Invite your friends and both of you get exclusive salon discounts up to ',
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.circleGreyColor,
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: ProfileAppBar(
+          title: "Invite & Earn",
+          centerTitle: false,
+          onBack: () {
+            Navigator.of(context).pop();
+          }),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(15),
+                children: [
+                  SvgPicture.asset(AppIcons.inviteAndEarn),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text:
+                              'Invite your friends and both of you get exclusive salon discounts up to ',
+                          style: GoogleFonts.bodoniModa(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primary,
+                          ),
                         ),
-                      ),
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.rupeeNormal,
-                              height: 16,
-                              width: 16,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.primary,
-                                BlendMode.srcIn,
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.rupeeNormal,
+                                height: 16,
+                                width: 16,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.primary,
+                                  BlendMode.srcIn,
+                                ),
                               ),
-                            ),
+                              HeaderTextBlack(
+                                title: '199! ',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                isBodoniModa: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' Because good hair days are better together.',
+                          style: GoogleFonts.bodoniModa(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  HeaderTextBlack(
+                    title: 'Share your code',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: DottedBorderContainer(
+                      borderColor: AppColors.black,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15, right: 5),
+                        child: Row(
+                          children: [
                             HeaderTextBlack(
-                              title: '199! ',
-                              fontSize: 14,
+                              title: 'referralCode',
+                              fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              isBodoniModa: true,
                             ),
+                            Spacer(),
+                            IconButton(
+                              onPressed: () async {
+                                await Clipboard.setData(
+                                  ClipboardData(
+                                    text: 'referralCode',
+                                  ),
+                                );
+                              },
+                              icon: SvgPicture.asset(
+                                AppIcons.copy,
+                              ),
+                            )
                           ],
                         ),
                       ),
-                      TextSpan(
-                        text: ' Because good hair days are better together.',
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.circleGreyColor,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                HeaderTextBlack(
-                  title: 'Share your code',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-                SizedBox(height: 15),
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: DottedBorderContainer(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15, right: 5),
-                      child: Row(
+                  SizedBox(height: 30),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.white,
+                    ),
+                    padding: EdgeInsets.all(10),
+                    child: Form(
+                      key: referralFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           HeaderTextBlack(
-                            title: 'referralCode',
+                            title: 'Enter your friend’s referral code below',
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                           ),
-                          Spacer(),
-                          IconButton(
-                            onPressed: () async {
-                              await Clipboard.setData(
-                                ClipboardData(
-                                  text: 'referralCode',
-                                ),
-                              );
+                          SizedBox(height: 20),
+                          CustomTextField(
+                            controller: referralCodeController,
+                            hintText: 'e.g. SALON123',
+                            inputType: TextInputType.text,
+                            inputAction: TextInputAction.done,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter referral code';
+                              }
+                              return null;
                             },
-                            icon: SvgPicture.asset(
-                              AppIcons.copy,
-                            ),
+                          ),
+                          SizedBox(height: 20),
+                          CustomOutlineButton(
+                            title: 'Apply & Claim',
+                            onTap: () async {
+                              if (referralFormKey.currentState!.validate()) {}
+                            },
                           )
                         ],
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 30),
-                Container(
-                  decoration: Themes.dropDownBoxDecoration(radius: 10),
-                  padding: EdgeInsets.all(10),
-                  child: Form(
-                    key: referralFormKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        HeaderTextBlack(
-                          title: 'Enter your friend’s referral code below',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        SizedBox(height: 20),
-                        CustomTextField(
-                          controller: referralCodeController,
-                          hintText: 'e.g. SALON123',
-                          inputType: TextInputType.text,
-                          inputAction: TextInputAction.done,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter referral code';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        CustomOutlineButton(
-                          title: 'Apply & Claim',
-                          onTap: () async {},
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
-          ),
-        ]),
-        bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               child: CustomFullButton(

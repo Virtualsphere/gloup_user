@@ -6,11 +6,10 @@ import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
-import 'package:tressy/features/widgets/custom_appbar.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
 import 'package:tressy/features/widgets/custom_snackbar.dart';
 import 'package:tressy/features/widgets/custom_text_field.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
 
 class Wallet extends StatefulWidget {
   const Wallet({super.key});
@@ -37,60 +36,60 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
-            ActionBar(
-              title: 'My Wallet',
-              isBackButtonDecoration: true,
-            ),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                children: [
-                  WalletBalanceContainer(
-                    amount: '500.00',
-                  ),
-                  SizedBox(height: 10),
-                  HeaderTextBlack(
-                    title: 'Transactions',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    isBodoniModa: false,
-                  ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 150),
-                    child: NoDataText(title: 'No data found'),
-                  ),
-                ],
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: ProfileAppBar(
+        title: "My Wallet",
+        centerTitle: false,
+        onBack: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              WalletBalanceContainer(
+                amount: '500.00',
               ),
-            )
-          ],
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: CustomFullButton(
-            title: '+ Add Money',
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom,
-                      ),
-                      child: DepositBottomSheet(),
-                    ),
-                  );
-                },
-              );
-            },
+              SizedBox(height: 15.0),
+              HeaderTextBlack(
+                title: 'Transactions',
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                isBodoniModa: false,
+              ),
+              Expanded(
+                child: NoDataText(title: 'No data found'),
+              )
+            ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        color: AppColors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+        child: CustomFullButton(
+          title: '+ Add Money',
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) {
+                return SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: DepositBottomSheet(),
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );
