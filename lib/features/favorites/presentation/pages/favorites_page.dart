@@ -1,15 +1,10 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/enums.dart';
-import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
-import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
-import 'package:tressy/features/widgets/custom_image.dart';
-import 'package:tressy/features/widgets/custom_indicator.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
-import 'package:tressy/features/widgets/custom_snackbar.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
+import 'package:tressy/core/constants/app_icons.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/widgets/explore_salon_card.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -19,7 +14,9 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  bool favotites = false;
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -27,271 +24,327 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
+  // Mock favorite salons data
+  final List<Map<String, dynamic>> _favoriteSalons = [
+    {
+      'name': 'Elite Hair Studio',
+      'image': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
+        'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
+      ],
+      'rating': 4.8,
+      'reviewCount': 234,
+      'distance': 2.5,
+      'address': 'Koramangala, Bangalore',
+      'isPremium': true,
+      'isFavorite': true,
+      'serviceName': 'Haircut',
+      'servicePrice': 299.0,
+      'categories': ['Hair', 'Beard', 'Spa'],
+      'languageCodes': ['en', 'hi', 'kn'],
+    },
+    {
+      'name': 'Beauty Lounge',
+      'image': 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
+      ],
+      'rating': 4.6,
+      'reviewCount': 189,
+      'distance': 3.2,
+      'address': 'Indiranagar, Bangalore',
+      'isPremium': false,
+      'isFavorite': true,
+      'serviceName': 'Facial',
+      'servicePrice': 499.0,
+      'categories': ['Facial', 'Makeup'],
+      'languageCodes': ['en', 'ta'],
+    },
+    {
+      'name': 'Chic Cuts',
+      'image': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400',
+        'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
+      ],
+      'rating': 4.7,
+      'reviewCount': 278,
+      'distance': 2.9,
+      'address': 'HSR Layout, Bangalore',
+      'isPremium': true,
+      'isFavorite': true,
+      'serviceName': 'Styling',
+      'servicePrice': 399.0,
+      'categories': ['Hair', 'Color'],
+      'languageCodes': ['en', 'te', 'kn'],
+    },
+    {
+      'name': 'Glow Spa',
+      'image': 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
+      ],
+      'rating': 4.9,
+      'reviewCount': 287,
+      'distance': 1.5,
+      'address': 'Rajajinagar, Bangalore',
+      'isPremium': true,
+      'isFavorite': true,
+      'serviceName': 'Facial',
+      'servicePrice': 699.0,
+      'categories': ['Facial', 'Spa'],
+      'languageCodes': ['en', 'hi', 'ta'],
+    },
+    {
+      'name': 'Premium Salon',
+      'image': 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400',
+        'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400',
+      ],
+      'rating': 4.7,
+      'reviewCount': 245,
+      'distance': 2.8,
+      'address': 'Banashankari, Bangalore',
+      'isPremium': true,
+      'isFavorite': true,
+      'serviceName': 'Spa',
+      'servicePrice': 899.0,
+      'categories': ['Spa', 'Massage'],
+      'languageCodes': ['en', 'ml', 'kn'],
+    },
+    {
+      'name': 'Elite Grooming',
+      'image': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400',
+      'images': [
+        'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400',
+        'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400',
+      ],
+      'rating': 4.9,
+      'reviewCount': 356,
+      'distance': 1.2,
+      'address': 'Sadashivanagar, Bangalore',
+      'isPremium': true,
+      'isFavorite': true,
+      'serviceName': 'Grooming',
+      'servicePrice': 999.0,
+      'categories': ['Hair', 'Beard', 'Spa'],
+      'languageCodes': ['en', 'hi', 'kn', 'ta'],
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
-            BodyTextColors(
-              title: 'Favorites',
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-              isBodoniModa: false,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 16.0, top: 15.0),
-              child: SearchBarWidget(
-                onTap: () {},
-                onSettingsTap: () {},
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: context.colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: context.colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        toolbarHeight: AppSizes.appBarHeight,
+        shape: Border(
+          bottom: BorderSide(
+            color: AppColors.border,
+            width: AppSizes.borderWidthThin,
+          ),
+        ),
+        title: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSizes.paddingS,
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/ic_search.svg',
+                width: AppSizes.iconS,
+                height: AppSizes.iconS,
+                colorFilter: ColorFilter.mode(
+                  isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            Expanded(
-              child: favotites
-                  ? NoDataImageWidget()
-                  : ListView.builder(
-                      itemCount: 2,
-                      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: SalonCard(
-                            salonName: 'Royal Beauty',
-                            salonImage: 'https://i.pravatar.cc/300',
-                            images: ['https://i.pravatar.cc/300','https://i.pravatar.cc/300'],
-                            rating: 4.5,
-                            reviewCount: 100,
-                            distance: 3,
-                            isPremium: true,
-                            isFavorite: true,
-                            serviceName: 'Royal Bueaty',
-                            servicePrice: 100,
-                            categories: [
-                              'test','value','amount'
-                            ],
-                            languageCodes: ['A'],
-                            onTap: () {},
-                          )
-                        );
-                      },
+              const SizedBox(width: AppSizes.spaceS),
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search favorites...',
+                    hintStyle: context.textTheme.bodyMedium?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textHintDark
+                          : AppColors.textHint,
+                      fontSize: AppSizes.fontS,
                     ),
-            ),
-          ],
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    filled: false,
+                  ),
+                  style: context.textTheme.bodyMedium,
+                  onChanged: (value) {
+                    // Handle search
+                  },
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  // Handle settings tap
+                },
+                borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.primaryDark.withValues(alpha: 0.05)
+                        : AppColors.primary.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: SvgPicture.asset(
+                    AppIcons.icSettings,
+                    width: AppSizes.iconS,
+                    height: AppSizes.iconS,
+                    colorFilter: ColorFilter.mode(
+                      isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
 
-class SalonData {
-  final int storeId;
-  final String name;
-  final String district;
-  final double averagerating;
-  final double distanceM;
-  final List<String> images;
-
-  SalonData({
-    required this.storeId,
-    required this.name,
-    required this.district,
-    required this.averagerating,
-    required this.distanceM,
-    required this.images,
-  });
-}
-
-class SalonContainerHorizontal extends StatefulWidget {
-  const SalonContainerHorizontal({
-    super.key,
-    required this.salonData,
-    required this.onTap,
-    this.favouriteOnTap,
-    this.itemIndex,
-    this.isMaps,
-    this.isFavouriteIcon = false,
-    this.isFavourite = false,
-  });
-
-  final SalonData salonData;
-  final int? itemIndex;
-  final bool? isMaps;
-  final VoidCallback? onTap, favouriteOnTap;
-  final bool isFavouriteIcon, isFavourite;
-
-  @override
-  State<SalonContainerHorizontal> createState() =>
-      _SalonContainerHorizontalState();
-}
-
-class _SalonContainerHorizontalState extends State<SalonContainerHorizontal> {
-  int currentIndex = 0;
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
-
-  @override
-  Widget build(BuildContext context) {
-    final List<String> imageUrl = widget.salonData.images;
-
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
-        decoration: Themes.dropDownBoxDecoration(radius: 10),
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //image part
-            Container(
-              height: widget.isMaps != true ? 185 : 165,
-              width: MediaQuery.of(context).size.width * 0.95,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
+          // Section Title
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //if no images
-                  if (imageUrl.isEmpty)
-                    NoDataImageWidget()
-                  else
-                    CarouselSlider(
-                      carouselController: _carouselController,
-                      options: CarouselOptions(
-                        viewportFraction: 1,
-                        autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 4),
-                        enlargeCenterPage: true,
-                        enableInfiniteScroll: true,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            currentIndex = index;
-                          });
-                        },
-                      ),
-                      items: imageUrl.map((image) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CustomNetworkImage(
-                            imageUrl: image,
-                            imageType: ImageType.images,
-                          ),
-                        );
-                      }).toList(),
+                  Text(
+                    'My Favorites',
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
                     ),
-
-                  //indicator
-                  if (imageUrl.isNotEmpty)
-                    Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: CustomIndicator(
-                        activeColor: AppColors.white,
-                        inActiveColor: AppColors.circleGreyColor,
-                        currentIndex: currentIndex,
-                        itemCount: imageUrl.length,
-                        activeWidth: 17,
-                        inactiveWidth: 12,
-                        borderHeight: 2.5,
-                      ),
+                  ),
+                  const SizedBox(height: AppSizes.spaceXS),
+                  Text(
+                    '${_favoriteSalons.length} saved salons',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-
-                  //favourite icon
-                  if (widget.isFavouriteIcon)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: InkWell(
-                        onTap: widget.favouriteOnTap,
-                        child: Container(
-                          height: 30,
-                          width: 42,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Center(
-                            child: widget.isFavourite
-                                ? const Icon(
-                                    Icons.favorite,
-                                    color: AppColors.darkRed,
-                                    size: 18,
-                                  )
-                                : const Icon(
-                                    Icons.favorite_border,
-                                    size: 18,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  ),
                 ],
               ),
             ),
+          ),
 
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // name + rating
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
+
+          // Empty state or Salon List
+          if (_favoriteSalons.isEmpty)
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Text(
-                        widget.salonData.name,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Icon(
+                      Icons.favorite_border,
+                      size: 80,
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark.withValues(alpha: 0.3)
+                          : AppColors.textSecondary.withValues(alpha: 0.3),
                     ),
-                    Row(
-                      children: [
-                        const Icon(Icons.star,
-                            color: AppColors.ratingYellowDark, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          widget.salonData.averagerating.toStringAsFixed(1),
-                          style: const TextStyle(fontSize: 12),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                //location
-                Row(
-                  children: [
-                    const Icon(Icons.location_on,
-                        size: 14, color: AppColors.circleGreyColor),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Text(
-                        widget.salonData.district,
-                        style: const TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    const SizedBox(height: AppSizes.spaceL),
                     Text(
-                      '${((widget.salonData.distanceM) / 1000).toStringAsFixed(1)} km away',
-                      style: const TextStyle(fontSize: 13),
+                      'No favorites yet',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: AppSizes.spaceS),
+                    Text(
+                      'Start adding salons to your favorites',
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
+                            : AppColors.textSecondary.withValues(alpha: 0.7),
+                      ),
                     ),
                   ],
                 ),
-              ],
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final salon = _favoriteSalons[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                      child: SizedBox(
+                        height: 140,
+                        child: ExploreSalonCard(
+                          salonName: salon['name'],
+                          salonImage: salon['image'],
+                          images: List<String>.from(salon['images']),
+                          rating: salon['rating'],
+                          reviewCount: salon['reviewCount'],
+                          distance: salon['distance'],
+                          isPremium: salon['isPremium'],
+                          isFavorite: salon['isFavorite'],
+                          serviceName: salon['serviceName'],
+                          servicePrice: salon['servicePrice'],
+                          address: salon['address'],
+                          categories: salon['categories'] != null
+                              ? List<String>.from(salon['categories'])
+                              : null,
+                          languageCodes: salon['languageCodes'] != null
+                              ? List<String>.from(salon['languageCodes'])
+                              : null,
+                          onTap: () {
+                            // Navigate to salon details
+                          },
+                          onFavoriteToggle: () {
+                            // Handle favorite toggle - remove from favorites
+                            setState(() {
+                              _favoriteSalons.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: _favoriteSalons.length,
+                ),
+              ),
             ),
-          ],
-        ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
+        ],
       ),
     );
   }

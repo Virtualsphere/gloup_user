@@ -371,8 +371,9 @@ class _ExplorePageState extends State<ExplorePage> {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDarkMode ? AppColors.backgroundDark : AppColors.background,
+    backgroundColor: context.colorScheme.surface,
+      // backgroundColor:
+      //     isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
