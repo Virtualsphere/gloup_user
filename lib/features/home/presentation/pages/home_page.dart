@@ -34,8 +34,8 @@ class _HomePageState extends State<HomePage> {
   HomeBloc? _homeBloc;
 
   // Chennai coordinates
-  static const double _latitude = 13.0827;
-  static const double _longitude = 80.2707;
+  static const double _latitude = 13.038;
+  static const double _longitude = 80.22292;
 
   @override
   void initState() {

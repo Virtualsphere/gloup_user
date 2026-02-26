@@ -422,180 +422,178 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-          backgroundColor: context.colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          shape: Border(
-            bottom: BorderSide(
-              color: AppColors.border,
-              width: AppSizes.borderWidthThin,
-            ),
-          ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: context.colorScheme.onSurface,
-            ),
-            onPressed: () => GoRouter.of(context).pop(),
-          ),
-          title: Text(
-            _selectedCategoryName,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+    return Scaffold(
+        appBar: AppBar(
+        backgroundColor: context.colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: Border(
+          bottom: BorderSide(
+            color: AppColors.border,
+            width: AppSizes.borderWidthThin,
           ),
         ),
-        body: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            // Sticky Category Section
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _CategorySectionDelegate(
-                selectedCategoryIndex: _selectedCategoryIndex,
-                onCategoryTap: _onCategoryTap,
-              ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: context.colorScheme.onSurface,
+          ),
+          onPressed: () => GoRouter.of(context).pop(),
+        ),
+        title: Text(
+          _selectedCategoryName,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          // Sticky Category Section
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _CategorySectionDelegate(
+              selectedCategoryIndex: _selectedCategoryIndex,
+              onCategoryTap: _onCategoryTap,
             ),
-      
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
-      
-            // Search Input
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingM,
-                ),
-                child: _buildSearchInput(context),
+          ),
+    
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+    
+          // Search Input
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingM,
               ),
+              child: _buildSearchInput(context),
             ),
-      
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
-      
-            // Section Title
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Salons offering $_selectedCategoryName',
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppSizes.spaceS),
-                    Text(
-                      'Browse through our curated list of salons',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: context.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-      
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
-      
-            // Salon List (1 column)
-            SliverPadding(
+          ),
+    
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+    
+          // Section Title
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final salon = _displayedSalons[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
-                      child: SizedBox(
-                        height: 140,
-                        child: ExploreSalonCard(
-                          salonName: salon['name'],
-                          salonImage: salon['image'],
-                          images: List<String>.from(salon['images']),
-                          rating: salon['rating'],
-                          reviewCount: salon['reviewCount'],
-                          distance: salon['distance'],
-                          isPremium: salon['isPremium'],
-                          isFavorite: salon['isFavorite'],
-                          serviceName: salon['serviceName'],
-                          servicePrice: salon['servicePrice'],
-                          address: salon['location'],
-                          categories: salon['categories'] != null 
-                              ? List<String>.from(salon['categories']) 
-                              : null,
-                          languageCodes: salon['languageCodes'] != null 
-                              ? List<String>.from(salon['languageCodes']) 
-                              : null,
-                          onTap: () {
-                            // Navigate to salon details
-                          },
-                          onFavoriteToggle: () {
-                            // Handle favorite toggle
-                          },
-                        ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Salons offering $_selectedCategoryName',
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSizes.spaceS),
+                  Text(
+                    'Browse through our curated list of salons',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+    
+          // Salon List (1 column)
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final salon = _displayedSalons[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
+                    child: SizedBox(
+                      height: 140,
+                      child: ExploreSalonCard(
+                        salonName: salon['name'],
+                        salonImage: salon['image'],
+                        images: List<String>.from(salon['images']),
+                        rating: salon['rating'],
+                        reviewCount: salon['reviewCount'],
+                        distance: salon['distance'],
+                        isPremium: salon['isPremium'],
+                        isFavorite: salon['isFavorite'],
+                        serviceName: salon['serviceName'],
+                        servicePrice: salon['servicePrice'],
+                        address: salon['location'],
+                        categories: salon['categories'] != null 
+                            ? List<String>.from(salon['categories']) 
+                            : null,
+                        languageCodes: salon['languageCodes'] != null 
+                            ? List<String>.from(salon['languageCodes']) 
+                            : null,
+                        onTap: () {
+                          // Navigate to salon details
+                        },
+                        onFavoriteToggle: () {
+                          // Handle favorite toggle
+                        },
                       ),
-                    );
-                  },
-                  childCount: _displayedSalons.length,
+                    ),
+                  );
+                },
+                childCount: _displayedSalons.length,
+              ),
+            ),
+          ),
+    
+          // Loading indicator at bottom
+          if (_isLoadingMore)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSizes.paddingL),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSizes.paddingM),
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-      
-            // Loading indicator at bottom
-            if (_isLoadingMore)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(AppSizes.paddingM),
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                        ),
-                      ),
+    
+          // End of list message
+          if (!_hasMoreData && _displayedSalons.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSizes.paddingL),
+                child: Center(
+                  child: Text(
+                    'No more salons to load',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
               ),
-      
-            // End of list message
-            if (!_hasMoreData && _displayedSalons.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  child: Center(
-                    child: Text(
-                      'No more salons to load',
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.onSurface.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-      
-            // Bottom spacing
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
-          ],
-        ),
+            ),
+    
+          // Bottom spacing
+          const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
+        ],
       ),
     );
   }

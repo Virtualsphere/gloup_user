@@ -9,6 +9,8 @@ import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
+import 'dart:ui' as ui;
+import 'package:http/http.dart' as http;
 
 class SalonSearchPage extends StatefulWidget {
   const SalonSearchPage({super.key});
@@ -23,10 +25,10 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
   final DraggableScrollableController _draggableController = DraggableScrollableController();
   final Set<Marker> _markers = {};
 
-  // Default location - Chennai, India
+  // Default location - Chennai area (13.038, 80.22292)
   CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(13.0827, 80.2707), // Chennai coordinates
-    zoom: 14.0,
+    target: LatLng(13.038, 80.22292),
+    zoom: 15.0,
   );
 
   // Sample salon data with Chennai-based locations
@@ -115,41 +117,164 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
     _createMarkers();
   }
 
-  void _createMarkers() {
-    // Chennai-based salon locations
+  Future<void> _createMarkers() async {
+    // Chennai-based salon locations - focused around 13.038, 80.22292
     final salonLocations = [
-      {'name': 'Glam Studio & Spa', 'lat': 13.0827, 'lng': 80.2707},
-      {'name': 'Men\'s Grooming Lounge', 'lat': 13.0878, 'lng': 80.2785},
-      {'name': 'Luxury Unisex Salon', 'lat': 13.0780, 'lng': 80.2650},
-      {'name': 'Classic Barber Shop', 'lat': 13.0900, 'lng': 80.2820},
-      {'name': 'Beauty Paradise Salon', 'lat': 13.0750, 'lng': 80.2600},
+      {'name': 'Glam Studio & Spa', 'lat': 13.038, 'lng': 80.22292},
+      {'name': 'Men\'s Grooming Lounge', 'lat': 13.0395, 'lng': 80.2245},
+      {'name': 'Luxury Unisex Salon', 'lat': 13.0365, 'lng': 80.2215},
+      {'name': 'Classic Barber Shop', 'lat': 13.0405, 'lng': 80.2250},
+      {'name': 'Beauty Paradise Salon', 'lat': 13.0355, 'lng': 80.2200},
     ];
 
+    final markers = <Marker>{};
+    
+    for (var i = 0; i < salonLocations.length; i++) {
+      final location = salonLocations[i];
+      final salon = _salonData[i];
+      
+      // Create custom marker icon with salon image
+      final BitmapDescriptor markerIcon = await _createCustomMarkerIcon(
+        salon['imageUrl'],
+        salon['isPremium'],
+      );
+      
+      markers.add(
+        Marker(
+          markerId: MarkerId('salon_$i'),
+          position: LatLng(location['lat'] as double, location['lng'] as double),
+          infoWindow: InfoWindow(
+            title: location['name'] as String,
+            snippet: '${salon['rating']} ⭐ • ${salon['distance']} km',
+          ),
+          icon: markerIcon,
+          onTap: () {
+            // Handle marker tap - could show salon details or scroll to card
+            debugPrint('Tapped marker: ${location['name']}');
+          },
+        ),
+      );
+    }
+    
     setState(() {
       _markers.clear();
-      for (var i = 0; i < salonLocations.length; i++) {
-        final location = salonLocations[i];
-        final salon = _salonData[i];
-        
-        _markers.add(
-          Marker(
-            markerId: MarkerId('salon_$i'),
-            position: LatLng(location['lat'] as double, location['lng'] as double),
-            infoWindow: InfoWindow(
-              title: location['name'] as String,
-              snippet: '${salon['rating']} ⭐ • ${salon['distance']} km',
-            ),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              salon['isPremium'] ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueRed,
-            ),
-            onTap: () {
-              // Handle marker tap - could show salon details or scroll to card
-              debugPrint('Tapped marker: ${location['name']}');
-            },
-          ),
-        );
-      }
+      _markers.addAll(markers);
     });
+  }
+
+  Future<BitmapDescriptor> _createCustomMarkerIcon(
+    String imageUrl,
+    bool isPremium,
+  ) async {
+    try {
+      // Download the image
+      final response = await http.get(Uri.parse(imageUrl));
+      final Uint8List imageBytes = response.bodyBytes;
+      
+      // Decode the image
+      final ui.Codec codec = await ui.instantiateImageCodec(
+        imageBytes,
+        targetWidth: 120,
+        targetHeight: 120,
+      );
+      final ui.FrameInfo frameInfo = await codec.getNextFrame();
+      final ui.Image image = frameInfo.image;
+      
+      // Create a canvas to draw the custom marker
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      final circleSize = 30.0; // Increased from 80
+      final borderWidth = 1.0; // Increased border
+      final dotHeight = 20.0; // Height of the pointer dot
+      final totalHeight = circleSize + dotHeight;
+      
+      // Draw white background circle (border effect)
+      final backgroundPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(
+        Offset(circleSize / 2, circleSize / 2),
+        circleSize / 2,
+        backgroundPaint,
+      );
+      
+      // Draw primary color border
+      final borderPaint = Paint()
+        ..color = const Color.fromARGB(255, 9, 9, 9) // Primary color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth;
+      canvas.drawCircle(
+        Offset(circleSize / 2, circleSize / 2),
+        circleSize / 2 - borderWidth / 2,
+        borderPaint,
+      );
+      
+      // Save canvas state before clipping
+      canvas.save();
+      
+      // Clip to circle and draw the salon image
+      final clipPath = Path()
+        ..addOval(Rect.fromCircle(
+          center: Offset(circleSize / 2, circleSize / 2),
+          radius: circleSize / 2 - borderWidth,
+        ));
+      canvas.clipPath(clipPath);
+      
+      // Draw the image
+      paintImage(
+        canvas: canvas,
+        rect: Rect.fromLTWH(
+          borderWidth,
+          borderWidth,
+          circleSize - borderWidth * 2,
+          circleSize - borderWidth * 2,
+        ),
+        image: image,
+        fit: BoxFit.cover,
+      );
+      
+      // Restore canvas state
+      canvas.restore();
+      
+      // Draw pointer dot below the circle
+      final dotPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      
+      // Draw white dot shadow/background
+      canvas.drawCircle(
+        Offset(circleSize / 2, circleSize + dotHeight / 2),
+        8.0,
+        dotPaint,
+      );
+      
+      // Draw colored dot (always primary color)
+      final coloredDotPaint = Paint()
+        ..color = const Color.fromARGB(255, 9, 9, 9) // Primary color
+        ..style = PaintingStyle.fill;
+      
+      canvas.drawCircle(
+        Offset(circleSize / 2, circleSize + dotHeight / 2),
+        6.0,
+        coloredDotPaint,
+      );
+      
+      // Convert canvas to image
+      final picture = recorder.endRecording();
+      final finalImage = await picture.toImage(circleSize.toInt(), totalHeight.toInt());
+      final ByteData? byteData = await finalImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      final Uint8List pngBytes = byteData!.buffer.asUint8List();
+      
+      return BitmapDescriptor.bytes(pngBytes);
+    } catch (e) {
+      debugPrint('Error creating custom marker: $e');
+      // Fallback to default marker
+      return BitmapDescriptor.defaultMarkerWithHue(
+        isPremium ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueRed,
+      );
+    }
   }
 
   Future<void> _getCurrentLocation() async {
