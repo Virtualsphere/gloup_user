@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
-import 'package:tressy/core/di/injection_container.dart';
-import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
-import 'package:tressy/features/home/presentation/bloc/home_event.dart';
-import 'package:tressy/features/home/presentation/bloc/home_state.dart';
-import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
-import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
+import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
+import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
+import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
 
 class SalonSearchPage extends StatefulWidget {
   const SalonSearchPage({super.key});
@@ -21,172 +18,380 @@ class SalonSearchPage extends StatefulWidget {
 }
 
 class _SalonSearchPageState extends State<SalonSearchPage> {
-  late GoogleMapController mapController;
+  GoogleMapController? _mapController;
+  final TextEditingController _searchController = TextEditingController();
+  final DraggableScrollableController _draggableController = DraggableScrollableController();
+  final Set<Marker> _markers = {};
 
-  LatLng? _currentPosition;
-  bool _isLoading = true;
+  // Default location - Chennai, India
+  CameraPosition _initialPosition = const CameraPosition(
+    target: LatLng(13.0827, 80.2707), // Chennai coordinates
+    zoom: 14.0,
+  );
+
+  // Sample salon data with Chennai-based locations
+  final List<Map<String, dynamic>> _salonData = [
+    {
+      'name': 'Glam Studio & Spa',
+      'image': 'https://images.unsplash.com/photo-1560066984-138dadb4c035',
+      'imageUrl': 'https://images.unsplash.com/photo-1560066984-138dadb4c035',
+      'rating': 4.8,
+      'reviewCount': 245,
+      'distance': 0.8,
+      'isPremium': true,
+      'isFavorite': false,
+      'serviceName': 'Haircut',
+      'servicePrice': 299.0,
+      'address': '123 Beauty Street, Downtown',
+      'categories': ['Hair', 'Spa', 'Makeup'],
+      'languageCodes': ['en', 'hi', 'ta'],
+    },
+    {
+      'name': 'Men\'s Grooming Lounge',
+      'image': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70',
+      'imageUrl': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70',
+      'rating': 4.6,
+      'reviewCount': 189,
+      'distance': 1.2,
+      'isPremium': false,
+      'isFavorite': true,
+      'serviceName': 'Beard Trim',
+      'servicePrice': 149.0,
+      'address': '456 Groom Avenue, City Center',
+      'categories': ['Haircut', 'Beard', 'Facial'],
+      'languageCodes': ['en', 'ml'],
+    },
+    {
+      'name': 'Luxury Unisex Salon',
+      'image': 'https://images.unsplash.com/photo-1562322140-8baeececf3df',
+      'imageUrl': 'https://images.unsplash.com/photo-1562322140-8baeececf3df',
+      'rating': 4.9,
+      'reviewCount': 320,
+      'distance': 1.5,
+      'isPremium': true,
+      'isFavorite': false,
+      'serviceName': 'Full Service',
+      'servicePrice': 599.0,
+      'address': '789 Style Road, Fashion District',
+      'categories': ['Hair', 'Spa', 'Nails', 'Makeup'],
+      'languageCodes': ['en', 'gu', 'hi'],
+    },
+    {
+      'name': 'Classic Barber Shop',
+      'image': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1',
+      'imageUrl': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1',
+      'rating': 4.7,
+      'reviewCount': 156,
+      'distance': 2.0,
+      'isPremium': false,
+      'isFavorite': false,
+      'serviceName': 'Haircut',
+      'servicePrice': 199.0,
+      'address': '321 Main Street, Old Town',
+      'categories': ['Haircut', 'Shave'],
+      'languageCodes': ['en', 'kn'],
+    },
+    {
+      'name': 'Beauty Paradise Salon',
+      'image': 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e',
+      'imageUrl': 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e',
+      'rating': 4.5,
+      'reviewCount': 98,
+      'distance': 2.3,
+      'isPremium': false,
+      'isFavorite': true,
+      'serviceName': 'Manicure',
+      'servicePrice': 249.0,
+      'address': '654 Beauty Lane, Suburb',
+      'categories': ['Nails', 'Spa', 'Waxing'],
+      'languageCodes': ['en', 'te', 'hi'],
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
-    getLocation();
+    _getCurrentLocation();
+    _createMarkers();
   }
 
-  // Method to get current location
-  getLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+  void _createMarkers() {
+    // Chennai-based salon locations
+    final salonLocations = [
+      {'name': 'Glam Studio & Spa', 'lat': 13.0827, 'lng': 80.2707},
+      {'name': 'Men\'s Grooming Lounge', 'lat': 13.0878, 'lng': 80.2785},
+      {'name': 'Luxury Unisex Salon', 'lat': 13.0780, 'lng': 80.2650},
+      {'name': 'Classic Barber Shop', 'lat': 13.0900, 'lng': 80.2820},
+      {'name': 'Beauty Paradise Salon', 'lat': 13.0750, 'lng': 80.2600},
+    ];
+
+    setState(() {
+      _markers.clear();
+      for (var i = 0; i < salonLocations.length; i++) {
+        final location = salonLocations[i];
+        final salon = _salonData[i];
+        
+        _markers.add(
+          Marker(
+            markerId: MarkerId('salon_$i'),
+            position: LatLng(location['lat'] as double, location['lng'] as double),
+            infoWindow: InfoWindow(
+              title: location['name'] as String,
+              snippet: '${salon['rating']} ⭐ • ${salon['distance']} km',
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              salon['isPremium'] ? BitmapDescriptor.hueOrange : BitmapDescriptor.hueRed,
+            ),
+            onTap: () {
+              // Handle marker tap - could show salon details or scroll to card
+              debugPrint('Tapped marker: ${location['name']}');
+            },
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      // Get current position
       Position position = await Geolocator.getCurrentPosition(
-          locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
-      double lat = position.latitude;
-      double long = position.longitude;
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
-      LatLng location = LatLng(lat, long);
+      // Update initial position and move camera
+      final newPosition = CameraPosition(
+        target: LatLng(position.latitude, position.longitude),
+        zoom: 15.0,
+      );
 
       setState(() {
-        _currentPosition = location;
-        _isLoading = false;
+        _initialPosition = newPosition;
       });
-    } else {
-      setState(() {
-        _isLoading = false;
-        _currentPosition = null;
-      });
+
+      // Move camera if map is already created
+      _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(newPosition),
+      );
+    } catch (e) {
+      // Handle error silently, use default location
+      debugPrint('Error getting location: $e');
     }
   }
 
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    _searchController.dispose();
+    _draggableController.dispose();
+    super.dispose();
+  }
+
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    _mapController = controller;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                // Google Map (Bottom Layer)
-                _currentPosition != null ?
-                GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  myLocationEnabled: true,
-                  compassEnabled: true,
-                  initialCameraPosition: CameraPosition(
-                    target: _currentPosition!,
-                    zoom: 16.0,
-                  ),
-                ) :
-                Text("Unable to track location", style: TextStyle(
-                  fontSize: AppSizes.fontL,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),),
+    final isDarkMode = context.theme.brightness == Brightness.dark;
 
-                // Search Bar (Top Layer)
-                Positioned(
-                  top: 50,
-                  left: 16,
-                  right: 16,
-                  child: SearchBarWidget(),
-                ),
-
-                _buildDraggableSheet()
-              ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Google Map
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: _initialPosition,
+              markers: _markers,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              zoomControlsEnabled: true,
+              mapType: MapType.normal,
+              compassEnabled: true,
             ),
+        
+            // Back button overlay
+            Positioned(
+              top: AppSizes.paddingM,
+              left: AppSizes.paddingM,
+              right: AppSizes.paddingM,
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: AppSizes.iconXXL,
+                        height: AppSizes.iconXXL,
+                        decoration: BoxDecoration(
+                          color:
+                              isDarkMode ? AppColors.surfaceDark : AppColors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.black.withValues(alpha: 0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 18,
+                          color: isDarkMode
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppSizes.spaceM),
+                    Expanded(child: _buildSearchInput(context))
+                    // _buildSearchInput(context)
+                  ],
+                ),
+              ),
+            ),
+        
+            // Search input field
+            
+            // Draggable Bottom Sheet
+            _buildDraggableBottomSheet(context),
+          ],
+        ),
+      ),
     );
   }
-
-  Widget _buildDraggableSheet() {
+  
+  Widget _buildDraggableBottomSheet(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    
     return DraggableScrollableSheet(
-      initialChildSize: 0.2, // Initial height (25% of screen)
-      minChildSize: 0.2, // Minimum height
-      maxChildSize: 0.5, // Maximum height (Half screen)
+      controller: _draggableController,
+      initialChildSize: 0.5,
+      minChildSize: 0.2,
+      maxChildSize: 0.7,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20),
+            color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(AppSizes.radiusL),
+              topRight: Radius.circular(AppSizes.radiusL),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
+                color: AppColors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
             ],
           ),
           child: Column(
             children: [
-              /// Drag Handle
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                height: 5,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(10),
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(top: AppSizes.paddingM, bottom: AppSizes.paddingS),
+                  decoration: BoxDecoration(
+                    color: isDarkMode 
+                        ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                        : AppColors.textSecondary.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-
-
-              /// Scrollable Content
-              Expanded(
-                  child: ListView(
-                controller: scrollController,
-                children: [
-                  _buildFilters(),
-                  AppSizes.heightM,
-                  BlocProvider(
-                    create: (context) => sl<HomeBloc>()
-                      ..add(const LoadAllHomeDataEvent(
-                        latitude: 19.0760,
-                        longitude: 72.8777,
-                      )),
-                    child: BlocBuilder<HomeBloc, HomeState>(
-                        builder: (context, state) {
-                      return SizedBox(
-                        height: 300,
-                        child: state.isPopularServicesLoading
-                            ? HomeShimmers.buildSalonCardsShimmer(context)
-                            : state.popularServices.isEmpty
-                                ? const Center(
-                                    child: Text('No popular services found'))
-                                : ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSizes.paddingM),
-                                    itemCount: state.popularServices.length,
-                                    itemBuilder: (context, index) {
-                                      final salon =
-                                          state.popularServices[index];
-                                      return Padding(
-                                        padding: AppSizes.paddingAllM,
-                                        child: SalonCard(
-                                          salonName: salon.salonName,
-                                          salonImage: salon.salonImage,
-                                          images: salon.images,
-                                          rating: salon.rating,
-                                          reviewCount: salon.reviewCount,
-                                          distance: salon.distance,
-                                          isPremium: salon.isPremium,
-                                          isFavorite: salon.isFavorite,
-                                          serviceName: salon.serviceName,
-                                          servicePrice: salon.servicePrice,
-                                          categories: salon.categories,
-                                          languageCodes: salon.languageCodes,
-                                          onTap: () {
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                      );
-                    }),
+              // Filter badges
+              FilterBadges(
+                initialGender: 'all',
+                onGenderSelected: (gender) {
+                  // Handle gender filter selection
+                  debugPrint('Selected gender: $gender');
+                },
+              ),
+              // Salons count text
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingL,
+                  vertical: AppSizes.paddingM,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '500 Salons Nearby',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: isDarkMode 
+                          ? AppColors.textSecondaryDark 
+                          : AppColors.textSecondary,
+                      fontSize: 14,
+                    ),
                   ),
-                ],
-              )),
+                ),
+              ),
+              // Scrollable content
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingS),
+                  itemCount: _salonData.length,
+                  itemBuilder: (context, index) {
+                    final salon = _salonData[index];
+                    return SalonSearchCard(
+                      salonName: salon['name'],
+                      salonImage: salon['image'],
+                      imageUrl: salon['imageUrl'],
+                      rating: salon['rating'],
+                      reviewCount: salon['reviewCount'],
+                      distance: salon['distance'],
+                      isPremium: salon['isPremium'],
+                      isFavorite: salon['isFavorite'],
+                      serviceName: salon['serviceName'],
+                      servicePrice: salon['servicePrice'],
+                      address: salon['address'],
+                      categories: salon['categories'] != null
+                          ? List<String>.from(salon['categories'])
+                          : null,
+                      languageCodes: salon['languageCodes'] != null
+                          ? List<String>.from(salon['languageCodes'])
+                          : null,
+                      onTap: () {
+                        // Navigate to salon details
+                        debugPrint('Tapped on ${salon['name']}');
+                      },
+                      onFavoriteToggle: () {
+                        // Handle favorite toggle
+                        debugPrint('Toggled favorite for ${salon['name']}');
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -194,44 +399,59 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
     );
   }
 
-  // Filters
-  Widget _buildFilters() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildDropdownChip("Price"),
-          AppSizes.widthM,
-          _buildDropdownChip("Type"),
+  Widget _buildSearchInput(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingM,
+        vertical: AppSizes.paddingM,
+      ),
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
-    );
-  }
-
-  // Dropdown chip
-  Widget _buildDropdownChip(String label) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppSizes.fontM,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+          SvgPicture.asset(
+            AppIcons.icSearch,
+            width: AppSizes.iconS,
+            height: AppSizes.iconS,
+            colorFilter: ColorFilter.mode(
+              isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
+              BlendMode.srcIn,
             ),
           ),
-          AppSizes.widthS,
-          Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.black,),
+          const SizedBox(width: AppSizes.spaceM),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search for salons, parlors, or massages...',
+                hintStyle: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                filled: false,
+              ),
+              style: context.textTheme.bodyLarge,
+              onChanged: (value) {
+                // Handle search
+              },
+            ),
+          ),
         ],
       ),
     );

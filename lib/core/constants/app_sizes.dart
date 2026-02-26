@@ -58,7 +58,7 @@ class AppSizes {
   static const double buttonHeightL = 56.0;
 
   // AppBar
-  static const double appBarHeight = 56.0;
+  static const double appBarHeight = 64.0;
   static const double appBarElevation = 0.0;
 
   // Bottom Navigation Bar

@@ -23,6 +23,7 @@ class _FilterBadgesState extends State<FilterBadges> {
   String? _selectedFilter;
 
   final List<Map<String, String>> _filters = [
+    {'label': 'All', 'value': 'all'},
     {'label': 'Men', 'value': 'male'},
     {'label': 'Women', 'value': 'female'},
     {'label': 'Unisex', 'value': 'unisex'},
@@ -107,7 +108,7 @@ class _FilterBadgesState extends State<FilterBadges> {
             ),
             const SizedBox(width: AppSizes.spaceXS),
             Text(
-              'Filter',
+              'Price',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
                 fontWeight: FontWeight.w600,
@@ -150,18 +151,18 @@ class _FilterBadgesState extends State<FilterBadges> {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? (isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) :  AppColors.primary.withValues(alpha: 0.1))
+                ? (isDarkMode ? AppColors.primaryDark :  AppColors.primary)
                 : context.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             border: Border.all(
               color: isSelected ? (isDarkMode ? AppColors.primaryDark:  AppColors.primary) :(isDarkMode ? AppColors.borderDark:  AppColors.border),
-              width: isSelected ? 1.5 : 1.0,
+              width:  1.0,
             ),
           ),
           child: Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: isSelected ? (isDarkMode ? AppColors.primaryDark:  AppColors.primary) : (isDarkMode ? AppColors.primaryDark:  AppColors.primary) ,
+              color: isSelected ? (isDarkMode ? AppColors.primary :  AppColors.primaryDark) : (isDarkMode ? AppColors.textSecondaryDark:  AppColors.textSecondary) ,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               fontSize: AppSizes.fontS,
             ),

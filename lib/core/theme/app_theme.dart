@@ -30,7 +30,8 @@ class AppTheme {
       centerTitle: true,
       backgroundColor: AppColors.primary,
       foregroundColor: AppColors.white,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      scrolledUnderElevation: 0,
       iconTheme: const IconThemeData(color: AppColors.white),
       titleTextStyle: GoogleFonts.outfit(
         color: AppColors.white,

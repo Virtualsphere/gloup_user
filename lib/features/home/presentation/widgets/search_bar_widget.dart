@@ -41,8 +41,8 @@ class SearchBarWidget extends StatelessWidget {
           children: [
             SvgPicture.asset(
               'assets/icons/ic_search.svg',
-              width: AppSizes.iconM,
-              height: AppSizes.iconM,
+              width: AppSizes.iconS,
+              height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
                 isDarkMode
                     ? AppColors.textSecondaryDark
