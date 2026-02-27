@@ -8,13 +8,24 @@ abstract class HomeRepository {
   Future<Either<Failure, List<SalonEntity>>> getPopularServices({
     required double latitude,
     required double longitude,
-    String gender = 'unisex',
+    int? limit,
+    int? page,
+    String? gender,
   });
   
   Future<Either<Failure, List<SalonEntity>>> getTopSalons({
     required double latitude,
     required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
   });
   
-  Future<Either<Failure, List<SalonEntity>>> getRecommendedSalons();
+  Future<Either<Failure, List<SalonEntity>>> getRecommendedSalons({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+  });
 }

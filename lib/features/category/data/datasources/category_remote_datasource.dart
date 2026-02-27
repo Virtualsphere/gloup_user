@@ -6,6 +6,15 @@ import 'package:tressy/features/category/data/models/category_model.dart';
 
 abstract class CategoryRemoteDataSource {
   Future<List<CategoryModel>> getCategories();
+  Future<CategorySalonsResponseModel> getCategorySalons({
+    required double latitude,
+    required double longitude,
+    required String categoryId,
+    int? limit,
+    int? page,
+    String? gender,
+    String? search,
+  });
 }
 
 class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
@@ -38,6 +47,60 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       } else {
         throw ServerException(
           message: response.data['message'] ?? 'Failed to fetch categories',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<CategorySalonsResponseModel> getCategorySalons({
+    required double latitude,
+    required double longitude,
+    required String categoryId,
+    int? limit,
+    int? page,
+    String? gender,
+    String? search,
+  }) async {
+    try {
+      // Build query parameters
+      final Map<String, dynamic> queryParams = {
+        'lat': latitude,
+        'lng': longitude,
+        'category': categoryId,
+      };
+      
+      if (limit != null) queryParams['limit'] = limit;
+      if (page != null) queryParams['page'] = page;
+      if (gender != null) queryParams['gender'] = gender;
+      if (search != null && search.isNotEmpty) queryParams['search'] = search;
+
+      final response = await dioClient.get(
+        ApiRoutes.getAllStores,
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        
+        if (data['success'] == true) {
+          // Parse the response with pagination
+          return CategorySalonsResponseModel.fromJson(
+            data,
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          );
+        } else {
+          throw ServerException(
+            message: data['message'] ?? 'Failed to fetch category salons',
+          );
+        }
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Failed to fetch category salons',
         );
       }
     } on DioException catch (e) {

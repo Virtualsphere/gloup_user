@@ -64,6 +64,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetPopularServicesParams(
         latitude: event.latitude,
         longitude: event.longitude,
+        limit: event.limit,
+        page: event.page,
         gender: event.gender,
       ),
     );
@@ -94,6 +96,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetTopSalonsParams(
         latitude: event.latitude,
         longitude: event.longitude,
+        limit: event.limit,
+        page: event.page,
+        gender: event.gender,
       ),
     );
 
@@ -114,23 +119,56 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadRecommendedSalonsEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(
-      isRecommendedSalonsLoading: true,
-      clearRecommendedSalonsError: true,
-    ));
+    // Don't load more if already loading or no more data
+    if (event.isLoadMore) {
+      if (state.isLoadingMoreRecommended || !state.hasMoreRecommended) {
+        return;
+      }
+      emit(state.copyWith(isLoadingMoreRecommended: true));
+    } else {
+      emit(state.copyWith(
+        isRecommendedSalonsLoading: true,
+        clearRecommendedSalonsError: true,
+      ));
+    }
 
-    final result = await getRecommendedSalonsUseCase();
+    final result = await getRecommendedSalonsUseCase(
+      GetRecommendedSalonsParams(
+        latitude: event.latitude,
+        longitude: event.longitude,
+        limit: event.limit ?? 10,
+        page: event.page ?? (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1),
+        gender: event.gender,
+      ),
+    );
 
     result.fold(
       (failure) => emit(state.copyWith(
         isRecommendedSalonsLoading: false,
+        isLoadingMoreRecommended: false,
         recommendedSalonsError: _mapFailureToMessage(failure),
       )),
-      (salons) => emit(state.copyWith(
-        isRecommendedSalonsLoading: false,
-        recommendedSalons: salons,
-        clearRecommendedSalonsError: true,
-      )),
+      (salons) {
+        // For load more, append to existing list; otherwise replace
+        final updatedSalons = event.isLoadMore 
+            ? [...state.recommendedSalons, ...salons]
+            : salons;
+        
+        // Calculate pagination info from response
+        // Note: We need to get this from the repository response
+        // For now, we'll use the page from the request
+        final currentPage = event.page ?? (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1);
+        final hasMore = salons.length >= (event.limit ?? 10);
+        
+        emit(state.copyWith(
+          isRecommendedSalonsLoading: false,
+          isLoadingMoreRecommended: false,
+          recommendedSalons: updatedSalons,
+          clearRecommendedSalonsError: true,
+          recommendedCurrentPage: currentPage,
+          hasMoreRecommended: hasMore,
+        ));
+      },
     );
   }
 
@@ -143,12 +181,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(LoadPopularServicesEvent(
       latitude: event.latitude,
       longitude: event.longitude,
+      limit: 10, // Set limit to 10 for home screen
     ));
     add(LoadTopSalonsEvent(
       latitude: event.latitude,
       longitude: event.longitude,
+      limit: 10, // Set limit to 10 for home screen
     ));
-    add(const LoadRecommendedSalonsEvent());
+    add(LoadRecommendedSalonsEvent(
+      latitude: event.latitude,
+      longitude: event.longitude,
+      limit: 10, // Set limit to 10 for home screen
+      page: 1,
+    ));
   }
 
   void _onResetHome(ResetHomeEvent event, Emitter<HomeState> emit) {

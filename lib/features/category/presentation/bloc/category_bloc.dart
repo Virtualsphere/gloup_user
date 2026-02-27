@@ -1,17 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart';
+import 'package:tressy/features/category/domain/usecases/get_category_salons_usecase.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
 import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   final GetCategoriesUseCase getCategoriesUseCase;
+  final GetCategorySalonsUseCase getCategorySalonsUseCase;
 
   CategoryBloc({
     required this.getCategoriesUseCase,
+    required this.getCategorySalonsUseCase,
   }) : super(const CategoryState()) {
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<RefreshCategoriesEvent>(_onRefreshCategories);
+    on<LoadCategorySalonsEvent>(_onLoadCategorySalons);
   }
 
   Future<void> _onLoadCategories(
@@ -59,6 +63,62 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         categories: categories,
         clearError: true,
       )),
+    );
+  }
+
+  Future<void> _onLoadCategorySalons(
+    LoadCategorySalonsEvent event,
+    Emitter<CategoryState> emit,
+  ) async {
+    // Don't load more if already loading or no more data
+    if (event.isLoadMore) {
+      if (state.isLoadingMoreSalons || !state.hasMoreSalons) {
+        return;
+      }
+      emit(state.copyWith(isLoadingMoreSalons: true));
+    } else {
+      emit(state.copyWith(
+        isSalonsLoading: true,
+        clearSalonsError: true,
+      ));
+    }
+
+    final result = await getCategorySalonsUseCase(
+      GetCategorySalonsParams(
+        latitude: event.latitude,
+        longitude: event.longitude,
+        categoryId: event.categoryId,
+        limit: event.limit ?? 10,
+        page: event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1),
+        gender: event.gender,
+        search: event.search,
+      ),
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isSalonsLoading: false,
+        isLoadingMoreSalons: false,
+        salonsError: _mapFailureToMessage(failure),
+      )),
+      (salons) {
+        // For load more, append to existing list; otherwise replace
+        final updatedSalons = event.isLoadMore 
+            ? [...state.salons, ...salons]
+            : salons;
+        
+        final currentPage = event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1);
+        final hasMore = salons.length >= (event.limit ?? 10);
+        
+        emit(state.copyWith(
+          isSalonsLoading: false,
+          isLoadingMoreSalons: false,
+          salons: updatedSalons,
+          clearSalonsError: true,
+          currentPage: currentPage,
+          hasMoreSalons: hasMore,
+        ));
+      },
     );
   }
 

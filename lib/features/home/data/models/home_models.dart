@@ -29,6 +29,126 @@ class CarouselBannerModel {
   }
 }
 
+/// Pagination Model
+class PaginationModel {
+  final int page;
+  final int limit;
+  final int totalRecords;
+  final int totalPages;
+
+  PaginationModel({
+    required this.page,
+    required this.limit,
+    required this.totalRecords,
+    required this.totalPages,
+  });
+
+  factory PaginationModel.fromJson(Map<String, dynamic> json) {
+    return PaginationModel(
+      page: json['page'] ?? 1,
+      limit: json['limit'] ?? 10,
+      totalRecords: json['totalRecords'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'page': page,
+      'limit': limit,
+      'totalRecords': totalRecords,
+      'totalPages': totalPages,
+    };
+  }
+}
+
+/// Nearby Stores Response Model
+class NearbyStoresResponseModel {
+  final PaginationModel pagination;
+  final List<SalonModel> salons;
+
+  NearbyStoresResponseModel({
+    required this.pagination,
+    required this.salons,
+  });
+
+  factory NearbyStoresResponseModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
+    final salonsJson = json['data'] as List<dynamic>? ?? [];
+
+    return NearbyStoresResponseModel(
+      pagination: PaginationModel.fromJson(paginationJson),
+      salons: salonsJson
+          .map((salonJson) => SalonModel.fromJson(
+                salonJson,
+                imageBaseUrl: imageBaseUrl,
+              ))
+          .toList(),
+    );
+  }
+}
+
+/// All Stores Response Model (for Recommended section)
+class AllStoresResponseModel {
+  final PaginationModel pagination;
+  final List<SalonModel> salons;
+
+  AllStoresResponseModel({
+    required this.pagination,
+    required this.salons,
+  });
+
+  factory AllStoresResponseModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
+    final salonsJson = json['data'] as List<dynamic>? ?? [];
+
+    return AllStoresResponseModel(
+      pagination: PaginationModel.fromJson(paginationJson),
+      salons: salonsJson
+          .map((salonJson) => SalonModel.fromJson(
+                salonJson,
+                imageBaseUrl: imageBaseUrl,
+              ))
+          .toList(),
+    );
+  }
+}
+
+/// Top Salons Response Model
+class TopSalonsResponseModel {
+  final PaginationModel pagination;
+  final List<SalonModel> salons;
+
+  TopSalonsResponseModel({
+    required this.pagination,
+    required this.salons,
+  });
+
+  factory TopSalonsResponseModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
+    final salonsJson = json['data'] as List<dynamic>? ?? [];
+
+    return TopSalonsResponseModel(
+      pagination: PaginationModel.fromJson(paginationJson),
+      salons: salonsJson
+          .map((salonJson) => SalonModel.fromJson(
+                salonJson,
+                imageBaseUrl: imageBaseUrl,
+              ))
+          .toList(),
+    );
+  }
+}
+
 /// Salon Model - Used for all salon listings (top salons, recommended, nearby)
 class SalonModel {
   final String id;

@@ -3,22 +3,32 @@ import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/features/home/data/models/home_models.dart';
-import 'package:tressy/features/home/data/models/home_mock_data.dart';
 
 /// Home Data Source
 /// Handles API calls for home page data
 abstract class HomeDataSource {
   Future<List<CarouselBannerModel>> getCarouselBanners();
-  Future<List<SalonModel>> getPopularServices({
+  Future<NearbyStoresResponseModel> getPopularServices({
     required double latitude,
     required double longitude,
-    String gender = 'unisex',
+    int? limit,
+    int? page,
+    String? gender,
   });
-  Future<List<SalonModel>> getTopSalons({
+  Future<TopSalonsResponseModel> getTopSalons({
     required double latitude,
     required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
   });
-  Future<List<SalonModel>> getRecommendedSalons();
+  Future<AllStoresResponseModel> getRecommendedSalons({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+  });
 }
 
 /// Implementation with actual API calls
@@ -62,32 +72,39 @@ class HomeDataSourceImpl implements HomeDataSource {
   }
 
   @override
-  Future<List<SalonModel>> getPopularServices({
+  Future<NearbyStoresResponseModel> getPopularServices({
     required double latitude,
     required double longitude,
-    String gender = 'unisex',
+    int? limit,
+    int? page,
+    String? gender,
   }) async {
     try {
+      // Build request data with optional parameters
+      final Map<String, dynamic> requestData = {
+        'lat': latitude,
+        'lng': longitude,
+      };
+
+      // Add optional parameters only if they are provided
+      if (limit != null) requestData['limit'] = limit;
+      if (page != null) requestData['page'] = page;
+      if (gender != null) requestData['gender'] = gender;
+
       final response = await dioClient.post(
         ApiRoutes.getNearbyStores,
-        data: {
-          'lat': latitude,
-          'lng': longitude,
-          'gender': gender,
-        },
+        data: requestData,
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
         
         if (data['success'] == true && data['data'] != null) {
-          final List<dynamic> salonsJson = data['data'];
-          return salonsJson
-              .map((json) => SalonModel.fromJson(
-                    json,
-                    imageBaseUrl: ApiRoutes.imageBaseUrl,
-                  ))
-              .toList();
+          // Parse the new response format with pagination
+          return NearbyStoresResponseModel.fromJson(
+            data['data'],
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          );
         } else {
           throw ServerException(
             message: data['message'] ?? 'Failed to fetch popular services',
@@ -106,33 +123,103 @@ class HomeDataSourceImpl implements HomeDataSource {
   }
 
   @override
-  Future<List<SalonModel>> getTopSalons({
+  Future<TopSalonsResponseModel> getTopSalons({
     required double latitude,
     required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
   }) async {
-    // TODO: Replace with actual API call
-    // Example: return await dioClient.get(
-    //   '/api/v1/home/top-salons',
-    //   queryParameters: {
-    //     'lat': latitude,
-    //     'lng': longitude,
-    //     'radius': radius,
-    //   },
-    // );
-    return await HomeMockData.simulateApiCall(
-      HomeMockData.getTopSalons(),
-      delaySeconds: 2,
-    );
+    try {
+      // Build query parameters
+      final Map<String, dynamic> queryParams = {
+        'lat': latitude,
+        'lng': longitude,
+      };
+      
+      if (limit != null) queryParams['limit'] = limit;
+      if (page != null) queryParams['page'] = page;
+      if (gender != null) queryParams['gender'] = gender;
+
+      final response = await dioClient.get(
+        ApiRoutes.getTopSalons,
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        
+        if (data['success'] == true) {
+          // Parse the response with pagination
+          return TopSalonsResponseModel.fromJson(
+            data,
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          );
+        } else {
+          throw ServerException(
+            message: data['message'] ?? 'Failed to fetch top salons',
+          );
+        }
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Failed to fetch top salons',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
   }
 
   @override
-  Future<List<SalonModel>> getRecommendedSalons() async {
-    // TODO: Replace with actual API call
-    // Example: return await dioClient.get('/api/v1/home/recommended');
-    return await HomeMockData.simulateApiCall(
-      HomeMockData.getRecommendedSalons(),
-      delaySeconds: 2,
-    );
+  Future<AllStoresResponseModel> getRecommendedSalons({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+  }) async {
+    try {
+      // Build query parameters
+      final Map<String, dynamic> queryParams = {
+        'lat': latitude,
+        'lng': longitude,
+      };
+      
+      if (limit != null) queryParams['limit'] = limit;
+      if (page != null) queryParams['page'] = page;
+      if (gender != null) queryParams['gender'] = gender;
+
+      final response = await dioClient.get(
+        ApiRoutes.getAllStores,
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        
+        if (data['success'] == true) {
+          // Parse the response with pagination
+          return AllStoresResponseModel.fromJson(
+            data,
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          );
+        } else {
+          throw ServerException(
+            message: data['message'] ?? 'Failed to fetch recommended salons',
+          );
+        }
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Failed to fetch recommended salons',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
   }
 
   ApiException _handleDioException(DioException e) {

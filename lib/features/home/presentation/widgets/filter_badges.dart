@@ -27,8 +27,6 @@ class _FilterBadgesState extends State<FilterBadges> {
     {'label': 'Men', 'value': 'male'},
     {'label': 'Women', 'value': 'female'},
     {'label': 'Unisex', 'value': 'unisex'},
-    {'label': 'Kids', 'value': 'kids'},
-    {'label': 'Senior', 'value': 'senior'},
   ];
 
   @override
@@ -43,6 +41,9 @@ class _FilterBadgesState extends State<FilterBadges> {
       if (filter['label']!.isNotEmpty) {
         _selectedFilter = filter['label'];
       }
+    } else {
+      // Default selection is "All"
+      _selectedFilter = 'All';
     }
   }
 

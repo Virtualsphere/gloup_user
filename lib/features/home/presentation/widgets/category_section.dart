@@ -11,7 +11,7 @@ import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategorySection extends StatefulWidget {
-  final Function(String categoryName, int categoryIndex)? onCategoryTap;
+  final Function(String categoryName, int categoryIndex, String categoryId)? onCategoryTap;
   final int? selectedCategoryIndex;
   final bool showActiveBorder;
   final List<CategoryEntity>? categories; // Optional categories passed from parent
@@ -232,7 +232,7 @@ class _CategorySectionState extends State<CategorySection> {
           setState(() {
             _selectedIndex = index;
           });
-          widget.onCategoryTap?.call(title, index);
+          widget.onCategoryTap?.call(title, index, id);
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Padding(

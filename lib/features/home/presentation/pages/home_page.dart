@@ -159,11 +159,34 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedGender = gender;
     });
+    
+    // For "all" filter, don't send gender parameter (null)
+    final genderParam = (gender.toLowerCase() == 'all') ? null : gender;
+    
     // Reload popular services with new gender filter
     _homeBloc?.add(LoadPopularServicesEvent(
       latitude: _latitude,
       longitude: _longitude,
-      gender: gender,
+      limit: 10, // Set limit to 10 for home screen
+      gender: genderParam,
+    ));
+    
+    // Reload top salons with new gender filter
+    _homeBloc?.add(LoadTopSalonsEvent(
+      latitude: _latitude,
+      longitude: _longitude,
+      limit: 10, // Set limit to 10 for home screen
+      gender: genderParam, // null when "all" is selected
+    ));
+    
+    // Also reload recommended salons with new gender filter
+    _homeBloc?.add(LoadRecommendedSalonsEvent(
+      latitude: _latitude,
+      longitude: _longitude,
+      limit: 10,
+      page: 1, // Reset to page 1 when filter changes
+      gender: genderParam, // null when "all" is selected
+      isLoadMore: false, // This is a fresh load, not load more
     ));
   }
 
@@ -175,17 +198,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35;
 
     // Check if scrolled past the carousel
-    final isCollapsed = _scrollController.hasClients &&
-        _scrollController.offset > (carouselHeight - kToolbarHeight);
+    final isCollapsed = _scrollController.offset > (carouselHeight - kToolbarHeight);
 
     if (isCollapsed != _isCollapsed) {
       setState(() {
         _isCollapsed = isCollapsed;
       });
+    }
+
+    // Infinite scroll for recommended salons
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    const double scrollThreshold = 200.0; // Load more when 200px from bottom
+
+    if (maxScroll - currentScroll <= scrollThreshold) {
+      // Trigger load more event
+      _homeBloc?.add(LoadRecommendedSalonsEvent(
+        latitude: _latitude,
+        longitude: _longitude,
+        limit: 10,
+        isLoadMore: true,
+      ));
     }
   }
 
@@ -505,12 +544,13 @@ class _HomePageState extends State<HomePage> {
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: _CategorySectionDelegate(
-                    onCategoryTap: (categoryName, categoryIndex) {
+                    onCategoryTap: (categoryName, categoryIndex, categoryId) {
                       GoRouter.of(context).push(
                         RouteNames.category,
                         extra: {
                           'categoryName': categoryName,
                           'categoryIndex': categoryIndex,
+                          'categoryId': categoryId,
                         },
                       );
                     },
@@ -649,7 +689,7 @@ class _HomePageState extends State<HomePage> {
                 // Bottom spacing
                 SliverToBoxAdapter(child: AppSizes.heightXXL),
 
-                // Recommended for You Section Header
+                // Recommended for You Section Header (No category filter)
                 SliverToBoxAdapter(
                   child: SectionHeader(
                     title: 'Recommended for You',
@@ -662,8 +702,8 @@ class _HomePageState extends State<HomePage> {
 
                 SliverToBoxAdapter(child: AppSizes.heightS),
 
-                // Vertical Full-Width Salon Cards
-                state.isRecommendedSalonsLoading
+                // Vertical Full-Width Salon Cards with infinite scroll
+                state.isRecommendedSalonsLoading && state.recommendedSalons.isEmpty
                     ? SliverPadding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingM),
@@ -726,6 +766,21 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
 
+                // Loading indicator for infinite scroll
+                if (state.isLoadingMoreRecommended)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSizes.paddingM),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                 // Bottom spacing
                 SliverToBoxAdapter(child: AppSizes.heightXXL),
               ],
@@ -739,7 +794,7 @@ class _HomePageState extends State<HomePage> {
 
 /// Delegate for sticky category section
 class _CategorySectionDelegate extends SliverPersistentHeaderDelegate {
-  final Function(String categoryName, int categoryIndex)? onCategoryTap;
+  final Function(String categoryName, int categoryIndex, String categoryId)? onCategoryTap;
 
   _CategorySectionDelegate({this.onCategoryTap});
 

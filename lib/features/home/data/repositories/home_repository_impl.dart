@@ -36,15 +36,21 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, List<SalonEntity>>> getPopularServices({
     required double latitude,
     required double longitude,
-    String gender = 'unisex',
+    int? limit,
+    int? page,
+    String? gender,
   }) async {
     try {
-      final models = await dataSource.getPopularServices(
+      final response = await dataSource.getPopularServices(
         latitude: latitude,
         longitude: longitude,
+        limit: limit,
+        page: page,
         gender: gender,
       );
-      final entities = models
+      
+      // Extract salons from the response model
+      final entities = response.salons
           .map((model) => SalonEntity(
                 id: model.id,
                 salonName: model.salonName,
@@ -78,13 +84,21 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, List<SalonEntity>>> getTopSalons({
     required double latitude,
     required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
   }) async {
     try {
-      final models = await dataSource.getTopSalons(
+      final response = await dataSource.getTopSalons(
         latitude: latitude,
         longitude: longitude,
+        limit: limit,
+        page: page,
+        gender: gender,
       );
-      final entities = models
+      
+      // Extract salons from the response model
+      final entities = response.salons
           .map((model) => SalonEntity(
                 id: model.id,
                 salonName: model.salonName,
@@ -115,10 +129,24 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, List<SalonEntity>>> getRecommendedSalons() async {
+  Future<Either<Failure, List<SalonEntity>>> getRecommendedSalons({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+  }) async {
     try {
-      final models = await dataSource.getRecommendedSalons();
-      final entities = models
+      final response = await dataSource.getRecommendedSalons(
+        latitude: latitude,
+        longitude: longitude,
+        limit: limit,
+        page: page,
+        gender: gender,
+      );
+      
+      // Extract salons from the response model
+      final entities = response.salons
           .map((model) => SalonEntity(
                 id: model.id,
                 salonName: model.salonName,

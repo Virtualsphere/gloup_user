@@ -14,6 +14,7 @@ import 'package:tressy/features/category/data/datasources/category_remote_dataso
 import 'package:tressy/features/category/data/repositories/category_repository_impl.dart';
 import 'package:tressy/features/category/domain/repositories/category_repository.dart';
 import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart' as category_usecase;
+import 'package:tressy/features/category/domain/usecases/get_category_salons_usecase.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/home/data/datasources/home_datasource.dart';
 import 'package:tressy/features/home/data/repositories/home_repository_impl.dart';
@@ -68,11 +69,15 @@ Future<void> initializeDependencies() async {
   // BLoC - Registered as singleton to share state across screens
   sl.registerLazySingleton<CategoryBloc>(() => CategoryBloc(
         getCategoriesUseCase: sl(),
+        getCategorySalonsUseCase: sl(),
       ));
 
   // Use Cases
   sl.registerLazySingleton<category_usecase.GetCategoriesUseCase>(
     () => category_usecase.GetCategoriesUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetCategorySalonsUseCase>(
+    () => GetCategorySalonsUseCase(sl()),
   );
 
   // Repository

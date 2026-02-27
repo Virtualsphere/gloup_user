@@ -8,7 +8,31 @@ class GetRecommendedSalonsUseCase {
 
   GetRecommendedSalonsUseCase(this.repository);
 
-  Future<Either<Failure, List<SalonEntity>>> call() async {
-    return await repository.getRecommendedSalons();
+  Future<Either<Failure, List<SalonEntity>>> call(
+    GetRecommendedSalonsParams params,
+  ) async {
+    return await repository.getRecommendedSalons(
+      latitude: params.latitude,
+      longitude: params.longitude,
+      limit: params.limit,
+      page: params.page,
+      gender: params.gender,
+    );
   }
+}
+
+class GetRecommendedSalonsParams {
+  final double latitude;
+  final double longitude;
+  final int? limit;
+  final int? page;
+  final String? gender;
+
+  GetRecommendedSalonsParams({
+    required this.latitude,
+    required this.longitude,
+    this.limit,
+    this.page,
+    this.gender,
+  });
 }

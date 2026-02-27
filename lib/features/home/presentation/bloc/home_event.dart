@@ -16,35 +16,62 @@ class LoadCarouselBannersEvent extends HomeEvent {
 class LoadPopularServicesEvent extends HomeEvent {
   final double latitude;
   final double longitude;
-  final String gender;
+  final int? limit;
+  final int? page;
+  final String? gender;
 
   const LoadPopularServicesEvent({
     required this.latitude,
     required this.longitude,
-    this.gender = 'unisex',
+    this.limit,
+    this.page,
+    this.gender,
   });
 
   @override
-  List<Object?> get props => [latitude, longitude, gender];
+  List<Object?> get props => [latitude, longitude, limit, page, gender];
 }
 
 /// Event to load top salons
 class LoadTopSalonsEvent extends HomeEvent {
   final double latitude;
   final double longitude;
+  final int? limit;
+  final int? page;
+  final String? gender;
 
   const LoadTopSalonsEvent({
     required this.latitude,
     required this.longitude,
+    this.limit,
+    this.page,
+    this.gender,
   });
 
   @override
-  List<Object?> get props => [latitude, longitude];
+  List<Object?> get props => [latitude, longitude, limit, page, gender];
 }
 
 /// Event to load recommended salons
 class LoadRecommendedSalonsEvent extends HomeEvent {
-  const LoadRecommendedSalonsEvent();
+  final double latitude;
+  final double longitude;
+  final int? limit;
+  final int? page;
+  final String? gender;
+  final bool isLoadMore; // For infinite scroll
+
+  const LoadRecommendedSalonsEvent({
+    required this.latitude,
+    required this.longitude,
+    this.limit,
+    this.page,
+    this.gender,
+    this.isLoadMore = false,
+  });
+
+  @override
+  List<Object?> get props => [latitude, longitude, limit, page, gender, isLoadMore];
 }
 
 /// Event to load all home data at once

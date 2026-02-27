@@ -17,10 +17,14 @@ class HomeState extends Equatable {
   final List<SalonEntity> topSalons;
   final String? topSalonsError;
 
-  // Recommended Salons
+  // Recommended Salons (with pagination)
   final bool isRecommendedSalonsLoading;
   final List<SalonEntity> recommendedSalons;
   final String? recommendedSalonsError;
+  final int recommendedCurrentPage;
+  final int recommendedTotalPages;
+  final bool hasMoreRecommended;
+  final bool isLoadingMoreRecommended;
 
   const HomeState({
     this.isCarouselLoading = false,
@@ -35,6 +39,10 @@ class HomeState extends Equatable {
     this.isRecommendedSalonsLoading = false,
     this.recommendedSalons = const [],
     this.recommendedSalonsError,
+    this.recommendedCurrentPage = 1,
+    this.recommendedTotalPages = 1,
+    this.hasMoreRecommended = true,
+    this.isLoadingMoreRecommended = false,
   });
 
   HomeState copyWith({
@@ -54,6 +62,10 @@ class HomeState extends Equatable {
     List<SalonEntity>? recommendedSalons,
     String? recommendedSalonsError,
     bool clearRecommendedSalonsError = false,
+    int? recommendedCurrentPage,
+    int? recommendedTotalPages,
+    bool? hasMoreRecommended,
+    bool? isLoadingMoreRecommended,
   }) {
     return HomeState(
       isCarouselLoading: isCarouselLoading ?? this.isCarouselLoading,
@@ -68,6 +80,10 @@ class HomeState extends Equatable {
       isRecommendedSalonsLoading: isRecommendedSalonsLoading ?? this.isRecommendedSalonsLoading,
       recommendedSalons: recommendedSalons ?? this.recommendedSalons,
       recommendedSalonsError: clearRecommendedSalonsError ? null : (recommendedSalonsError ?? this.recommendedSalonsError),
+      recommendedCurrentPage: recommendedCurrentPage ?? this.recommendedCurrentPage,
+      recommendedTotalPages: recommendedTotalPages ?? this.recommendedTotalPages,
+      hasMoreRecommended: hasMoreRecommended ?? this.hasMoreRecommended,
+      isLoadingMoreRecommended: isLoadingMoreRecommended ?? this.isLoadingMoreRecommended,
     );
   }
 
@@ -99,5 +115,9 @@ class HomeState extends Equatable {
         isRecommendedSalonsLoading,
         recommendedSalons,
         recommendedSalonsError,
+        recommendedCurrentPage,
+        recommendedTotalPages,
+        hasMoreRecommended,
+        isLoadingMoreRecommended,
       ];
 }
