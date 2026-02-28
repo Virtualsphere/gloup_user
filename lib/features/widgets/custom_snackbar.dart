@@ -6,6 +6,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_images.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/extensions/string_extensions.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomToast {
   static show(
@@ -95,12 +96,17 @@ class NoDataText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Center(
-      child: HeaderTextBlack(
-        title: title,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-        isBodoniModa: false,
+      child: Text(
+        title,
+        style: context.textTheme.bodyLarge?.copyWith(
+          color: isDarkMode
+              ? AppColors.white
+              : AppColors.black,
+          fontSize: 24,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

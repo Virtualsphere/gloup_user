@@ -2,13 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/enums.dart';
-import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:tressy/features/widgets/custom_image.dart';
 import 'package:tressy/features/widgets/custom_indicator.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
 import 'package:tressy/features/widgets/custom_snackbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   bool favotites = false;
+
   @override
   void initState() {
     super.initState();
@@ -32,18 +32,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Text(
+          'Favorites',
+          style: context.textTheme.displaySmall?.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: isDarkMode ? AppColors.white : AppColors.black,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
           children: [
-            BodyTextColors(
-              title: 'Favorites',
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-              isBodoniModa: false,
-            ),
             Padding(
               padding:
                   const EdgeInsets.only(left: 16.0, right: 16.0, top: 15.0),
@@ -57,28 +61,29 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   ? NoDataImageWidget()
                   : ListView.builder(
                       itemCount: 2,
-                      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 20.0),
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: SalonCard(
-                            salonName: 'Royal Beauty',
-                            salonImage: 'https://i.pravatar.cc/300',
-                            images: ['https://i.pravatar.cc/300','https://i.pravatar.cc/300'],
-                            rating: 4.5,
-                            reviewCount: 100,
-                            distance: 3,
-                            isPremium: true,
-                            isFavorite: true,
-                            serviceName: 'Royal Bueaty',
-                            servicePrice: 100,
-                            categories: [
-                              'test','value','amount'
-                            ],
-                            languageCodes: ['A'],
-                            onTap: () {},
-                          )
-                        );
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: SalonCard(
+                              salonName: 'Royal Beauty',
+                              salonImage: 'https://i.pravatar.cc/300',
+                              images: [
+                                'https://i.pravatar.cc/300',
+                                'https://i.pravatar.cc/300'
+                              ],
+                              rating: 4.5,
+                              reviewCount: 100,
+                              distance: 3,
+                              isPremium: true,
+                              isFavorite: true,
+                              serviceName: 'Royal Bueaty',
+                              servicePrice: 100,
+                              categories: ['test', 'value', 'amount'],
+                              languageCodes: ['A'],
+                              onTap: () {},
+                            ));
                       },
                     ),
             ),

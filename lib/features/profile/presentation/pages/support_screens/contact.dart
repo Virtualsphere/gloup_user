@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
-import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/dev_info.dart';
-import 'package:tressy/features/widgets/custom_appbar.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Contact extends StatefulWidget {
@@ -28,12 +26,19 @@ class _ContactState extends State<Contact> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    return Scaffold(
+      // backgroundColor: context.colorScheme.surface,
+      appBar:  ProfileAppBar(
+        title: "Contact",
+        centerTitle: false,
+        onBack: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      body: SafeArea(
+        child: Column(
           children: [
-            ActionBar(title: 'Contact', isBackButtonDecoration: true),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 15),
@@ -43,35 +48,53 @@ class _ContactState extends State<Contact> {
                   Center(
                     child: SvgPicture.asset(
                       AppIcons.gloUp,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 40),
-                  HeaderTextBlack(
-                    title: 'Mission',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
+                  SizedBox(height: 40.0),
+                  Text(
+                    'Mission',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                  SizedBox(height: 10),
-                  BodyTextHint(
-                    title:
+                  SizedBox(height: 10.0),
+                  Text(
                     'To simplify and elevate the beauty and grooming experience by providing a seamless, user-friendly platform that connects customers with trusted salons and professionals, offering convenience, transparency, and personalized services at their fingertips',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w300,
+                    ),
                   ),
-                  SizedBox(height: 15),
-                  HeaderTextBlack(
-                    title: 'Vision',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
+                  SizedBox(height: 15.0),
+                  Text(
+                    'Vision',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                  SizedBox(height: 10),
-                  BodyTextHint(
-                    title:
+                  SizedBox(height: 10.0),
+                  Text(
                     'To become India’s most trusted and innovative salon booking ecosystem, redefining how people discover, book, and experience beauty and wellness, while empowering salons and professionals to grow in the digital era.',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w300,
+                    ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [

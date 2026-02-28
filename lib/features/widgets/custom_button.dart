@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/text_styles.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomFullButton extends StatelessWidget {
   const CustomFullButton({
@@ -15,31 +16,61 @@ class CustomFullButton extends StatelessWidget {
     this.titleColor = AppColors.white,
     this.borderRadius = 10,
     this.buttonHeight = 56,
+    this.isLoading = false,
+    this.disabledBackgroundColor,
+    this.disabledTextColor,
+    this.backgroundColor,
+    this.textColor,
   });
 
   final String title;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool isDisabled;
   final Color buttonColor, titleColor;
   final double borderRadius, buttonHeight;
+  final bool isLoading;
+  final Color? disabledBackgroundColor;
+  final Color? disabledTextColor;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    final isButtonDisabled = isDisabled || isLoading || onTap == null;
+
+    final bgColor = isButtonDisabled
+        ? (disabledBackgroundColor ??
+        (isDarkMode ? AppColors.borderDark : AppColors.border))
+        : (backgroundColor ??
+        (isDarkMode ? AppColors.onPrimary : AppColors.primary));
+
+    // Determine text color
+    final txtColor = isButtonDisabled
+        ? (disabledTextColor ??
+        (isDarkMode
+            ? AppColors.textSecondaryDark
+            : AppColors.textSecondary))
+        : (textColor ?? (isDarkMode ? AppColors.primary : AppColors.onPrimary));
+
     return GestureDetector(
       onTap: isDisabled ? null : onTap,
       child: Container(
         height: buttonHeight,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          color: isDisabled ? AppColors.disabledColor : buttonColor,
+          borderRadius: BorderRadius.circular(borderRadius,),
+          color: isDisabled
+              ? (isDarkMode ? AppColors.borderDark : AppColors.border)
+              : (isDarkMode ? AppColors.borderDark : AppColors.border),
         ),
         child: Center(
           child: Text(
             title,
-            style: GoogleFonts.outfit(
-              fontSize: 16,
+            style: context.textTheme.labelLarge?.copyWith(
+              color: isDarkMode
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimary,
               fontWeight: FontWeight.w400,
-              color: isDisabled ? AppColors.textSecondaryDark : titleColor,
             ),
           ),
         ),
@@ -181,32 +212,35 @@ class CustomPopupMenuButton extends StatelessWidget {
     required this.items,
     this.alignment = Alignment.center,
     this.iconColor = AppColors.primary,
+    this.backgroundColor,
   });
 
   final double width;
   final List<PopupMenuItemData> items;
   final Alignment alignment;
   final Color iconColor;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return PopupMenuTheme(
       data: PopupMenuThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
-            color: AppColors.borderColor,
+            color: isDarkMode ? AppColors.black : AppColors.borderColor,
             width: 1,
           ),
         ),
         surfaceTintColor: Colors.white,
-        color: Colors.white,
-        position: PopupMenuPosition.under,
+        color: backgroundColor,
+      position: PopupMenuPosition.under,
         iconColor: iconColor,
       ),
       child: PopupMenuButton(
-        color: Colors.white,
+        color: isDarkMode ? context.colorScheme.surface : AppColors.white,
         padding: EdgeInsets.zero,
         icon: Icon(
           Icons.more_vert_sharp,
@@ -224,10 +258,13 @@ class CustomPopupMenuButton extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   alignment: alignment,
-                  child: HeaderTextBlack(
-                    title: items[i].title,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
+                  child: Text(
+                    items[i].title,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: isDarkMode ? AppColors.white : AppColors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ),

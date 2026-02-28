@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
-import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/add_person_bottom_sheet.dart';
 import 'package:tressy/shared/widgets/edit_person_bottom_sheet.dart';
 import 'package:tressy/features/profile/presentation/pages/support.dart';
@@ -22,8 +20,9 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+       // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
         title: "Settings",
         centerTitle: false,
@@ -44,7 +43,13 @@ class _SettingsState extends State<Settings> {
               height: AppSizes.paddingM,
             ),
             Container(
-              decoration: Themes.borderDecoration(),
+             decoration:  BoxDecoration(
+                color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  color: context.colorScheme.surface,
+                ),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               margin: EdgeInsets.symmetric(horizontal: 15),
               child: ProfileListTile(
@@ -55,7 +60,7 @@ class _SettingsState extends State<Settings> {
                     context,
                     title: 'Delete Account',
                     submitOnTap: () async {
-                      context.pop();
+                      Navigator.of(context).pop();
                       // await deleteUser();
                     },
                   );
@@ -68,12 +73,13 @@ class _SettingsState extends State<Settings> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  BodyTextColors(
-                    title: 'Guest User ',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primary,
-                    isBodoniModa: false,
+                  Text(
+                    'Guest User',
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
                   InkWell(
                     onTap: () {
@@ -95,24 +101,28 @@ class _SettingsState extends State<Settings> {
                         vertical: AppSizes.paddingS,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: isDarkMode ? AppColors.white: AppColors.black,
                         borderRadius: BorderRadius.circular(AppSizes.radiusS),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                           Icon(
                             Icons.add,
-                            color: AppColors.white,
+                            color: isDarkMode
+                                ? AppColors.black
+                                : AppColors.white,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Add',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.black
+                                  : AppColors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: AppSizes.fontM,
                             ),
                           ),
                         ],
@@ -165,10 +175,17 @@ class ProfileDeleteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: Themes.borderDecoration(),
+       decoration: BoxDecoration(
+         color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
+         borderRadius: BorderRadius.circular(15.0),
+         border: Border.all(
+           color: context.colorScheme.surface,
+         ),
+       ),
       child: Column(
         children: [
           Row(
@@ -204,10 +221,10 @@ class ProfileDeleteCard extends StatelessWidget {
                       name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: context.colorScheme.onSurface,
                         fontSize: AppSizes.font,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -224,10 +241,10 @@ class ProfileDeleteCard extends StatelessWidget {
                             gender,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: context.textTheme.displaySmall?.copyWith(
+                              color: context.colorScheme.onSurface,
                               fontSize: AppSizes.font,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
                             ),
                           ),
                         ),
@@ -238,6 +255,7 @@ class ProfileDeleteCard extends StatelessWidget {
               ),
               if (showMenuButton == true)
                 CustomPopupMenuButton(
+                  iconColor: isDarkMode ? AppColors.white : AppColors.black,
                   items: [
                     PopupMenuItemData(
                       title: 'Edit',
@@ -268,7 +286,7 @@ class ProfileDeleteCard extends StatelessWidget {
                           context,
                           title: 'delete this guest user?',
                           submitOnTap: () {
-                            context.pop();
+                          Navigator.of(context).pop();
                           },
                         );
                       },

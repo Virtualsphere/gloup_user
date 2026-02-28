@@ -1,14 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/enums.dart';
-import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/profile/presentation/model/review_data.dart';
 import 'package:tressy/features/widgets/add_rating_dialogue.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
@@ -16,6 +13,8 @@ import 'package:tressy/features/widgets/custom_dialogues.dart';
 import 'package:tressy/features/widgets/custom_image.dart';
 import 'package:tressy/features/widgets/custom_rating_bar.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class MyReviews extends StatefulWidget {
   const MyReviews({super.key});
@@ -56,7 +55,7 @@ class _MyReviewsState extends State<MyReviews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // backgroundColor: AppColors.background,
       appBar: ProfileAppBar(
           title: "My Reviews",
           centerTitle: false,
@@ -64,29 +63,24 @@ class _MyReviewsState extends State<MyReviews> {
             Navigator.of(context).pop();
           }),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: AppSizes.paddingL),
-            Expanded(
-              child: ListView.builder(
-                itemCount: dummyReviews.length,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  final review = dummyReviews[index];
-                  return MyReviewContainer(
-                    reviewData: review,
-                    deleteOnTap: () {
-                      if (kDebugMode) {
-                        print("Delete tapped for reviewId: ${review.reviewId}");
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
+          child: ListView.builder(
+        padding: const EdgeInsets.only(
+          top: AppSizes.paddingL,
         ),
-      ),
+        itemCount: dummyReviews.length,
+        itemBuilder: (context, index) {
+          final review = dummyReviews[index];
+
+          return MyReviewContainer(
+            reviewData: review,
+            deleteOnTap: () {
+              debugPrint(
+                "Delete tapped for reviewId: ${review.reviewId}",
+              );
+            },
+          );
+        },
+      )),
     );
   }
 }
@@ -110,10 +104,13 @@ class MyReviewContainer extends StatelessWidget {
       "Spa",
       "Beard Trim",
     ];
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
       padding: EdgeInsets.all(10),
-      decoration: Themes.borderDecoration(radius: 10),
+      decoration: BoxDecoration(
+          color: isDarkMode ? AppColors.black : AppColors.white,
+          borderRadius: BorderRadius.circular(10.0)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,24 +132,37 @@ class MyReviewContainer extends StatelessWidget {
               Expanded(
                 child: ListTile(
                   contentPadding: EdgeInsets.only(left: 15),
-                  title: HeaderTextBlack(
-                    title: '${reviewData.storeName}',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    overflow: TextOverflow.ellipsis,
+                  title: Text(
+                    '${reviewData.storeName}',
+                    maxLines: 1,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.white
+                          : AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 6),
-                    child: BodyTextHint(
-                      title: '${reviewData.district}, ${reviewData.city}',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      overflow: TextOverflow.ellipsis,
+                    child: Text(
+                      '${reviewData.district}, ${reviewData.city}',
+                      maxLines: 1,
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
               ),
               CustomPopupMenuButton(
+                iconColor: isDarkMode ? AppColors.white : AppColors.black,
                 items: [
                   PopupMenuItemData(
                     title: 'Edit',
@@ -173,7 +183,7 @@ class MyReviewContainer extends StatelessWidget {
                         context,
                         title: 'delete this review',
                         submitOnTap: () {
-                          context.pop();
+                          Navigator.of(context).pop();
                           deleteOnTap();
                         },
                       );
@@ -188,7 +198,7 @@ class MyReviewContainer extends StatelessWidget {
             child: SizedBox(
               height: 2.0,
               child: Divider(
-                color: AppColors.disabledColor,
+                color: isDarkMode ? AppColors.white : AppColors.disabledColor,
                 thickness: 1.5,
               ),
             ),
@@ -205,7 +215,7 @@ class MyReviewContainer extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: services.length,
                   itemBuilder: (context, index) {
-                    return buildServiceChip(services[index]);
+                    return buildServiceChip(context, services[index]);
                   },
                 ),
               ),
@@ -216,20 +226,23 @@ class MyReviewContainer extends StatelessWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.circle,
                             size: 8,
-                            color: Colors.black,
+                            color:
+                                isDarkMode ? AppColors.white : AppColors.black,
                           ),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               'Completed on 23/02/2026',
-                              style: TextStyle(
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.textSecondary,
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w400,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -243,14 +256,17 @@ class MyReviewContainer extends StatelessWidget {
                           height: 14.0,
                           width: 14.0,
                           colorFilter: ColorFilter.mode(
-                            AppColors.primary,
+                            isDarkMode ? AppColors.white : AppColors.black,
                             BlendMode.srcIn,
                           ),
                         ),
                         const SizedBox(width: 3.0),
-                        const Text(
+                        Text(
                           '1000',
-                          style: TextStyle(
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            color: isDarkMode
+                                ? AppColors.white
+                                : AppColors.textSecondary,
                             fontSize: 13.0,
                             fontWeight: FontWeight.w400,
                           ),
@@ -265,7 +281,9 @@ class MyReviewContainer extends StatelessWidget {
                 child: SizedBox(
                   height: 2.0,
                   child: Divider(
-                    color: AppColors.disabledColor,
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.disabledColor,
                     thickness: 1.5,
                   ),
                 ),
@@ -281,26 +299,36 @@ class MyReviewContainer extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: AppColors.borderColor,
-                  border: Border.all(color: AppColors.borderColor)
-                ),
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: isDarkMode ? AppColors.white : AppColors.borderColor,
+                    border: Border.all(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : AppColors.borderColor)),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         '${reviewData.reviewDescription}',
-                        style: TextStyle(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                           fontSize: 15.0,
                           fontWeight: FontWeight.w400,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     GestureDetector(
-                      onTap: (){showInputDialog(context, reviewData.reviewDescription);},
-                        child: SvgPicture.asset(AppIcons.edit,color: AppColors.black,),
+                      onTap: () {
+                        showInputDialog(context, reviewData.reviewDescription);
+                      },
+                      child: SvgPicture.asset(
+                        AppIcons.edit,
+                        color: AppColors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -321,13 +349,15 @@ class MyReviewContainer extends StatelessWidget {
   }
 
   //service chip:-
-  Widget buildServiceChip(String title) {
+  Widget buildServiceChip(BuildContext context, String title) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Chip(
         label: Text(
           title,
-          style: const TextStyle(
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: isDarkMode ? AppColors.white : AppColors.textSecondary,
             fontSize: 12, // smaller text
             height: 1,
           ),
@@ -336,11 +366,12 @@ class MyReviewContainer extends StatelessWidget {
         visualDensity: VisualDensity.compact,
         // reduces internal padding
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-        backgroundColor: AppColors.circleGreyColor,
+        backgroundColor:
+            isDarkMode ? AppColors.greyColor : AppColors.circleGreyColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          side: const BorderSide(
-            color: AppColors.circleGreyColor,
+          side: BorderSide(
+            color: isDarkMode ? AppColors.greyColor : AppColors.circleGreyColor,
           ),
         ),
       ),
@@ -355,8 +386,11 @@ class MyReviewContainer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        final isDarkMode = context.theme.brightness == Brightness.dark;
         return Dialog(
-          backgroundColor: AppColors.scaffoldBackground,
+          backgroundColor: isDarkMode
+              ? context.colorScheme.surface
+              : AppColors.scaffoldBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -372,10 +406,13 @@ class MyReviewContainer extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      HeaderTextBlack(
-                        title: 'View Comments',
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
+                      Text(
+                        'View Comments',
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colorScheme.onSurface,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       IconButton(
                         onPressed: () {
@@ -384,7 +421,7 @@ class MyReviewContainer extends StatelessWidget {
                         icon: Icon(
                           Icons.clear,
                           size: 23.0,
-                          color: AppColors.black,
+                          color: context.colorScheme.onSurface,
                         ),
                       )
                     ],
@@ -401,10 +438,11 @@ class MyReviewContainer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 48.0,
-                    child: CustomFullButton(
-                      title: 'Save',
-                      onTap: () {
+                   height:  45.0,
+                    child: PrimaryButton(
+                      text: 'Save',
+                      isLoading: false,
+                      onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),

@@ -90,6 +90,7 @@ class AppColors {
   static const Color greenText = Color(0xFF00C10D);
   static const Color secondaryColor = Color(0xFFB5B5B5);
   static const Color scaffoldBackground = Color(0XFFFFFFFF);
+  static const Color greyColor = Color(0xFF808080);
 
   // Gradient Colors - Light Theme
   static const List<Color> primaryGradient = [

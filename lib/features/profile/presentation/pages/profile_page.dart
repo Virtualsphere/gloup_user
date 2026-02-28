@@ -5,9 +5,10 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/strings.dart';
-import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/widgets/custom_dialogues.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/theme_image_toggle.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String userName = 'Muthupandi Murugaiah';
@@ -16,8 +17,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -33,35 +34,37 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 60, // same height as avatar
+                      height: 60,
                       child: Center(
                         child: GestureDetector(
-                          onTap: () => context.pop(),
+                          onTap: () => Navigator.of(context).pop(),
                           child: SvgPicture.asset(
                             AppIcons.arrowBack,
                             height: 20.0,
                             width: 20.0,
                             colorFilter: ColorFilter.mode(
-                              AppColors.primary,
+                              isDarkMode ? AppColors.white : AppColors.black,
                               BlendMode.srcIn,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 20.0,),
+                    SizedBox(
+                      width: 20.0,
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             userName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: context.textTheme.displaySmall?.copyWith(
+                              color: context.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
                               fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -69,9 +72,10 @@ class ProfilePage extends StatelessWidget {
                             'Personal Profile',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: context.textTheme.displaySmall?.copyWith(
+                              color: context.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
                               fontSize: AppSizes.fontM,
-                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -144,6 +148,12 @@ class ProfilePage extends StatelessWidget {
                       },
                     ),
                     _MenuItem(
+                      icon: null,
+                      label: 'Switch Theme',
+                      trailing: true,
+                      onTap: () {},
+                    ),
+                    _MenuItem(
                       icon: Icons.settings_outlined,
                       label: 'Settings',
                       onTap: () {
@@ -152,7 +162,6 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: AppSizes.paddingM),
 
                 // ── Support & Logout Card ──────────────────────────────
@@ -233,11 +242,13 @@ class WalletBalanceContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                BodyTextColors(
-                  title: 'Wallet Balance',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.white,
+                Text(
+                  'Wallet Balance',
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16.0,
+                  ),
                 ),
                 Row(
                   children: [
@@ -250,14 +261,16 @@ class WalletBalanceContainer extends StatelessWidget {
                         BlendMode.srcIn,
                       ),
                     ),
-                    BodyTextColors(
-                      title: amount == Strings.loading
+                    Text(
+                      amount == Strings.loading
                           ? Strings.loading
                           : double.parse(amount).toStringAsFixed(2),
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.white,
-                    )
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24.0,
+                      ),
+                    ),
                   ],
                 ),
                 if (isViewWalletButton) ...{
@@ -269,16 +282,18 @@ class WalletBalanceContainer extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(35),
                         border: Border.all(
-                          color: AppColors.background,
+                          color: AppColors.white,
                           width: 1,
                         ),
                       ),
                       child: Center(
-                        child: BodyTextColors(
-                          title: 'View Wallet',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.white,
+                        child: Text(
+                          'View Wallet',
+                          style: context.textTheme.labelLarge?.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12.0,
+                          ),
                         ),
                       ),
                     ),
@@ -286,12 +301,13 @@ class WalletBalanceContainer extends StatelessWidget {
                 } else ...{
                   Padding(
                     padding: const EdgeInsets.only(right: 60),
-                    child: BodyTextColors(
-                      title:
-                          'Wallet balance is non-transferable and can be used only for salon bookings.',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      color: AppColors.white,
+                    child: Text(
+                      'Wallet balance is non-transferable and can be used only for salon bookings.',
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 14.0,
+                      ),
                     ),
                   )
                 }
@@ -313,12 +329,11 @@ class _MenuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
-      ),
+          color: isDarkMode ? AppColors.black : AppColors.white,
+          borderRadius: BorderRadius.circular(16.0)),
       child: Column(
         children: List.generate(items.length, (index) {
           final item = items[index];
@@ -330,7 +345,7 @@ class _MenuCard extends StatelessWidget {
                 Divider(
                   height: 1,
                   thickness: 1,
-                  color: Colors.grey.shade100,
+                  color: isDarkMode ? AppColors.white : Colors.grey.shade100,
                   indent: 56,
                 ),
             ],
@@ -350,6 +365,7 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return InkWell(
       onTap: item.onTap,
       borderRadius: BorderRadius.circular(16),
@@ -360,20 +376,27 @@ class _MenuTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              item.icon,
-              size: 24,
-              color: AppColors.textPrimary,
-            ),
-            const SizedBox(width: AppSizes.paddingM),
-            Text(
-              item.label,
-              style: const TextStyle(
-                fontSize: AppSizes.fontM,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textPrimary,
+            if (item.icon != null) ...[
+              Icon(
+                item.icon,
+                size: 24,
+                color: isDarkMode
+                    ? AppColors.white
+                    : AppColors.textPrimary,
+              ),
+              const SizedBox(width: AppSizes.paddingM),
+            ],
+            Expanded(
+              child: Text(
+                item.label,
+                style: context.textTheme.displaySmall?.copyWith(
+                  color: isDarkMode ? AppColors.white : AppColors.textPrimary,
+                  fontSize: AppSizes.fontM,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
+            if (item.trailing == true) ThemeImageToggle(),
           ],
         ),
       ),
@@ -383,13 +406,15 @@ class _MenuTile extends StatelessWidget {
 
 // ── Data class ────────────────────────────────────────────────────────────────
 class _MenuItem {
-  final IconData icon;
+  final IconData? icon;
   final String label;
   final VoidCallback onTap;
+  final bool? trailing;
 
   const _MenuItem({
-    required this.icon,
+    this.icon,
     required this.label,
     required this.onTap,
+    this.trailing,
   });
 }
