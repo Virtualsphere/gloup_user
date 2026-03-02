@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -11,11 +10,8 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart'
 import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/shared/widgets/custom_toast.dart';
-import 'package:tressy/shared/widgets/empty_widget.dart';
-import 'package:tressy/shared/widgets/error_widget.dart' as custom_error;
+import 'package:tressy/features/favorites/presentation/widgets/favorites_shimmers.dart';
 import 'package:tressy/shared/widgets/explore_salon_card.dart';
-import 'package:tressy/shared/widgets/loading_widget.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -112,33 +108,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       style: context.textTheme.bodyMedium,
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      // Handle settings tap
-                    },
-                    borderRadius:
-                        BorderRadius.circular(AppSizes.radiusCircular),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.primaryDark.withValues(alpha: 0.05)
-                              : AppColors.primary.withValues(alpha: 0.05),
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusS)),
-                      padding: const EdgeInsets.all(6),
-                      child: SvgPicture.asset(
-                        AppIcons.icSettings,
-                        width: AppSizes.iconS,
-                        height: AppSizes.iconS,
-                        colorFilter: ColorFilter.mode(
-                          isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -185,10 +154,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
                     const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
 
-                    // Loading state
+                    // Loading state - Show shimmer
                     if (state.listStatus == FavoritesListStatus.loading)
-                      const SliverFillRemaining(
-                        child: LoadingWidget(),
+                      SliverToBoxAdapter(
+                        child: FavoritesShimmers.favoritesSalonListShimmer(context),
                       ),
 
                     // Error state

@@ -72,9 +72,9 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
 
     // Toggle favorite via BLoC
     context.read<FavoritesBloc>().add(
-      ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
-    );
-    
+          ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
+        );
+
     // Call optional callback
     widget.onFavoriteToggle?.call();
   }
@@ -102,58 +102,65 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
     return BlocBuilder<FavoritesBloc, FavoritesState>(
       builder: (context, favoritesState) {
         // Use optimistic update if available, otherwise use server data
-        final isFavorite = favoritesState.isFavorite(widget.storeId, widget.isFavorite);
-        
+        final isFavorite =
+            favoritesState.isFavorite(widget.storeId, widget.isFavorite);
+
         // Check if this specific card is loading
         final isLoading = favoritesState.status == FavoritesStatus.loading &&
             favoritesState.lastToggledStoreId == widget.storeId;
 
         return InkWell(
-      onTap: widget.onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          boxShadow: [
-            BoxShadow(
-              color: isDarkMode
-                  ? AppColors.white.withValues(alpha: 0.08)
-                  : AppColors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Left side - Image carousel
-            _buildImageCarousel(),
-            const SizedBox(width: AppSizes.spaceM),
-            // Right side - Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: AppSizes.paddingM,
-                  right: AppSizes.paddingM,
-                  bottom: AppSizes.paddingM,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildSalonInfo(isDarkMode, isFavorite, isLoading),
-                    const SizedBox(height: AppSizes.spaceS),
-                    _buildRatingAndDistance(isDarkMode),
-                  ],
-                ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+              border: Border.all(
+                color: isDarkMode
+                    ? AppColors.white.withValues(alpha: 0.08)
+                    : AppColors.black.withValues(alpha: 0.08),
+                width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDarkMode
+                      ? AppColors.white.withValues(alpha: 0.08)
+                      : AppColors.black.withValues(alpha: 0.08),
+                  blurRadius: 1,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left side - Image carousel
+                _buildImageCarousel(),
+                const SizedBox(width: AppSizes.spaceM),
+                // Right side - Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: AppSizes.paddingM,
+                      right: AppSizes.paddingM,
+                      bottom: AppSizes.paddingM,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildSalonInfo(isDarkMode, isFavorite, isLoading),
+                        const SizedBox(height: AppSizes.spaceS),
+                        _buildRatingAndDistance(
+                            isDarkMode, widget.showDistance),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -167,8 +174,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
           // Carousel images
           ClipRRect(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(AppSizes.radiusM),
-              bottomLeft: Radius.circular(AppSizes.radiusM),
+              topLeft: Radius.circular(AppSizes.radiusS),
+              bottomLeft: Radius.circular(AppSizes.radiusS),
             ),
             child: CarouselSlider(
               options: CarouselOptions(
@@ -410,7 +417,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
     );
   }
 
-  Widget _buildRatingAndDistance(bool isDarkMode) {
+  Widget _buildRatingAndDistance(bool isDarkMode, bool showDistance) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -456,7 +463,10 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             ),
             const SizedBox(width: 4),
             Container(
-              constraints: const BoxConstraints(maxWidth: 130),
+              constraints: BoxConstraints(
+                  maxWidth: showDistance
+                      ? 130
+                      : 200), // Limit width when distance is shown
               child: Text(
                 widget.address ?? '',
                 style: context.textTheme.bodySmall?.copyWith(

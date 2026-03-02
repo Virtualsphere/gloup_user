@@ -81,7 +81,6 @@ class _CategoryPageState extends State<CategoryPage> {
     if (_lastLatitude != locationProvider.latitude || 
         _lastLongitude != locationProvider.longitude) {
       
-      debugPrint('CategoryPage: Location changed from ($_lastLatitude, $_lastLongitude) to (${locationProvider.latitude}, ${locationProvider.longitude})');
       
       // Update stored location
       _lastLatitude = locationProvider.latitude;
@@ -97,7 +96,6 @@ class _CategoryPageState extends State<CategoryPage> {
       
       // Reload data with new location if category is selected
       if (_selectedCategoryId != null) {
-        debugPrint('CategoryPage: Reloading salons for category $_selectedCategoryId with new location');
         context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
           latitude: locationProvider.latitude,
           longitude: locationProvider.longitude,
@@ -214,6 +212,12 @@ class _CategoryPageState extends State<CategoryPage> {
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        border: Border.all(
+          color: isDarkMode
+              ? AppColors.white.withValues(alpha: 0.08)
+              : AppColors.black.withValues(alpha: 0.08),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -279,6 +283,7 @@ class _CategoryPageState extends State<CategoryPage> {
         }
       },
       child: Scaffold(
+        backgroundColor: context.colorScheme.surface,
         appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: Colors.transparent,

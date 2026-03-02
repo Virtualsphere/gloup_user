@@ -244,16 +244,9 @@ class _HomePageState extends State<HomePage> {
         return _homeBloc!;
       },
       child: BlocListener<FavoritesBloc, FavoritesState>(
-        listenWhen: (previous, current) {
-          // Listen when toast counter changes
-          return current.toastCounter != previous.toastCounter;
-        },
         listener: (context, state) {
-          // Show toast for success or failure
-          if (state.status == FavoritesStatus.success) {
-            CustomToast.showSuccess(context, state.message ?? 'Favorite updated');
-          } else if (state.status == FavoritesStatus.failure) {
-            CustomToast.showError(context, state.errorMessage ?? 'Failed to update favorite');
+          if (state.status == FavoritesStatus.failure && state.lastToggledStoreId != null) {
+            CustomToast.showError(context, 'Failed to update favorite. Please try again.');
           }
         },
         child: Scaffold(

@@ -89,9 +89,9 @@ class _SalonCardState extends State<SalonCard> {
 
     // Toggle favorite via BLoC, passing current state
     context.read<FavoritesBloc>().add(
-      ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
-    );
-    
+          ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
+        );
+
     // Call optional callback
     widget.onFavoriteToggle?.call();
   }
@@ -99,54 +99,73 @@ class _SalonCardState extends State<SalonCard> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     // Removed BlocListener - toasts are now handled by parent page
     return BlocBuilder<FavoritesBloc, FavoritesState>(
-        builder: (context, favoritesState) {
-          // Use optimistic update if available, otherwise use server data
-          final isFavorite = favoritesState.isFavorite(widget.storeId, widget.isFavorite);
-          
-          print('🔍 SalonCard ${widget.storeId}: serverValue=${widget.isFavorite}, optimistic=${favoritesState.optimisticUpdates[widget.storeId]}, final=$isFavorite');
-          
-          // Check if this specific card is loading
-          final isLoading = favoritesState.status == FavoritesStatus.loading &&
-              favoritesState.lastToggledStoreId == widget.storeId;
-          
-          return InkWell(
-            onTap: widget.onTap,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            child: Container(
-              width: widget.isFullWidth ? double.infinity : 320,
-              margin: widget.isFullWidth 
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.only(right: AppSizes.paddingM),
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+      builder: (context, favoritesState) {
+        // Use optimistic update if available, otherwise use server data
+        final isFavorite =
+            favoritesState.isFavorite(widget.storeId, widget.isFavorite);
+
+        // Check if this specific card is loading
+        final isLoading = favoritesState.status == FavoritesStatus.loading &&
+            favoritesState.lastToggledStoreId == widget.storeId;
+
+        return InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          child: Container(
+            width: widget.isFullWidth ? double.infinity : 310,
+            margin: widget.isFullWidth
+                ? EdgeInsets.zero
+                : const EdgeInsets.only(right: AppSizes.paddingM),
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+              border: Border.all(
+                color: isDarkMode
+                    ? AppColors.white.withValues(alpha: 0.08)
+                    : AppColors.black.withValues(alpha: 0.08),
+                width: 1,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildImageCarousel(isFavorite, isLoading),
-                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
-                  _buildSalonInfo(isDarkMode),
-                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
-                  _buildRatingAndDistance(isDarkMode),
-                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
-                ],
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDarkMode
+                      ? AppColors.white.withValues(alpha: 0.08)
+                      : AppColors.black.withValues(alpha: 0.08),
+                  blurRadius: 1,
+                ),
+              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
+              //     blurRadius: 8,
+              //     offset: const Offset(0, 2),
+              //   ),
+              // ],
             ),
-          );
-        },
-      );
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildImageCarousel(isFavorite, isLoading),
+                SizedBox(
+                    height:
+                        widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
+                _buildSalonInfo(isDarkMode),
+                SizedBox(
+                    height:
+                        widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
+                _buildRatingAndDistance(isDarkMode),
+                SizedBox(
+                    height:
+                        widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildImageCarousel(bool isFavorite, bool isLoading) {
@@ -160,7 +179,7 @@ class _SalonCardState extends State<SalonCard> {
           ),
           child: CarouselSlider(
             options: CarouselOptions(
-              height: 160,
+              height: 150,
               viewportFraction: 1.0,
               enableInfiniteScroll: widget.images.length > 1,
               autoPlay: false,
@@ -196,7 +215,8 @@ class _SalonCardState extends State<SalonCard> {
                               Text(
                                 'Image not available',
                                 style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.primary.withValues(alpha: 0.4),
+                                  color:
+                                      AppColors.primary.withValues(alpha: 0.4),
                                   fontSize: 11,
                                 ),
                               ),
@@ -255,7 +275,9 @@ class _SalonCardState extends State<SalonCard> {
           top: AppSizes.paddingS,
           right: AppSizes.paddingS,
           child: InkWell(
-            onTap: isLoading ? null : _handleFavoriteToggle, // Disable while loading
+            onTap: isLoading
+                ? null
+                : _handleFavoriteToggle, // Disable while loading
             borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             child: Container(
               padding: const EdgeInsets.all(AppSizes.paddingS),
@@ -421,7 +443,8 @@ class _SalonCardState extends State<SalonCard> {
                   widget.salonName,
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
                     height: 1.3,
                   ),
                   maxLines: 2,
@@ -453,7 +476,9 @@ class _SalonCardState extends State<SalonCard> {
               Text(
                 '(${widget.reviewCount})',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: AppSizes.fontXS,
                 ),
               ),
@@ -473,7 +498,7 @@ class _SalonCardState extends State<SalonCard> {
           // Location row
           Row(
             children: [
-               Icon(
+              Icon(
                 Icons.location_on,
                 color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 size: 14,
@@ -485,7 +510,9 @@ class _SalonCardState extends State<SalonCard> {
                   widget.address ?? '',
                   style: context.textTheme.bodySmall?.copyWith(
                     overflow: TextOverflow.ellipsis,
-                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                     fontSize: AppSizes.fontS,
                   ),
                 ),
@@ -496,7 +523,9 @@ class _SalonCardState extends State<SalonCard> {
                   width: 4,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -505,7 +534,9 @@ class _SalonCardState extends State<SalonCard> {
               Text(
                 '${widget.distance.toStringAsFixed(1)} KM',
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: AppSizes.fontS,
                 ),
               ),
@@ -513,7 +544,8 @@ class _SalonCardState extends State<SalonCard> {
           ),
           const SizedBox(height: AppSizes.spaceS),
           // Language and Category badges row (separate)
-          if ((widget.languageCodes != null && widget.languageCodes!.isNotEmpty) ||
+          if ((widget.languageCodes != null &&
+                  widget.languageCodes!.isNotEmpty) ||
               (widget.categories != null && widget.categories!.isNotEmpty)) ...[
             const SizedBox(height: AppSizes.spaceS),
             Row(
@@ -531,11 +563,10 @@ class _SalonCardState extends State<SalonCard> {
 
   Widget _buildLanguageBadges(bool isDarkMode) {
     final languageCodes = widget.languageCodes ?? [];
-    
+
     // If no languages found, show default 'en' and 'ta'
-    final displayLanguages = languageCodes.isEmpty 
-        ? ['en', 'ta']
-        : languageCodes.take(3).toList();
+    final displayLanguages =
+        languageCodes.isEmpty ? ['en', 'ta'] : languageCodes.take(3).toList();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -546,9 +577,10 @@ class _SalonCardState extends State<SalonCard> {
           final languageCode = entry.value;
           final index = entry.key;
           final iconPath = getLanguageIcon(languageCode);
-          
+
           return Padding(
-            padding: EdgeInsets.only(right: index < displayLanguages.length - 1 ? 10 : 6),
+            padding: EdgeInsets.only(
+                right: index < displayLanguages.length - 1 ? 10 : 6),
             child: iconPath != null
                 ? SvgPicture.asset(
                     iconPath,
@@ -563,18 +595,20 @@ class _SalonCardState extends State<SalonCard> {
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: isDarkMode 
+                      color: isDarkMode
                           ? AppColors.primaryDark.withValues(alpha: 0.2)
                           : AppColors.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
-                        languageCode.length >= 2 
+                        languageCode.length >= 2
                             ? languageCode.substring(0, 2).toUpperCase()
                             : languageCode.toUpperCase(),
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                          color: isDarkMode
+                              ? AppColors.primaryDark
+                              : AppColors.primary,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
@@ -604,7 +638,9 @@ class _SalonCardState extends State<SalonCard> {
                 vertical: 6,
               ),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.textSecondaryDark.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
+                    : AppColors.textSecondary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               ),
               child: Text(
@@ -612,7 +648,9 @@ class _SalonCardState extends State<SalonCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -626,13 +664,17 @@ class _SalonCardState extends State<SalonCard> {
               vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.textSecondaryDark.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
+              color: isDarkMode
+                  ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
+                  : AppColors.textSecondary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             ),
             child: Text(
               '+${categories.length - 2}',
               style: context.textTheme.bodySmall?.copyWith(
-                color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
@@ -641,6 +683,4 @@ class _SalonCardState extends State<SalonCard> {
       ],
     );
   }
-
-
 }
