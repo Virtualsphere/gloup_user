@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/guest_shimmers.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/salon_info_card.dart';
@@ -135,7 +139,13 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
+        ),
+      ],
+      child: Scaffold(
       backgroundColor:
           isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
@@ -201,34 +211,56 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     const SizedBox(height: AppSizes.spaceM),
                     // Profile card (shown when "Myself" is selected)
                     if (selectedBookingFor == 'myself')
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                        child: ProfileCard(
-                          name: 'John Doe', // TODO: Replace with actual user data
-                          age: 28, // TODO: Replace with actual user data
-                          gender: 'Male', // TODO: Replace with actual user data
-                          isSelected: true, // Always selected for "Myself"
-                          onEdit: () {
-                            showEditPersonBottomSheet(
-                              context,
-                              initialName: 'John Doe',
-                              initialAge: 28,
-                              initialGender: 'Male',
-                              initialPhone: null, // TODO: Get from user profile
-                              onSave: (result) {
-                                // TODO: Save updated profile to backend/local storage
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Profile updated: ${result.fullName}'),
-                                  ),
-                                );
-                                setState(() {
-                                  // Update local state if needed
-                                });
-                              },
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context, profileState) {
+                          // Show loading shimmer
+                          if (profileState is ProfileLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
-                          },
-                        ),
+                          }
+
+                          // Show error state
+                          if (profileState is ProfileFailure) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                              child: Center(
+                                child: Text(
+                                  profileState.message,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.error,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          // Get profile data
+                          final profile = profileState is ProfileLoaded ? profileState.profile : null;
+                          final userName = profile?.fullName ?? 'User';
+                          final userGender = profile?.gender ?? 'Not Selected';
+                          final userPhone = profile?.phone.toString();
+                          
+                          // Calculate age from date of birth if available
+                          int? userAge;
+                          if (profile?.dateOfBirth != null && profile!.dateOfBirth.isNotEmpty) {
+                            userAge = _calculateAge(profile.dateOfBirth);
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                            child: ProfileCard(
+                              name: userName,
+                              age: userAge ?? 0,
+                              gender: userGender,
+                              isSelected: true, // Always selected for "Myself"
+                            
+                            ),
+                          );
+                        },
                       ),
                     // Someone else cards (loaded from API)
                     if (selectedBookingFor == 'someone_else')
@@ -527,11 +559,69 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildGloupCashCheckbox(context, isDarkMode),
+          // _buildGloupCashCheckbox(context, isDarkMode),
           _buildBottomConfirmButton(context, isDarkMode),
         ],
       ),
+      ),
     );
+  }
+
+  /// Calculate age from date of birth string
+  /// Handles multiple date formats: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY
+  int? _calculateAge(String dateOfBirth) {
+    if (dateOfBirth.isEmpty) return null;
+    
+    try {
+      DateTime? birthDate;
+      
+      // Try YYYY-MM-DD format (2000-03-15)
+      if (dateOfBirth.contains('-') && dateOfBirth.indexOf('-') == 4) {
+        birthDate = DateTime.tryParse(dateOfBirth);
+      }
+      // Try DD/MM/YYYY format (15/03/2000)
+      else if (dateOfBirth.contains('/')) {
+        final parts = dateOfBirth.split('/');
+        if (parts.length == 3) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (day != null && month != null && year != null) {
+            birthDate = DateTime(year, month, day);
+          }
+        }
+      }
+      // Try DD-MM-YYYY format (15-03-2000)
+      else if (dateOfBirth.contains('-')) {
+        final parts = dateOfBirth.split('-');
+        if (parts.length == 3) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (day != null && month != null && year != null) {
+            birthDate = DateTime(year, month, day);
+          }
+        }
+      }
+      
+      if (birthDate != null) {
+        final today = DateTime.now();
+        int age = today.year - birthDate.year;
+        
+        // Adjust age if birthday hasn't occurred yet this year
+        if (today.month < birthDate.month || 
+            (today.month == birthDate.month && today.day < birthDate.day)) {
+          age--;
+        }
+        
+        return age >= 0 ? age : null;
+      }
+    } catch (e) {
+      // If parsing fails, return null
+      return null;
+    }
+    
+    return null;
   }
 
   Widget _buildGloupCashCheckbox(BuildContext context, bool isDarkMode) {
