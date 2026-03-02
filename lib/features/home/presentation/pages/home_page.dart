@@ -455,7 +455,7 @@ class _HomePageState extends State<HomePage> {
                                     const Spacer(),
                                     InkWell(
                                       onTap: () {
-                                        context.pushNamed(RouteNames.myProfile);
+                                        context.pushNamed(RouteNames.personalProfile);
                                       },
                                       borderRadius: BorderRadius.circular(
                                         AppSizes.radiusCircular,

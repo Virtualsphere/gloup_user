@@ -2,7 +2,7 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'http://192.168.1.4:5678';
+  static const String baseUrl = 'http://192.168.1.2:5678';
   
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl = 'https://v1.gloup.in/images';
@@ -18,6 +18,9 @@ class ApiRoutes {
   static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
   static const String getAllStores = '$baseUrl/user/app/v2/get-all-stores';
   static const String getTopSalons = '$baseUrl/user/app/v2/salons/top';
+
+  //profile
+  static const String getUserProfile = '$baseUrl/user/app/getuserprofile';
 
 
   // Helper method to build URLs with query parameters
