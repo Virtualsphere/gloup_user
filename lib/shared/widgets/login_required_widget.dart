@@ -8,7 +8,7 @@ import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 
 /// A widget that checks authentication and shows login prompt if not authenticated
 /// Matches the design of login_page.dart with background image and overlay card
-class LoginRequiredWidget extends StatelessWidget {
+class LoginRequiredWidget extends StatefulWidget {
   final Widget child;
   final VoidCallback? onLoginPressed;
   final String? title;
@@ -29,14 +29,44 @@ class LoginRequiredWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Check if user is authenticated
-    final bool isAuthenticated = LocalStorageService.accessToken != null &&
-        LocalStorageService.accessToken!.isNotEmpty;
+  State<LoginRequiredWidget> createState() => _LoginRequiredWidgetState();
+}
 
-    if (isAuthenticated) {
+class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsBindingObserver {
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _checkAuthentication();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkAuthentication();
+    }
+  }
+
+  void _checkAuthentication() {
+    setState(() {
+      _isAuthenticated = LocalStorageService.accessToken != null &&
+          LocalStorageService.accessToken!.isNotEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isAuthenticated) {
       // User is logged in, show the actual content
-      return child;
+      return widget.child;
     } else {
       // User is not logged in, show login prompt
       return _buildLoginPrompt(context);
@@ -116,7 +146,7 @@ class LoginRequiredWidget extends StatelessWidget {
 
                     // Title
                     Text(
-                      title ?? 'Login Required',
+                      widget.title ?? 'Login Required',
                       style: context.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.colorScheme.onSurface,
@@ -128,7 +158,7 @@ class LoginRequiredWidget extends StatelessWidget {
 
                     // Message
                     Text(
-                      message ?? 'Please login to access this feature and enjoy personalized experience.',
+                      widget.message ?? 'Please login to access this feature and enjoy personalized experience.',
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: isDarkMode
                             ? AppColors.textSecondaryDark
@@ -144,13 +174,15 @@ class LoginRequiredWidget extends StatelessWidget {
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (useBottomSheet) {
+                        onPressed: () async {
+                          if (widget.useBottomSheet) {
                             // Show login bottom sheet
-                            LoginBottomSheet.show(context);
-                          } else if (onLoginPressed != null) {
+                            await LoginBottomSheet.show(context);
+                            // Check authentication after bottom sheet closes
+                            _checkAuthentication();
+                          } else if (widget.onLoginPressed != null) {
                             // Use custom callback
-                            onLoginPressed!();
+                            widget.onLoginPressed!();
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -162,7 +194,7 @@ class LoginRequiredWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          buttonText ?? 'Login to Continue',
+                          widget.buttonText ?? 'Login to Continue',
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -174,7 +206,7 @@ class LoginRequiredWidget extends StatelessWidget {
                     const SizedBox(height: AppSizes.spaceL),
 
                     // Skip/Browse as guest option (only show if enabled and can pop)
-                    if (showBrowseAsGuest && Navigator.of(context).canPop())
+                    if (widget.showBrowseAsGuest && Navigator.of(context).canPop())
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();

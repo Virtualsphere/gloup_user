@@ -7,6 +7,8 @@ import 'package:pinput/pinput.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/features/auth/domain/entities/auth_entity.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_event.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_state.dart';
@@ -79,24 +81,26 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
 
   void _handleResendOtp() {
     setState(() => _isResending = true);
-    context.read<AuthBloc>().add(SendOtpEvent(_fullPhoneNumber));
+    // Send OTP with phone number only (no country code)
+    context.read<AuthBloc>().add(SendOtpEvent(_phoneController.text));
   }
 
   void _handleLogin() {
     if (_formKey.currentState?.validate() ?? false) {
       _fullPhoneNumber = '$_selectedCountryCode${_phoneController.text}';
-      debugPrint('LoginBottomSheet: Sending OTP to: $_fullPhoneNumber');
-      context.read<AuthBloc>().add(SendOtpEvent(_fullPhoneNumber));
+      debugPrint('LoginBottomSheet: Sending OTP to: $_fullPhoneNumber (API will receive: ${_phoneController.text})');
+      // Send OTP with phone number only (no country code) to match verify flow
+      context.read<AuthBloc>().add(SendOtpEvent(_phoneController.text));
     }
   }
 
   void _handleVerifyOtp() {
     if (_otpController.text.length == 4) {
       // Extract phone number without country code for API
-      // Remove only the '+' prefix, keep the rest (country code + phone number)
-      final phoneNumber = _fullPhoneNumber.replaceFirst('+', '');
+      // Use the phone number from controller (without country code)
+      final phoneNumber = _phoneController.text;
       
-      debugPrint('LoginBottomSheet: Full: $_fullPhoneNumber, After removing +: $phoneNumber, OTP: ${_otpController.text}');
+      debugPrint('LoginBottomSheet: Full: $_fullPhoneNumber, Phone only: $phoneNumber, OTP: ${_otpController.text}');
       context.read<AuthBloc>().add(VerifyOtpEvent(
         phone: phoneNumber,
         otp: _otpController.text,
@@ -136,10 +140,15 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           _startResendCountdown();
           CustomToast.showSuccess(context, 'OTP sent to $_fullPhoneNumber');
         } else if (state is OtpVerifiedSuccess) {
-          // Login successful - close bottom sheet
+          // Login successful - save token and mark as logged in
+          final authEntity = state.authEntity;
+          if (authEntity is VerifyOtpEntity) {
+            LocalStorageService.setAccessToken(authEntity.token);
+            LocalStorageService.setLoggedIn(true);
+          }
+          
           CustomToast.showSuccess(context, 'Login successful!');
           Navigator.pop(context);
-          // TODO: Navigate to home or refresh the current page
         } else if (state is AuthFailure) {
           CustomToast.showError(context, state.message);
         }
