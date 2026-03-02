@@ -1,17 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart';
-import 'package:tressy/features/category/domain/usecases/get_category_salons_usecase.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
 import 'package:tressy/features/category/presentation/bloc/category_state.dart';
+import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   final GetCategoriesUseCase getCategoriesUseCase;
-  final GetCategorySalonsUseCase getCategorySalonsUseCase;
+  final GetSalonsUseCase getSalonsUseCase; // Shared use case
 
   CategoryBloc({
     required this.getCategoriesUseCase,
-    required this.getCategorySalonsUseCase,
+    required this.getSalonsUseCase,
   }) : super(const CategoryState()) {
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<RefreshCategoriesEvent>(_onRefreshCategories);
@@ -83,11 +83,11 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       ));
     }
 
-    final result = await getCategorySalonsUseCase(
-      GetCategorySalonsParams(
+    final result = await getSalonsUseCase(
+      GetSalonsParams(
         latitude: event.latitude,
         longitude: event.longitude,
-        categoryId: event.categoryId,
+        category: event.categoryId,
         limit: event.limit ?? 10,
         page: event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1),
         gender: event.gender,

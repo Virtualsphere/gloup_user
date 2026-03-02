@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/widgets/explore_salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/login_required_widget.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -143,7 +144,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-    return Scaffold(
+    return LoginRequiredWidget(
+      title: 'Login to View Favorites',
+      message: 'Please login to save and view your favorite salons.',
+      showBrowseAsGuest: false, // Don't show "Browse as Guest" in bottom nav screens
+      child: Scaffold(
       backgroundColor: context.colorScheme.surface,
       appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
@@ -345,6 +350,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
           const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
         ],
+      ),
       ),
     );
   }

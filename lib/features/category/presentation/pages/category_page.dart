@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
@@ -35,14 +36,13 @@ class _CategoryPageState extends State<CategoryPage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
-  // Location
-  double _latitude = 0.0;
-  double _longitude = 0.0;
-  bool _locationLoaded = false;
-
   // Search debounce
   Timer? _debounceTimer;
   String _searchQuery = '';
+  
+  // Track location changes
+  double? _lastLatitude;
+  double? _lastLongitude;
 
   @override
   void initState() {
@@ -52,7 +52,15 @@ class _CategoryPageState extends State<CategoryPage> {
     // Don't set _selectedCategoryId here - will be set from CategoryBloc
     _scrollController.addListener(_onScroll);
     _searchController.addListener(_onSearchChanged);
-    _getCurrentLocation();
+    
+    // Store initial location
+    final locationProvider = context.read<LocationProvider>();
+    _lastLatitude = locationProvider.latitude;
+    _lastLongitude = locationProvider.longitude;
+    
+    // Load initial category salons with existing location
+    // Don't fetch GPS location - use LocationProvider's current location
+    _loadInitialCategorySalons();
   }
 
   @override
@@ -61,6 +69,44 @@ class _CategoryPageState extends State<CategoryPage> {
     _scrollController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
+  }
+  
+  void _checkLocationChange() {
+    final locationProvider = context.read<LocationProvider>();
+    
+    // Check if location has changed
+    if (_lastLatitude != locationProvider.latitude || 
+        _lastLongitude != locationProvider.longitude) {
+      
+      debugPrint('CategoryPage: Location changed from ($_lastLatitude, $_lastLongitude) to (${locationProvider.latitude}, ${locationProvider.longitude})');
+      
+      // Update stored location
+      _lastLatitude = locationProvider.latitude;
+      _lastLongitude = locationProvider.longitude;
+      
+      // Try to get category ID if not set yet
+      if (_selectedCategoryId == null) {
+        final categoryState = context.read<CategoryBloc>().state;
+        if (categoryState.categories.isNotEmpty && _selectedCategoryIndex < categoryState.categories.length) {
+          _selectedCategoryId = categoryState.categories[_selectedCategoryIndex].id;
+        }
+      }
+      
+      // Reload data with new location if category is selected
+      if (_selectedCategoryId != null) {
+        debugPrint('CategoryPage: Reloading salons for category $_selectedCategoryId with new location');
+        context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
+          latitude: locationProvider.latitude,
+          longitude: locationProvider.longitude,
+          categoryId: _selectedCategoryId!,
+          limit: 10,
+          page: 1,
+          search: _searchQuery.isEmpty ? null : _searchQuery,
+        ));
+      } else {
+        debugPrint('CategoryPage: Cannot reload - _selectedCategoryId is null (categories not loaded yet)');
+      }
+    }
   }
 
   void _onSearchChanged() {
@@ -78,10 +124,12 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   void _performSearch(String query) {
-    if (_selectedCategoryId != null && _locationLoaded) {
+    final locationProvider = context.read<LocationProvider>();
+    
+    if (_selectedCategoryId != null) {
       context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-        latitude: _latitude,
-        longitude: _longitude,
+        latitude: locationProvider.latitude,
+        longitude: locationProvider.longitude,
         categoryId: _selectedCategoryId!,
         limit: 10,
         page: 1,
@@ -90,48 +138,9 @@ class _CategoryPageState extends State<CategoryPage> {
     }
   }
 
-  Future<void> _getCurrentLocation() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        // Use default location if service is disabled
-        _latitude = 13.0827;
-        _longitude = 80.2707;
-        setState(() => _locationLoaded = true);
-        _loadInitialCategorySalons();
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          // Use default location
-          _latitude = 13.0827;
-          _longitude = 80.2707;
-          setState(() => _locationLoaded = true);
-          _loadInitialCategorySalons();
-          return;
-        }
-      }
-
-      Position position = await Geolocator.getCurrentPosition();
-      setState(() {
-        _latitude = position.latitude;
-        _longitude = position.longitude;
-        _locationLoaded = true;
-      });
-      _loadInitialCategorySalons();
-    } catch (e) {
-      // Use default location on error
-      _latitude = 13.0827;
-      _longitude = 80.2707;
-      setState(() => _locationLoaded = true);
-      _loadInitialCategorySalons();
-    }
-  }
-
   void _loadInitialCategorySalons() {
+    final locationProvider = context.read<LocationProvider>();
+    
     // Get category ID from CategoryBloc state
     final categoryState = context.read<CategoryBloc>().state;
     if (categoryState.categories.isNotEmpty && _selectedCategoryIndex < categoryState.categories.length) {
@@ -140,8 +149,8 @@ class _CategoryPageState extends State<CategoryPage> {
       
       // Load salons for the initial category
       context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-        latitude: _latitude,
-        longitude: _longitude,
+        latitude: locationProvider.latitude,
+        longitude: locationProvider.longitude,
         categoryId: _selectedCategoryId!,
         limit: 10,
         page: 1,
@@ -155,12 +164,13 @@ class _CategoryPageState extends State<CategoryPage> {
     
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
+    final locationProvider = context.read<LocationProvider>();
     
-    if (maxScroll - currentScroll <= 200 && _selectedCategoryId != null && _locationLoaded) {
+    if (maxScroll - currentScroll <= 200 && _selectedCategoryId != null) {
       // Trigger load more with search query
       context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-        latitude: _latitude,
-        longitude: _longitude,
+        latitude: locationProvider.latitude,
+        longitude: locationProvider.longitude,
         categoryId: _selectedCategoryId!,
         limit: 10,
         search: _searchQuery.isEmpty ? null : _searchQuery,
@@ -170,6 +180,8 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   void _onCategoryTap(String categoryName, int categoryIndex, String categoryId) {
+    final locationProvider = context.read<LocationProvider>();
+    
     setState(() {
       _selectedCategoryIndex = categoryIndex;
       _selectedCategoryName = categoryName;
@@ -177,10 +189,10 @@ class _CategoryPageState extends State<CategoryPage> {
     });
 
     // Load salons for selected category with search query
-    if (_locationLoaded && _selectedCategoryId != null) {
+    if (_selectedCategoryId != null) {
       context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-        latitude: _latitude,
-        longitude: _longitude,
+        latitude: locationProvider.latitude,
+        longitude: locationProvider.longitude,
         categoryId: _selectedCategoryId!,
         limit: 10,
         page: 1,
@@ -239,6 +251,17 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
+
+    return Consumer<LocationProvider>(
+      builder: (context, locationProvider, child) {
+        // Check for location changes whenever LocationProvider notifies
+        _checkLocationChange();
+        return _buildContent(context, isDarkMode);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, bool isDarkMode) {
     return Scaffold(
         appBar: AppBar(
         backgroundColor: context.colorScheme.surface,

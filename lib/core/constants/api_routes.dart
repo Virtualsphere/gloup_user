@@ -2,7 +2,7 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'http://192.168.1.7:5678';
+  static const String baseUrl = 'http://192.168.1.4:5678';
   
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl = 'https://v1.gloup.in/images';

@@ -112,10 +112,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildSalonInfo(isDarkMode),
-                    // const SizedBox(height: AppSizes.spaceS),
-                    Spacer(),
+                    const SizedBox(height: AppSizes.spaceS),
                     _buildRatingAndDistance(isDarkMode),
-                    Spacer()
                   ],
                 ),
               ),
@@ -462,8 +460,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
           Row(
             children: [
               _buildLanguageBadges(isDarkMode),
-              const SizedBox(width: AppSizes.spaceS),
-              Expanded(child: _buildCategoryBadges(isDarkMode)),
+              Spacer(),
+              _buildCategoryBadges(isDarkMode),
             ],
           ),
         ],
@@ -494,16 +492,18 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             child: iconPath != null
                 ? SvgPicture.asset(
                     iconPath,
-                    width: 12,
-                    height: 12,
+                    width: 11,
+                    height: 11,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
                     colorFilter: ColorFilter.mode(
                       isDarkMode ? AppColors.primaryDark : AppColors.primary,
                       BlendMode.srcIn,
                     ),
                   )
                 : Container(
-                    width: 16,
-                    height: 16,
+                    width: 11,
+                    height: 11,
                     decoration: BoxDecoration(
                       color: isDarkMode
                           ? AppColors.primaryDark.withValues(alpha: 0.2)
@@ -519,7 +519,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                           color: isDarkMode
                               ? AppColors.primaryDark
                               : AppColors.primary,
-                          fontSize: 7,
+                          fontSize: 9,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -536,15 +536,16 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
     final displayCategories = categories.take(2).toList();
     final hasMoreCategories = categories.length > 2;
 
-    return Wrap(
-      spacing: 4,
-      runSpacing: 4,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Category badges (up to 2 for row layout)
+        // Category badges
         ...displayCategories.map((category) => Container(
+              constraints: const BoxConstraints(maxWidth: 55),
+              margin: const EdgeInsets.only(left: 4),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingS,
-                vertical: 3,
+                vertical: 4,
               ),
               decoration: BoxDecoration(
                 color: isDarkMode
@@ -560,16 +561,17 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   color: isDarkMode
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondary,
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             )),
         if (hasMoreCategories)
           Container(
+            margin: const EdgeInsets.only(left: 6),
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingS,
-              vertical: 3,
+              horizontal: AppSizes.paddingM,
+              vertical: 6,
             ),
             decoration: BoxDecoration(
               color: isDarkMode
@@ -583,7 +585,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
             ),

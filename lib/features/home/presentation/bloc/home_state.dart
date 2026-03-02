@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:tressy/features/home/domain/entities/home_entity.dart';
+import 'package:tressy/shared/domain/entities/salon_entity.dart' as shared;
 
 class HomeState extends Equatable {
   // Carousel Banners
@@ -9,17 +10,17 @@ class HomeState extends Equatable {
 
   // Popular Services
   final bool isPopularServicesLoading;
-  final List<SalonEntity> popularServices;
+  final List<shared.SalonEntity> popularServices; // Using shared SalonEntity
   final String? popularServicesError;
 
   // Top Salons
   final bool isTopSalonsLoading;
-  final List<SalonEntity> topSalons;
+  final List<shared.SalonEntity> topSalons; // Using shared SalonEntity
   final String? topSalonsError;
 
   // Recommended Salons (with pagination)
   final bool isRecommendedSalonsLoading;
-  final List<SalonEntity> recommendedSalons;
+  final List<shared.SalonEntity> recommendedSalons; // Using shared SalonEntity
   final String? recommendedSalonsError;
   final int recommendedCurrentPage;
   final int recommendedTotalPages;
@@ -51,15 +52,15 @@ class HomeState extends Equatable {
     String? carouselError,
     bool clearCarouselError = false,
     bool? isPopularServicesLoading,
-    List<SalonEntity>? popularServices,
+    List<shared.SalonEntity>? popularServices,
     String? popularServicesError,
     bool clearPopularServicesError = false,
     bool? isTopSalonsLoading,
-    List<SalonEntity>? topSalons,
+    List<shared.SalonEntity>? topSalons,
     String? topSalonsError,
     bool clearTopSalonsError = false,
     bool? isRecommendedSalonsLoading,
-    List<SalonEntity>? recommendedSalons,
+    List<shared.SalonEntity>? recommendedSalons,
     String? recommendedSalonsError,
     bool clearRecommendedSalonsError = false,
     int? recommendedCurrentPage,

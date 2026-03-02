@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-class CategorySalonEntity extends Equatable {
+/// Shared Salon Entity used across multiple features
+/// (Home, Explore, Category, Favorites, etc.)
+class SalonEntity extends Equatable {
   final String id;
   final String salonName;
   final String salonImage;
@@ -16,7 +18,7 @@ class CategorySalonEntity extends Equatable {
   final List<String> categories;
   final List<String> languageCodes;
 
-  const CategorySalonEntity({
+  const SalonEntity({
     required this.id,
     required this.salonName,
     required this.salonImage,

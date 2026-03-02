@@ -598,4 +598,6 @@ class _SalonCardState extends State<SalonCard> {
       ],
     );
   }
+
+
 }

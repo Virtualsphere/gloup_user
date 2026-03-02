@@ -3,21 +3,21 @@ import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/home/domain/usecases/get_carousel_banners_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_popular_services_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_top_salons_usecase.dart';
-import 'package:tressy/features/home/domain/usecases/get_recommended_salons_usecase.dart';
 import 'package:tressy/features/home/presentation/bloc/home_event.dart';
 import 'package:tressy/features/home/presentation/bloc/home_state.dart';
+import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetCarouselBannersUseCase getCarouselBannersUseCase;
   final GetPopularServicesUseCase getPopularServicesUseCase;
   final GetTopSalonsUseCase getTopSalonsUseCase;
-  final GetRecommendedSalonsUseCase getRecommendedSalonsUseCase;
+  final GetSalonsUseCase getSalonsUseCase; // Shared use case
 
   HomeBloc({
     required this.getCarouselBannersUseCase,
     required this.getPopularServicesUseCase,
     required this.getTopSalonsUseCase,
-    required this.getRecommendedSalonsUseCase,
+    required this.getSalonsUseCase,
   }) : super(const HomeState()) {
     on<LoadCarouselBannersEvent>(_onLoadCarouselBanners);
     on<LoadPopularServicesEvent>(_onLoadPopularServices);
@@ -132,8 +132,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ));
     }
 
-    final result = await getRecommendedSalonsUseCase(
-      GetRecommendedSalonsParams(
+    final result = await getSalonsUseCase(
+      GetSalonsParams(
         latitude: event.latitude,
         longitude: event.longitude,
         limit: event.limit ?? 10,

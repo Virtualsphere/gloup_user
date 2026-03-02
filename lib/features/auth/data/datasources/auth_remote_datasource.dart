@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
@@ -41,12 +42,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthEntity> verifyOtp(String phone, String otp) async {
     try {
+      debugPrint('🔍 AuthDataSource - verifyOtp called with phone: "$phone", otp: "$otp"');
+      debugPrint('🔍 Phone type: ${phone.runtimeType}, length: ${phone.length}');
+      debugPrint('🔍 OTP type: ${otp.runtimeType}, length: ${otp.length}');
+      
+      final requestData = {
+        'phone': phone,
+        'otp': otp,
+      };
+      debugPrint('🔍 Request data: $requestData');
+      
       final response = await dioClient.post(
         ApiRoutes.verifyOtp,
-        data: {
-          'phone': phone,
-          'otp': otp,
-        },
+        data: requestData,
       );
 
       if (response.statusCode == 200) {

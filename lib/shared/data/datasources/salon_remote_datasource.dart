@@ -2,83 +2,50 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/features/category/data/models/category_model.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 
-abstract class CategoryRemoteDataSource {
-  Future<List<CategoryModel>> getCategories();
-  Future<SalonsResponseModel> getCategorySalons({
+/// Shared Salon Remote Data Source
+/// Handles API calls for salon data across multiple features
+abstract class SalonRemoteDataSource {
+  Future<SalonsResponseModel> getSalons({
     required double latitude,
     required double longitude,
-    required String categoryId,
     int? limit,
     int? page,
     String? gender,
     String? search,
+    String? category,
   });
 }
 
-class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
+/// Implementation of Shared Salon Remote Data Source
+class SalonRemoteDataSourceImpl implements SalonRemoteDataSource {
   final DioClient dioClient;
 
-  CategoryRemoteDataSourceImpl(this.dioClient);
+  SalonRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<List<CategoryModel>> getCategories() async {
-    try {
-      final response = await dioClient.get(ApiRoutes.getCategories);
-
-      if (response.statusCode == 200) {
-        final success = response.data['success'] ?? false;
-        if (success && response.data['data'] != null) {
-          final List<dynamic> categoryList = response.data['data'];
-          
-          // Parse categories with base image URL
-          return categoryList
-              .map((json) => CategoryModel.fromJson(
-                json,
-                imageBaseUrl: ApiRoutes.imageProfileUrl,
-              ))
-              .toList();
-        } else {
-          throw ServerException(
-            message: response.data['message'] ?? 'Failed to fetch categories',
-          );
-        }
-      } else {
-        throw ServerException(
-          message: response.data['message'] ?? 'Failed to fetch categories',
-        );
-      }
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(message: 'Unexpected error: ${e.toString()}');
-    }
-  }
-
-  @override
-  Future<SalonsResponseModel> getCategorySalons({
+  Future<SalonsResponseModel> getSalons({
     required double latitude,
     required double longitude,
-    required String categoryId,
     int? limit,
     int? page,
     String? gender,
     String? search,
+    String? category,
   }) async {
     try {
       // Build query parameters
       final Map<String, dynamic> queryParams = {
         'lat': latitude,
         'lng': longitude,
-        'category': categoryId,
       };
-      
+
       if (limit != null) queryParams['limit'] = limit;
       if (page != null) queryParams['page'] = page;
       if (gender != null) queryParams['gender'] = gender;
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
+      if (category != null) queryParams['category'] = category;
 
       final response = await dioClient.get(
         ApiRoutes.getAllStores,
@@ -87,21 +54,20 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['success'] == true) {
-          // Parse the response with pagination
           return SalonsResponseModel.fromJson(
             data,
             imageBaseUrl: ApiRoutes.imageBaseUrl,
           );
         } else {
           throw ServerException(
-            message: data['message'] ?? 'Failed to fetch category salons',
+            message: data['message'] ?? 'Failed to fetch salons',
           );
         }
       } else {
         throw ServerException(
-          message: response.data['message'] ?? 'Failed to fetch category salons',
+          message: response.data['message'] ?? 'Failed to fetch salons',
         );
       }
     } on DioException catch (e) {

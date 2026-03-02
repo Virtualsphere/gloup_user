@@ -14,16 +14,23 @@ import 'package:tressy/features/category/data/datasources/category_remote_dataso
 import 'package:tressy/features/category/data/repositories/category_repository_impl.dart';
 import 'package:tressy/features/category/domain/repositories/category_repository.dart';
 import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart' as category_usecase;
-import 'package:tressy/features/category/domain/usecases/get_category_salons_usecase.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
+
+// Shared Salon Repository
+import 'package:tressy/shared/data/datasources/salon_remote_datasource.dart';
+import 'package:tressy/shared/data/repositories/salon_repository_impl.dart';
+import 'package:tressy/shared/domain/repositories/salon_repository.dart';
+import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
 import 'package:tressy/features/home/data/datasources/home_datasource.dart';
 import 'package:tressy/features/home/data/repositories/home_repository_impl.dart';
 import 'package:tressy/features/home/domain/repositories/home_repository.dart';
 import 'package:tressy/features/home/domain/usecases/get_carousel_banners_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_popular_services_usecase.dart';
-import 'package:tressy/features/home/domain/usecases/get_recommended_salons_usecase.dart';
 import 'package:tressy/features/home/domain/usecases/get_top_salons_usecase.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
+
+// Explore Feature
+import 'package:tressy/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:tressy/features/salon_details/data/datasources/salon_detail_remote_datasource.dart';
 import 'package:tressy/features/salon_details/data/repositories/salon_detail_repository_impl.dart';
 import 'package:tressy/features/salon_details/domain/repositories/salon_detail_repository.dart';
@@ -65,19 +72,32 @@ Future<void> initializeDependencies() async {
     () => AuthRemoteDataSourceImpl(sl()),
   );
 
+  // Shared Salon Repository (Used by Home, Explore, Favorites, etc.)
+  // Data Sources
+  sl.registerLazySingleton<SalonRemoteDataSource>(
+    () => SalonRemoteDataSourceImpl(sl()),
+  );
+
+  // Repositories
+  sl.registerLazySingleton<SalonRepository>(
+    () => SalonRepositoryImpl(sl()),
+  );
+
+  // Use Cases
+  sl.registerLazySingleton<GetSalonsUseCase>(
+    () => GetSalonsUseCase(sl()),
+  );
+
   // Category Feature
   // BLoC - Registered as singleton to share state across screens
   sl.registerLazySingleton<CategoryBloc>(() => CategoryBloc(
         getCategoriesUseCase: sl(),
-        getCategorySalonsUseCase: sl(),
+        getSalonsUseCase: sl(), // Using shared use case
       ));
 
   // Use Cases
   sl.registerLazySingleton<category_usecase.GetCategoriesUseCase>(
     () => category_usecase.GetCategoriesUseCase(sl()),
-  );
-  sl.registerLazySingleton<GetCategorySalonsUseCase>(
-    () => GetCategorySalonsUseCase(sl()),
   );
 
   // Repository
@@ -96,7 +116,13 @@ Future<void> initializeDependencies() async {
         getCarouselBannersUseCase: sl(),
         getPopularServicesUseCase: sl(),
         getTopSalonsUseCase: sl(),
-        getRecommendedSalonsUseCase: sl(),
+        getSalonsUseCase: sl(), // Using shared use case
+      ));
+
+  // Explore Feature
+  // BLoC
+  sl.registerFactory<ExploreBloc>(() => ExploreBloc(
+        getSalonsUseCase: sl(), // Using shared use case
       ));
 
   // Use Cases
@@ -109,9 +135,7 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<GetTopSalonsUseCase>(
     () => GetTopSalonsUseCase(sl()),
   );
-  sl.registerLazySingleton<GetRecommendedSalonsUseCase>(
-    () => GetRecommendedSalonsUseCase(sl()),
-  );
+  // GetRecommendedSalonsUseCase removed - now using shared GetSalonsUseCase
 
   // Repository
   sl.registerLazySingleton<HomeRepository>(

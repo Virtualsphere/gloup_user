@@ -22,13 +22,6 @@ abstract class HomeDataSource {
     int? page,
     String? gender,
   });
-  Future<AllStoresResponseModel> getRecommendedSalons({
-    required double latitude,
-    required double longitude,
-    int? limit,
-    int? page,
-    String? gender,
-  });
 }
 
 /// Implementation with actual API calls
@@ -163,56 +156,6 @@ class HomeDataSourceImpl implements HomeDataSource {
       } else {
         throw ServerException(
           message: response.data['message'] ?? 'Failed to fetch top salons',
-        );
-      }
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(message: 'Unexpected error: ${e.toString()}');
-    }
-  }
-
-  @override
-  Future<AllStoresResponseModel> getRecommendedSalons({
-    required double latitude,
-    required double longitude,
-    int? limit,
-    int? page,
-    String? gender,
-  }) async {
-    try {
-      // Build query parameters
-      final Map<String, dynamic> queryParams = {
-        'lat': latitude,
-        'lng': longitude,
-      };
-      
-      if (limit != null) queryParams['limit'] = limit;
-      if (page != null) queryParams['page'] = page;
-      if (gender != null) queryParams['gender'] = gender;
-
-      final response = await dioClient.get(
-        ApiRoutes.getAllStores,
-        queryParameters: queryParams,
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-        
-        if (data['success'] == true) {
-          // Parse the response with pagination
-          return AllStoresResponseModel.fromJson(
-            data,
-            imageBaseUrl: ApiRoutes.imageBaseUrl,
-          );
-        } else {
-          throw ServerException(
-            message: data['message'] ?? 'Failed to fetch recommended salons',
-          );
-        }
-      } else {
-        throw ServerException(
-          message: response.data['message'] ?? 'Failed to fetch recommended salons',
         );
       }
     } on DioException catch (e) {

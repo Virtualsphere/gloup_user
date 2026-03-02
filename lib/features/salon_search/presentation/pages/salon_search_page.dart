@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/app_icons.dart';
+import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
@@ -25,11 +27,7 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
   final DraggableScrollableController _draggableController = DraggableScrollableController();
   final Set<Marker> _markers = {};
 
-  // Default location - Chennai area (13.038, 80.22292)
-  CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(13.038, 80.22292),
-    zoom: 15.0,
-  );
+  CameraPosition? _initialPosition;
 
   // Sample salon data with Chennai-based locations
   final List<Map<String, dynamic>> _salonData = [
@@ -113,8 +111,17 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
   @override
   void initState() {
     super.initState();
+    _initializeLocation();
     _getCurrentLocation();
     _createMarkers();
+  }
+
+  void _initializeLocation() {
+    final locationProvider = context.read<LocationProvider>();
+    _initialPosition = CameraPosition(
+      target: LatLng(locationProvider.latitude, locationProvider.longitude),
+      zoom: 15.0,
+    );
   }
 
   Future<void> _createMarkers() async {
@@ -156,10 +163,12 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
       );
     }
     
-    setState(() {
-      _markers.clear();
-      _markers.addAll(markers);
-    });
+    if (mounted) {
+      setState(() {
+        _markers.clear();
+        _markers.addAll(markers);
+      });
+    }
   }
 
   Future<BitmapDescriptor> _createCustomMarkerIcon(
@@ -278,6 +287,8 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
   }
 
   Future<void> _getCurrentLocation() async {
+    final locationProvider = context.read<LocationProvider>();
+    
     try {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -300,7 +311,17 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      // Update LocationProvider with current GPS location
+      // Silent update (no toast) for GPS location
+      await locationProvider.updateLocation(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        silent: true, // Don't show toast for GPS updates
       );
 
       // Update initial position and move camera
@@ -309,16 +330,18 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
         zoom: 15.0,
       );
 
-      setState(() {
-        _initialPosition = newPosition;
-      });
+      if (mounted) {
+        setState(() {
+          _initialPosition = newPosition;
+        });
 
-      // Move camera if map is already created
-      _mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(newPosition),
-      );
+        // Move camera if map is already created
+        _mapController?.animateCamera(
+          CameraUpdate.newCameraPosition(newPosition),
+        );
+      }
     } catch (e) {
-      // Handle error silently, use default location
+      // Handle error silently, use location from LocationProvider
       debugPrint('Error getting location: $e');
     }
   }
@@ -349,16 +372,17 @@ class _SalonSearchPageState extends State<SalonSearchPage> {
         body: Stack(
           children: [
             // Google Map
-            GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: _initialPosition,
-              markers: _markers,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: true,
-              mapType: MapType.normal,
-              compassEnabled: true,
-            ),
+            if (_initialPosition != null)
+              GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: _initialPosition!,
+                markers: _markers,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                zoomControlsEnabled: true,
+                mapType: MapType.normal,
+                compassEnabled: true,
+              ),
         
             // Back button overlay
             Positioned(

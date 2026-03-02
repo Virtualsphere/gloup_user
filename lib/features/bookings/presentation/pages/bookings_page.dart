@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/login_required_widget.dart';
 
 class BookingsPage extends StatefulWidget {
   const BookingsPage({super.key});
@@ -144,6 +145,16 @@ class _BookingsPageState extends State<BookingsPage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
+
+    return LoginRequiredWidget(
+      title: 'Login to View Bookings',
+      message: 'Please login to view and manage your salon bookings.',
+      showBrowseAsGuest: false, // Don't show "Browse as Guest" in bottom nav screens
+      child: _buildContent(context, isDarkMode),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, bool isDarkMode) {
 
     return Scaffold(
       backgroundColor: context.colorScheme.surface,

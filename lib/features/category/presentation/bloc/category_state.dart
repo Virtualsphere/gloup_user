@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:tressy/features/category/domain/entities/category_entity.dart';
-import 'package:tressy/features/category/domain/entities/category_salon_entity.dart';
+import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 enum CategoryStatus { initial, loading, success, failure }
 
@@ -11,7 +11,7 @@ class CategoryState extends Equatable {
   
   // Category Salons with pagination
   final bool isSalonsLoading;
-  final List<CategorySalonEntity> salons;
+  final List<SalonEntity> salons; // Using shared SalonEntity
   final String? salonsError;
   final int currentPage;
   final int totalPages;
@@ -37,7 +37,7 @@ class CategoryState extends Equatable {
     String? errorMessage,
     bool clearError = false,
     bool? isSalonsLoading,
-    List<CategorySalonEntity>? salons,
+    List<SalonEntity>? salons,
     String? salonsError,
     bool clearSalonsError = false,
     int? currentPage,

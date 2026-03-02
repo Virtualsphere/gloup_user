@@ -1,35 +1,6 @@
-/// Carousel Banner Model
-class CarouselBannerModel {
-  final String id;
-  final String imageUrl;
+import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
-  CarouselBannerModel({
-    required this.id,
-    required this.imageUrl,
-  });
-
-  factory CarouselBannerModel.fromJson(Map<String, dynamic> json,
-      {String? imageBaseUrl}) {
-    final imagePath = json['imageUrl'] ?? '';
-    final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
-        ? '$imageBaseUrl/$imagePath'
-        : imagePath;
-
-    return CarouselBannerModel(
-      id: json['id']?.toString() ?? '',
-      imageUrl: fullImageUrl,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'imageUrl': imageUrl,
-    };
-  }
-}
-
-/// Pagination Model
+/// Shared Pagination Model
 class PaginationModel {
   final int page;
   final int limit;
@@ -62,73 +33,15 @@ class PaginationModel {
   }
 }
 
-/// Nearby Stores Response Model
-class NearbyStoresResponseModel {
-  final PaginationModel pagination;
-  final List<HomeSalonModel> salons;
-
-  NearbyStoresResponseModel({
-    required this.pagination,
-    required this.salons,
-  });
-
-  factory NearbyStoresResponseModel.fromJson(
-    Map<String, dynamic> json, {
-    String? imageBaseUrl,
-  }) {
-    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
-    final salonsJson = json['data'] as List<dynamic>? ?? [];
-
-    return NearbyStoresResponseModel(
-      pagination: PaginationModel.fromJson(paginationJson),
-      salons: salonsJson
-          .map((salonJson) => HomeSalonModel.fromJson(
-                salonJson,
-                imageBaseUrl: imageBaseUrl,
-              ))
-          .toList(),
-    );
-  }
-}
-
-/// Top Salons Response Model
-class TopSalonsResponseModel {
-  final PaginationModel pagination;
-  final List<HomeSalonModel> salons;
-
-  TopSalonsResponseModel({
-    required this.pagination,
-    required this.salons,
-  });
-
-  factory TopSalonsResponseModel.fromJson(
-    Map<String, dynamic> json, {
-    String? imageBaseUrl,
-  }) {
-    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
-    final salonsJson = json['data'] as List<dynamic>? ?? [];
-
-    return TopSalonsResponseModel(
-      pagination: PaginationModel.fromJson(paginationJson),
-      salons: salonsJson
-          .map((salonJson) => HomeSalonModel.fromJson(
-                salonJson,
-                imageBaseUrl: imageBaseUrl,
-              ))
-          .toList(),
-    );
-  }
-}
-
-/// Home Salon Model - Used for Popular Services and Top Salons (home-specific APIs)
-class HomeSalonModel {
+/// Shared Salon Model
+class SalonModel {
   final String id;
   final String salonName;
   final String salonImage;
   final List<String> images;
   final double rating;
   final int reviewCount;
-  final double distance; // in km
+  final double distance;
   final String address;
   final bool isPremium;
   final bool isFavorite;
@@ -137,7 +50,7 @@ class HomeSalonModel {
   final List<String> categories;
   final List<String> languageCodes;
 
-  HomeSalonModel({
+  SalonModel({
     required this.id,
     required this.salonName,
     required this.salonImage,
@@ -154,15 +67,15 @@ class HomeSalonModel {
     required this.languageCodes,
   });
 
-  factory HomeSalonModel.fromJson(Map<String, dynamic> json,
-      {String? imageBaseUrl}) {
-    // Transform salonImage with imageBaseUrl
+  factory SalonModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
     final salonImagePath = json['salonImage'] ?? '';
     final fullSalonImageUrl = imageBaseUrl != null && salonImagePath.isNotEmpty
         ? '$imageBaseUrl/$salonImagePath'
         : salonImagePath;
 
-    // Transform images array with imageBaseUrl
     final imagesList = (json['images'] as List<dynamic>?)?.map((image) {
           final imagePath = image?.toString() ?? '';
           return imageBaseUrl != null && imagePath.isNotEmpty
@@ -171,7 +84,7 @@ class HomeSalonModel {
         }).toList() ??
         [];
 
-    return HomeSalonModel(
+    return SalonModel(
       id: json['id']?.toString() ?? '',
       salonName: json['salonName'] ?? '',
       salonImage: fullSalonImageUrl,
@@ -186,6 +99,26 @@ class HomeSalonModel {
       address: json['address'] ?? 'Not available',
       categories: List<String>.from(json['categories'] ?? []),
       languageCodes: List<String>.from(json['languageCodes'] ?? []),
+    );
+  }
+
+  /// Convert model to entity
+  SalonEntity toEntity() {
+    return SalonEntity(
+      id: id,
+      salonName: salonName,
+      salonImage: salonImage,
+      images: images,
+      rating: rating,
+      reviewCount: reviewCount,
+      distance: distance,
+      address: address,
+      isPremium: isPremium,
+      isFavorite: isFavorite,
+      serviceName: serviceName,
+      servicePrice: servicePrice,
+      categories: categories,
+      languageCodes: languageCodes,
     );
   }
 
@@ -206,5 +139,34 @@ class HomeSalonModel {
       'categories': categories,
       'languageCodes': languageCodes,
     };
+  }
+}
+
+/// Shared Salons Response Model
+class SalonsResponseModel {
+  final PaginationModel pagination;
+  final List<SalonModel> salons;
+
+  SalonsResponseModel({
+    required this.pagination,
+    required this.salons,
+  });
+
+  factory SalonsResponseModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final paginationJson = json['pagination'] as Map<String, dynamic>? ?? {};
+    final salonsJson = json['data'] as List<dynamic>? ?? [];
+
+    return SalonsResponseModel(
+      pagination: PaginationModel.fromJson(paginationJson),
+      salons: salonsJson
+          .map((salonJson) => SalonModel.fromJson(
+                salonJson,
+                imageBaseUrl: imageBaseUrl,
+              ))
+          .toList(),
+    );
   }
 }

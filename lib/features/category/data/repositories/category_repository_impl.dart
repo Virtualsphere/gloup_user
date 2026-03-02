@@ -3,8 +3,8 @@ import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/features/category/data/datasources/category_remote_datasource.dart';
 import 'package:tressy/features/category/domain/entities/category_entity.dart';
-import 'package:tressy/features/category/domain/entities/category_salon_entity.dart';
 import 'package:tressy/features/category/domain/repositories/category_repository.dart';
+import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
   final CategoryRemoteDataSource dataSource;
@@ -35,7 +35,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<Either<Failure, List<CategorySalonEntity>>> getCategorySalons({
+  Future<Either<Failure, List<SalonEntity>>> getCategorySalons({
     required double latitude,
     required double longitude,
     required String categoryId,
@@ -57,7 +57,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
       // Extract salons from the response model
       final entities = response.salons
-          .map((model) => CategorySalonEntity(
+          .map((model) => SalonEntity(
                 id: model.id,
                 salonName: model.salonName,
                 salonImage: model.salonImage,

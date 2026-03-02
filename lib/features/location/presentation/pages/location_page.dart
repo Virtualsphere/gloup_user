@@ -732,8 +732,8 @@ class _LocationPageState extends State<LocationPage> {
       child: InkWell(
         onTap: onTap ?? () {
           Navigator.pop(context, {
-            'city': location['area'] ?? location['name'],
-            'area': location['name'],
+            'city': location['name'],
+            'area': location['area'] ?? '',
             'latitude': location['latitude'],
             'longitude': location['longitude'],
           });
