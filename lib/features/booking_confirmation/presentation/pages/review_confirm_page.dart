@@ -7,6 +7,9 @@ import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_blo
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/guest_shimmers.dart';
+import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
+import 'package:tressy/features/coupons/presentation/bloc/coupon_event.dart';
+import 'package:tressy/features/coupons/presentation/bloc/coupon_state.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -41,16 +44,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   String selectedBookingFor = 'myself'; // 'myself' or 'someone_else'
   int? selectedSomeoneElseIndex; // selected index for someone else profiles
   String? selectedCouponCode;
-  bool useGloupCash = true; // Gloup Cash checkbox state
+  bool useGloupCash = false; // Gloup Cash checkbox state
   List<Map<String, dynamic>> addedServices = []; // Track added recommended services
-
-  // TODO: Replace with actual coupon data from API/state
-  final List<CouponData> availableCoupons = [
-    CouponData(discountAmount: 50, couponCode: 'GLOUP2026'),
-    CouponData(discountAmount: 100, couponCode: 'SAVE100'),
-    CouponData(discountAmount: 75, couponCode: 'WELCOME75'),
-    CouponData(discountAmount: 150, couponCode: 'MEGA150'),
-  ];
+  List<CouponData> availableCoupons = []; // Coupons from API
 
   // Calculate highest offer percentage from selected services
   int get _highestOfferPercentage {
@@ -143,6 +139,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
       providers: [
         BlocProvider(
           create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
+        ),
+        BlocProvider(
+          create: (context) => sl<CouponBloc>()..add(const GetActiveCouponsEvent()),
         ),
       ],
       child: Scaffold(
@@ -432,75 +431,128 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     // Coupons & Offers section
                     _buildSectionTitle(context, 'Coupons & Offers', isDarkMode),
                     const SizedBox(height: AppSizes.spaceS),
-                    // Show first coupon or selected coupon
-                    if (availableCoupons.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                        child: () {
-                          // Find selected coupon or show first one
-                          final displayCoupon = selectedCouponCode != null
-                              ? availableCoupons.firstWhere(
-                                  (c) => c.couponCode == selectedCouponCode,
-                                  orElse: () => availableCoupons.first,
-                                )
-                              : availableCoupons.first;
-
-                          return CouponCard(
-                            discountAmount: displayCoupon.discountAmount,
-                            couponCode: displayCoupon.couponCode,
-                            isSelected: selectedCouponCode == displayCoupon.couponCode,
-                            onTap: () async {
-                              final newSelection = selectedCouponCode == displayCoupon.couponCode
-                                  ? null
-                                  : displayCoupon.couponCode;
-                              
-                              setState(() {
-                                selectedCouponCode = newSelection;
-                              });
-
-                              // Show success dialog when applying a coupon
-                              if (newSelection != null) {
-                                await CouponAppliedDialog.show(
-                                  context,
-                                  couponCode: displayCoupon.couponCode,
-                                  discountAmount: displayCoupon.discountAmount,
-                                );
-                              }
-                            },
+                    // Fetch coupons from BLoC
+                    BlocBuilder<CouponBloc, CouponState>(
+                      builder: (context, couponState) {
+                        // Show loading state
+                        if (couponState is CouponLoading) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           );
-                        }(),
-                      ),
-                    const SizedBox(height: AppSizes.spaceM),
-                    // View all coupons link
-                    if (availableCoupons.length > 1)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.paddingM,
-                          vertical: AppSizes.paddingS,
-                        ),
-                        child: GestureDetector(
-                          onTap: () async {
-                            final result = await showCouponsBottomSheet(
-                              context,
-                              coupons: availableCoupons,
-                              selectedCouponCode: selectedCouponCode,
-                            );
-                            if (result != null && result != selectedCouponCode) {
+                        }
+
+                        // Show error state
+                        if (couponState is CouponFailure) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                            child: Center(
+                              child: Text(
+                                couponState.message,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Get coupons from loaded state and convert to CouponData
+                        final coupons = couponState is CouponLoaded ? couponState.coupons : [];
+                        
+                        // Update state with fetched coupons
+                        if (couponState is CouponLoaded) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
                               setState(() {
-                                selectedCouponCode = result;
+                                availableCoupons = coupons.map(_convertToCouponData).toList();
                               });
-                              
-                              // Show success dialog when applying from bottom sheet
-                              final selectedCoupon = availableCoupons.firstWhere(
-                                (c) => c.couponCode == result,
-                              );
-                              await CouponAppliedDialog.show(
-                                context,
-                                couponCode: selectedCoupon.couponCode,
-                                discountAmount: selectedCoupon.discountAmount,
-                              );
                             }
-                          },
+                          });
+                        }
+
+                        if (availableCoupons.isEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                            child: Center(
+                              child: Text(
+                                'No coupons available',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Find selected coupon or show first one
+                        final displayCoupon = selectedCouponCode != null
+                            ? availableCoupons.firstWhere(
+                                (c) => c.couponCode == selectedCouponCode,
+                                orElse: () => availableCoupons.first,
+                              )
+                            : availableCoupons.first;
+
+                        return Column(
+                          children: [
+                            // Show first coupon or selected coupon
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                              child: CouponCard(
+                                discountAmount: displayCoupon.discountAmount,
+                                couponCode: displayCoupon.couponCode,
+                                isSelected: selectedCouponCode == displayCoupon.couponCode,
+                                onTap: () async {
+                                  final newSelection = selectedCouponCode == displayCoupon.couponCode
+                                      ? null
+                                      : displayCoupon.couponCode;
+                                  
+                                  setState(() {
+                                    selectedCouponCode = newSelection;
+                                  });
+
+                                  // Show success dialog when applying a coupon
+                                  if (newSelection != null) {
+                                    await CouponAppliedDialog.show(
+                                      context,
+                                      couponCode: displayCoupon.couponCode,
+                                      discountAmount: displayCoupon.discountAmount,
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: AppSizes.spaceM),
+                            // View all coupons link
+                            if (availableCoupons.length > 1)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSizes.paddingM,
+                                  vertical: AppSizes.paddingS,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final result = await showCouponsBottomSheet(
+                                      context,
+                                      coupons: availableCoupons,
+                                      selectedCouponCode: selectedCouponCode,
+                                    );
+                                    if (result != null && result != selectedCouponCode) {
+                                      setState(() {
+                                        selectedCouponCode = result;
+                                      });
+                                      
+                                      // Show success dialog when applying from bottom sheet
+                                      final selectedCoupon = availableCoupons.firstWhere(
+                                        (c) => c.couponCode == result,
+                                      );
+                                      await CouponAppliedDialog.show(
+                                        context,
+                                        couponCode: selectedCoupon.couponCode,
+                                        discountAmount: selectedCoupon.discountAmount,
+                                      );
+                                    }
+                                  },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -524,6 +576,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                           ),
                         ),
                       ),
+                          ],
+                        );
+                      },
+                    ),
                     const SizedBox(height: AppSizes.spaceL),
                     // Billing Summary section
                     _buildSectionTitle(context, 'Billing Summary', isDarkMode),
@@ -564,6 +620,14 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
         ],
       ),
       ),
+    );
+  }
+
+  /// Convert CouponEntity to CouponData for UI compatibility
+  CouponData _convertToCouponData(dynamic coupon) {
+    return CouponData(
+      discountAmount: coupon.discountAmount as int,
+      couponCode: coupon.code as String,
     );
   }
 
@@ -657,7 +721,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
             value: useGloupCash,
             onChanged: (value) {
               setState(() {
-                useGloupCash = value ?? true;
+                useGloupCash = value ?? false;
               });
             },
             activeColor: isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,

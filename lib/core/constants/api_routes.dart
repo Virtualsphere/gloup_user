@@ -36,6 +36,8 @@ class ApiRoutes {
   //profile
   static const String getUserProfile = '$baseUrl/user/app/getuserprofile';
 
+  // Coupons
+  static const String getActiveCoupons = '$baseUrl/user/app/v2/get/activecoupons';
 
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {

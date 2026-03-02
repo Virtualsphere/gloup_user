@@ -67,6 +67,13 @@ import 'package:tressy/features/booking_confirmation/domain/usecases/add_guest_u
 import 'package:tressy/features/booking_confirmation/domain/usecases/update_guest_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 
+// Coupon Feature
+import 'package:tressy/features/coupons/data/datasources/coupon_remote_datasource.dart';
+import 'package:tressy/features/coupons/data/repositories/coupon_repository_impl.dart';
+import 'package:tressy/features/coupons/domain/repositories/coupon_repository.dart';
+import 'package:tressy/features/coupons/domain/usecases/get_active_coupons_usecase.dart';
+import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -292,5 +299,26 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<GuestRemoteDataSource>(
     () => GuestRemoteDataSourceImpl(sl()),
+  );
+
+  // Coupon Feature
+  // BLoC - Factory for new instance each time
+  sl.registerFactory<CouponBloc>(() => CouponBloc(
+        getActiveCouponsUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<GetActiveCouponsUseCase>(
+    () => GetActiveCouponsUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<CouponRepository>(
+    () => CouponRepositoryImpl(sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<CouponRemoteDataSource>(
+    () => CouponRemoteDataSourceImpl(sl()),
   );
 }
