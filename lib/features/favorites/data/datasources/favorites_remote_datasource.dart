@@ -21,11 +21,7 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
     try {
       // Get auth token
       final token = LocalStorageService.accessToken;
-      print('🔍 FavoritesDataSource - toggleFavorite called with storeId: $storeId');
-      print('🔍 StoreId type: ${storeId.runtimeType}');
-      print('🔍 Request data: {store_id: $storeId}');
-      print('🔍 Auth token: ${token?.substring(0, 20)}...');
-      
+
       final response = await dioClient.post(
         ApiRoutes.toggleFavorite,
         data: {
@@ -37,9 +33,6 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
           },
         ),
       );
-      
-      print('🔍 Response status: ${response.statusCode}');
-      print('🔍 Response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return FavoriteModel.fromJson(response.data);
@@ -60,9 +53,7 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
     try {
       // Get auth token
       final token = LocalStorageService.accessToken;
-      print('🔍 FavoritesDataSource - getFavorites called');
-      print('🔍 Auth token: ${token?.substring(0, 20)}...');
-      
+
       final response = await dioClient.get(
         ApiRoutes.getFavorites,
         options: Options(
@@ -72,15 +63,10 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
         ),
       );
       
-      print('🔍 Response status: ${response.statusCode}');
-      print('🔍 Response data: ${response.data}');
-
       if (response.statusCode == 200) {
-        // Get imageBaseUrl from response or use default
-        final imageBaseUrl = response.data['imageBaseUrl'] as String?;
         return FavoritesListModel.fromJson(
           response.data,
-          imageBaseUrl: imageBaseUrl,
+          imageBaseUrl: ApiRoutes.imageBaseUrl,
         );
       } else {
         throw ServerException(

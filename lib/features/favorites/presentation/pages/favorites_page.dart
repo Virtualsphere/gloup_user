@@ -145,91 +145,179 @@ class _FavoritesPageState extends State<FavoritesPage> {
           ),
           body: BlocBuilder<FavoritesBloc, FavoritesState>(
             builder: (context, state) {
-              // Loading state
-              if (state.listStatus == FavoritesListStatus.loading) {
-                return const LoadingWidget();
-              }
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context
+                      .read<FavoritesBloc>()
+                      .add(const LoadFavoritesEvent());
+                  // Wait a bit for the refresh
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
 
-              // Error state
-              if (state.listStatus == FavoritesListStatus.failure) {
-                return custom_error.ErrorDisplayWidget(
-                  message: state.listErrorMessage ?? 'Failed to load favorites',
-                  onRetry: () {
-                    context
-                        .read<FavoritesBloc>()
-                        .add(const LoadFavoritesEvent());
-                  },
-                );
-              }
-
-              // Empty state
-              if (state.listStatus == FavoritesListStatus.loaded &&
-                  state.favoritesList.isEmpty) {
-                return EmptyWidget(
-                  icon: Icons.favorite_border,
-                  message:
-                      'Start adding salons to your favorites to see them here',
-                  actionLabel: 'Explore Salons',
-                  onAction: () {
-                    // Navigate to home or explore
-                    context.go(RouteNames.home);
-                  },
-                );
-              }
-
-              // Success state with data
-              if (state.listStatus == FavoritesListStatus.loaded) {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    context
-                        .read<FavoritesBloc>()
-                        .add(const LoadFavoritesEvent());
-                    // Wait a bit for the refresh
-                    await Future.delayed(const Duration(milliseconds: 500));
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(AppSizes.paddingM),
-                    itemCount: state.favoritesList.length,
-                    itemBuilder: (context, index) {
-                      final salon = state.favoritesList[index];
-                      return Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: AppSizes.paddingM),
-                        child: ExploreSalonCard(
-                          storeId: int.tryParse(salon.id) ?? 0,
-                          salonName: salon.salonName,
-                          salonImage: salon.salonImage,
-                          images: salon.images,
-                          rating: salon.rating,
-                          reviewCount: salon.reviewCount,
-                          distance: salon.distance,
-                          isPremium: salon.isPremium,
-                          isFavorite: salon.isFavorite,
-                          serviceName: salon.serviceName,
-                          servicePrice: salon.servicePrice,
-                          address: salon.address,
-                          categories: salon.categories,
-                          languageCodes: salon.languageCodes,
-                          showDistance: false, // Hide distance in favorites
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonDetails,
-                              extra: {
-                                'salonId': salon.id,
-                                'salonName': salon.salonName,
-                              },
-                            );
-                          },
+                    // Section Title
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'My Favorites',
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                              ),
+                            ),
+                            const SizedBox(height: AppSizes.spaceXS),
+                            Text(
+                              'Your collection of favorite salons',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                );
-              }
+                      ),
+                    ),
 
-              // Initial state
-              return const Center(
-                child: Text('Loading...'),
+                    const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
+
+                    // Loading state
+                    if (state.listStatus == FavoritesListStatus.loading)
+                      const SliverFillRemaining(
+                        child: LoadingWidget(),
+                      ),
+
+                    // Error state
+                    if (state.listStatus == FavoritesListStatus.failure)
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: context.colorScheme.error,
+                                ),
+                                const SizedBox(height: AppSizes.spaceM),
+                                Text(
+                                  state.listErrorMessage ?? 'Failed to load favorites',
+                                  textAlign: TextAlign.center,
+                                  style: context.textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: AppSizes.spaceM),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context
+                                        .read<FavoritesBloc>()
+                                        .add(const LoadFavoritesEvent());
+                                  },
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Empty state
+                    if (state.listStatus == FavoritesListStatus.loaded &&
+                        state.favoritesList.isEmpty)
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.favorite_border,
+                                  size: 64,
+                                  color: context.colorScheme.onSurface.withValues(alpha: 0.3),
+                                ),
+                                const SizedBox(height: AppSizes.spaceM),
+                                Text(
+                                  'No favorites yet',
+                                  style: context.textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: AppSizes.spaceS),
+                                Text(
+                                  'Start adding salons to your favorites to see them here',
+                                  textAlign: TextAlign.center,
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+                                  ),
+                                ),
+                                const SizedBox(height: AppSizes.spaceL),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context.go(RouteNames.home);
+                                  },
+                                  child: const Text('Explore Salons'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Favorites List
+                    if (state.listStatus == FavoritesListStatus.loaded &&
+                        state.favoritesList.isNotEmpty)
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final salon = state.favoritesList[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                                child: SizedBox(
+                                  height: 150,
+                                  child: ExploreSalonCard(
+                                    storeId: int.tryParse(salon.id) ?? 0,
+                                    salonName: salon.salonName,
+                                    salonImage: salon.salonImage,
+                                    images: salon.images,
+                                    rating: salon.rating,
+                                    reviewCount: salon.reviewCount,
+                                    distance: salon.distance,
+                                    isPremium: salon.isPremium,
+                                    isFavorite: salon.isFavorite,
+                                    serviceName: salon.serviceName,
+                                    servicePrice: salon.servicePrice,
+                                    address: salon.address,
+                                    categories: salon.categories,
+                                    languageCodes: salon.languageCodes,
+                                    showDistance: false,
+                                    onTap: () {
+                                      GoRouter.of(context).push(
+                                        RouteNames.salonDetails,
+                                        extra: {
+                                          'salonId': salon.id,
+                                          'salonName': salon.salonName,
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            childCount: state.favoritesList.length,
+                          ),
+                        ),
+                      ),
+
+                    // Bottom spacing
+                    const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
+                  ],
+                ),
               );
             },
           ),
