@@ -1,0 +1,14 @@
+import 'package:dartz/dartz.dart';
+import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
+import 'package:tressy/features/profile/domain/repositories/profile_repository.dart';
+
+class GetProfileUseCase {
+  final ProfileRepository repository;
+
+  GetProfileUseCase(this.repository);
+
+  Future<Either<Failure, ProfileEntity>> call() async {
+    return await repository.getProfile();
+  }
+}

@@ -13,8 +13,14 @@ import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:tressy/features/category/data/datasources/category_remote_datasource.dart';
 import 'package:tressy/features/category/data/repositories/category_repository_impl.dart';
 import 'package:tressy/features/category/domain/repositories/category_repository.dart';
-import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart' as category_usecase;
+import 'package:tressy/features/category/domain/usecases/get_categories_usecase.dart'
+    as category_usecase;
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
+import 'package:tressy/features/profile/data/datasources/profile_remote_datasources.dart';
+import 'package:tressy/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:tressy/features/profile/domain/repositories/profile_repository.dart';
+import 'package:tressy/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 
 // Shared Salon Repository
 import 'package:tressy/shared/data/datasources/salon_remote_datasource.dart';
@@ -57,7 +63,7 @@ final sl = GetIt.instance;
 /// Initialize dependencies
 Future<void> initializeDependencies() async {
   // ==================== Core ====================
-  
+
   // Network
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
@@ -65,7 +71,7 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<DioClient>(() => DioClient());
 
   // ==================== Features ====================
-  
+
   // Auth Feature
   // BLoC
   sl.registerFactory<AuthBloc>(() => AuthBloc(
@@ -194,7 +200,7 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<ToggleFavoriteUseCase>(
     () => ToggleFavoriteUseCase(sl()),
   );
-  
+
   sl.registerLazySingleton<GetFavoritesUseCase>(
     () => GetFavoritesUseCase(sl()),
   );
@@ -228,5 +234,23 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<SlotRemoteDataSource>(
     () => SlotRemoteDataSourceImpl(sl()),
+  );
+  // ─── Profile ───────────────────────────────────────
+// Bloc
+
+  sl.registerFactory(
+    () => ProfileBloc(getProfileUseCase: sl()),
+  );
+  // UseCase
+  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
+
+  // Repository
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl()),
+  );
+
+  // DataSource
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(sl()),
   );
 }

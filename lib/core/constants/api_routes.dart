@@ -28,6 +28,9 @@ class ApiRoutes {
 
   // Slot Booking Endpoints
   static const String getSlotStatus = '$baseUrl/user/app/v2/getslotstatus';
+  //profile
+  static const String getUserProfile = '$baseUrl/user/app/getuserprofile';
+
 
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {

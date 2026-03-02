@@ -27,7 +27,7 @@ class RouteNames {
   static const String salonSearch = '/salon-search';
 
   //profile
-  static String myProfile = 'my_profile';
+  static String personalProfile = 'personal_profile';
 
   //support
   static String support = 'support';

@@ -7,6 +7,7 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/strings.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/widgets/custom_dialogues.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 import 'package:tressy/shared/widgets/theme_image_toggle.dart';
@@ -21,9 +22,11 @@ class ProfilePage extends StatelessWidget {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return LoginRequiredWidget(
       title: 'Login to View Profile',
-      message: 'Please login to see your profile details, wallet balance, and personalized features.',
+      message:
+          'Please login to see your profile details, wallet balance, and personalized features.',
       showBrowseAsGuest: false,
       child: Scaffold(
+        appBar: ProfileAppBar(title: 'Personal Profile',centerTitle: false,),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
@@ -35,60 +38,43 @@ class ProfilePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Header: Name + Avatar ──────────────────────────────
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 60,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: SvgPicture.asset(
-                              AppIcons.arrowBack,
-                              height: 20.0,
-                              width: 20.0,
-                              colorFilter: ColorFilter.mode(
-                                isDarkMode ? AppColors.white : AppColors.black,
-                                BlendMode.srcIn,
+                  Container(
+                    padding: EdgeInsets.only(left: 16.0,right: 16.0,top: 10.0,bottom: 10.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: isDarkMode ? AppColors.black : AppColors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: context.colorScheme.onSurface,
+                                  fontSize: 18.0,
+                                ),
                               ),
-                            ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Personal Profile',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: context.colorScheme.onSurface,
+                                  fontSize: AppSizes.fontM,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              userName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.displaySmall?.copyWith(
-                                color: context.colorScheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Personal Profile',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.displaySmall?.copyWith(
-                                color: context.colorScheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                                fontSize: AppSizes.fontM,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: AppSizes.paddingM),
-                      // Fixed-size avatar — always visible, never overflows
-                      /* Container(
+                        const SizedBox(width: AppSizes.paddingM),
+                        // Fixed-size avatar — always visible, never overflows
+                        /* Container(
                         height: 72,
                         width: 72,
                         clipBehavior: Clip.hardEdge,
@@ -99,26 +85,27 @@ class ProfilePage extends StatelessWidget {
                           placeHolderHeight: 25,
                         ),
                       ),*/
-                      SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.image_outlined,
-                            color: Colors.grey,
-                            size: 28,
+                        SizedBox(
+                          width: 50.0,
+                          height: 50.0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.image_outlined,
+                              color: Colors.grey,
+                              size: 28,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-      
+
                   const SizedBox(height: AppSizes.paddingL),
-      
+
                   // ── Wallet Balance Card ────────────────────────────────
                   WalletBalanceContainer(
                     amount: '500.00', // Static value
@@ -153,7 +140,7 @@ class ProfilePage extends StatelessWidget {
                         },
                       ),
                       _MenuItem(
-                        icon: null,
+                        icon: Icons.color_lens_outlined,
                         label: 'Switch Theme',
                         trailing: true,
                         onTap: () {},
@@ -168,7 +155,7 @@ class ProfilePage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSizes.paddingM),
-      
+
                   // ── Support & Logout Card ──────────────────────────────
                   _MenuCard(
                     items: [
@@ -196,7 +183,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
                   ),
-      
+
                   const SizedBox(height: AppSizes.paddingL),
                 ],
               ),
@@ -250,9 +237,8 @@ class WalletBalanceContainer extends StatelessWidget {
               children: [
                 Text(
                   'Wallet Balance',
-                  style: context.textTheme.labelLarge?.copyWith(
+                  style: context.textTheme.bodySmall?.copyWith(
                     color: AppColors.white,
-                    fontWeight: FontWeight.w300,
                     fontSize: 16.0,
                   ),
                 ),
@@ -271,9 +257,8 @@ class WalletBalanceContainer extends StatelessWidget {
                       amount == Strings.loading
                           ? Strings.loading
                           : double.parse(amount).toStringAsFixed(2),
-                      style: context.textTheme.labelLarge?.copyWith(
+                      style: context.textTheme.bodySmall?.copyWith(
                         color: AppColors.white,
-                        fontWeight: FontWeight.w700,
                         fontSize: 24.0,
                       ),
                     ),
@@ -295,9 +280,8 @@ class WalletBalanceContainer extends StatelessWidget {
                       child: Center(
                         child: Text(
                           'View Wallet',
-                          style: context.textTheme.labelLarge?.copyWith(
+                          style: context.textTheme.bodySmall?.copyWith(
                             color: AppColors.white,
-                            fontWeight: FontWeight.w400,
                             fontSize: 12.0,
                           ),
                         ),
@@ -309,7 +293,7 @@ class WalletBalanceContainer extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 60),
                     child: Text(
                       'Wallet balance is non-transferable and can be used only for salon bookings.',
-                      style: context.textTheme.labelLarge?.copyWith(
+                      style: context.textTheme.bodySmall?.copyWith(
                         color: AppColors.white,
                         fontWeight: FontWeight.w300,
                         fontSize: 14.0,
@@ -351,7 +335,7 @@ class _MenuCard extends StatelessWidget {
                 Divider(
                   height: 1,
                   thickness: 1,
-                  color: isDarkMode ? AppColors.white : Colors.grey.shade100,
+                  color: AppColors.divider,
                   indent: 56,
                 ),
             ],
@@ -386,19 +370,16 @@ class _MenuTile extends StatelessWidget {
               Icon(
                 item.icon,
                 size: 24,
-                color: isDarkMode
-                    ? AppColors.white
-                    : AppColors.textPrimary,
+                color: isDarkMode ? AppColors.white : AppColors.textPrimary,
               ),
               const SizedBox(width: AppSizes.paddingM),
             ],
             Expanded(
               child: Text(
                 item.label,
-                style: context.textTheme.displaySmall?.copyWith(
+                style: context.textTheme.bodySmall?.copyWith(
                   color: isDarkMode ? AppColors.white : AppColors.textPrimary,
-                  fontSize: AppSizes.fontM,
-                  fontWeight: FontWeight.w400,
+                  fontSize: AppSizes.font,
                 ),
               ),
             ),
