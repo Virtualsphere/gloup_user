@@ -220,7 +220,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   @override
   Widget build(BuildContext context) {
     final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.30;
+    final carouselHeight = screenHeight * 0.28;
     final collapsedHeight = screenHeight * 0.08; // 8% when collapsed
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
@@ -531,10 +531,26 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               color: AppColors.primary.withValues(alpha: 0.1),
-                              child: const Icon(
-                                Icons.image,
-                                color: AppColors.primary,
-                                size: 80,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.content_cut,
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3),
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Image not available',
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.4),
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           },
@@ -876,7 +892,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 fontWeight: FontWeight.w600,
               ),
             ),
-            if (salonDetail.openingTime.isNotEmpty && salonDetail.closingTime.isNotEmpty) ...[
+            if (salonDetail.openingTime.isNotEmpty &&
+                salonDetail.closingTime.isNotEmpty) ...[
               AppSizes.widthS,
               Container(
                 width: 4,
@@ -1056,7 +1073,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   left: AppSizes.paddingM,
                   right: AppSizes.paddingM,
                   top: AppSizes.paddingM,
-                  bottom: AppSizes.paddingXXL,
+                  bottom: AppSizes.paddingM + MediaQuery.of(context).padding.bottom,
                 ),
                 decoration: BoxDecoration(
                   color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
@@ -1080,8 +1097,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                             '$_serviceCount ${_serviceCount == 1 ? 'service' : 'services'} added',
                             style: context.textTheme.bodySmall?.copyWith(
                               color: isDarkMode
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondary,
+                                  ? AppColors.textSecondary
+                                  : AppColors.textSecondaryDark,
                               fontSize: AppSizes.fontS,
                             ),
                           ),
@@ -1151,10 +1168,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                         },
                         backgroundColor: isDarkMode
                             ? AppColors.primary
-                            : AppColors.primaryDark,
+                            : AppColors.onPrimary,
                         textColor:
-                            isDarkMode ? AppColors.white : AppColors.black,
-                        height: 48,
+                            isDarkMode ? AppColors.onPrimary : AppColors.primary,
+                        height: 56,
                         fontSize: AppSizes.fontL,
                       ),
                     ),
@@ -1332,7 +1349,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         ),
       );
     }
-    
+
     return Text(
       salonDetail.about,
       textAlign: TextAlign.left,
@@ -1375,7 +1392,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         ),
       );
     }
-    
+
     // Map icon names from model to IconData
     IconData getIconData(String iconName) {
       switch (iconName) {
@@ -1448,7 +1465,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         ),
       );
     }
-    
+
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate width for 4 profiles per row
@@ -1620,7 +1637,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         ),
       );
     }
-    
+
     final starCounts = _calculateStarCounts(salonDetail.reviews);
     final totalReviews = salonDetail.reviewCount;
 
@@ -1811,7 +1828,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         ),
       );
     }
-    
+
     // Extract unique categories from services
     final serviceCategories = _getUniqueCategories(salonDetail.services);
 
@@ -2186,10 +2203,10 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent =>
-      260.0; // Height for combined sections + tab bar (250 + 56)
+      270.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
-  double get maxExtent => 260.0; // Same as min for fixed height
+  double get maxExtent => 270.0; // Same as min for fixed height
 
   @override
   Widget build(

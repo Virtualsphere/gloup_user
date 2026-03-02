@@ -60,10 +60,26 @@ class SalonInfoCard extends StatelessWidget {
                                 width: 120,
                                 height: 80,
                                 color: AppColors.primary.withValues(alpha: 0.1),
-                                child: const Icon(
-                                  Icons.image,
-                                  color: AppColors.primary,
-                                  size: 40,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.content_cut,
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.3),
+                                      size: 36,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Image not available',
+                                      style:
+                                          context.textTheme.bodySmall?.copyWith(
+                                        color: AppColors.primary
+                                            .withValues(alpha: 0.4),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
@@ -248,7 +264,8 @@ class SalonInfoCard extends StatelessWidget {
                   ),
                 // Time slot row
                 if (selectedTimeSlot != null) ...[
-                  if (selectedDate != null) const SizedBox(height: AppSizes.spaceS),
+                  if (selectedDate != null)
+                    const SizedBox(height: AppSizes.spaceS),
                   AppSizes.widthL,
                   Row(
                     children: [

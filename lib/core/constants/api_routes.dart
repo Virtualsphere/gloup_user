@@ -26,6 +26,9 @@ class ApiRoutes {
   // Salon Details Endpoints
   static const String getStoreDetails = '$baseUrl/user/app/v2/store/details';
 
+  // Slot Booking Endpoints
+  static const String getSlotStatus = '$baseUrl/user/app/v2/getslotstatus';
+
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {
     if (params.isEmpty) return endpoint;

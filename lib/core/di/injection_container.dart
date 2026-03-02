@@ -45,6 +45,13 @@ import 'package:tressy/features/favorites/domain/usecases/get_favorites_usecase.
 import 'package:tressy/features/favorites/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 
+// Slot Booking Feature
+import 'package:tressy/features/slot_booking/data/datasources/slot_remote_datasource.dart';
+import 'package:tressy/features/slot_booking/data/repositories/slot_repository_impl.dart';
+import 'package:tressy/features/slot_booking/domain/repositories/slot_repository.dart';
+import 'package:tressy/features/slot_booking/domain/usecases/get_slot_status_usecase.dart';
+import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -200,5 +207,26 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<FavoritesRemoteDataSource>(
     () => FavoritesRemoteDataSourceImpl(sl()),
+  );
+
+  // Slot Booking Feature
+  // BLoC - Factory for new instance each time
+  sl.registerFactory<SlotBloc>(() => SlotBloc(
+        getSlotStatusUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<GetSlotStatusUseCase>(
+    () => GetSlotStatusUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SlotRepository>(
+    () => SlotRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<SlotRemoteDataSource>(
+    () => SlotRemoteDataSourceImpl(sl()),
   );
 }

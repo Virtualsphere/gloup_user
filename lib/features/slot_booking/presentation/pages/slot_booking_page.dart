@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
+import 'package:tressy/features/slot_booking/presentation/bloc/slot_event.dart';
+import 'package:tressy/features/slot_booking/presentation/bloc/slot_state.dart';
+import 'package:tressy/features/slot_booking/presentation/widgets/scrollable_calendar.dart';
+import 'package:tressy/features/slot_booking/presentation/widgets/slot_shimmers.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 import 'package:tressy/shared/widgets/salon_info_card.dart';
-import 'package:tressy/features/slot_booking/presentation/widgets/scrollable_calendar.dart';
-import 'package:tressy/core/router/route_names.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class SlotBookingPage extends StatefulWidget {
   final Map<String, dynamic>? bookingData;
@@ -23,51 +28,124 @@ class SlotBookingPage extends StatefulWidget {
 }
 
 class _SlotBookingPageState extends State<SlotBookingPage> {
-  DateTime? selectedDate = DateTime.now(); // Initialize with today's date
-  String? selectedTimeSlot;
+  DateTime selectedDate = DateTime.now();
 
-  // Static time slots (will be replaced with server data in future)
-  final List<Map<String, dynamic>> timeSlots = [
-    {'time': '10:00 AM - 10:30 AM', 'startHour': 10, 'startMinute': 0},
-    {'time': '10:30 AM - 11:00 AM', 'startHour': 10, 'startMinute': 30},
-    {'time': '11:00 AM - 11:30 AM', 'startHour': 11, 'startMinute': 0},
-    {'time': '11:30 AM - 12:00 PM', 'startHour': 11, 'startMinute': 30},
-    {'time': '12:00 PM - 12:30 PM', 'startHour': 12, 'startMinute': 0},
-    {'time': '12:30 PM - 01:00 PM', 'startHour': 12, 'startMinute': 30},
-    {'time': '01:00 PM - 01:30 PM', 'startHour': 13, 'startMinute': 0},
-    {'time': '01:30 PM - 02:00 PM', 'startHour': 13, 'startMinute': 30},
-    {'time': '02:00 PM - 02:30 PM', 'startHour': 14, 'startMinute': 0},
-    {'time': '02:30 PM - 03:00 PM', 'startHour': 14, 'startMinute': 30},
-    {'time': '03:00 PM - 03:30 PM', 'startHour': 15, 'startMinute': 0},
-    {'time': '03:30 PM - 04:00 PM', 'startHour': 15, 'startMinute': 30},
-    {'time': '04:00 PM - 04:30 PM', 'startHour': 16, 'startMinute': 0},
-    {'time': '04:30 PM - 05:00 PM', 'startHour': 16, 'startMinute': 30},
-    {'time': '05:00 PM - 05:30 PM', 'startHour': 17, 'startMinute': 0},
-    {'time': '05:30 PM - 06:00 PM', 'startHour': 17, 'startMinute': 30},
-    {'time': '06:00 PM - 06:30 PM', 'startHour': 18, 'startMinute': 0},
-    {'time': '06:30 PM - 07:00 PM', 'startHour': 18, 'startMinute': 30},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadSlots();
+  }
+
+  void _loadSlots() {
+    final salonIdValue = widget.bookingData?['salonId'];
+    int? salonId;
+    
+    if (salonIdValue is int) {
+      salonId = salonIdValue;
+    } else if (salonIdValue is String) {
+      salonId = int.tryParse(salonIdValue);
+    }
+    
+    if (salonId != null) {
+      final dateStr = DateFormat('yyyy-MM-dd').format(selectedDate);
+      context.read<SlotBloc>().add(
+            LoadSlotsEvent(salonId: salonId, date: dateStr),
+          );
+    }
+  }
+
+  // Format time from 24-hour to 12-hour format
+  String _formatTime(String time24) {
+    try {
+      final parts = time24.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+
+      final period = hour >= 12 ? 'PM' : 'AM';
+      final hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+      return '${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
+    } catch (e) {
+      return time24;
+    }
+  }
+
+  // Format time range (start time + service duration)
+  String _formatTimeRange(String time24) {
+    try {
+      // Calculate total duration from selected services
+      int totalMinutes = 0;
+      final selectedServices = widget.bookingData?['selectedServices'] as List?;
+      
+      if (selectedServices != null && selectedServices.isNotEmpty) {
+        for (var service in selectedServices) {
+          final duration = service['duration'] as String?;
+          if (duration != null) {
+            // Parse duration format "HH:MM:SS" or "HH:MM"
+            final durationParts = duration.split(':');
+            final hours = int.tryParse(durationParts[0]) ?? 0;
+            final minutes = int.tryParse(durationParts[1]) ?? 0;
+            totalMinutes += (hours * 60) + minutes;
+          }
+        }
+      }
+
+      // If no duration, default to 30 minutes
+      if (totalMinutes == 0) {
+        totalMinutes = 30;
+      }
+
+      // Parse start time
+      final parts = time24.split(':');
+      final startHour = int.parse(parts[0]);
+      final startMinute = int.parse(parts[1]);
+
+      // Calculate end time
+      final startDateTime = DateTime(2000, 1, 1, startHour, startMinute);
+      final endDateTime = startDateTime.add(Duration(minutes: totalMinutes));
+
+      // Format start time
+      final startPeriod = startHour >= 12 ? 'PM' : 'AM';
+      final startHour12 = startHour > 12 ? startHour - 12 : (startHour == 0 ? 12 : startHour);
+      final startFormatted = '${startHour12.toString().padLeft(2, '0')}:${startMinute.toString().padLeft(2, '0')} $startPeriod';
+
+      // Format end time
+      final endHour = endDateTime.hour;
+      final endMinute = endDateTime.minute;
+      final endPeriod = endHour >= 12 ? 'PM' : 'AM';
+      final endHour12 = endHour > 12 ? endHour - 12 : (endHour == 0 ? 12 : endHour);
+      final endFormatted = '${endHour12.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')} $endPeriod';
+
+      return '$startFormatted - $endFormatted';
+    } catch (e) {
+      return _formatTime(time24);
+    }
+  }
 
   // Check if a time slot is in the past
-  bool _isSlotPast(int startHour, int startMinute) {
-    if (selectedDate == null) return false;
+  bool _isSlotPast(String time24) {
+    try {
+      final parts = time24.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
 
-    final now = DateTime.now();
-    final selectedDay =
-        DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
-    final today = DateTime(now.year, now.month, now.day);
+      final now = DateTime.now();
+      final selectedDay = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+      final today = DateTime(now.year, now.month, now.day);
 
-    // If selected date is in the future, no slots are past
-    if (selectedDay.isAfter(today)) return false;
+      // If selected date is in the future, no slots are past
+      if (selectedDay.isAfter(today)) return false;
 
-    // If selected date is today, check the time
-    if (selectedDay.isAtSameMomentAs(today)) {
-      final slotTime =
-          DateTime(now.year, now.month, now.day, startHour, startMinute);
-      return slotTime.isBefore(now);
+      // If selected date is today, check the time
+      if (selectedDay.isAtSameMomentAs(today)) {
+        final slotTime = DateTime(now.year, now.month, now.day, hour, minute);
+        return slotTime.isBefore(now);
+      }
+
+      return false;
+    } catch (e) {
+      return false;
     }
-
-    return false;
   }
 
   // Calculate highest offer percentage from selected services
@@ -87,17 +165,14 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     }).fold<int>(0, (max, discount) => discount > max ? discount : max);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDarkMode ? AppColors.backgroundDark : AppColors.background,
+      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
-        backgroundColor:
-            isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
@@ -118,227 +193,184 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       ),
       body: Column(
         children: [
-          // Offer banner below app bar
+          // Offer banner
           OfferBanner(discountPercentage: _highestOfferPercentage),
+
           // Main content
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  if (widget.bookingData != null)
-                    SalonInfoCard(
-                      salonName:
-                          widget.bookingData!['salonName'] as String? ?? 'N/A',
-                      salonImage: widget.bookingData!['salonImage'] as String?,
-                      rating: widget.bookingData!['rating'] as double? ?? 0.0,
-                      reviewCount:
-                          widget.bookingData!['reviewCount'] as int? ?? 0,
-                      gender: widget.bookingData!['gender'] as String? ?? 'N/A',
-                      address:
-                          widget.bookingData!['address'] as String? ?? 'N/A',
-                      isPremium:
-                          widget.bookingData!['isPremium'] as bool? ?? false,
-                    ),
-                  // Calendar widget
-                  ScrollableCalendar(
-                    onDateSelected: (date) {
-                      setState(() {
-                        selectedDate = date;
-                        selectedTimeSlot = null;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: AppSizes.spaceM),
-                  // Time section title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.paddingM),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Available Slots',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          fontSize: AppSizes.fontL,
-                          fontWeight: FontWeight.w600,
-                          color: isDarkMode
-                              ? AppColors.textPrimaryDark
-                              : AppColors.textPrimary,
+            child: BlocBuilder<SlotBloc, SlotState>(
+              builder: (context, state) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Salon info card
+                      if (widget.bookingData != null)
+                        SalonInfoCard(
+                          salonName: widget.bookingData!['salonName'] as String? ?? 'N/A',
+                          salonImage: widget.bookingData!['salonImage'] as String?,
+                          rating: widget.bookingData!['rating'] as double? ?? 0.0,
+                          reviewCount: widget.bookingData!['reviewCount'] as int? ?? 0,
+                          gender: widget.bookingData!['gender'] as String? ?? 'N/A',
+                          address: widget.bookingData!['address'] as String? ?? 'N/A',
+                          isPremium: widget.bookingData!['isPremium'] as bool? ?? false,
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSizes.spaceM),
-                  // Time slots grid
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.paddingM),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: AppSizes.spaceM,
-                        mainAxisSpacing: AppSizes.spaceM,
-                        childAspectRatio: 3,
-                      ),
-                      itemCount: timeSlots.length,
-                      itemBuilder: (context, index) {
-                        final slotData = timeSlots[index];
-                        final slot = slotData['time'] as String;
-                        final startHour = slotData['startHour'] as int;
-                        final startMinute = slotData['startMinute'] as int;
 
-                        final isSelected = selectedTimeSlot == slot;
-                        final isPast = _isSlotPast(startHour, startMinute);
+                      // Calendar widget
+                      ScrollableCalendar(
+                        onDateSelected: (date) {
+                          setState(() {
+                            selectedDate = date;
+                          });
+                          context.read<SlotBloc>().add(const ClearSelectedSlotEvent());
+                          _loadSlots();
+                        },
+                      ),
 
-                        return GestureDetector(
-                          onTap: isPast
-                              ? null
-                              : () {
-                                  setState(() {
-                                    // Toggle: if already selected, unselect it
-                                    if (selectedTimeSlot == slot) {
-                                      selectedTimeSlot = null;
-                                    } else {
-                                      selectedTimeSlot = slot;
-                                    }
-                                  });
-                                },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? (isDarkMode
-                                      ? AppColors.primaryDark
-                                      : AppColors.primary)
-                                  : isPast
-                                      ? (isDarkMode
-                                          ? AppColors.textSecondaryDark
-                                              .withValues(alpha: 0.2)
-                                          : AppColors.textSecondary
-                                              .withValues(alpha: 0.2))
-                                      : (isDarkMode
-                                          ? AppColors.surfaceDark
-                                          : AppColors.surface),
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusM),
-                              border: Border.all(
-                                color: isSelected || isPast
-                                    ? Colors.transparent
-                                    : (isDarkMode
-                                        ? AppColors.borderDark
-                                        : AppColors.border),
-                                width: AppSizes.borderWidth,
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              slot,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                fontSize: AppSizes.fontM,
-                                fontWeight: FontWeight.w500,
-                                color: isSelected
-                                    ? (isDarkMode
-                                        ? AppColors.black
-                                        : AppColors.white)
-                                    : isPast
-                                        ? (isDarkMode
-                                            ? AppColors.textPrimaryDark
-                                                .withValues(alpha: 0.7)
-                                            : AppColors.textPrimary
-                                                .withValues(alpha: 0.7))
-                                        : (isDarkMode
-                                            ? AppColors.textPrimaryDark
-                                            : AppColors.textPrimary),
-                              ),
+                      const SizedBox(height: AppSizes.spaceM),
+
+                      // Section title
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Available Slots',
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              fontSize: AppSizes.fontL,
+                              fontWeight: FontWeight.w600,
+                              color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSizes.spaceM),
+
+                      // Slots grid or loading/error states
+                      if (state.isLoading)
+                        SlotShimmers.slotGridShimmer(context)
+                      else if (state.errorMessage != null)
+                        _buildErrorState(isDarkMode, state.errorMessage!)
+                      else if (state.slots.isEmpty)
+                        _buildEmptyState(isDarkMode)
+                      else
+                        _buildSlotsGrid(context, state, isDarkMode),
+
+                      const SizedBox(height: AppSizes.spaceXXL),
+                    ],
                   ),
-                  const SizedBox(height: AppSizes.paddingXL),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ],
       ),
-      bottomNavigationBar: selectedTimeSlot != null
-          ? _buildBookingBottomNav(context, isDarkMode)
-          : _buildBottomIndicators(context, isDarkMode),
+      bottomNavigationBar: BlocBuilder<SlotBloc, SlotState>(
+        builder: (context, state) {
+          return state.hasSelectedSlot
+              ? _buildBottomBar(context, isDarkMode, state.selectedSlotTime!)
+              : const SizedBox.shrink();
+        },
+      ),
     );
   }
 
-  Widget _buildBookingBottomNav(BuildContext context, bool isDarkMode) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            // Left side - Slot info
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    selectedTimeSlot!,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontSize: AppSizes.fontM,
-                      fontWeight: FontWeight.w600,
-                      color: isDarkMode
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'slot selected. Ready to Book?',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      fontSize: AppSizes.fontS,
-                      color: isDarkMode
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondary,
-                    ),
-                  ),
-                ],
+  Widget _buildSlotsGrid(BuildContext context, SlotState state, bool isDarkMode) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: AppSizes.spaceM,
+          mainAxisSpacing: AppSizes.spaceM,
+          childAspectRatio: 3,
+        ),
+        itemCount: state.slots.length,
+        itemBuilder: (context, index) {
+          final slot = state.slots[index];
+          final isSelected = state.selectedSlotTime == slot.time;
+          final isBooked = slot.isBooked;
+          final isPast = _isSlotPast(slot.time);
+
+          return GestureDetector(
+            onTap: (isBooked || isPast)
+                ? null
+                : () {
+                    if (isSelected) {
+                      context.read<SlotBloc>().add(const ClearSelectedSlotEvent());
+                    } else {
+                      context.read<SlotBloc>().add(SelectSlotEvent(slot.time));
+                    }
+                  },
+            child: Container(
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                    : (isBooked || isPast)
+                        ? (isDarkMode
+                            ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+                            : AppColors.textSecondary.withValues(alpha: 0.2))
+                        : (isDarkMode ? AppColors.surfaceDark : AppColors.surface),
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                border: Border.all(
+                  color: (isSelected || isBooked || isPast)
+                      ? Colors.transparent
+                      : (isDarkMode ? AppColors.borderDark : AppColors.border),
+                  width: AppSizes.borderWidth,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                _formatTimeRange(slot.time),
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontSize: AppSizes.fontS,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected
+                      ? (isDarkMode ? AppColors.black : AppColors.white)
+                      : (isBooked || isPast)
+                          ? (isDarkMode
+                              ? AppColors.textPrimaryDark.withValues(alpha: 0.5)
+                              : AppColors.textPrimary.withValues(alpha: 0.5))
+                          : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary),
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(width: AppSizes.spaceM),
-            // Right side - Continue button
-            SizedBox(
-              width: 130,
-              child: PrimaryButton(
-                text: 'Continue',
-                onPressed: () {
-                  // Navigate to review & confirm page with all booking data
-                  final bookingDataWithSlot = {
-                    ...widget.bookingData!,
-                    'selectedDate':
-                        DateFormat('dd MMM yyyy').format(selectedDate!),
-                    'selectedTimeSlot': selectedTimeSlot,
-                  };
-                  context.pushNamed(
-                    RouteNames.reviewConfirm,
-                    extra: bookingDataWithSlot,
-                  );
-                },
-                backgroundColor:
-                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                textColor: AppColors.white,
-                height: 52,
-                fontSize: AppSizes.fontL,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        child: Column(
+          children: [
+            Icon(
+              Icons.event_busy,
+              size: 64,
+              color: isDarkMode
+                  ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                  : AppColors.textSecondary.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: AppSizes.spaceM),
+            Text(
+              'No slots available',
+              style: context.textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSizes.spaceS),
+            Text(
+              'Please select another date',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+                fontStyle: FontStyle.italic,
               ),
             ),
           ],
@@ -347,89 +379,120 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     );
   }
 
-  Widget _buildBottomIndicators(BuildContext context, bool isDarkMode) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: SizedBox(
-          height: 52, // Match the Continue button height
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Not Available indicator
-              _buildIndicatorItem(
-                context,
-                isDarkMode,
-                'Not Available',
-                isDarkMode
-                    ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
-                    : AppColors.textSecondary.withValues(alpha: 0.2),
-                showBorder: false,
+  Widget _buildErrorState(bool isDarkMode, String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        child: Column(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppColors.error,
+            ),
+            const SizedBox(height: AppSizes.spaceM),
+            Text(
+              'Error loading slots',
+              style: context.textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSizes.spaceS),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
-              // Available indicator
-              _buildIndicatorItem(
-                context,
-                isDarkMode,
-                'Available',
-                isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                showBorder: true,
-              ),
-              // Selected indicator
-              _buildIndicatorItem(
-                context,
-                isDarkMode,
-                'Selected',
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                showBorder: false,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: AppSizes.spaceM),
+            ElevatedButton(
+              onPressed: _loadSlots,
+              child: const Text('Retry'),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildIndicatorItem(
-      BuildContext context, bool isDarkMode, String label, Color color,
-      {required bool showBorder}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(AppSizes.radiusS),
-            border: showBorder
-                ? Border.all(
-                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
-                    width: AppSizes.borderWidth,
-                  )
-                : null,
+  Widget _buildBottomBar(BuildContext context, bool isDarkMode, String selectedTime) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: AppSizes.paddingM,
+        right: AppSizes.paddingM,
+        top: AppSizes.paddingM,
+        bottom: AppSizes.paddingM + MediaQuery.of(context).padding.bottom,
+      ),
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
-        ),
-        const SizedBox(width: AppSizes.spaceS),
-        Text(
-          label,
-          style: context.textTheme.bodySmall?.copyWith(
-            fontSize: AppSizes.fontS,
-            color: isDarkMode
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Selected Slot',
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  DateFormat('MMM dd, yyyy').format(selectedDate),
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isDarkMode
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _formatTimeRange(selectedTime),
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: isDarkMode
+                        ? AppColors.primaryDark
+                        : AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: AppSizes.spaceM),
+          PrimaryButton(
+            text: 'Continue',
+            onPressed: () {
+              // Navigate to booking confirmation
+              final updatedBookingData = {
+                ...?widget.bookingData,
+                'selectedDate': DateFormat('yyyy-MM-dd').format(selectedDate),
+                'selectedTime': selectedTime,
+                'selectedTimeFormatted': _formatTimeRange(selectedTime),
+              };
+              
+              GoRouter.of(context).push(
+                RouteNames.reviewConfirm,
+                extra: updatedBookingData,
+              );
+            },
+            width: 120,
+          ),
+        ],
+      ),
     );
   }
 }

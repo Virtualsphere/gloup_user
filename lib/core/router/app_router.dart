@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
 import 'package:tressy/features/auth/presentation/pages/otp_page.dart';
 import 'package:tressy/features/bookings/presentation/pages/bookings_page.dart';
@@ -144,7 +147,10 @@ class AppRouter {
           builder: (context, state) {
             // Get salon and service data from extra
             final data = state.extra as Map<String, dynamic>?;
-            return SlotBookingPage(bookingData: data);
+            return BlocProvider(
+              create: (context) => sl<SlotBloc>(),
+              child: SlotBookingPage(bookingData: data),
+            );
           },
           routes: [
             // Review & Confirm route (child of slot booking)
