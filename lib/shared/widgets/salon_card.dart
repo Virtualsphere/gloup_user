@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
+import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 
 class SalonCard extends StatefulWidget {
+  final int storeId; // Added store ID for API
   final String salonName;
   final String salonImage;
   final List<String> images;
@@ -26,6 +34,7 @@ class SalonCard extends StatefulWidget {
 
   const SalonCard({
     super.key,
+    required this.storeId,
     required this.salonName,
     required this.salonImage,
     required this.images,
@@ -50,7 +59,6 @@ class SalonCard extends StatefulWidget {
 
 class _SalonCardState extends State<SalonCard> {
   int _currentImageIndex = 0;
-  late bool _isFavorite;
 
   // Language icon paths map
   static const Map<String, String> languageIcons = {
@@ -68,51 +76,80 @@ class _SalonCardState extends State<SalonCard> {
     return languageIcons[languageCode];
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _isFavorite = widget.isFavorite;
+  void _handleFavoriteToggle() {
+    // Check if user is authenticated
+    final isAuthenticated = LocalStorageService.accessToken != null &&
+        LocalStorageService.accessToken!.isNotEmpty;
+
+    if (!isAuthenticated) {
+      // Show login bottom sheet
+      LoginBottomSheet.show(context);
+      return;
+    }
+
+    // Toggle favorite via BLoC, passing current state
+    context.read<FavoritesBloc>().add(
+      ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
+    );
+    
+    // Call optional callback
+    widget.onFavoriteToggle?.call();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    return InkWell(
-      onTap: widget.onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-      child: Container(
-        width: widget.isFullWidth ? double.infinity : 320,
-        margin: widget.isFullWidth 
-            ? EdgeInsets.zero
-            : const EdgeInsets.only(right: AppSizes.paddingM),
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          boxShadow: [
-            BoxShadow(
-              color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    
+    // Removed BlocListener - toasts are now handled by parent page
+    return BlocBuilder<FavoritesBloc, FavoritesState>(
+        builder: (context, favoritesState) {
+          // Use optimistic update if available, otherwise use server data
+          final isFavorite = favoritesState.isFavorite(widget.storeId, widget.isFavorite);
+          
+          print('🔍 SalonCard ${widget.storeId}: serverValue=${widget.isFavorite}, optimistic=${favoritesState.optimisticUpdates[widget.storeId]}, final=$isFavorite');
+          
+          // Check if this specific card is loading
+          final isLoading = favoritesState.status == FavoritesStatus.loading &&
+              favoritesState.lastToggledStoreId == widget.storeId;
+          
+          return InkWell(
+            onTap: widget.onTap,
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+            child: Container(
+              width: widget.isFullWidth ? double.infinity : 320,
+              margin: widget.isFullWidth 
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.only(right: AppSizes.paddingM),
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildImageCarousel(isFavorite, isLoading),
+                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
+                  _buildSalonInfo(isDarkMode),
+                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
+                  _buildRatingAndDistance(isDarkMode),
+                  SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
+                ],
+              ),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildImageCarousel(),
-            SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
-            _buildSalonInfo(isDarkMode),
-            SizedBox(height: widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
-            _buildRatingAndDistance(isDarkMode),
-            SizedBox(height: widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
-          ],
-        ),
-      ),
-    );
+          );
+        },
+      );
   }
 
-  Widget _buildImageCarousel() {
+  Widget _buildImageCarousel(bool isFavorite, bool isLoading) {
     return Stack(
       children: [
         // Carousel images
@@ -218,12 +255,7 @@ class _SalonCardState extends State<SalonCard> {
           top: AppSizes.paddingS,
           right: AppSizes.paddingS,
           child: InkWell(
-            onTap: () {
-              setState(() {
-                _isFavorite = !_isFavorite;
-              });
-              widget.onFavoriteToggle?.call();
-            },
+            onTap: isLoading ? null : _handleFavoriteToggle, // Disable while loading
             borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             child: Container(
               padding: const EdgeInsets.all(AppSizes.paddingS),
@@ -238,17 +270,28 @@ class _SalonCardState extends State<SalonCard> {
                   ),
                 ],
               ),
-              child: SvgPicture.asset(
-                _isFavorite
-                    ? 'assets/icons/ic_heart_fill.svg'
-                    : 'assets/icons/ic_heart.svg',
-                width: 18,
-                height: 18,
-                colorFilter: ColorFilter.mode(
-                  _isFavorite ? Colors.red : AppColors.textSecondary,
-                  BlendMode.srcIn,
-                ),
-              ),
+              child: isLoading
+                  ? SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.primary,
+                        ),
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      isFavorite
+                          ? 'assets/icons/ic_heart_fill.svg'
+                          : 'assets/icons/ic_heart.svg',
+                      width: 18,
+                      height: 18,
+                      colorFilter: ColorFilter.mode(
+                        isFavorite ? Colors.red : AppColors.textSecondary,
+                        BlendMode.srcIn,
+                      ),
+                    ),
             ),
           ),
         ),

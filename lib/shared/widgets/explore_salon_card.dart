@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 
 class ExploreSalonCard extends StatefulWidget {
+  final int storeId;
   final String salonName;
   final String salonImage;
   final List<String> images;
@@ -22,9 +29,11 @@ class ExploreSalonCard extends StatefulWidget {
   final List<String>? languageCodes;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteToggle;
+  final bool showDistance; // New parameter to hide/show distance
 
   const ExploreSalonCard({
     super.key,
+    required this.storeId,
     required this.salonName,
     required this.salonImage,
     required this.images,
@@ -40,6 +49,7 @@ class ExploreSalonCard extends StatefulWidget {
     this.languageCodes,
     this.onTap,
     this.onFavoriteToggle,
+    this.showDistance = true, // Default to showing distance
   });
 
   @override
@@ -48,7 +58,26 @@ class ExploreSalonCard extends StatefulWidget {
 
 class _ExploreSalonCardState extends State<ExploreSalonCard> {
   int _currentImageIndex = 0;
-  late bool _isFavorite;
+
+  void _handleFavoriteToggle() {
+    // Check if user is authenticated
+    final isAuthenticated = LocalStorageService.accessToken != null &&
+        LocalStorageService.accessToken!.isNotEmpty;
+
+    if (!isAuthenticated) {
+      // Show login bottom sheet
+      LoginBottomSheet.show(context);
+      return;
+    }
+
+    // Toggle favorite via BLoC
+    context.read<FavoritesBloc>().add(
+      ToggleFavoriteEvent(widget.storeId, widget.isFavorite),
+    );
+    
+    // Call optional callback
+    widget.onFavoriteToggle?.call();
+  }
 
   // Language icon paths map
   static const Map<String, String> languageIcons = {
@@ -67,16 +96,19 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _isFavorite = widget.isFavorite;
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-    return InkWell(
+    return BlocBuilder<FavoritesBloc, FavoritesState>(
+      builder: (context, favoritesState) {
+        // Use optimistic update if available, otherwise use server data
+        final isFavorite = favoritesState.isFavorite(widget.storeId, widget.isFavorite);
+        
+        // Check if this specific card is loading
+        final isLoading = favoritesState.status == FavoritesStatus.loading &&
+            favoritesState.lastToggledStoreId == widget.storeId;
+
+        return InkWell(
       onTap: widget.onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
       child: Container(
@@ -111,7 +143,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildSalonInfo(isDarkMode),
+                    _buildSalonInfo(isDarkMode, isFavorite, isLoading),
                     const SizedBox(height: AppSizes.spaceS),
                     _buildRatingAndDistance(isDarkMode),
                   ],
@@ -122,11 +154,14 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         ),
       ),
     );
+      },
+    );
   }
 
   Widget _buildImageCarousel() {
     return SizedBox(
       width: 130,
+      height: 150, // Add fixed height to prevent infinite height error
       child: Stack(
         children: [
           // Carousel images
@@ -313,7 +348,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
     );
   }
 
-  Widget _buildSalonInfo(bool isDarkMode) {
+  Widget _buildSalonInfo(bool isDarkMode, bool isFavorite, bool isLoading) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -335,12 +370,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         const SizedBox(width: AppSizes.spaceS),
         // Favorite heart button
         InkWell(
-          onTap: () {
-            setState(() {
-              _isFavorite = !_isFavorite;
-            });
-            widget.onFavoriteToggle?.call();
-          },
+          onTap: isLoading ? null : _handleFavoriteToggle,
           borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
           child: Container(
             padding: const EdgeInsets.all(6),
@@ -352,17 +382,28 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 width: 1,
               ),
             ),
-            child: SvgPicture.asset(
-              _isFavorite
-                  ? 'assets/icons/ic_heart_fill.svg'
-                  : 'assets/icons/ic_heart.svg',
-              width: 16,
-              height: 16,
-              colorFilter: ColorFilter.mode(
-                _isFavorite ? Colors.red : AppColors.textSecondary,
-                BlendMode.srcIn,
-              ),
-            ),
+            child: isLoading
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
+                  )
+                : SvgPicture.asset(
+                    isFavorite
+                        ? 'assets/icons/ic_heart_fill.svg'
+                        : 'assets/icons/ic_heart.svg',
+                    width: 16,
+                    height: 16,
+                    colorFilter: ColorFilter.mode(
+                      isFavorite ? Colors.red : AppColors.textSecondary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
           ),
         ),
       ],
@@ -427,29 +468,32 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Container(
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
+            // Only show distance if showDistance is true
+            if (widget.showDistance) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
+                  width: 4,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              // Distance
+              Text(
+                '${widget.distance.toStringAsFixed(1)} KM',
+                style: context.textTheme.bodySmall?.copyWith(
                   color: isDarkMode
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondary,
-                  shape: BoxShape.circle,
+                  fontSize: AppSizes.fontS,
                 ),
               ),
-            ),
-            // Distance
-            Text(
-              '${widget.distance.toStringAsFixed(1)} KM',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                fontSize: AppSizes.fontS,
-              ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: AppSizes.spaceS),

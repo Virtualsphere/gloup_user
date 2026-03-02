@@ -9,6 +9,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/utils/local_storage_service.dart';
 import 'features/category/presentation/bloc/category_bloc.dart';
+import 'features/favorites/presentation/bloc/favorites_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,10 @@ class MyApp extends StatelessWidget {
         // Global CategoryBloc - shared across all screens
         BlocProvider<CategoryBloc>.value(
           value: sl<CategoryBloc>(),
+        ),
+        // Global FavoritesBloc - manages favorite state across all screens
+        BlocProvider<FavoritesBloc>.value(
+          value: sl<FavoritesBloc>(),
         ),
       ],
       child: MultiProvider(

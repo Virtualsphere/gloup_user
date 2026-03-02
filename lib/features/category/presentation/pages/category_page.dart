@@ -11,6 +11,9 @@ import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
 import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/features/category/presentation/widgets/category_shimmers.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
@@ -262,7 +265,20 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Widget _buildContent(BuildContext context, bool isDarkMode) {
-    return Scaffold(
+    return BlocListener<FavoritesBloc, FavoritesState>(
+      listenWhen: (previous, current) {
+        // Listen when toast counter changes
+        return current.toastCounter != previous.toastCounter;
+      },
+      listener: (context, state) {
+        // Show toast for success or failure
+        if (state.status == FavoritesStatus.success) {
+          CustomToast.showSuccess(context, state.message ?? 'Favorite updated');
+        } else if (state.status == FavoritesStatus.failure) {
+          CustomToast.showError(context, state.errorMessage ?? 'Failed to update favorite');
+        }
+      },
+      child: Scaffold(
         appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
@@ -393,6 +409,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
                         child: SalonCard(
+                          storeId: int.tryParse(salon.id) ?? 0,
                           salonName: salon.salonName,
                           salonImage: salon.salonImage,
                           images: salon.images,
@@ -488,6 +505,7 @@ class _CategoryPageState extends State<CategoryPage> {
           // Bottom spacing
           const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
         ],
+      ),
       ),
     );
   }

@@ -344,6 +344,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                             child: SizedBox(
                               height: 150,
                               child: ExploreSalonCard(
+                                storeId: int.tryParse(salon.id) ?? 0,
                                 salonName: salon.salonName,
                                 salonImage: salon.salonImage,
                                 images: salon.images,
@@ -359,9 +360,6 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                                 languageCodes: salon.languageCodes,
                                 onTap: () {
                                   // Navigate to salon details
-                                },
-                                onFavoriteToggle: () {
-                                  // Handle favorite toggle
                                 },
                               ),
                             ),

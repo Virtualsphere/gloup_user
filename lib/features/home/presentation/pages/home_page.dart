@@ -24,6 +24,8 @@ import 'package:tressy/features/location/presentation/pages/location_page.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -241,10 +243,23 @@ class _HomePageState extends State<HomePage> {
           ));
         return _homeBloc!;
       },
-      child: Scaffold(
-        backgroundColor: context.colorScheme.surface,
-        body: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
+      child: BlocListener<FavoritesBloc, FavoritesState>(
+        listenWhen: (previous, current) {
+          // Listen when toast counter changes
+          return current.toastCounter != previous.toastCounter;
+        },
+        listener: (context, state) {
+          // Show toast for success or failure
+          if (state.status == FavoritesStatus.success) {
+            CustomToast.showSuccess(context, state.message ?? 'Favorite updated');
+          } else if (state.status == FavoritesStatus.failure) {
+            CustomToast.showError(context, state.errorMessage ?? 'Failed to update favorite');
+          }
+        },
+        child: Scaffold(
+          backgroundColor: context.colorScheme.surface,
+          body: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
             return CustomScrollView(
               controller: _scrollController,
               slivers: [
@@ -603,6 +618,7 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   final salon = state.popularServices[index];
                                   return SalonCard(
+                                    storeId: int.tryParse(salon.id) ?? 0,
                                     salonName: salon.salonName,
                                     salonImage: salon.salonImage,
                                     images: salon.images,
@@ -662,6 +678,7 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   final salon = state.topSalons[index];
                                   return SalonCard(
+                                    storeId: int.tryParse(salon.id) ?? 0,
                                     salonName: salon.salonName,
                                     salonImage: salon.salonImage,
                                     images: salon.images,
@@ -739,6 +756,7 @@ class _HomePageState extends State<HomePage> {
                                     padding: const EdgeInsets.only(
                                         bottom: AppSizes.paddingM),
                                     child: SalonCard(
+                                      storeId: int.tryParse(salon.id) ?? 0,
                                       salonName: salon.salonName,
                                       salonImage: salon.salonImage,
                                       images: salon.images,
@@ -789,7 +807,8 @@ class _HomePageState extends State<HomePage> {
                 SliverToBoxAdapter(child: AppSizes.heightXXL),
               ],
             );
-          },
+            },
+          ),
         ),
       ),
     );

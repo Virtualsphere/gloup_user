@@ -18,6 +18,10 @@ class ApiRoutes {
   static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
   static const String getAllStores = '$baseUrl/user/app/v2/get-all-stores';
   static const String getTopSalons = '$baseUrl/user/app/v2/salons/top';
+  
+  // Favorites Endpoints
+  static const String toggleFavorite = '$baseUrl/user/app/v2/favourites';
+  static const String getFavorites = '$baseUrl/user/app/v2/favourites';
 
 
   // Helper method to build URLs with query parameters

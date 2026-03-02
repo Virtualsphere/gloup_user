@@ -37,6 +37,14 @@ import 'package:tressy/features/salon_details/domain/repositories/salon_detail_r
 import 'package:tressy/features/salon_details/domain/usecases/get_salon_details_usecase.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 
+// Favorites Feature
+import 'package:tressy/features/favorites/data/datasources/favorites_remote_datasource.dart';
+import 'package:tressy/features/favorites/data/repositories/favorites_repository_impl.dart';
+import 'package:tressy/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:tressy/features/favorites/domain/usecases/get_favorites_usecase.dart';
+import 'package:tressy/features/favorites/domain/usecases/toggle_favorite_usecase.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -166,5 +174,31 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<SalonDetailRemoteDataSource>(
     () => SalonDetailRemoteDataSourceImpl(sl()),
+  );
+
+  // Favorites Feature
+  // BLoC - Registered as singleton to share favorite state across the app
+  sl.registerLazySingleton<FavoritesBloc>(() => FavoritesBloc(
+        toggleFavoriteUseCase: sl(),
+        getFavoritesUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<ToggleFavoriteUseCase>(
+    () => ToggleFavoriteUseCase(sl()),
+  );
+  
+  sl.registerLazySingleton<GetFavoritesUseCase>(
+    () => GetFavoritesUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<FavoritesRepository>(
+    () => FavoritesRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<FavoritesRemoteDataSource>(
+    () => FavoritesRemoteDataSourceImpl(sl()),
   );
 }
