@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
@@ -26,6 +29,7 @@ import 'package:tressy/shared/widgets/coupon_applied_dialog.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/billing_summary_card.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/recommended_service_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
+import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ReviewConfirmPage extends StatefulWidget {
@@ -40,13 +44,35 @@ class ReviewConfirmPage extends StatefulWidget {
   State<ReviewConfirmPage> createState() => _ReviewConfirmPageState();
 }
 
-class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
+class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindingObserver {
   String selectedBookingFor = 'myself'; // 'myself' or 'someone_else'
   int? selectedSomeoneElseIndex; // selected index for someone else profiles
   String? selectedCouponCode;
   bool useGloupCash = false; // Gloup Cash checkbox state
   List<Map<String, dynamic>> addedServices = []; // Track added recommended services
   List<CouponData> availableCoupons = []; // Coupons from API
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+  
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Refresh when app comes to foreground
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        // This will trigger rebuild and check login state again
+      });
+    }
+  }
 
   // Calculate highest offer percentage from selected services
   int get _highestOfferPercentage {
@@ -134,6 +160,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isLoggedIn = LocalStorageService.isLoggedIn && 
+                       LocalStorageService.accessToken != null;
 
     return MultiBlocProvider(
       providers: [
@@ -202,14 +230,16 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                       ],
                     ),
                     const SizedBox(height: AppSizes.spaceM),
-                    // Who is this booking for section
-                    _buildSectionTitle(context, 'Who is this booking for?', isDarkMode),
-                    const SizedBox(height: AppSizes.spaceS),
-                    // Booking for selector (Myself / Someone else)
-                    _buildBookingForSelector(context, isDarkMode),
-                    const SizedBox(height: AppSizes.spaceM),
-                    // Profile card (shown when "Myself" is selected)
-                    if (selectedBookingFor == 'myself')
+                    // Who is this booking for section - Only show if logged in
+                    if (isLoggedIn) ...[
+                      _buildSectionTitle(context, 'Who is this booking for?', isDarkMode),
+                      const SizedBox(height: AppSizes.spaceS),
+                      // Booking for selector (Myself / Someone else)
+                      _buildBookingForSelector(context, isDarkMode),
+                      const SizedBox(height: AppSizes.spaceM),
+                    ],
+                    // Profile card (shown when "Myself" is selected and logged in)
+                    if (isLoggedIn && selectedBookingFor == 'myself')
                       BlocBuilder<ProfileBloc, ProfileState>(
                         builder: (context, profileState) {
                           // Show loading shimmer
@@ -261,8 +291,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                           );
                         },
                       ),
-                    // Someone else cards (loaded from API)
-                    if (selectedBookingFor == 'someone_else')
+                    // Someone else cards (loaded from API and logged in)
+                    if (isLoggedIn && selectedBookingFor == 'someone_else')
                       BlocConsumer<GuestBloc, GuestState>(
                         listener: (context, guestState) {
                           // Show success message when guest is added
@@ -431,6 +461,16 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                     // Coupons & Offers section
                     _buildSectionTitle(context, 'Coupons & Offers', isDarkMode),
                     const SizedBox(height: AppSizes.spaceS),
+                    // Show login message if not logged in, otherwise show coupons
+                    if (!isLoggedIn)
+                      Text(
+                        'Sign in to access exclusive discounts and offers',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
+                    else
                     // Fetch coupons from BLoC
                     BlocBuilder<CouponBloc, CouponState>(
                       builder: (context, couponState) {
@@ -667,7 +707,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // _buildGloupCashCheckbox(context, isDarkMode),
-          _buildBottomConfirmButton(context, isDarkMode),
+          _buildBottomConfirmButton(context, isDarkMode, isLoggedIn),
         ],
       ),
       ),
@@ -807,7 +847,36 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
     );
   }
 
-  Widget _buildBottomConfirmButton(BuildContext context, bool isDarkMode) {
+  Widget _buildBottomConfirmButton(BuildContext context, bool isDarkMode, bool isLoggedIn) {
+    // If not logged in, show "Login to Continue" button
+    if (!isLoggedIn) {
+      return Container(
+        padding: const EdgeInsets.all(AppSizes.paddingM),
+        decoration: BoxDecoration(
+          color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        ),
+        child: SafeArea(
+          child: PrimaryButton(
+            text: 'Login to Continue',
+            onPressed: () async {
+              // Show login bottom sheet
+              await LoginBottomSheet.show(context);
+              
+              // Refresh the page after login sheet closes
+              if (mounted) {
+                setState(() {
+                  // This will trigger rebuild and check login state again
+                });
+              }
+            },
+            backgroundColor: isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
+            textColor: AppColors.white,
+            height: 52,
+          ),
+        ),
+      );
+    }
+
     // Calculate final total from billing summary
     final serviceAmount = _totalServiceAmount;
     final couponDiscount = selectedCouponCode != null
