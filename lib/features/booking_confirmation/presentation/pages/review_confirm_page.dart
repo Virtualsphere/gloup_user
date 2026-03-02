@@ -493,6 +493,46 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                               )
                             : availableCoupons.first;
 
+                        // Check if coupon can be applied
+                        // Use discounted price (after service discount) for validation
+                        final originalAmount = _totalServiceAmount;
+                        final serviceDiscount = _totalServiceDiscount;
+                        final discountedAmount = originalAmount - serviceDiscount;
+                        final minAmountRequired = displayCoupon.discountAmount.toDouble();
+                        final isCouponValid = (discountedAmount + 30) >= minAmountRequired;
+                        final amountNeeded = minAmountRequired - discountedAmount - 30;
+                        
+                        // Debug logging
+                        print('DEBUG Coupon Validation:');
+                        print('  Original Amount: ₹$originalAmount');
+                        print('  Service Discount: ₹$serviceDiscount');
+                        print('  Discounted Amount: ₹$discountedAmount');
+                        print('  Coupon Discount: ₹$minAmountRequired');
+                        print('  Calculation: $discountedAmount + 30 = ${discountedAmount + 30}');
+                        print('  Is Valid: $isCouponValid (${discountedAmount + 30} >= $minAmountRequired)');
+                        print('  Selected Coupon: $selectedCouponCode');
+                        print('  Display Coupon: ${displayCoupon.couponCode}');
+                        
+                        // Auto-deselect coupon if it becomes invalid
+                        if (!isCouponValid && selectedCouponCode == displayCoupon.couponCode) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              setState(() {
+                                selectedCouponCode = null;
+                              });
+                              CustomToast.showWarning(
+                                context,
+                                'Coupon removed: Add more services to apply this coupon',
+                              );
+                            }
+                          });
+                        }
+                        
+                        String? disabledReason;
+                        if (!isCouponValid) {
+                          disabledReason = 'Add services worth ₹${amountNeeded.toStringAsFixed(0)} more to avail this coupon';
+                        }
+
                         return Column(
                           children: [
                             // Show first coupon or selected coupon
@@ -502,7 +542,17 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                                 discountAmount: displayCoupon.discountAmount,
                                 couponCode: displayCoupon.couponCode,
                                 isSelected: selectedCouponCode == displayCoupon.couponCode,
+                                isEnabled: isCouponValid,
+                                disabledReason: disabledReason,
                                 onTap: () async {
+                                  if (!isCouponValid) {
+                                    CustomToast.showWarning(
+                                      context,
+                                      disabledReason ?? 'Cannot apply this coupon',
+                                    );
+                                    return;
+                                  }
+                                  
                                   final newSelection = selectedCouponCode == displayCoupon.couponCode
                                       ? null
                                       : displayCoupon.couponCode;
@@ -536,6 +586,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                                       context,
                                       coupons: availableCoupons,
                                       selectedCouponCode: selectedCouponCode,
+                                      serviceAmount: _totalServiceAmount - _totalServiceDiscount,
                                     );
                                     if (result != null && result != selectedCouponCode) {
                                       setState(() {

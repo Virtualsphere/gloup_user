@@ -7,6 +7,8 @@ class CouponCard extends StatelessWidget {
   final String couponCode;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isEnabled;
+  final String? disabledReason;
 
   const CouponCard({
     super.key,
@@ -14,6 +16,8 @@ class CouponCard extends StatelessWidget {
     required this.couponCode,
     required this.isSelected,
     required this.onTap,
+    this.isEnabled = true,
+    this.disabledReason,
   });
 
   @override
@@ -22,71 +26,121 @@ class CouponCard extends StatelessWidget {
 
     final Color surface = isDarkMode ? AppColors.surfaceDark : AppColors.surface;
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        ),
-        child: Row(
-          children: [
-            // Left icon
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-              ),
-              child: Icon(
-                Icons.local_offer_outlined,
-                color: AppColors.success,
-                size: 22,
-              ),
+      onTap: isEnabled ? onTap : null,
+      child: Opacity(
+        opacity: isEnabled ? 1.0 : 0.5,
+        child: Container(
+          padding: const EdgeInsets.all(AppSizes.paddingM),
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+            border: isEnabled ? null : Border.all(
+              color: isDarkMode ? AppColors.borderDark : AppColors.border,
+              width: 1,
             ),
-            const SizedBox(width: AppSizes.spaceM),
-
-            // Middle text
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text.rich(
-                    TextSpan(
-                      text: 'Save ',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: isDarkMode
-                                ? AppColors.textPrimaryDark
-                                : AppColors.textPrimary,
-                          ),
+                  // Left icon
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isEnabled 
+                          ? AppColors.success.withValues(alpha: 0.12)
+                          : Colors.grey.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    ),
+                    child: Icon(
+                      Icons.local_offer_outlined,
+                      color: isEnabled ? AppColors.success : Colors.grey,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: AppSizes.spaceM),
+
+                  // Middle text
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: '₹$discountAmount',
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        Text.rich(
+                          TextSpan(
+                            text: 'Save ',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: isEnabled
+                                      ? (isDarkMode
+                                          ? AppColors.textPrimaryDark
+                                          : AppColors.textPrimary)
+                                      : Colors.grey,
+                                ),
+                            children: [
+                              TextSpan(
+                                text: '₹$discountAmount',
+                                style: const TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              const TextSpan(text: ' with'),
+                            ],
+                          ),
                         ),
-                        const TextSpan(text: ' with'),
+                        const SizedBox(height: AppSizes.spaceXS),
+                        Text(
+                          '"$couponCode"',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: isEnabled ? AppColors.success : Colors.grey,
+                              ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceXS),
-                  Text(
-                    '"$couponCode"',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.success,
-                        ),
+
+                  // Right button / toggle
+                  _ApplyToggle(
+                    isSelected: isSelected,
+                    isEnabled: isEnabled,
+                    onTap: onTap,
                   ),
                 ],
               ),
-            ),
-
-            // Right button / toggle
-            _ApplyToggle(
-              isSelected: isSelected,
-              onTap: onTap,
-            ),
-          ],
+              // Show disabled reason if provided
+              if (!isEnabled && disabledReason != null) ...[
+                const SizedBox(height: AppSizes.spaceS),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.paddingS,
+                    vertical: AppSizes.paddingXS,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: AppColors.warning,
+                      ),
+                      const SizedBox(width: AppSizes.spaceXS),
+                      Expanded(
+                        child: Text(
+                          disabledReason!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.warning,
+                                fontSize: 11,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -95,17 +149,19 @@ class CouponCard extends StatelessWidget {
 
 class _ApplyToggle extends StatelessWidget {
   final bool isSelected;
+  final bool isEnabled;
   final VoidCallback onTap;
 
   const _ApplyToggle({
     required this.isSelected,
+    this.isEnabled = true,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: isEnabled ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(
@@ -113,15 +169,17 @@ class _ApplyToggle extends StatelessWidget {
           vertical: AppSizes.paddingS,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.success.withValues(alpha: 0.12)
-              : AppColors.success,
+          color: isEnabled
+              ? (isSelected
+                  ? AppColors.success.withValues(alpha: 0.12)
+                  : AppColors.success)
+              : Colors.grey.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isSelected) ...[
+            if (isSelected && isEnabled) ...[
               const Icon(
                 Icons.check,
                 size: 16,
@@ -132,7 +190,9 @@ class _ApplyToggle extends StatelessWidget {
             Text(
               isSelected ? 'Applied' : 'Apply',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isSelected ? AppColors.success : AppColors.white,
+                    color: isEnabled
+                        ? (isSelected ? AppColors.success : AppColors.white)
+                        : Colors.grey,
                     fontWeight: FontWeight.w700,
                   ),
             ),

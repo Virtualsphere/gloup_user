@@ -17,6 +17,7 @@ Future<String?> showCouponsBottomSheet(
   BuildContext context, {
   required List<CouponData> coupons,
   String? selectedCouponCode,
+  required double serviceAmount, // This should be the discounted amount
 }) async {
   return await showModalBottomSheet<String?>(
     context: context,
@@ -25,6 +26,7 @@ Future<String?> showCouponsBottomSheet(
     builder: (context) => _CouponsBottomSheet(
       coupons: coupons,
       selectedCouponCode: selectedCouponCode,
+      serviceAmount: serviceAmount,
     ),
   );
 }
@@ -32,10 +34,12 @@ Future<String?> showCouponsBottomSheet(
 class _CouponsBottomSheet extends StatefulWidget {
   final List<CouponData> coupons;
   final String? selectedCouponCode;
+  final double serviceAmount;
 
   const _CouponsBottomSheet({
     required this.coupons,
     this.selectedCouponCode,
+    required this.serviceAmount,
   });
 
   @override
@@ -109,11 +113,27 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
                   final coupon = widget.coupons[index];
                   final isSelected = _selectedCoupon == coupon.couponCode;
 
+                  // Check if coupon can be applied
+                  final minAmountRequired = coupon.discountAmount.toDouble();
+                  final isCouponValid = (widget.serviceAmount + 30) >= minAmountRequired;
+                  final amountNeeded = minAmountRequired - widget.serviceAmount - 30;
+                  
+                  String? disabledReason;
+                  if (!isCouponValid) {
+                    disabledReason = 'Add services worth ₹${amountNeeded.toStringAsFixed(0)} more to avail this coupon';
+                  }
+
                   return CouponCard(
                     discountAmount: coupon.discountAmount,
                     couponCode: coupon.couponCode,
                     isSelected: isSelected,
+                    isEnabled: isCouponValid,
+                    disabledReason: disabledReason,
                     onTap: () {
+                      if (!isCouponValid) {
+                        // Don't close bottom sheet, just show it's disabled
+                        return;
+                      }
                       setState(() {
                         // Toggle: if already selected, unselect; otherwise select
                         _selectedCoupon = isSelected ? null : coupon.couponCode;
