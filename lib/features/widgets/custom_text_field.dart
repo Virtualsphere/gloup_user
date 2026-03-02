@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/text_styles.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
@@ -65,7 +66,7 @@ class CustomTextField extends StatelessWidget {
       style: AppTextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
-        color: AppColors.primary,
+        color: context.colorScheme.onSurface,
       ).textStyle,
       decoration: InputDecoration(
         hintText: hintText,

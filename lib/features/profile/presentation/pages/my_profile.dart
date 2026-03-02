@@ -8,13 +8,13 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/core/extensions/string_extensions.dart';
-import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_drop_downs.dart';
 import 'package:tressy/features/widgets/custom_image.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/features/widgets/profile_text_field.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -37,6 +37,8 @@ class _MyProfileState extends State<MyProfile> {
   final emailRegExp = RegExp(
     r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
   );
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -69,8 +71,9 @@ class _MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
       appBar: ProfileAppBar(
           title: "Your Profile",
           centerTitle: false,
@@ -93,7 +96,9 @@ class _MyProfileState extends State<MyProfile> {
                             left: 15,
                             right: 15,
                             bottom: 15),
-                        decoration: Themes.borderDecoration(),
+                        decoration: BoxDecoration(
+                            color: context.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(10.0)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -143,7 +148,9 @@ class _MyProfileState extends State<MyProfile> {
                                   // authController.setGender = value;
                                 },
                                 hintText: 'Select gender',
-                                color: AppColors.secondary,
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.borderColor,
                                 validator: (value) {
                                   if (value == null) {
                                     return 'Please select gender';
@@ -162,7 +169,7 @@ class _MyProfileState extends State<MyProfile> {
                               onTap: () async {
                                 DateTime? selectedDate =
                                     await pickDate(context);
-        
+
                                 if (selectedDate != null) {
                                   dateOfBirthController.text =
                                       DateFormat('dd/MM/yyyy')
@@ -206,37 +213,87 @@ class _MyProfileState extends State<MyProfile> {
                             ProfileTextField(
                               labelText: "Country",
                               controller: countryController,
-                              inputType: TextInputType.number,
+                              inputType: TextInputType.text,
                               showClear: true,
                               onTap: () {
                                 showCountryPicker(
                                   context: context,
                                   showPhoneCode: false,
                                   countryListTheme: CountryListThemeData(
-                                    searchTextStyle: AppTextStyle(
+                                    backgroundColor: isDarkMode
+                                        ? Colors.grey.shade900
+                                        : AppColors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    textStyle:
+                                        context.textTheme.bodyLarge?.copyWith(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDarkMode
+                                          ? AppColors.white
+                                          : AppColors.black,
+                                    ),
+                                    searchTextStyle:
+                                        context.textTheme.bodyLarge?.copyWith(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
-                                      color: AppColors.primary,
-                                    ).textStyle,
-                                    textStyle: AppTextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.primary,
-                                    ).textStyle,
+                                      color: isDarkMode
+                                          ? AppColors.white
+                                          : AppColors.black,
+                                    ),
                                     inputDecoration: InputDecoration(
                                       isDense: true,
+                                      filled: true,
+                                      fillColor: isDarkMode
+                                          ? AppColors.black
+                                          : Colors.grey.shade100,
                                       hintText: 'Search country',
-                                      hintStyle: AppTextStyle(
-                                        fontSize: 13,
+                                      hintStyle:
+                                          context.textTheme.bodyLarge?.copyWith(
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w400,
-                                        color: AppColors.secondary,
-                                      ).textStyle,
+                                        color: isDarkMode
+                                            ? AppColors.white
+                                            : AppColors.black,
+                                      ),
+                                      labelStyle:
+                                          context.textTheme.bodyLarge?.copyWith(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: isDarkMode
+                                            ? AppColors.white
+                                            : AppColors.black,
+                                      ),
                                       prefixIcon: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                        ),
+                                            horizontal: 10),
                                         child: SvgPicture.asset(
                                           AppIcons.search,
+                                          colorFilter: ColorFilter.mode(
+                                            isDarkMode
+                                                ? AppColors.white
+                                                : AppColors.greyColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        borderSide: BorderSide(
+                                          color: isDarkMode
+                                              ? AppColors.white
+                                              : AppColors.border,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        borderSide: BorderSide(
+                                          color: isDarkMode
+                                              ? AppColors.white
+                                              : AppColors.border,
+                                          width: 1,
                                         ),
                                       ),
                                     ),
@@ -277,11 +334,16 @@ class _MyProfileState extends State<MyProfile> {
                               height: 132,
                               width: 132,
                               clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDarkMode
+                                    ? AppColors.black.withValues(alpha: 0.6)
+                                    : AppColors.transparent,
+                              ),
                               child: ValueListenableBuilder(
                                 valueListenable: profileImageNotifier,
                                 builder: (context, file, child) {
-                                  return file != null
+                                  Widget imageWidget = file != null
                                       ? Image.file(
                                           File(file.path),
                                           fit: BoxFit.cover,
@@ -290,6 +352,18 @@ class _MyProfileState extends State<MyProfile> {
                                           imageUrl: '',
                                           imageType: ImageType.profilepic,
                                         );
+
+                                  return Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      imageWidget,
+                                      if (isDarkMode)
+                                        Container(
+                                          color: Colors.black.withOpacity(
+                                              0.5), // adjust darkness here
+                                        ),
+                                    ],
+                                  );
                                 },
                               ),
                             ),
@@ -338,12 +412,13 @@ class _MyProfileState extends State<MyProfile> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: AppColors.white,
+        color: isDarkMode ? AppColors.primary : AppColors.white,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-          child: CustomFullButton(
-            title: 'Update Profile',
-            onTap: () async {},
+          child: PrimaryButton(
+            text: 'Update Profile',
+            isLoading: _isLoading,
+            onPressed: () {},
           ),
         ),
       ),

@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
-import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_snackbar.dart';
 import 'package:tressy/features/widgets/custom_text_field.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class Wallet extends StatefulWidget {
   const Wallet({super.key});
@@ -36,8 +36,9 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // backgroundColor: isDarkMode ? AppColors.black:AppColors.background,
       appBar: ProfileAppBar(
         title: "My Wallet",
         centerTitle: false,
@@ -56,11 +57,13 @@ class _WalletState extends State<Wallet> {
                 amount: '500.00',
               ),
               SizedBox(height: 15.0),
-              HeaderTextBlack(
-                title: 'Transactions',
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                isBodoniModa: false,
+              Text(
+                'Transactions',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: isDarkMode ? AppColors.white : AppColors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Expanded(
                 child: NoDataText(title: 'No data found'),
@@ -70,11 +73,12 @@ class _WalletState extends State<Wallet> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: AppColors.white,
+        color: isDarkMode ? null : AppColors.white,
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-        child: CustomFullButton(
-          title: '+ Add Money',
-          onTap: () {
+        child: PrimaryButton(
+          text: '+ Add Money',
+          isLoading: false,
+          onPressed: () {
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -195,10 +199,13 @@ class _DepositBottomSheetState extends State<DepositBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
-      decoration: Themes.bottomSheetDecoration,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
       child: SingleChildScrollView(
         child: Form(
           key: depositFormKey,
@@ -206,17 +213,22 @@ class _DepositBottomSheetState extends State<DepositBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              HeaderTextBlack(
-                title: 'Deposit Money',
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                isBodoniModa: false,
+              Text(
+                'Deposit Money',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: isDarkMode ? AppColors.white : AppColors.black,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 10),
-              BodyTextHint(
-                title: 'Securely deposit funds to use for salon bookings',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
+              Text(
+                'Securely deposit funds to use for salon bookings',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: isDarkMode ? AppColors.white : AppColors.black,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
               const SizedBox(height: 20),
               CustomTextField(
@@ -262,14 +274,19 @@ class _DepositBottomSheetState extends State<DepositBottomSheet> {
                               height: 16,
                               width: 16,
                               colorFilter: ColorFilter.mode(
-                                AppColors.primary,
+                                isDarkMode ? AppColors.white : AppColors.black,
                                 BlendMode.srcIn,
                               ),
                             ),
-                            HeaderTextBlack(
-                              title: amounts[index],
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                            Text(
+                              amounts[index],
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ],
                         ),
@@ -279,10 +296,10 @@ class _DepositBottomSheetState extends State<DepositBottomSheet> {
                 ),
               ),
               const SizedBox(height: 50),
-              CustomFullButton(
-                title: 'Deposit',
-                isDisabled: amountController.text.isEmpty,
-                onTap: () {
+              PrimaryButton(
+                text: 'Deposit',
+                isLoading: false,
+                onPressed: () {
                   if (depositFormKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

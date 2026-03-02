@@ -6,10 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
-import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_text_field.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class InviteAndEarn extends StatefulWidget {
   const InviteAndEarn({super.key});
@@ -36,8 +37,9 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
           title: "Invite & Earn",
           centerTitle: false,
@@ -65,7 +67,7 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                           style: GoogleFonts.bodoniModa(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.primary,
+                            color: isDarkMode ? AppColors.white : AppColors.primary,
                           ),
                         ),
                         WidgetSpan(
@@ -79,15 +81,19 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                                 height: 16,
                                 width: 16,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.primary,
+                                  isDarkMode ? AppColors.white : AppColors.primary,
                                   BlendMode.srcIn,
                                 ),
                               ),
-                              HeaderTextBlack(
-                                title: '199! ',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                isBodoniModa: true,
+                              Text(
+                                '199!',
+                                style: context.textTheme.labelLarge?.copyWith(
+                                  color: isDarkMode
+                                      ? AppColors.white
+                                      : AppColors.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ],
                           ),
@@ -97,17 +103,23 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                           style: GoogleFonts.bodoniModa(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.primary,
+                            color: isDarkMode
+                                ? AppColors.white : AppColors.primary,
                           ),
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20),
-                  HeaderTextBlack(
-                    title: 'Share your code',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
+                  Text(
+                    'Share your code',
+                    style: context.textTheme.labelLarge?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.white
+                          : AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   SizedBox(height: 15),
                   Container(
@@ -117,15 +129,22 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: DottedBorderContainer(
-                      borderColor: AppColors.black,
+                      borderColor: isDarkMode
+                          ? AppColors.white
+                          : AppColors.black,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15, right: 5),
                         child: Row(
                           children: [
-                            HeaderTextBlack(
-                              title: 'referralCode',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
+                            Text(
+                              'referralCode',
+                              style: context.textTheme.labelLarge?.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.primary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                             Spacer(),
                             IconButton(
@@ -138,6 +157,10 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                               },
                               icon: SvgPicture.asset(
                                 AppIcons.copy,
+                                colorFilter: ColorFilter.mode(
+                                  isDarkMode ? AppColors.white : AppColors.black,
+                                  BlendMode.srcIn,
+                                ),
                               ),
                             )
                           ],
@@ -149,7 +172,7 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: AppColors.white,
+                      color:  isDarkMode ? AppColors.black : AppColors.white,
                     ),
                     padding: EdgeInsets.all(10),
                     child: Form(
@@ -157,10 +180,15 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          HeaderTextBlack(
-                            title: 'Enter your friend’s referral code below',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          Text(
+                            'Enter your friend’s referral code below',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.white
+                                  : AppColors.primary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                           SizedBox(height: 20),
                           CustomTextField(
@@ -191,11 +219,10 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: CustomFullButton(
-                title: 'Invite Friends',
-                onTap: () {
-                  Share.share('Welcome to GloUp Salon!!');
-                },
+              child: PrimaryButton(
+                text: 'Invite Friends',
+                isLoading: false,
+                onPressed: (){Share.share('Welcome to GloUp Salon!!');},
               ),
             )
           ],

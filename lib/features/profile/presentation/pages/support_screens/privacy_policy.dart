@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/features/widgets/custom_safe_area.dart';
 import 'package:tressy/features/widgets/custom_snackbar.dart';
+import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicy extends StatefulWidget {
@@ -56,41 +54,12 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
           ? const CustomLoadingIndicator()
           : Column(
               children: [
-                AppBar(
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 15.0,bottom: 8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        height: 35,
-                        width: 37,
-                        decoration: BoxDecoration(
-                          color: AppColors.background,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: .2),
-                              blurRadius: 20,
-                              spreadRadius: 0,
-                            )
-                          ],
-                        ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            AppIcons.arrowBack,
-                            colorFilter: ColorFilter.mode(
-                              AppColors.primary,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  elevation: 0.0,
+                ProfileAppBar(
+                  title: "",
+                  centerTitle: false,
+                  onBack: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
                 Expanded(
                   child: WebViewWidget(controller: controller),

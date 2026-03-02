@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,6 +15,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return AppBar(
       backgroundColor: context.colorScheme.surface,
       surfaceTintColor: Colors.transparent,
@@ -23,17 +23,11 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 40,
       titleSpacing: 10,
       elevation: 0,
-      shape: Border(
-        bottom: BorderSide(
-          color: AppColors.border,
-          width: AppSizes.borderWidthThin,
-        ),
-      ),
       leading: IconButton(
         padding: EdgeInsets.only(left: 16.0),
         icon: Icon(
           Icons.arrow_back_ios,
-          color: context.colorScheme.onSurface,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
         onPressed: onBack ?? () => Navigator.pop(context),
       ),
@@ -41,6 +35,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: context.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
       ),
     );

@@ -5,9 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
-import 'package:tressy/core/constants/text_styles.dart';
-import 'package:tressy/core/constants/themes.dart';
-import 'package:tressy/features/widgets/custom_text_field.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomDropDownField extends StatelessWidget {
   const CustomDropDownField({
@@ -33,30 +31,52 @@ class CustomDropDownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return DropdownButtonHideUnderline(
       child: DropdownButtonFormField2(
         isExpanded: true,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-          // const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+          fillColor: isDarkMode ? AppColors.black : AppColors.white,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: isDarkMode
+                  ? AppColors.transparent
+                  : AppColors.border,
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: isDarkMode
+                  ? AppColors.transparent
+                  : AppColors.border,
+              width: 1,
+            ),
+          ),
+
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(10.0),
           ),
           prefixIcon: icon.isEmpty
               ? null
               : Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: SvgPicture.asset(
-              icon,
-              height: 20,
-              width: 20,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondary,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          // Add more decoration..
+                  padding: const EdgeInsets.only(left: 10),
+                  child: SvgPicture.asset(
+                    icon,
+                    height: 20,
+                    width: 20,
+                    colorFilter: ColorFilter.mode(
+                      theme.iconTheme.color ?? Colors.grey,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
         ),
         barrierColor: Colors.transparent,
         iconStyleData: IconStyleData(
@@ -64,7 +84,7 @@ class CustomDropDownField extends StatelessWidget {
             AppIcons.dropDownArrow,
             height: 12,
             colorFilter: ColorFilter.mode(
-              color,
+              isDarkMode ? AppColors.white : AppColors.black,
               BlendMode.srcIn,
             ),
           ),
@@ -72,18 +92,17 @@ class CustomDropDownField extends StatelessWidget {
         dropdownStyleData: DropdownStyleData(
           padding: EdgeInsets.zero,
           maxHeight: maxHeight != null ? 150 : null,
-          decoration: Themes.dropDownBoxDecoration(),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        menuItemStyleData:
-        MenuItemStyleData(padding: EdgeInsets.only(left: 15)),
         hint: Text(
           hintText,
           overflow: TextOverflow.ellipsis,
-          style: AppTextStyle(
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: isDarkMode ? AppColors.white : AppColors.black,
             fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: AppColors.secondary,
-          ).textStyle,
+          ),
         ),
         value: dropdownValue,
         onChanged: onChanged,
@@ -92,32 +111,13 @@ class CustomDropDownField extends StatelessWidget {
             value: item,
             child: Text(
               item,
-              style: AppTextStyle(
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: isDarkMode ? AppColors.white : AppColors.black,
                 fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColors.primary,
-              ).textStyle,
+              ),
             ),
           );
         }).toList(),
-        selectedItemBuilder: (BuildContext context) {
-          return items.map((String value) {
-            return Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                value,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: AppTextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.primary,
-                ).textStyle,
-              ),
-            );
-          }).toList();
-        },
-        validator: validator,
       ),
     );
   }
@@ -133,12 +133,16 @@ class CustomCountryPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Container(
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadiusDirectional.circular(10),
+        color: isDarkMode ? AppColors.black : AppColors.white,
         border: Border.all(
-          color: AppColors.textDisabled,
+          color: isDarkMode ? AppColors.transparent : AppColors.border,
+          width: 1,
         ),
       ),
       child: CountryCodePicker(
@@ -146,68 +150,66 @@ class CustomCountryPicker extends StatelessWidget {
         margin: EdgeInsets.zero,
         onChanged: onChanged,
         initialSelection: 'IN',
-        favorite: ['+91', 'IN'],
+        favorite: const ['+91', 'IN'],
         showCountryOnly: false,
         showOnlyCountryWhenClosed: false,
         alignLeft: true,
         flagWidth: 26,
-        searchPadding: EdgeInsets.symmetric(horizontal: 15),
-        dialogBackgroundColor: AppColors.background,
+        dialogBackgroundColor:
+            isDarkMode ? Colors.grey.shade900 : AppColors.white,
         boxDecoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadiusDirectional.circular(10),
-          border: Border.all(color: AppColors.textDisabled),
+          color: isDarkMode ? Colors.grey.shade900 : AppColors.white,
+          borderRadius: BorderRadius.circular(10),
         ),
+        searchPadding: const EdgeInsets.symmetric(horizontal: 15),
         searchDecoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: AppColors.textDisabled,
-              width: 1,
-            ),
+          filled: true,
+          fillColor: isDarkMode ? AppColors.black : Colors.grey.shade100,
+          hintText: "Search country",
+          hintStyle: TextStyle(
+            color: isDarkMode ? AppColors.white : AppColors.black,
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SvgPicture.asset(
-              AppIcons.search,
-              height: 24,
-              width: 24,
+            child: Icon(
+              Icons.search,
+              color: isDarkMode ? AppColors.white : AppColors.greyColor,
             ),
           ),
-          enabledBorder: DecoratedInputBorder(
-            child: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(
-                color: AppColors.textDisabled,
-                width: 1,
-              ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: theme.colorScheme.primary,
+              width: 1,
             ),
-            shadow: BoxShadow(
-              color: AppColors.primary.withValues(alpha: .06),
-              blurRadius: 30,
-              spreadRadius: 0,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline,
+              width: 1,
             ),
           ),
         ),
         headerTextStyle: GoogleFonts.outfit(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: AppColors.primary,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
         dialogTextStyle: GoogleFonts.poppins(
           fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.primary,
+          fontWeight: FontWeight.w500,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
         textStyle: GoogleFonts.poppins(
           fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.primary,
+          fontWeight: FontWeight.w500,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
         searchStyle: GoogleFonts.poppins(
           fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.primary,
+          fontWeight: FontWeight.w500,
+          color: isDarkMode ? AppColors.white : AppColors.black,
         ),
       ),
     );

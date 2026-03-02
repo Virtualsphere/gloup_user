@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ProfileTextField extends StatelessWidget {
   const ProfileTextField({
@@ -41,6 +42,7 @@ class ProfileTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       height: 55.0,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -59,40 +61,48 @@ class ProfileTextField extends StatelessWidget {
             keyboardType: inputType,
             textInputAction: inputAction,
             maxLines: maxLines,
-            style: const TextStyle(
+            style: context.textTheme.bodyLarge?.copyWith(
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: Colors.black,
+              color: isDarkMode
+                  ? AppColors.white
+                  : AppColors.black,
             ),
             decoration: InputDecoration(
               counterText: '',
               labelText: labelText,
               hintText: hintText,
               filled: true,
-              fillColor: AppColors.white,
-              hintStyle: TextStyle(
-                color: AppColors.border,
-                fontSize: 15.0,
-                fontWeight: FontWeight.w500,
+              fillColor: isDarkMode
+                  ? AppColors.black: AppColors.white,
+              hintStyle: context.textTheme.bodyLarge?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: isDarkMode ? AppColors.white: AppColors.black,
               ),
-              labelStyle: TextStyle(
-                color: AppColors.border,
-                fontSize: 15.0,
-                fontWeight: FontWeight.w500,
+              labelStyle: context.textTheme.bodyLarge?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: isDarkMode ? AppColors.white: AppColors.black,
               ),
               contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
 
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: AppColors.border,
+                borderSide: BorderSide(
+                  color: isDarkMode
+                      ? AppColors.transparent
+                      : AppColors.border,
+                  width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: AppColors.border,
+                borderSide: BorderSide(
+                  color: isDarkMode
+                      ? AppColors.transparent
+                      : AppColors.border,
                   width: 1,
                 ),
               ),
@@ -107,13 +117,14 @@ class ProfileTextField extends StatelessWidget {
                               () {
                             controller?.clear();
                           },
-                      child: const Padding(
+                      child: Padding(
                         padding:
                         EdgeInsets.only(right: 5.0, left: 15.0),
                         child: Icon(
                           Icons.clear,
                           size: 18,
-                          color: Colors.grey,
+                          color: isDarkMode
+                              ? AppColors.white : AppColors.greyColor,
                         ),
                       ),
                     ),

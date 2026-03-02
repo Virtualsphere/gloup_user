@@ -9,6 +9,8 @@ import 'package:tressy/features/profile/presentation/model/review_data.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_rating_bar.dart';
 import 'package:tressy/features/widgets/custom_text_field.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/primary_button.dart';
 
 class AddRatingDialogue {
   late TextEditingController reviewController;
@@ -23,6 +25,7 @@ class AddRatingDialogue {
         TextEditingController(text: reviewData.reviewDescription);
     reviewRating = reviewData.rating.toDouble();
     Size size = MediaQuery.of(context).size;
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return showDialog(
       context: context,
       builder: (context) {
@@ -34,9 +37,13 @@ class AddRatingDialogue {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    HeaderTextBlack(
-                      title: 'Your Opinion Matter To Us!',
-                      fontSize: 20,
+                    Text(
+                      'Your Opinion Matter To Us!',
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: context.colorScheme.onSurface,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -106,7 +113,7 @@ class AddRatingDialogue {
               );
             } else {
               return Dialog(
-                backgroundColor: AppColors.background,
+                backgroundColor: context.colorScheme.surface,
                 insetPadding: EdgeInsets.symmetric(horizontal: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -117,18 +124,24 @@ class AddRatingDialogue {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      HeaderTextBlack(
-                        title: 'Your Opinion Matter To Us!',
-                        fontSize: 20,
+                      Text(
+                        'Your Opinion Matter To Us!',
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colorScheme.onSurface,
+                          fontSize: 20.0,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Divider(color: AppColors.borderColor),
+                        child: Divider(color: isDarkMode ? AppColors.white : AppColors.borderColor,thickness: 1.0,),
                       ),
-                      BodyTextHint(
-                        title: 'How’s our Service?',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
+                      Text(
+                        'How’s our Service?',
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colorScheme.onSurface,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                       SizedBox(height: 20),
                       CustomRatingBar(
@@ -160,12 +173,19 @@ class AddRatingDialogue {
                               child: Container(
                                 height: 56,
                                 width: size.width / 2.6,
-                                decoration: Themes.borderDecoration(),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                    color: isDarkMode ? AppColors.borderColor : AppColors.white,
+                                  border: Border.all(color: isDarkMode ? AppColors.borderColor : AppColors.borderColor, width: 1.0)
+                                ),
                                 child: Center(
-                                  child: HeaderTextBlack(
-                                    title: 'Not Now',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
+                                  child: Text(
+                                    'Not Now',
+                                    style: context.textTheme.displaySmall?.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -173,44 +193,10 @@ class AddRatingDialogue {
                           ),
                           SizedBox(width: 15),
                           Expanded(
-                            child: CustomFullButton(
-                              title: 'Submit',
-                              borderRadius: 15,
-                              onTap: () async {
-                                /*final profileController =
-                                context.read<ProfileController>();
-                                CustomDialogues.showLoadingDialogue(context);
-                                if (isEditReview) {
-                                  await profileController.updateReview(
-                                    reviewId: reviewData.reviewId!,
-                                    rating: reviewRating,
-                                    description: reviewController.text.trim(),
-                                  );
-                                } else {
-                                  await profileController.addReview(
-                                    storeId: reviewData.storeId!,
-                                    rating: reviewRating,
-                                    description: reviewController.text.trim(),
-                                  );
-                                }
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                                final response =
-                                    profileController.getApiResponse;
-                                if (response.status == Status.COMPLETED) {
-                                  context.pop();
-                                  CustomToast.show(
-                                    context,
-                                    title: '${response.data}',
-                                  );
-                                  await profileController.getAllReview();
-                                } else {
-                                  CustomToast.show(
-                                    context,
-                                    title: '${response.message}',
-                                  );
-                                }*/
-                              },
+                            child: PrimaryButton(
+                              text: 'Submit',
+                              isLoading: false,
+                              onPressed: (){},
                             ),
                           ),
                         ],
