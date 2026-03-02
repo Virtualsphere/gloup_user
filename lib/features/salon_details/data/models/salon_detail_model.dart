@@ -43,40 +43,57 @@ class SalonDetailModel {
     required this.location,
   });
 
-  factory SalonDetailModel.fromJson(Map<String, dynamic> json) {
+  factory SalonDetailModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    // Handle both direct data and nested data structure
+    final data = json['data'] ?? json;
+    
+    // Process images with base URL
+    final imagesList = (data['images'] as List<dynamic>?)?.map((image) {
+          final imagePath = image?.toString() ?? '';
+          return imageBaseUrl != null && imagePath.isNotEmpty
+              ? '$imageBaseUrl/$imagePath'
+              : imagePath;
+        }).toList() ??
+        [];
+    
     return SalonDetailModel(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      isNew: json['isNew'] ?? false,
-      isPremium: json['isPremium'] ?? false,
-      rating: (json['rating'] ?? 0).toDouble(),
-      reviewCount: json['reviewCount'] ?? 0,
-      gender: json['gender'] ?? 'Unisex',
-      address: json['address'] ?? '',
-      isOpen: json['isOpen'] ?? false,
-      openingTime: json['openingTime'] ?? '',
-      closingTime: json['closingTime'] ?? '',
-      languages: List<String>.from(json['languages'] ?? []),
-      images: List<String>.from(json['images'] ?? []),
-      about: json['about'] ?? '',
-      services: (json['services'] as List?)
+      id: data['id']?.toString() ?? '',
+      name: data['name'] ?? '',
+      isNew: data['isNew'] ?? false,
+      isPremium: (data['isPremium'] == 1 || data['isPremium'] == true),
+      rating: double.tryParse(data['rating']?.toString() ?? '0') ?? 0.0,
+      reviewCount: data['reviewCount'] ?? 0,
+      gender: data['gender'] ?? 'Unisex',
+      address: data['location']?['address'] ?? data['address'] ?? '',
+      isOpen: data['isOpen'] ?? false,
+      openingTime: data['openingTime'] ?? '',
+      closingTime: data['closingTime'] ?? '',
+      languages: List<String>.from(data['languages'] ?? []),
+      images: imagesList,
+      about: data['about'] ?? '',
+      services: (data['services'] as List?)
               ?.map((e) => ServiceModel.fromJson(e))
               .toList() ??
           [],
-      ambients: (json['ambients'] as List?)
+      ambients: (data['ambients'] as List?)
               ?.map((e) => AmbientModel.fromJson(e))
               .toList() ??
           [],
-      teamMembers: (json['teamMembers'] as List?)
-              ?.map((e) => TeamMemberModel.fromJson(e))
+      teamMembers: (data['teamMembers'] as List?)
+              ?.map((e) => TeamMemberModel.fromJson(e, imageBaseUrl: imageBaseUrl))
               .toList() ??
           [],
-      reviews: (json['reviews'] as List?)
-              ?.map((e) => ReviewModel.fromJson(e))
+      reviews: (data['reviews'] as List?)
+              ?.map((e) => ReviewModel.fromJson(e, imageBaseUrl: imageBaseUrl))
               .toList() ??
           [],
-      openingHours: Map<String, String>.from(json['openingHours'] ?? {}),
-      location: LocationModel.fromJson(json['location'] ?? {}),
+      openingHours: Map<String, String>.from(data['openingHours'] ?? {}),
+      location: data['location'] != null 
+          ? LocationModel.fromJson(data['location']) 
+          : LocationModel(latitude: 0, longitude: 0, address: ''),
     );
   }
 
@@ -195,12 +212,20 @@ class TeamMemberModel {
     required this.imageUrl,
   });
 
-  factory TeamMemberModel.fromJson(Map<String, dynamic> json) {
+  factory TeamMemberModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final imagePath = json['imageUrl'] ?? '';
+    final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
+        ? '$imageBaseUrl/$imagePath'
+        : imagePath;
+    
     return TeamMemberModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       role: json['role'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
+      imageUrl: fullImageUrl,
     );
   }
 
@@ -231,11 +256,19 @@ class ReviewModel {
     required this.reviewText,
   });
 
-  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+  factory ReviewModel.fromJson(
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
+    final userImagePath = json['userImage'];
+    final fullUserImageUrl = userImagePath != null && imageBaseUrl != null && userImagePath.toString().isNotEmpty
+        ? '$imageBaseUrl/$userImagePath'
+        : userImagePath;
+    
     return ReviewModel(
       id: json['id'] ?? '',
       userName: json['userName'] ?? '',
-      userImage: json['userImage'],
+      userImage: fullUserImageUrl,
       timeAgo: json['timeAgo'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
       reviewText: json['reviewText'] ?? '',
@@ -267,8 +300,8 @@ class LocationModel {
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
-      latitude: (json['latitude'] ?? 0).toDouble(),
-      longitude: (json['longitude'] ?? 0).toDouble(),
+      latitude: double.tryParse(json['latitude']?.toString() ?? '0') ?? 0.0,
+      longitude: double.tryParse(json['longitude']?.toString() ?? '0') ?? 0.0,
       address: json['address'] ?? '',
     );
   }

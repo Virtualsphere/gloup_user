@@ -21,7 +21,6 @@ import 'package:tressy/shared/widgets/review_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/error_widget.dart' as custom;
-import 'package:tressy/features/salon_details/data/models/salon_mock_data.dart';
 
 class SalonDetailsPage extends StatefulWidget {
   final String? salonId;
@@ -268,7 +267,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                       builder: (context, constraints) {
                         // Calculate the shrink offset to determine collapse state
                         final currentHeight = constraints.maxHeight;
-                        final isFullyExpanded = currentHeight > collapsedHeight + 50;
+                        final isFullyExpanded =
+                            currentHeight > collapsedHeight + 50;
 
                         return FlexibleSpaceBar(
                           background: state.isLoading
@@ -372,22 +372,23 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   ),
                 ],
               ),
-              
+
               // Sticky action buttons (Back, Share, Favorite) - Always visible on top
               Positioned(
                 top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Back button
                       Container(
                         decoration: BoxDecoration(
-                          color: _isCollapsed 
-                              ? Colors.transparent 
+                          color: _isCollapsed
+                              ? Colors.transparent
                               : AppColors.black.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
@@ -396,8 +397,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           constraints: const BoxConstraints(),
                           icon: Icon(
                             Icons.arrow_back_ios_new,
-                            color: _isCollapsed 
-                                ? (isDarkMode ? AppColors.white : AppColors.black)
+                            color: _isCollapsed
+                                ? (isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.black)
                                 : AppColors.white,
                             size: AppSizes.iconS,
                           ),
@@ -410,8 +413,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           // Share button
                           Container(
                             decoration: BoxDecoration(
-                              color: _isCollapsed 
-                                  ? Colors.transparent 
+                              color: _isCollapsed
+                                  ? Colors.transparent
                                   : AppColors.black.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
@@ -420,8 +423,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               constraints: const BoxConstraints(),
                               icon: Icon(
                                 Icons.share,
-                                color: _isCollapsed 
-                                    ? (isDarkMode ? AppColors.white : AppColors.black)
+                                color: _isCollapsed
+                                    ? (isDarkMode
+                                        ? AppColors.white
+                                        : AppColors.black)
                                     : AppColors.white,
                                 size: AppSizes.iconS,
                               ),
@@ -434,15 +439,17 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           // Favorite button
                           Container(
                             decoration: BoxDecoration(
-                              color: _isCollapsed 
-                                  ? Colors.transparent 
+                              color: _isCollapsed
+                                  ? Colors.transparent
                                   : AppColors.black.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
-                            child: BlocBuilder<SalonDetailBloc, SalonDetailState>(
+                            child:
+                                BlocBuilder<SalonDetailBloc, SalonDetailState>(
                               builder: (context, state) {
                                 return IconButton(
-                                  padding: const EdgeInsets.all(AppSizes.paddingXS),
+                                  padding:
+                                      const EdgeInsets.all(AppSizes.paddingXS),
                                   constraints: const BoxConstraints(),
                                   icon: SvgPicture.asset(
                                     state.isFavorite
@@ -451,10 +458,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                     width: AppSizes.iconS,
                                     height: AppSizes.iconS,
                                     colorFilter: ColorFilter.mode(
-                                      state.isFavorite 
-                                          ? Colors.red 
-                                          : (_isCollapsed 
-                                              ? (isDarkMode ? AppColors.white : AppColors.black)
+                                      state.isFavorite
+                                          ? Colors.red
+                                          : (_isCollapsed
+                                              ? (isDarkMode
+                                                  ? AppColors.white
+                                                  : AppColors.black)
                                               : AppColors.white),
                                       BlendMode.srcIn,
                                     ),
@@ -839,6 +848,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   fontSize: 14,
                   height: 1.4,
                 ),
+                maxLines: 2,
               ),
             ),
           ],
@@ -866,27 +876,52 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 fontWeight: FontWeight.w600,
               ),
             ),
-            AppSizes.widthS,
-            Container(
-              width: 4,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                shape: BoxShape.circle,
+            if (salonDetail.openingTime.isNotEmpty && salonDetail.closingTime.isNotEmpty) ...[
+              AppSizes.widthS,
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-            AppSizes.widthS,
-            Text(
-              '${salonDetail.openingTime} - ${salonDetail.closingTime}',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                fontSize: 14,
+              AppSizes.widthS,
+              Text(
+                '${salonDetail.openingTime} - ${salonDetail.closingTime}',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontSize: 14,
+                ),
               ),
-            ),
+            ] else ...[
+              AppSizes.widthS,
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              AppSizes.widthS,
+              Text(
+                'Hours not set',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
           ],
         ),
         AppSizes.heightM,
@@ -905,13 +940,24 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             ),
             AppSizes.widthS,
             Expanded(
-              child: Wrap(
-                spacing: AppSizes.spaceS,
-                runSpacing: AppSizes.spaceS,
-                children: salonDetail.languages
-                    .map((lang) => _buildLanguageBadge(lang, isDarkMode))
-                    .toList(),
-              ),
+              child: salonDetail.languages.isEmpty
+                  ? Text(
+                      'Language not set',
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    )
+                  : Wrap(
+                      spacing: AppSizes.spaceS,
+                      runSpacing: AppSizes.spaceS,
+                      children: salonDetail.languages
+                          .map((lang) => _buildLanguageBadge(lang, isDarkMode))
+                          .toList(),
+                    ),
             ),
           ],
         ),
@@ -945,19 +991,47 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     );
   }
 
+  // Helper method to extract unique categories from services
+  List<String> _getUniqueCategories(List<ServiceEntity> services) {
+    final categories = services
+        .map((service) => service.category)
+        .where((category) => category.isNotEmpty)
+        .toSet()
+        .toList();
+
+    // Sort categories alphabetically for consistent display
+    categories.sort();
+
+    return categories;
+  }
+
+  // Helper method to calculate star counts from reviews
+  Map<int, int> _calculateStarCounts(List<ReviewEntity> reviews) {
+    final counts = <int, int>{5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+
+    for (final review in reviews) {
+      final rating = review.rating.round();
+      if (rating >= 1 && rating <= 5) {
+        counts[rating] = (counts[rating] ?? 0) + 1;
+      }
+    }
+
+    return counts;
+  }
+
   // Calculate highest offer percentage from selected services
   int get _highestOfferPercentage {
     if (_selectedServices.isEmpty) return 0;
-    
+
     return _selectedServices.values
         .where((service) => service.discountPercentage != null)
         .map((service) {
-          // Parse discount percentage from string
-          final discountStr = service.discountPercentage!;
-          final discountInt = int.tryParse(discountStr.replaceAll('%', '').trim()) ?? 0;
-          return discountInt;
-        })
-        .fold<int>(0, (max, discount) => discount > max ? discount : max);
+      // Parse discount percentage from string
+      final discountStr = service.discountPercentage!;
+      final discountInt =
+          int.tryParse(discountStr.replaceAll('%', '').trim()) ?? 0;
+      return discountInt;
+    }).fold<int>(0, (max, discount) => discount > max ? discount : max);
   }
 
   // Build bottom navigation bar
@@ -978,7 +1052,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               OfferBanner(discountPercentage: _highestOfferPercentage),
               // Main bottom nav bar
               Container(
-                padding: const EdgeInsets.all(AppSizes.paddingM),
+                padding: EdgeInsets.only(
+                  left: AppSizes.paddingM,
+                  right: AppSizes.paddingM,
+                  top: AppSizes.paddingM,
+                  bottom: AppSizes.paddingXXL,
+                ),
                 decoration: BoxDecoration(
                   color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
                   boxShadow: [
@@ -1030,9 +1109,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           final salonData = {
                             'salonId': widget.salonId,
                             'salonName': state.salonDetail?.name,
-                            'salonImage': state.salonDetail?.images.isNotEmpty == true 
-                                ? state.salonDetail!.images.first 
-                                : null,
+                            'salonImage':
+                                state.salonDetail?.images.isNotEmpty == true
+                                    ? state.salonDetail!.images.first
+                                    : null,
                             'rating': state.salonDetail?.rating,
                             'reviewCount': state.salonDetail?.reviewCount,
                             'isPremium': state.salonDetail?.isPremium,
@@ -1040,32 +1120,40 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                             'address': state.salonDetail?.address,
                             'openingTime': state.salonDetail?.openingTime,
                             'closingTime': state.salonDetail?.closingTime,
-                            'selectedServices': _selectedServices.values.map((service) => {
-                              'id': service.id,
-                              'name': service.name,
-                              'price': service.price,
-                              'duration': service.duration,
-                              'discountPercentage': service.discountPercentage,
-                              'isPopular': service.isPopular,
-                            }).toList(),
-                            'allServices': state.salonDetail?.services.map((service) => {
-                              'id': service.id,
-                              'name': service.name,
-                              'price': service.price,
-                              'duration': service.duration,
-                              'discountPercentage': service.discountPercentage,
-                              'isPopular': service.isPopular,
-                            }).toList()
+                            'selectedServices': _selectedServices.values
+                                .map((service) => {
+                                      'id': service.id,
+                                      'name': service.name,
+                                      'price': service.price,
+                                      'duration': service.duration,
+                                      'discountPercentage':
+                                          service.discountPercentage,
+                                      'isPopular': service.isPopular,
+                                    })
+                                .toList(),
+                            'allServices': state.salonDetail?.services
+                                .map((service) => {
+                                      'id': service.id,
+                                      'name': service.name,
+                                      'price': service.price,
+                                      'duration': service.duration,
+                                      'discountPercentage':
+                                          service.discountPercentage,
+                                      'isPopular': service.isPopular,
+                                    })
+                                .toList()
                           };
-                          
+
                           context.pushNamed(
                             RouteNames.slotBooking,
                             extra: salonData,
                           );
                         },
-                        backgroundColor:
-                            isDarkMode ? AppColors.primary : AppColors.primaryDark,
-                        textColor: isDarkMode ? AppColors.white : AppColors.black,
+                        backgroundColor: isDarkMode
+                            ? AppColors.primary
+                            : AppColors.primaryDark,
+                        textColor:
+                            isDarkMode ? AppColors.white : AppColors.black,
                         height: 48,
                         fontSize: AppSizes.fontL,
                       ),
@@ -1216,6 +1304,35 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Build About section
   Widget _buildAboutSection(bool isDarkMode, SalonDetailEntity salonDetail) {
+    if (salonDetail.about.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          child: Column(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 48,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AppSizes.spaceM),
+              Text(
+                'About information not available',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
     return Text(
       salonDetail.about,
       textAlign: TextAlign.left,
@@ -1230,6 +1347,35 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Build Ambients section
   Widget _buildAmbientsSection(bool isDarkMode, SalonDetailEntity salonDetail) {
+    if (salonDetail.ambients.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          child: Column(
+            children: [
+              Icon(
+                Icons.dashboard_customize_outlined,
+                size: 48,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AppSizes.spaceM),
+              Text(
+                'No amenities available',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
     // Map icon names from model to IconData
     IconData getIconData(String iconName) {
       switch (iconName) {
@@ -1274,6 +1420,35 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Build Team section
   Widget _buildTeamSection(bool isDarkMode, SalonDetailEntity salonDetail) {
+    if (salonDetail.teamMembers.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          child: Column(
+            children: [
+              Icon(
+                Icons.people_outline,
+                size: 48,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AppSizes.spaceM),
+              Text(
+                'No team members added',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate width for 4 profiles per row
@@ -1407,7 +1582,46 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Build Reviews section
   Widget _buildReviewsSection(bool isDarkMode, SalonDetailEntity salonDetail) {
-    final starCounts = SalonMockData.getStarCounts();
+    if (salonDetail.reviews.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          child: Column(
+            children: [
+              Icon(
+                Icons.rate_review_outlined,
+                size: 48,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AppSizes.spaceM),
+              Text(
+                'No reviews yet',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              const SizedBox(height: AppSizes.spaceS),
+              Text(
+                'Be the first to review this salon',
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    final starCounts = _calculateStarCounts(salonDetail.reviews);
     final totalReviews = salonDetail.reviewCount;
 
     return Column(
@@ -1569,11 +1783,49 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   // Build Services section with category badges
   Widget _buildServicesSection(bool isDarkMode, SalonDetailEntity salonDetail) {
-    final serviceCategories = SalonMockData.getServiceCategories();
-    final currentCategory = serviceCategories[_activeServiceCategoryIndex];
-    final filteredServices = salonDetail.services
-        .where((service) => service.category == currentCategory)
-        .toList();
+    if (salonDetail.services.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          child: Column(
+            children: [
+              Icon(
+                Icons.content_cut,
+                size: 48,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AppSizes.spaceM),
+              Text(
+                'No services available',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    // Extract unique categories from services
+    final serviceCategories = _getUniqueCategories(salonDetail.services);
+
+    // Add "All" at the beginning
+    final categoriesWithAll = ['All', ...serviceCategories];
+
+    final currentCategory = categoriesWithAll[_activeServiceCategoryIndex];
+
+    // Filter services based on selected category
+    final filteredServices = currentCategory == 'All'
+        ? salonDetail.services
+        : salonDetail.services
+            .where((service) => service.category == currentCategory)
+            .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1583,9 +1835,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
           height: 36,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: serviceCategories.length,
+            itemCount: categoriesWithAll.length,
             itemBuilder: (context, index) {
-              final category = serviceCategories[index];
+              final category = categoriesWithAll[index];
               final isActive = _activeServiceCategoryIndex == index;
 
               return GestureDetector(
@@ -1934,10 +2186,10 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent =>
-      280.0; // Height for combined sections + tab bar (250 + 56)
+      260.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
-  double get maxExtent => 280.0; // Same as min for fixed height
+  double get maxExtent => 260.0; // Same as min for fixed height
 
   @override
   Widget build(

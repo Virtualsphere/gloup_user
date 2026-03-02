@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
+import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/salon_details/data/models/salon_detail_model.dart';
-import 'package:tressy/features/salon_details/data/models/salon_mock_data.dart';
 
 abstract class SalonDetailRemoteDataSource {
   /// Get detailed information about a specific salon
@@ -18,21 +21,53 @@ class SalonDetailRemoteDataSourceImpl implements SalonDetailRemoteDataSource {
   Future<SalonDetailModel> getSalonDetails({
     required String salonId,
   }) async {
-    // TODO: Replace with actual API call
-    // Example:
-    // final response = await dioClient.get('/api/v1/salons/$salonId');
-    // return SalonDetailModel.fromJson(response.data);
+    try {
+      // Prepare request data
+      final requestData = {
+        'store_id': int.tryParse(salonId) ?? salonId,
+      };
 
-    // For now, return mock data with simulated API delay
-    return await _simulateApiCall(
-      SalonMockData.getSalonDetails(),
-      delaySeconds: 3,
-    );
-  }
+      // Get auth token if available
+      final token = LocalStorageService.accessToken;
 
-  /// Simulates an API call with a delay
-  Future<T> _simulateApiCall<T>(T data, {int delaySeconds = 2}) async {
-    await Future.delayed(Duration(seconds: delaySeconds));
-    return data;
+      final response = await dioClient.post(
+        ApiRoutes.getStoreDetails,
+        data: requestData,
+        options: token != null && token.isNotEmpty
+            ? Options(headers: {'userauth': token})
+            : null,
+      );
+
+      // Check if response is successful
+      if (response.data['success'] == true) {
+        return SalonDetailModel.fromJson(
+          response.data,
+          imageBaseUrl: ApiRoutes.imageBaseUrl,
+        );
+      } else {
+        throw ApiException(
+          message: response.data['message'] ?? 'Failed to load salon details',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiException(
+          message: e.response?.data['message'] ?? 'Failed to load salon details',
+          statusCode: e.response?.statusCode,
+          error: e,
+        );
+      } else {
+        throw ApiException(
+          message: e.message ?? 'Network error occurred',
+          error: e,
+        );
+      }
+    } catch (e) {
+      throw ApiException(
+        message: 'An unexpected error occurred: ${e.toString()}',
+        error: e,
+      );
+    }
   }
 }
