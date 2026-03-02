@@ -9,6 +9,7 @@ import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/strings.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -18,6 +19,7 @@ import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 import 'package:tressy/shared/widgets/theme_image_toggle.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -34,6 +36,14 @@ class ProfilePage extends StatelessWidget {
         create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
+            // Show loading shimmer
+            if (state is ProfileLoading) {
+              return Scaffold(
+                appBar: ProfileAppBar(title: 'Personal Profile', centerTitle: false),
+                body: _ProfilePageShimmer(isDarkMode: isDarkMode),
+              );
+            }
+
             // Get profile data from state
             final profile = state is ProfileLoaded ? state.profile : null;
             final userName = profile?.fullName ?? 'Guest User';
@@ -185,9 +195,21 @@ class ProfilePage extends StatelessWidget {
                             context,
                             title: 'Logout',
                             submitOnTap: () async {
-                              // SessionManager.clearSession();
-                              // context.read<HomeController>().setIndex(0);
-                              context.pushNamed(RouteNames.login);
+                              // Clear all user data
+                              await LocalStorageService.clearAll();
+                              
+                              // Set onboarding as completed so it doesn't show again
+                              await LocalStorageService.setOnboardingCompleted(true);
+                              
+                              // Pop the dialog first
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                              
+                              // Navigate to login page and clear stack
+                              if (context.mounted) {
+                                context.go('/login');
+                              }
                             },
                           );
                         },
@@ -418,4 +440,189 @@ class _MenuItem {
     required this.onTap,
     this.trailing,
   });
+}
+
+// ── Profile Page Shimmer ─────────────────────────────────────────────────────
+class _ProfilePageShimmer extends StatelessWidget {
+  final bool isDarkMode;
+
+  const _ProfilePageShimmer({required this.isDarkMode});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingL,
+            vertical: AppSizes.paddingL,
+          ),
+          child: Shimmer.fromColors(
+            baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+            highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header shimmer
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: isDarkMode ? AppColors.black : AppColors.white,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 150,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              width: 100,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: AppSizes.paddingL),
+                
+                // Wallet shimmer
+                Container(
+                  height: 170,
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                
+                const SizedBox(height: AppSizes.paddingL),
+                
+                // Menu items shimmer
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: isDarkMode ? AppColors.black : AppColors.white,
+                  ),
+                  child: Column(
+                    children: List.generate(5, (index) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingL,
+                              vertical: 18,
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSizes.paddingM),
+                                Container(
+                                  width: 120,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (index < 4)
+                            Divider(
+                              height: 1,
+                              color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            ),
+                        ],
+                      );
+                    }),
+                  ),
+                ),
+                
+                const SizedBox(height: AppSizes.paddingL),
+                
+                // Support & Logout shimmer
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: isDarkMode ? AppColors.black : AppColors.white,
+                  ),
+                  child: Column(
+                    children: List.generate(2, (index) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingL,
+                              vertical: 18,
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSizes.paddingM),
+                                Container(
+                                  width: 100,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (index < 1)
+                            Divider(
+                              height: 1,
+                              color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            ),
+                        ],
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
