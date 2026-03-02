@@ -7,8 +7,8 @@ abstract class ProfileEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadProfileEvent extends ProfileEvent {
-  const LoadProfileEvent();
+class GetProfileEvent extends ProfileEvent {
+  const GetProfileEvent();
 }
 
 class RefreshProfileEvent extends ProfileEvent {

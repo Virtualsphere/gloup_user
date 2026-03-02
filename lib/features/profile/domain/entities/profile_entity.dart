@@ -1,4 +1,6 @@
-abstract class ProfileEntity {
+import 'package:equatable/equatable.dart';
+
+class ProfileEntity extends Equatable {
   final int id;
   final String firstname;
   final String lastname;
@@ -32,4 +34,22 @@ abstract class ProfileEntity {
   });
 
   String get fullName => '$firstname $lastname'.trim();
+
+  @override
+  List<Object?> get props => [
+        id,
+        firstname,
+        lastname,
+        phone,
+        email,
+        dateOfBirth,
+        city,
+        invitedCode,
+        wallet,
+        profilePic,
+        fullProfilePicUrl,
+        gender,
+        country,
+        status,
+      ];
 }

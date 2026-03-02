@@ -488,7 +488,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            ProfilePage.userName[0],
+                                            'U', // User avatar placeholder
                                             style: TextStyle(
                                               fontSize: AppSizes.fontL,
                                               fontWeight: FontWeight.bold,

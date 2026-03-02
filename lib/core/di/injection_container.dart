@@ -58,6 +58,15 @@ import 'package:tressy/features/slot_booking/domain/repositories/slot_repository
 import 'package:tressy/features/slot_booking/domain/usecases/get_slot_status_usecase.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 
+// Guest Feature
+import 'package:tressy/features/booking_confirmation/data/datasources/guest_remote_datasource.dart';
+import 'package:tressy/features/booking_confirmation/data/repositories/guest_repository_impl.dart';
+import 'package:tressy/features/booking_confirmation/domain/repositories/guest_repository.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/get_all_guests_usecase.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/add_guest_usecase.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/update_guest_usecase.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -252,5 +261,36 @@ Future<void> initializeDependencies() async {
   // DataSource
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(sl()),
+  );
+
+  // Guest Feature
+  // BLoC - Factory for new instance each time
+  sl.registerFactory<GuestBloc>(() => GuestBloc(
+        getAllGuestsUseCase: sl(),
+        addGuestUseCase: sl(),
+        updateGuestUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<GetAllGuestsUseCase>(
+    () => GetAllGuestsUseCase(sl()),
+  );
+  
+  sl.registerLazySingleton<AddGuestUseCase>(
+    () => AddGuestUseCase(sl()),
+  );
+  
+  sl.registerLazySingleton<UpdateGuestUseCase>(
+    () => UpdateGuestUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<GuestRepository>(
+    () => GuestRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<GuestRemoteDataSource>(
+    () => GuestRemoteDataSourceImpl(sl()),
   );
 }

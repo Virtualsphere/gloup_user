@@ -22,7 +22,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-       // backgroundColor: context.colorScheme.surface,
+      // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
         title: "Settings",
         centerTitle: false,
@@ -43,7 +43,7 @@ class _SettingsState extends State<Settings> {
               height: AppSizes.paddingM,
             ),
             Container(
-             decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
                 borderRadius: BorderRadius.circular(15.0),
                 border: Border.all(
@@ -83,16 +83,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   InkWell(
                     onTap: () {
-                      showAddPersonBottomSheet(
-                        context,
-                        onAdd: (result) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Added "+${result.fullName}"'),
-                            ),
-                          );
-                        },
-                      );
+                      showAddPersonBottomSheet(context);
                     },
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     child: Container(
@@ -101,17 +92,16 @@ class _SettingsState extends State<Settings> {
                         vertical: AppSizes.paddingS,
                       ),
                       decoration: BoxDecoration(
-                        color: isDarkMode ? AppColors.white: AppColors.black,
+                        color: isDarkMode ? AppColors.white : AppColors.black,
                         borderRadius: BorderRadius.circular(AppSizes.radiusS),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           Icon(
+                          Icon(
                             Icons.add,
-                            color: isDarkMode
-                                ? AppColors.black
-                                : AppColors.white,
+                            color:
+                                isDarkMode ? AppColors.black : AppColors.white,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
@@ -179,13 +169,13 @@ class ProfileDeleteCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-       decoration: BoxDecoration(
-         color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
-         borderRadius: BorderRadius.circular(15.0),
-         border: Border.all(
-           color: context.colorScheme.surface,
-         ),
-       ),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(
+          color: context.colorScheme.surface,
+        ),
+      ),
       child: Column(
         children: [
           Row(
@@ -286,7 +276,7 @@ class ProfileDeleteCard extends StatelessWidget {
                           context,
                           title: 'delete this guest user?',
                           submitOnTap: () {
-                          Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                           },
                         );
                       },

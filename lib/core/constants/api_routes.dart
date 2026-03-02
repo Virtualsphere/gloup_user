@@ -2,7 +2,7 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'http://192.168.1.2:5678';
+  static const String baseUrl = 'http://192.168.1.6:5678';
   
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl = 'https://v1.gloup.in/images';
@@ -28,6 +28,11 @@ class ApiRoutes {
 
   // Slot Booking Endpoints
   static const String getSlotStatus = '$baseUrl/user/app/v2/getslotstatus';
+
+  // Guest Endpoints
+  static const String getAllGuests = '$baseUrl/user/app/v2/guest/all';
+  static const String addGuest = '$baseUrl/user/app/v2/guest/add';
+  static const String updateGuest = '$baseUrl/user/app/v2/guest/update';
   //profile
   static const String getUserProfile = '$baseUrl/user/app/getuserprofile';
 

@@ -1,72 +1,45 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 
-class ProfileBloc extends Cubit<ProfileState> {
+class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetProfileUseCase getProfileUseCase;
 
-  ProfileBloc({required this.getProfileUseCase})
-      : super(const ProfileState());
+  ProfileBloc({required this.getProfileUseCase}) : super(const ProfileInitial()) {
+    on<GetProfileEvent>(_onGetProfile);
+    on<RefreshProfileEvent>(_onRefreshProfile);
+  }
 
-  Future<void> getProfile() async {
-    emit(state.copyWith(status: ProfileStatus.loading));
+  Future<void> _onGetProfile(GetProfileEvent event, Emitter<ProfileState> emit) async {
+    emit(const ProfileLoading());
 
     final result = await getProfileUseCase();
 
     result.fold(
-          (failure) => emit(state.copyWith(
-        status: ProfileStatus.failure,
-        errorMessage: _mapFailureToMessage(failure),
-      )),
-          (profile) => emit(state.copyWith(
-        status: ProfileStatus.success,
-        profile: profile,
-
-        firstName: profile.firstname,
-        lastName: profile.lastname,
-        email: profile.email,
-        gender: profile.gender,
-        dob: profile.dateOfBirth,
-        mobile: profile.phone.toString(),
-        country: profile.country,
-
-        initialFirstName: profile.firstname,
-        initialLastName: profile.lastname,
-        initialEmail: profile.email,
-        initialGender: profile.gender,
-        initialDob: profile.dateOfBirth,
-        initialMobile: profile.phone.toString(),
-        initialCountry: profile.country,
-
-        clearError: true,
-      )),
+      (failure) => emit(ProfileFailure(_mapFailureToMessage(failure))),
+      (profile) => emit(ProfileLoaded(profile)),
     );
   }
-  void updateFirstName(String value) =>
-      emit(state.copyWith(firstName: value));
 
-  void updateLastName(String value) =>
-      emit(state.copyWith(lastName: value));
+  Future<void> _onRefreshProfile(RefreshProfileEvent event, Emitter<ProfileState> emit) async {
+    // Keep current state while refreshing in background
+    final result = await getProfileUseCase();
 
-  void updateEmail(String value) =>
-      emit(state.copyWith(email: value));
-
-  void updateGender(String value) =>
-      emit(state.copyWith(gender: value));
-
-  void updateDob(String value) =>
-      emit(state.copyWith(dob: value));
-
-  void updateMobile(String value) =>
-      emit(state.copyWith(mobile: value));
-
-  void updateCountry(String value) =>
-      emit(state.copyWith(country: value));
+    result.fold(
+      (failure) => emit(ProfileFailure(_mapFailureToMessage(failure))),
+      (profile) => emit(ProfileLoaded(profile)),
+    );
+  }
 
   String _mapFailureToMessage(Failure failure) {
-    if (failure is NetworkFailure) return 'No internet connection';
-    if (failure is ServerFailure) return failure.message;
-    return 'Something went wrong';
+    if (failure is NetworkFailure) {
+      return failure.message;
+    } else if (failure is ServerFailure) {
+      return failure.message;
+    } else {
+      return 'An unexpected error occurred';
+    }
   }
 }

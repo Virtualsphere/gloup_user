@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
 import 'package:tressy/features/auth/presentation/pages/otp_page.dart';
 import 'package:tressy/features/bookings/presentation/pages/bookings_page.dart';
@@ -12,6 +13,7 @@ import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/pages/invite_and_earn.dart';
 import 'package:tressy/features/profile/presentation/pages/my_profile.dart';
 import 'package:tressy/features/my_reviews/my_reviews.dart';
@@ -160,7 +162,10 @@ class AppRouter {
               builder: (context, state) {
                 // Get complete booking data including slot timing
                 final data = state.extra as Map<String, dynamic>?;
-                return ReviewConfirmPage(bookingData: data);
+                return BlocProvider(
+                  create: (context) => sl<GuestBloc>(),
+                  child: ReviewConfirmPage(bookingData: data),
+                );
               },
             ),
           ],
@@ -258,11 +263,9 @@ class AppRouter {
     GoRoute(
       path: '/profile',
       name: RouteNames.profile,
-      // builder: (context, state) => MyProfile(),
       builder: (context, state) {
         return BlocProvider(
-          create: (context) => sl<ProfileBloc>()
-            ..getProfile(),
+          create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
           child: const MyProfile(),
         );
       },

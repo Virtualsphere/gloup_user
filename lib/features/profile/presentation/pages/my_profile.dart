@@ -10,6 +10,7 @@ import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/widgets/custom_drop_downs.dart';
 import 'package:tressy/features/widgets/custom_image.dart';
@@ -39,6 +40,15 @@ class _MyProfileState extends State<MyProfile> {
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
 
   String _selectedGender = 'Not Selected';
+  
+  // Track initial values to detect changes
+  String _initialFirstName = '';
+  String _initialLastName = '';
+  String _initialEmail = '';
+  String _initialMobile = '';
+  String _initialDob = '';
+  String _initialCountry = '';
+  String _initialGender = 'Not Selected';
 
   @override
   void dispose() {
@@ -57,7 +67,6 @@ class _MyProfileState extends State<MyProfile> {
     firstNameController.text = profile.firstname.isNotEmpty ? profile.firstname : '';
     lastNameController.text = profile.lastname.isNotEmpty ? profile.lastname : '';
     emailController.text = profile.email.isNotEmpty ? profile.email : '';
-
     mobileController.text = profile.phone != 0 ? profile.phone.toString() : '';
 
     if (profile.dateOfBirth.isNotEmpty) {
@@ -73,7 +82,6 @@ class _MyProfileState extends State<MyProfile> {
 
     countryController.text = profile.country.isNotEmpty ? profile.country : '';
 
-
     if (profile.gender.isNotEmpty) {
       final capitalised =
           profile.gender[0].toUpperCase() + profile.gender.substring(1).toLowerCase();
@@ -84,6 +92,32 @@ class _MyProfileState extends State<MyProfile> {
     } else {
       setState(() => _selectedGender = 'Not Selected');
     }
+    
+    // Store initial values for change detection
+    _initialFirstName = firstNameController.text;
+    _initialLastName = lastNameController.text;
+    _initialEmail = emailController.text;
+    _initialMobile = mobileController.text;
+    _initialDob = dateOfBirthController.text;
+    _initialCountry = countryController.text;
+    _initialGender = _selectedGender;
+  }
+  
+  bool get _hasChanges {
+    return firstNameController.text != _initialFirstName ||
+           lastNameController.text != _initialLastName ||
+           emailController.text != _initialEmail ||
+           mobileController.text != _initialMobile ||
+           dateOfBirthController.text != _initialDob ||
+           countryController.text != _initialCountry ||
+           _selectedGender != _initialGender;
+  }
+  
+  bool get _isFormValid {
+    return firstNameController.text.isNotEmpty &&
+           lastNameController.text.isNotEmpty &&
+           emailController.text.isNotEmpty &&
+           _selectedGender != 'Not Selected';
   }
 
   @override
@@ -93,12 +127,59 @@ class _MyProfileState extends State<MyProfile> {
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state.status == ProfileStatus.success && state.profile != null) {
-          _fillFields(state.profile!);
+        if (state is ProfileLoaded) {
+          _fillFields(state.profile);
         }
       },
-      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
+        // Handle loading state
+        if (state is ProfileLoading) {
+          return Scaffold(
+            backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
+            appBar: ProfileAppBar(
+              title: "Your Profile",
+              centerTitle: false,
+              onBack: () => Navigator.of(context).pop(),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        // Handle failure state
+        if (state is ProfileFailure) {
+          return Scaffold(
+            backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
+            appBar: ProfileAppBar(
+              title: "Your Profile",
+              centerTitle: false,
+              onBack: () => Navigator.of(context).pop(),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    state.message,
+                    style: context.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ProfileBloc>().add(const GetProfileEvent());
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Get profile from loaded state
+        final profile = state is ProfileLoaded ? state.profile : null;
         return Scaffold(
           backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
           appBar: ProfileAppBar(
@@ -139,8 +220,7 @@ class _MyProfileState extends State<MyProfile> {
                                 inputType: TextInputType.name,
                                 inputAction: TextInputAction.next,
                                 showClear: true,
-                                onChanged: (value) =>
-                                    context.read<ProfileBloc>().updateFirstName(value),
+                                onChanged: (value) => setState(() {}),
                               ),
                               const SizedBox(height: 20.0),
 
@@ -151,8 +231,7 @@ class _MyProfileState extends State<MyProfile> {
                                 inputType: TextInputType.name,
                                 inputAction: TextInputAction.next,
                                 showClear: true,
-                                onChanged: (value) =>
-                                    context.read<ProfileBloc>().updateLastName(value),
+                                onChanged: (value) => setState(() {}),
                               ),
                               const SizedBox(height: 20.0),
 
@@ -163,8 +242,7 @@ class _MyProfileState extends State<MyProfile> {
                                 inputType: TextInputType.emailAddress,
                                 inputAction: TextInputAction.next,
                                 showChange: true,
-                                onChanged: (value) =>
-                                    context.read<ProfileBloc>().updateEmail(value),
+                                onChanged: (value) => setState(() {}),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter email id';
@@ -188,10 +266,6 @@ class _MyProfileState extends State<MyProfile> {
                                   dropdownValue: _selectedGender,
                                   items: ['Not Selected', 'Male', 'Female'],
                                   onChanged: (value) {
-                                    setState(() {
-                                      context.read<ProfileBloc>()
-                                          .updateGender(value ?? 'Not Selected');
-                                    });
                                     setState(() => _selectedGender = value ?? 'Not Selected');
                                   },
                                   hintText: 'Select gender',
@@ -219,7 +293,7 @@ class _MyProfileState extends State<MyProfile> {
                                   if (selectedDate != null) {
                                     dateOfBirthController.text =
                                         DateFormat('dd/MM/yyyy').format(selectedDate);
-                                    context.read<ProfileBloc>().updateDob(dateOfBirthController.text);
+                                    setState(() {});
                                   }
                                 },
                               ),
@@ -252,8 +326,7 @@ class _MyProfileState extends State<MyProfile> {
                                           }
                                           return null;
                                         },
-                                        onChanged: (value) =>
-                                            context.read<ProfileBloc>().updateMobile(value),
+                                        onChanged: (value) => setState(() {}),
                                       ),
                                     ),
                                   ],
@@ -337,7 +410,7 @@ class _MyProfileState extends State<MyProfile> {
                                     ),
                                     onSelect: (Country country) {
                                       countryController.text = country.name;
-                                      context.read<ProfileBloc>().updateCountry(country.name);
+                                      setState(() {});
                                     },
                                   );
                                 },
@@ -388,7 +461,7 @@ class _MyProfileState extends State<MyProfile> {
                                           fit: BoxFit.cover,
                                         )
                                             : CustomNetworkImage(
-                                          imageUrl: state.profile
+                                          imageUrl: profile
                                               ?.fullProfilePicUrl ??
                                               '',
                                           imageType: ImageType.profilepic,
@@ -396,7 +469,7 @@ class _MyProfileState extends State<MyProfile> {
                                         if (isDarkMode)
                                           Container(
                                             color:
-                                            Colors.black.withOpacity(0.5),
+                                            Colors.black.withValues(alpha: 0.5),
                                           ),
                                       ],
                                     );
@@ -451,24 +524,14 @@ class _MyProfileState extends State<MyProfile> {
             child: Padding(
               padding:
               const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-              child: BlocBuilder<ProfileBloc, ProfileState>(
-                builder: (context, state) {
-
-                  final isButtonEnabled =
-                      !state.isAllEmpty &&
-                          state.isChanged &&
-                          state.status != ProfileStatus.loading;
-
-                  return PrimaryButton(
-                    text: 'Update Profile',
-                    isLoading: false,
-                    onPressed: isButtonEnabled
-                        ? () {
-                      _onUpdateProfile();
-                    }
-                        : null,
-                  );
-                },
+              child: PrimaryButton(
+                text: 'Update Profile',
+                isLoading: state is ProfileLoading,
+                onPressed: (_isFormValid && _hasChanges)
+                    ? () {
+                  _onUpdateProfile();
+                }
+                    : null,
               ),
             ),
           ),

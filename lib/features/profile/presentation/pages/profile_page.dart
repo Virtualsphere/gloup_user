@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/strings.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/widgets/custom_dialogues.dart';
+import 'package:tressy/features/widgets/custom_image.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 import 'package:tressy/shared/widgets/theme_image_toggle.dart';
 
 class ProfilePage extends StatelessWidget {
-  static const String userName = 'Muthupandi Murugaiah';
-
   const ProfilePage({super.key});
 
   @override
@@ -25,7 +30,17 @@ class ProfilePage extends StatelessWidget {
       message:
           'Please login to see your profile details, wallet balance, and personalized features.',
       showBrowseAsGuest: false,
-      child: Scaffold(
+      child: BlocProvider(
+        create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            // Get profile data from state
+            final profile = state is ProfileLoaded ? state.profile : null;
+            final userName = profile?.fullName ?? 'Guest User';
+            final walletAmount = profile?.wallet ?? '0.00';
+            final profilePicUrl = profile?.fullProfilePicUrl ?? '';
+
+            return Scaffold(
         appBar: ProfileAppBar(title: 'Personal Profile',centerTitle: false,),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -73,32 +88,28 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: AppSizes.paddingM),
-                        // Fixed-size avatar — always visible, never overflows
-                        /* Container(
-                        height: 72,
-                        width: 72,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(shape: BoxShape.circle),
-                        child: CustomNetworkImage(
-                          imageUrl: (SessionManager.getProfile() ?? ' '),
-                          imageType: ImageType.profilepic,
-                          placeHolderHeight: 25,
-                        ),
-                      ),*/
-                        SizedBox(
-                          width: 50.0,
-                          height: 50.0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.image_outlined,
-                              color: Colors.grey,
-                              size: 28,
-                            ),
-                          ),
+                        // Profile Avatar
+                        Container(
+                          height: 50,
+                          width: 50,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: const BoxDecoration(shape: BoxShape.circle),
+                          child: profilePicUrl.isNotEmpty
+                              ? CustomNetworkImage(
+                                  imageUrl: profilePicUrl,
+                                  imageType: ImageType.profilepic,
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_outline,
+                                    color: Colors.grey,
+                                    size: 28,
+                                  ),
+                                ),
                         ),
                       ],
                     ),
@@ -108,7 +119,7 @@ class ProfilePage extends StatelessWidget {
 
                   // ── Wallet Balance Card ────────────────────────────────
                   WalletBalanceContainer(
-                    amount: '500.00', // Static value
+                    amount: walletAmount,
                     isViewWalletButton: true,
                     viewWalletOnTap: () {
                       context.pushNamed(RouteNames.wallet);
@@ -189,6 +200,9 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      );
+          },
         ),
       ),
     );

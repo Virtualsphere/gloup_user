@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 
 class AddPersonResult {
@@ -18,25 +22,23 @@ class AddPersonResult {
 }
 
 Future<void> showAddPersonBottomSheet(
-  BuildContext context, {
-  required void Function(AddPersonResult result) onAdd,
-}) async {
-  final result = await showModalBottomSheet<AddPersonResult>(
+  BuildContext context,
+) async {
+  await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (ctx) {
       final viewInsets = MediaQuery.of(ctx).viewInsets;
-      return Padding(
-        padding: EdgeInsets.only(bottom: viewInsets.bottom),
-        child: const _AddPersonBottomSheet(),
+      return BlocProvider.value(
+        value: context.read<GuestBloc>(),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: viewInsets.bottom),
+          child: const _AddPersonBottomSheet(),
+        ),
       );
     },
   );
-
-  if (result != null) {
-    onAdd(result);
-  }
 }
 
 class _AddPersonBottomSheet extends StatefulWidget {
@@ -74,16 +76,24 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
     final int age = int.parse(ageText); // Now required, so safe to parse
 
     final phoneText = _phoneCtrl.text.trim();
-    final String? phone = phoneText.isEmpty ? null : '+91$phoneText';
+    final String phone = phoneText.isEmpty ? '' : phoneText;
+    final String name = _nameCtrl.text.trim();
 
-    Navigator.of(context).pop(
-      AddPersonResult(
-        fullName: _nameCtrl.text.trim(),
-        age: age,
-        gender: _gender,
-        phone: phone,
-      ),
-    );
+    // Trigger API call via BLoC
+    context.read<GuestBloc>().add(
+          AddGuestEvent(
+            name: name,
+            gender: _gender,
+            age: age,
+            phone: phone,
+          ),
+        );
+
+    // Close the bottom sheet
+    Navigator.of(context).pop();
+
+    // Show loading message
+    CustomToast.showInfo(context, 'Adding $name...');
   }
 
   @override

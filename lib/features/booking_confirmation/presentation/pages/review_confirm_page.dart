@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/guest_shimmers.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/salon_info_card.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/selected_services_card.dart';
@@ -224,93 +230,122 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                           },
                         ),
                       ),
-                    // Someone else cards (two selectable profiles)
+                    // Someone else cards (loaded from API)
                     if (selectedBookingFor == 'someone_else')
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                        child: Column(
-                          children: [
-                            ProfileCard(
-                              name: 'Priya Sharma', // TODO: Replace with actual data
-                              age: 26,
-                              gender: 'Female',
-                              isSelected: selectedSomeoneElseIndex == 0,
-                              onTap: () {
-                                setState(() {
-                                  selectedSomeoneElseIndex = 0;
-                                });
-                              },
-                              onEdit: () {
-                                showEditPersonBottomSheet(
-                                  context,
-                                  initialName: 'Priya Sharma',
-                                  initialAge: 26,
-                                  initialGender: 'Female',
-                                  initialPhone: null,
-                                  onSave: (result) {
-                                    // TODO: Update profile in list
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Profile updated: ${result.fullName}'),
+                      BlocConsumer<GuestBloc, GuestState>(
+                        listener: (context, guestState) {
+                          // Show success message when guest is added
+                          if (guestState.addSuccessMessage != null) {
+                            CustomToast.showSuccess(
+                              context,
+                              guestState.addSuccessMessage!,
+                            );
+                          }
+                          // Show success message when guest is updated
+                          if (guestState.updateSuccessMessage != null) {
+                            CustomToast.showSuccess(
+                              context,
+                              guestState.updateSuccessMessage!,
+                            );
+                          }
+                        },
+                        builder: (context, guestState) {
+                          // Show shimmer while loading
+                          if (guestState.isLoading) {
+                            return GuestShimmers.guestListShimmer(context);
+                          }
+
+                          // Show error state
+                          if (guestState.errorMessage != null) {
+                            return Padding(
+                              padding: const EdgeInsets.all(AppSizes.paddingXL),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      size: 48,
+                                      color: AppColors.error,
+                                    ),
+                                    const SizedBox(height: AppSizes.spaceM),
+                                    Text(
+                                      guestState.errorMessage!,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                    const SizedBox(height: AppSizes.spaceM),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        context.read<GuestBloc>().add(const LoadGuestsEvent());
+                                      },
+                                      child: const Text('Retry'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          // Show guest list
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                            child: Column(
+                              children: [
+                                // Display all guests from API
+                                ...List.generate(
+                                  guestState.guests.length,
+                                  (index) {
+                                    final guest = guestState.guests[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
+                                      child: ProfileCard(
+                                        name: guest.name,
+                                        age: guest.age,
+                                        gender: guest.gender,
+                                        isSelected: selectedSomeoneElseIndex == index,
+                                        onTap: () {
+                                          setState(() {
+                                            selectedSomeoneElseIndex = index;
+                                          });
+                                          context.read<GuestBloc>().add(SelectGuestEvent(index));
+                                        },
+                                        onEdit: () {
+                                          if (guest.guestId == null) return;
+                                          
+                                          showEditPersonBottomSheet(
+                                            context,
+                                            initialName: guest.name,
+                                            initialAge: guest.age,
+                                            initialGender: guest.gender,
+                                            initialPhone: guest.phone,
+                                            onSave: (result) {
+                                              // Update guest via API
+                                              context.read<GuestBloc>().add(
+                                                    UpdateGuestEvent(
+                                                      guestId: guest.guestId!,
+                                                      name: result.fullName,
+                                                      gender: result.gender,
+                                                      age: result.age,
+                                                      phone: result.phone,
+                                                    ),
+                                                  );
+                                              
+                                              CustomToast.showInfo(
+                                                context,
+                                                'Updating ${result.fullName}...',
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
                                     );
-                                    setState(() {
-                                      // Update profile data
-                                    });
                                   },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: AppSizes.spaceM),
-                            ProfileCard(
-                              name: 'Rahul Verma', // TODO: Replace with actual data
-                              age: 30,
-                              gender: 'Male',
-                              isSelected: selectedSomeoneElseIndex == 1,
-                              onTap: () {
-                                setState(() {
-                                  selectedSomeoneElseIndex = 1;
-                                });
-                              },
-                              onEdit: () {
-                                showEditPersonBottomSheet(
-                                  context,
-                                  initialName: 'Rahul Verma',
-                                  initialAge: 30,
-                                  initialGender: 'Male',
-                                  initialPhone: null,
-                                  onSave: (result) {
-                                    // TODO: Update profile in list
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Profile updated: ${result.fullName}'),
-                                      ),
-                                    );
-                                    setState(() {
-                                      // Update profile data
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: AppSizes.spaceM),
-                            // Add a New Person card-styled button
-                            GestureDetector(
-                              onTap: () {
-                                showAddPersonBottomSheet(
-                                  context,
-                                  onAdd: (result) {
-                                    // Example: append to list or set selection
-                                    setState(() {
-                                      selectedSomeoneElseIndex = 0; // adjust per your data model
-                                    });
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Added "+${result.fullName}"'),
-                                      ),
-                                    );
-                                  },
-                                );
+                                ),
+                                const SizedBox(height: AppSizes.spaceM),
+                                // Add a New Person card-styled button
+                                GestureDetector(
+                                  onTap: () {
+                                    showAddPersonBottomSheet(context);
                               },
                               child: Container(
                                 constraints: const BoxConstraints(minHeight: 72.0),
@@ -356,8 +391,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     const SizedBox(height: AppSizes.spaceL),
                     // Coupons & Offers section
@@ -756,6 +793,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> {
               onTap: () {
                 setState(() {
                   selectedBookingFor = 'someone_else';
+                  // Load guests when switching to "Someone Else" tab
+                  context.read<GuestBloc>().add(const LoadGuestsEvent());
                 });
               },
               child: Container(
