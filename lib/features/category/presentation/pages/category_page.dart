@@ -13,6 +13,7 @@ import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/features/category/presentation/widgets/category_shimmers.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
+import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
@@ -413,11 +414,10 @@ class _CategoryPageState extends State<CategoryPage> {
                       final salon = state.salons[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
-                        child: SalonCard(
-                          storeId: int.tryParse(salon.id) ?? 0,
+                        child: SalonSearchCard(
                           salonName: salon.salonName,
                           salonImage: salon.salonImage,
-                          images: salon.images,
+                          imageUrl: salon.images?.firstOrNull ?? '',
                           rating: salon.rating,
                           reviewCount: salon.reviewCount,
                           distance: salon.distance,
@@ -428,7 +428,6 @@ class _CategoryPageState extends State<CategoryPage> {
                           address: salon.address,
                           categories: salon.categories,
                           languageCodes: salon.languageCodes,
-                          isFullWidth: true,
                           onTap: () {
                             GoRouter.of(context).push(
                               RouteNames.salonDetails,
@@ -439,6 +438,32 @@ class _CategoryPageState extends State<CategoryPage> {
                             );
                           },
                         ),
+                        // child: SalonCard(
+                        //   storeId: int.tryParse(salon.id) ?? 0,
+                        //   salonName: salon.salonName,
+                        //   salonImage: salon.salonImage,
+                        //   images: salon.images,
+                        //   rating: salon.rating,
+                        //   reviewCount: salon.reviewCount,
+                        //   distance: salon.distance,
+                        //   isPremium: salon.isPremium,
+                        //   isFavorite: salon.isFavorite,
+                        //   serviceName: salon.serviceName,
+                        //   servicePrice: salon.servicePrice,
+                        //   address: salon.address,
+                        //   categories: salon.categories,
+                        //   languageCodes: salon.languageCodes,
+                        //   isFullWidth: true,
+                        //   onTap: () {
+                        //     GoRouter.of(context).push(
+                        //       RouteNames.salonDetails,
+                        //       extra: {
+                        //         'salonId': salon.id,
+                        //         'salonName': salon.salonName,
+                        //       },
+                        //     );
+                        //   },
+                        // ),
                       );
                     },
                     childCount: state.salons.length,
