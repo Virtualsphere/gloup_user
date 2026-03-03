@@ -40,7 +40,7 @@ class _MyProfileState extends State<MyProfile> {
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
 
   String _selectedGender = 'Not Selected';
-  
+
   // Track initial values to detect changes
   String _initialFirstName = '';
   String _initialLastName = '';
@@ -62,10 +62,11 @@ class _MyProfileState extends State<MyProfile> {
     super.dispose();
   }
 
-
   void _fillFields(ProfileEntity profile) {
-    firstNameController.text = profile.firstname.isNotEmpty ? profile.firstname : '';
-    lastNameController.text = profile.lastname.isNotEmpty ? profile.lastname : '';
+    firstNameController.text =
+        profile.firstname.isNotEmpty ? profile.firstname : '';
+    lastNameController.text =
+        profile.lastname.isNotEmpty ? profile.lastname : '';
     emailController.text = profile.email.isNotEmpty ? profile.email : '';
     mobileController.text = profile.phone != 0 ? profile.phone.toString() : '';
 
@@ -83,16 +84,17 @@ class _MyProfileState extends State<MyProfile> {
     countryController.text = profile.country.isNotEmpty ? profile.country : '';
 
     if (profile.gender.isNotEmpty) {
-      final capitalised =
-          profile.gender[0].toUpperCase() + profile.gender.substring(1).toLowerCase();
+      final capitalised = profile.gender[0].toUpperCase() +
+          profile.gender.substring(1).toLowerCase();
       const validGenders = ['Male', 'Female'];
       setState(() {
-        _selectedGender = validGenders.contains(capitalised) ? capitalised : 'Not Selected';
+        _selectedGender =
+            validGenders.contains(capitalised) ? capitalised : 'Not Selected';
       });
     } else {
       setState(() => _selectedGender = 'Not Selected');
     }
-    
+
     // Store initial values for change detection
     _initialFirstName = firstNameController.text;
     _initialLastName = lastNameController.text;
@@ -102,22 +104,22 @@ class _MyProfileState extends State<MyProfile> {
     _initialCountry = countryController.text;
     _initialGender = _selectedGender;
   }
-  
+
   bool get _hasChanges {
     return firstNameController.text != _initialFirstName ||
-           lastNameController.text != _initialLastName ||
-           emailController.text != _initialEmail ||
-           mobileController.text != _initialMobile ||
-           dateOfBirthController.text != _initialDob ||
-           countryController.text != _initialCountry ||
-           _selectedGender != _initialGender;
+        lastNameController.text != _initialLastName ||
+        emailController.text != _initialEmail ||
+        mobileController.text != _initialMobile ||
+        dateOfBirthController.text != _initialDob ||
+        countryController.text != _initialCountry ||
+        _selectedGender != _initialGender;
   }
-  
+
   bool get _isFormValid {
     return firstNameController.text.isNotEmpty &&
-           lastNameController.text.isNotEmpty &&
-           emailController.text.isNotEmpty &&
-           _selectedGender != 'Not Selected';
+        lastNameController.text.isNotEmpty &&
+        emailController.text.isNotEmpty &&
+        _selectedGender != 'Not Selected';
   }
 
   @override
@@ -135,7 +137,8 @@ class _MyProfileState extends State<MyProfile> {
         // Handle loading state
         if (state is ProfileLoading) {
           return Scaffold(
-            backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
+            backgroundColor:
+                isDarkMode ? AppColors.primary : AppColors.background,
             appBar: ProfileAppBar(
               title: "Your Profile",
               centerTitle: false,
@@ -150,7 +153,8 @@ class _MyProfileState extends State<MyProfile> {
         // Handle failure state
         if (state is ProfileFailure) {
           return Scaffold(
-            backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
+            backgroundColor:
+                isDarkMode ? AppColors.primary : AppColors.background,
             appBar: ProfileAppBar(
               title: "Your Profile",
               centerTitle: false,
@@ -181,7 +185,8 @@ class _MyProfileState extends State<MyProfile> {
         // Get profile from loaded state
         final profile = state is ProfileLoaded ? state.profile : null;
         return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.primary : AppColors.background,
+          backgroundColor:
+              isDarkMode ? AppColors.primary : AppColors.background,
           appBar: ProfileAppBar(
             title: "Your Profile",
             centerTitle: false,
@@ -266,14 +271,16 @@ class _MyProfileState extends State<MyProfile> {
                                   dropdownValue: _selectedGender,
                                   items: ['Not Selected', 'Male', 'Female'],
                                   onChanged: (value) {
-                                    setState(() => _selectedGender = value ?? 'Not Selected');
+                                    setState(() => _selectedGender =
+                                        value ?? 'Not Selected');
                                   },
                                   hintText: 'Select gender',
                                   color: isDarkMode
                                       ? AppColors.white
                                       : AppColors.borderColor,
                                   validator: (value) {
-                                    if (value == null || value == 'Not Selected') {
+                                    if (value == null ||
+                                        value == 'Not Selected') {
                                       return 'Please select gender';
                                     }
                                     return null;
@@ -292,7 +299,8 @@ class _MyProfileState extends State<MyProfile> {
                                   final selectedDate = await pickDate(context);
                                   if (selectedDate != null) {
                                     dateOfBirthController.text =
-                                        DateFormat('dd/MM/yyyy').format(selectedDate);
+                                        DateFormat('dd/MM/yyyy')
+                                            .format(selectedDate);
                                     setState(() {});
                                   }
                                 },
@@ -351,7 +359,7 @@ class _MyProfileState extends State<MyProfile> {
                                           : AppColors.white,
                                       borderRadius: BorderRadius.circular(15),
                                       textStyle:
-                                      context.textTheme.bodyLarge?.copyWith(
+                                          context.textTheme.bodyLarge?.copyWith(
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w500,
                                         color: isDarkMode
@@ -359,7 +367,7 @@ class _MyProfileState extends State<MyProfile> {
                                             : AppColors.black,
                                       ),
                                       searchTextStyle:
-                                      context.textTheme.bodyLarge?.copyWith(
+                                          context.textTheme.bodyLarge?.copyWith(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w400,
                                         color: isDarkMode
@@ -388,7 +396,7 @@ class _MyProfileState extends State<MyProfile> {
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
-                                          BorderRadius.circular(10.0),
+                                              BorderRadius.circular(10.0),
                                           borderSide: BorderSide(
                                             color: isDarkMode
                                                 ? AppColors.white
@@ -398,7 +406,7 @@ class _MyProfileState extends State<MyProfile> {
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
-                                          BorderRadius.circular(10.0),
+                                              BorderRadius.circular(10.0),
                                           borderSide: BorderSide(
                                             color: isDarkMode
                                                 ? AppColors.white
@@ -457,19 +465,19 @@ class _MyProfileState extends State<MyProfile> {
                                       children: [
                                         file != null
                                             ? Image.file(
-                                          File(file.path),
-                                          fit: BoxFit.cover,
-                                        )
+                                                File(file.path),
+                                                fit: BoxFit.cover,
+                                              )
                                             : CustomNetworkImage(
-                                          imageUrl: profile
-                                              ?.fullProfilePicUrl ??
-                                              '',
-                                          imageType: ImageType.profilepic,
-                                        ),
+                                                imageUrl: profile
+                                                        ?.fullProfilePicUrl ??
+                                                    '',
+                                                imageType: ImageType.profilepic,
+                                              ),
                                         if (isDarkMode)
                                           Container(
-                                            color:
-                                            Colors.black.withValues(alpha: 0.5),
+                                            color: Colors.black
+                                                .withValues(alpha: 0.5),
                                           ),
                                       ],
                                     );
@@ -523,14 +531,14 @@ class _MyProfileState extends State<MyProfile> {
             color: isDarkMode ? AppColors.primary : AppColors.white,
             child: Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
               child: PrimaryButton(
                 text: 'Update Profile',
                 isLoading: state is ProfileLoading,
                 onPressed: (_isFormValid && _hasChanges)
                     ? () {
-                  _onUpdateProfile();
-                }
+                        _onUpdateProfile();
+                      }
                     : null,
               ),
             ),
@@ -541,13 +549,30 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void _onUpdateProfile() {
-    debugPrint('First Name: ${firstNameController.text}');
-    debugPrint('Last Name: ${lastNameController.text}');
-    debugPrint('Email: ${emailController.text}');
-    debugPrint('Phone: ${mobileController.text}');
-    debugPrint('DOB: ${dateOfBirthController.text}');
-    debugPrint('Country: ${countryController.text}');
-    debugPrint('Gender: $_selectedGender');
+    final currentState = context.read<ProfileBloc>().state;
+
+    if (currentState is ProfileLoaded) {
+      final currentProfile = currentState.profile;
+
+      final File? selectedImage = profileImageNotifier.value;
+
+      final updatedProfileEntity = currentProfile.copyWith(
+        firstname: firstNameController.text.trim(),
+        lastname: lastNameController.text.trim(),
+        email: emailController.text.trim(),
+        phone: int.tryParse(mobileController.text.trim()),
+        dateOfBirth: dateOfBirthController.text.trim(),
+        country: countryController.text.trim(),
+        gender: _selectedGender,
+        profilePic: selectedImage != null
+            ? selectedImage.path
+            : currentProfile.profilePic,
+      );
+
+      context.read<ProfileBloc>().add(
+            UpdateProfileEvent(updatedProfileEntity),
+          );
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {

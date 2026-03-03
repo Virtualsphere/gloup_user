@@ -10,11 +10,31 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   ProfileRepositoryImpl(this.dataSource);
 
+  //get profile data:-
   @override
   Future<Either<Failure, ProfileEntity>> getProfile() async {
     try {
       final model = await dataSource.getProfile();
       return Right(model);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
+
+  //update profile date:-
+  @override
+  Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile) async {
+    try {
+      final result = await dataSource.updateProfile(profile);
+      return Right(result);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } on TimeoutException catch (e) {
