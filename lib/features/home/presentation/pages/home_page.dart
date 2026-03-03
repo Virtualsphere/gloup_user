@@ -107,9 +107,11 @@ class _HomePageState extends State<HomePage> {
           debugPrint('Locality: ${place.locality}');
           debugPrint('SubLocality: ${place.subLocality}');
           debugPrint('AdministrativeArea: ${place.administrativeArea}');
-          
-          final city = place.locality ?? place.administrativeArea ?? 'Unknown City';
-          final area = place.subLocality ?? place.thoroughfare ?? 'Unknown Area';
+
+          final city =
+              place.locality ?? place.administrativeArea ?? 'Unknown City';
+          final area =
+              place.subLocality ?? place.thoroughfare ?? 'Unknown Area';
 
           // Update LocationProvider - this will save to SharedPreferences and notify all listeners
           // Silent update (no toast) for GPS location
@@ -145,14 +147,14 @@ class _HomePageState extends State<HomePage> {
 
   void _onGenderChanged(String gender) {
     final locationProvider = context.read<LocationProvider>();
-    
+
     setState(() {
       _selectedGender = gender;
     });
-    
+
     // For "all" filter, don't send gender parameter (null)
     final genderParam = (gender.toLowerCase() == 'all') ? null : gender;
-    
+
     // Reload popular services with new gender filter
     _homeBloc?.add(LoadPopularServicesEvent(
       latitude: locationProvider.latitude,
@@ -160,7 +162,7 @@ class _HomePageState extends State<HomePage> {
       limit: 10, // Set limit to 10 for home screen
       gender: genderParam,
     ));
-    
+
     // Reload top salons with new gender filter
     _homeBloc?.add(LoadTopSalonsEvent(
       latitude: locationProvider.latitude,
@@ -168,7 +170,7 @@ class _HomePageState extends State<HomePage> {
       limit: 10, // Set limit to 10 for home screen
       gender: genderParam, // null when "all" is selected
     ));
-    
+
     // Also reload recommended salons with new gender filter
     _homeBloc?.add(LoadRecommendedSalonsEvent(
       latitude: locationProvider.latitude,
@@ -194,7 +196,8 @@ class _HomePageState extends State<HomePage> {
     final carouselHeight = screenHeight * 0.35;
 
     // Check if scrolled past the carousel
-    final isCollapsed = _scrollController.offset > (carouselHeight - kToolbarHeight);
+    final isCollapsed =
+        _scrollController.offset > (carouselHeight - kToolbarHeight);
 
     if (isCollapsed != _isCollapsed) {
       setState(() {
@@ -224,12 +227,13 @@ class _HomePageState extends State<HomePage> {
     // Listen for location changes and show toast
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final locationProvider = context.read<LocationProvider>();
-      if (locationProvider.locationJustUpdated && locationProvider.lastUpdateMessage != null) {
+      if (locationProvider.locationJustUpdated &&
+          locationProvider.lastUpdateMessage != null) {
         CustomToast.showInfo(context, locationProvider.lastUpdateMessage!);
         locationProvider.clearUpdateFlag();
       }
     });
-    
+
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
 
@@ -245,510 +249,410 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocListener<FavoritesBloc, FavoritesState>(
         listener: (context, state) {
-          if (state.status == FavoritesStatus.failure && state.lastToggledStoreId != null) {
-            CustomToast.showError(context, 'Failed to update favorite. Please try again.');
+          if (state.status == FavoritesStatus.failure &&
+              state.lastToggledStoreId != null) {
+            CustomToast.showError(
+                context, 'Failed to update favorite. Please try again.');
           }
         },
         child: Scaffold(
           backgroundColor: context.colorScheme.surface,
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                // SliverAppBar with carousel
-                SliverAppBar(
-                  pinned: true,
-                  expandedHeight: carouselHeight,
-                  collapsedHeight: 70,
-                  toolbarHeight: 70,
-                  backgroundColor: context.colorScheme.surface,
-                  surfaceTintColor: Colors.transparent,
-                  elevation: 0,
-                  shape: _isCollapsed
-                      ? Border(
-                          bottom: BorderSide(
-                            color: AppColors.border,
-                            width: AppSizes.borderWidthThin,
-                          ),
-                        )
-                      : null,
-                  // Show only search bar when collapsed
-                  title: _isCollapsed
-                      ? SearchBarWidget(
-                          onTap: () {
-                            GoRouter.of(context).push(
-                              RouteNames.salonSearch ,
-                            );
-                          },
-                          onSettingsTap: () {},
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSizes.paddingS,
-                          ),
-                        )
-                      : null,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        // Carousel with shimmer loading
-                        state.isCarouselLoading
-                            ? HomeShimmers.buildCarouselShimmer(context)
-                            : state.carouselBanners.isEmpty
-                                ? HomeShimmers.buildCarouselShimmer(context)
-                                : CarouselSlider(
-                                    options: CarouselOptions(
-                                      height: double.infinity,
-                                      viewportFraction: 1.0,
-                                      autoPlay: true,
-                                      autoPlayInterval:
-                                          const Duration(seconds: 3),
-                                      autoPlayAnimationDuration: const Duration(
-                                        milliseconds: 800,
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  // SliverAppBar with carousel
+                  SliverAppBar(
+                    pinned: true,
+                    expandedHeight: carouselHeight,
+                    collapsedHeight: 70,
+                    toolbarHeight: 70,
+                    backgroundColor: context.colorScheme.surface,
+                    surfaceTintColor: Colors.transparent,
+                    elevation: 0,
+                    shape: _isCollapsed
+                        ? Border(
+                            bottom: BorderSide(
+                              color: AppColors.border,
+                              width: AppSizes.borderWidthThin,
+                            ),
+                          )
+                        : null,
+                    // Show only search bar when collapsed
+                    title: _isCollapsed
+                        ? SearchBarWidget(
+                            onTap: () {
+                              GoRouter.of(context).push(
+                                RouteNames.salonSearch,
+                              );
+                            },
+                            onSettingsTap: () {},
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSizes.paddingS,
+                            ),
+                          )
+                        : null,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Carousel with shimmer loading
+                          state.isCarouselLoading
+                              ? HomeShimmers.buildCarouselShimmer(context)
+                              : state.carouselBanners.isEmpty
+                                  ? HomeShimmers.buildCarouselShimmer(context)
+                                  : CarouselSlider(
+                                      options: CarouselOptions(
+                                        height: double.infinity,
+                                        viewportFraction: 1.0,
+                                        autoPlay: true,
+                                        autoPlayInterval:
+                                            const Duration(seconds: 3),
+                                        autoPlayAnimationDuration:
+                                            const Duration(
+                                          milliseconds: 800,
+                                        ),
+                                        autoPlayCurve: Curves.fastOutSlowIn,
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            _currentCarouselIndex = index;
+                                          });
+                                        },
                                       ),
-                                      autoPlayCurve: Curves.fastOutSlowIn,
-                                      onPageChanged: (index, reason) {
-                                        setState(() {
-                                          _currentCarouselIndex = index;
-                                        });
-                                      },
-                                    ),
-                                    items: state.carouselBanners.map((banner) {
-                                      return Builder(
-                                        builder: (BuildContext context) {
-                                          return SizedBox(
-                                            width: double.infinity,
-                                            child: Stack(
-                                              children: [
-                                                Positioned(
-                                                  top: 0,
-                                                  bottom: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Image.network(
-                                                    banner.imageUrl,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Container(
-                                                        color: AppColors.primary
-                                                            .withValues(
-                                                          alpha: 0.2,
-                                                        ),
-                                                        child: const Center(
-                                                          child: Icon(
-                                                            Icons.cut,
-                                                            size: 80,
-                                                            color:
-                                                                AppColors.white,
+                                      items:
+                                          state.carouselBanners.map((banner) {
+                                        return Builder(
+                                          builder: (BuildContext context) {
+                                            return SizedBox(
+                                              width: double.infinity,
+                                              child: Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: Image.network(
+                                                      banner.imageUrl,
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Container(
+                                                          color: AppColors
+                                                              .primary
+                                                              .withValues(
+                                                            alpha: 0.2,
                                                           ),
-                                                        ),
-                                                      );
-                                                    },
+                                                          child: const Center(
+                                                            child: Icon(
+                                                              Icons.cut,
+                                                              size: 80,
+                                                              color: AppColors
+                                                                  .white,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
                                                   ),
-                                                ),
-                                                Positioned(
-                                                  top: 0,
-                                                  bottom: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topCenter,
-                                                        end: Alignment
-                                                            .bottomCenter,
-                                                        colors: [
-                                                          AppColors.black
-                                                              .withValues(
-                                                                  alpha: 0.85),
-                                                          AppColors.black
-                                                              .withValues(
-                                                                  alpha: 0.05),
-                                                        ],
+                                                  Positioned(
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            AppColors.black
+                                                                .withValues(
+                                                                    alpha:
+                                                                        0.85),
+                                                            AppColors.black
+                                                                .withValues(
+                                                                    alpha:
+                                                                        0.05),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    }).toList(),
-                                  ),
-
-                        // Location and Profile on top of carousel
-                        SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingM,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: AppSizes.spaceS),
-                                // Location and profile row
-                                Row(
-                                  children: [
-                                    _isLoadingLocation
-                                        ? Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: AppSizes.paddingM,
-                                              vertical: AppSizes.paddingS,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.white.withValues(alpha: 0.95),
-                                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  width: 12,
-                                                  height: 12,
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                                      AppColors.primary,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  'Getting location...',
-                                                  style: context.textTheme.bodySmall?.copyWith(
-                                                    color: AppColors.primary,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : Consumer<LocationProvider>(
-                                            builder: (context, locationProvider, child) {
-                                              return LocationBadge(
-                                                location: locationProvider.city,
-                                                addressLine2: locationProvider.area,
-                                                onTap: () async {
-                                                  // Navigate to location page
-                                                  final result = await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => const LocationPage(),
-                                                    ),
-                                                  );
-                                                  
-                                                  // Update location if user selected one
-                                                  if (result != null && result is Map<String, dynamic>) {
-                                                    // Update LocationProvider - this will save and notify all listeners
-                                                    await locationProvider.updateLocation(
-                                                      latitude: result['latitude'],
-                                                      longitude: result['longitude'],
-                                                      city: result['city'],
-                                                      area: result['area'],
-                                                    );
-                                                    
-                                                    // Reload home data with new location
-                                                    _homeBloc?.add(LoadAllHomeDataEvent(
-                                                      latitude: locationProvider.latitude,
-                                                      longitude: locationProvider.longitude,
-                                                    ));
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
-                                    const Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                        context.pushNamed(RouteNames.personalProfile);
-                                      },
-                                      borderRadius: BorderRadius.circular(
-                                        AppSizes.radiusCircular,
-                                      ),
-                                      child: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.white.withValues(
-                                            alpha: 0.95,
-                                          ),
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppColors.black.withValues(
-                                                alpha: 0.1,
+                                                ],
                                               ),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
+                                            );
+                                          },
+                                        );
+                                      }).toList(),
+                                    ),
+
+                          // Location and Profile on top of carousel
+                          SafeArea(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.paddingM,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: AppSizes.spaceS),
+                                  // Location and profile row
+                                  Row(
+                                    children: [
+                                      _isLoadingLocation
+                                          ? Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: AppSizes.paddingM,
+                                                vertical: AppSizes.paddingS,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.white
+                                                    .withValues(alpha: 0.95),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        AppSizes.radiusM),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 12,
+                                                    height: 12,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                              Color>(
+                                                        AppColors.primary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    'Getting location...',
+                                                    style: context
+                                                        .textTheme.bodySmall
+                                                        ?.copyWith(
+                                                      color: AppColors.primary,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : Consumer<LocationProvider>(
+                                              builder: (context,
+                                                  locationProvider, child) {
+                                                return LocationBadge(
+                                                  location:
+                                                      locationProvider.city,
+                                                  addressLine2:
+                                                      locationProvider.area,
+                                                  onTap: () async {
+                                                    // Navigate to location page
+                                                    final result =
+                                                        await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const LocationPage(),
+                                                      ),
+                                                    );
+
+                                                    // Update location if user selected one
+                                                    if (result != null &&
+                                                        result is Map<String,
+                                                            dynamic>) {
+                                                      // Update LocationProvider - this will save and notify all listeners
+                                                      await locationProvider
+                                                          .updateLocation(
+                                                        latitude:
+                                                            result['latitude'],
+                                                        longitude:
+                                                            result['longitude'],
+                                                        city: result['city'],
+                                                        area: result['area'],
+                                                      );
+
+                                                      // Reload home data with new location
+                                                      _homeBloc?.add(
+                                                          LoadAllHomeDataEvent(
+                                                        latitude:
+                                                            locationProvider
+                                                                .latitude,
+                                                        longitude:
+                                                            locationProvider
+                                                                .longitude,
+                                                      ));
+                                                    }
+                                                  },
+                                                );
+                                              },
                                             ),
-                                          ],
+                                      const Spacer(),
+                                      InkWell(
+                                        onTap: () {
+                                          context.pushNamed(
+                                              RouteNames.personalProfile);
+                                        },
+                                        borderRadius: BorderRadius.circular(
+                                          AppSizes.radiusCircular,
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            'U', // User avatar placeholder
-                                            style: TextStyle(
-                                              fontSize: AppSizes.fontL,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primary,
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.white.withValues(
+                                              alpha: 0.95,
+                                            ),
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color:
+                                                    AppColors.black.withValues(
+                                                  alpha: 0.1,
+                                                ),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'U', // User avatar placeholder
+                                              style: TextStyle(
+                                                fontSize: AppSizes.fontL,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.primary,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                // Search bar below location
-                                SearchBarWidget(
-                                    onTap: () {
-                                      GoRouter.of(context).push(
-                                        RouteNames.salonSearch ,
-                                      );
-                                    }, onSettingsTap: () {}),
-                                AppSizes.heightM,
-                                if (state.carouselBanners.isNotEmpty)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: state.carouselBanners
-                                        .asMap()
-                                        .entries
-                                        .map((
-                                      entry,
-                                    ) {
-                                      return Container(
-                                        width:
-                                            _currentCarouselIndex == entry.key
-                                                ? 24.0
-                                                : 8.0,
-                                        height: 8.0,
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 4.0,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          color:
-                                              _currentCarouselIndex == entry.key
-                                                  ? AppColors.white
-                                                  : AppColors.white
-                                                      .withValues(alpha: 0.4),
-                                        ),
-                                      );
-                                    }).toList(),
+                                    ],
                                   ),
-                                AppSizes.heightM,
-                              ],
+                                  Spacer(),
+                                  // Search bar below location
+                                  SearchBarWidget(
+                                      onTap: () {
+                                        GoRouter.of(context).push(
+                                          RouteNames.salonSearch,
+                                        );
+                                      },
+                                      onSettingsTap: () {}),
+                                  AppSizes.heightM,
+                                  if (state.carouselBanners.isNotEmpty)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: state.carouselBanners
+                                          .asMap()
+                                          .entries
+                                          .map((
+                                        entry,
+                                      ) {
+                                        return Container(
+                                          width:
+                                              _currentCarouselIndex == entry.key
+                                                  ? 24.0
+                                                  : 8.0,
+                                          height: 8.0,
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 4.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            color: _currentCarouselIndex ==
+                                                    entry.key
+                                                ? AppColors.white
+                                                : AppColors.white
+                                                    .withValues(alpha: 0.4),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  AppSizes.heightM,
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      collapseMode: CollapseMode.parallax,
                     ),
-                    collapseMode: CollapseMode.parallax,
                   ),
-                ),
 
-                SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightS),
 
-                // Sticky Category Section
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _CategorySectionDelegate(
-                    onCategoryTap: (categoryName, categoryIndex, categoryId) {
-                      GoRouter.of(context).push(
-                        RouteNames.category,
-                        extra: {
-                          'categoryName': categoryName,
-                          'categoryIndex': categoryIndex,
-                          'categoryId': categoryId,
-                        },
-                      );
-                    },
+                  // Sticky Category Section
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _CategorySectionDelegate(
+                      onCategoryTap: (categoryName, categoryIndex, categoryId) {
+                        GoRouter.of(context).push(
+                          RouteNames.category,
+                          extra: {
+                            'categoryName': categoryName,
+                            'categoryIndex': categoryIndex,
+                            'categoryId': categoryId,
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
 
-                SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightS),
 
-                // Filter Badges Section
-                SliverToBoxAdapter(
-                  child: FilterBadges(
-                    initialGender: _selectedGender,
-                    onGenderSelected: _onGenderChanged,
+                  // Filter Badges Section
+                  SliverToBoxAdapter(
+                    child: FilterBadges(
+                      initialGender: _selectedGender,
+                      onGenderSelected: _onGenderChanged,
+                    ),
                   ),
-                ),
 
-                SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightS),
 
-                // Popular Services Nearby Section Header
-                SliverToBoxAdapter(
-                  child: SectionHeader(
-                    title: 'Popular Services Nearby',
-                    subtitle: 'Based on your location',
-                    onSeeAllTap: () {
-                      // Navigate to see all popular services
-                    },
+                  // Popular Services Nearby Section Header
+                  SliverToBoxAdapter(
+                    child: SectionHeader(
+                      title: 'Popular Services Nearby',
+                      subtitle: 'Based on your location',
+                      onSeeAllTap: () {
+                        // Navigate to Explore tab
+                        context.go(RouteNames.explore);
+                      },
+                    ),
                   ),
-                ),
 
-                SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightS),
 
-                // Horizontal Scrollable Salon Cards - Popular Services
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 300,
-                    child: state.isPopularServicesLoading
-                        ? HomeShimmers.buildSalonCardsShimmer(context)
-                        : state.popularServices.isEmpty
-                            ? const Center(
-                                child: Text('No popular services found'))
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSizes.paddingM),
-                                itemCount: state.popularServices.length,
-                                itemBuilder: (context, index) {
-                                  final salon = state.popularServices[index];
-                                  return SalonCard(
-                                    storeId: int.tryParse(salon.id) ?? 0,
-                                    salonName: salon.salonName,
-                                    salonImage: salon.salonImage,
-                                    images: salon.images,
-                                    rating: salon.rating,
-                                    reviewCount: salon.reviewCount,
-                                    distance: salon.distance,
-                                    isPremium: salon.isPremium,
-                                    isFavorite: salon.isFavorite,
-                                    serviceName: salon.serviceName,
-                                    servicePrice: salon.servicePrice,
-                                    address: salon.address,
-                                    categories: salon.categories,
-                                    languageCodes: salon.languageCodes,
-                                    onTap: () {
-                                      GoRouter.of(context).push(
-                                        RouteNames.salonDetails,
-                                        extra: {
-                                          'salonId': salon.id,
-                                          'salonName': salon.salonName,
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                  ),
-                ),
-
-                // Content spacing
-                SliverToBoxAdapter(child: AppSizes.heightL),
-
-                // Top Salons Section Header
-                SliverToBoxAdapter(
-                  child: SectionHeader(
-                    title: 'Top Salons',
-                    subtitle: 'Highest rated salons in your area',
-                    onSeeAllTap: () {
-                      // Navigate to see all top salons
-                    },
-                  ),
-                ),
-
-                SliverToBoxAdapter(child: AppSizes.heightS),
-                // Horizontal Scrollable Salon Cards - Top Salons
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 300,
-                    child: state.isTopSalonsLoading
-                        ? HomeShimmers.buildSalonCardsShimmer(context)
-                        : state.topSalons.isEmpty
-                            ? const Center(child: Text('No top salons found'))
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSizes.paddingM),
-                                itemCount: state.topSalons.length,
-                                itemBuilder: (context, index) {
-                                  final salon = state.topSalons[index];
-                                  return SalonCard(
-                                    storeId: int.tryParse(salon.id) ?? 0,
-                                    salonName: salon.salonName,
-                                    salonImage: salon.salonImage,
-                                    images: salon.images,
-                                    rating: salon.rating,
-                                    reviewCount: salon.reviewCount,
-                                    distance: salon.distance,
-                                    isPremium: salon.isPremium,
-                                    isFavorite: salon.isFavorite,
-                                    serviceName: salon.serviceName,
-                                    servicePrice: salon.servicePrice,
-                                    address: salon.address,
-                                    categories: salon.categories,
-                                    languageCodes: salon.languageCodes,
-                                    onTap: () {
-                                      GoRouter.of(context).push(
-                                        RouteNames.salonDetails,
-                                        extra: {
-                                          'salonId': salon.id,
-                                          'salonName': salon.salonName,
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                  ),
-                ),
-
-                // Bottom spacing
-                SliverToBoxAdapter(child: AppSizes.heightXXL),
-
-                // Recommended for You Section Header (No category filter)
-                SliverToBoxAdapter(
-                  child: SectionHeader(
-                    title: 'Recommended for You',
-                    subtitle: 'Based on your preferences',
-                    onSeeAllTap: () {
-                      // Navigate to see all recommendations
-                    },
-                  ),
-                ),
-
-                SliverToBoxAdapter(child: AppSizes.heightS),
-
-                // Vertical Full-Width Salon Cards with infinite scroll
-                state.isRecommendedSalonsLoading && state.recommendedSalons.isEmpty
-                    ? SliverPadding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingM),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) => Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: AppSizes.paddingM),
-                              child: HomeShimmers.buildVerticalSalonCardShimmer(
-                                  context),
-                            ),
-                            childCount: 3,
-                          ),
-                        ),
-                      )
-                    : state.recommendedSalons.isEmpty
-                        ? const SliverToBoxAdapter(
-                            child:
-                                Center(child: Text('No recommendations found')),
-                          )
-                        : SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: AppSizes.paddingM),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final salon = state.recommendedSalons[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: AppSizes.paddingM),
-                                    child: SalonCard(
+                  // Horizontal Scrollable Salon Cards - Popular Services
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 300,
+                      child: state.isPopularServicesLoading
+                          ? HomeShimmers.buildSalonCardsShimmer(context)
+                          : state.popularServices.isEmpty
+                              ? const Center(
+                                  child: Text('No popular services found'))
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSizes.paddingM),
+                                  itemCount: state.popularServices.length,
+                                  itemBuilder: (context, index) {
+                                    final salon = state.popularServices[index];
+                                    return SalonCard(
                                       storeId: int.tryParse(salon.id) ?? 0,
                                       salonName: salon.salonName,
                                       salonImage: salon.salonImage,
@@ -763,7 +667,6 @@ class _HomePageState extends State<HomePage> {
                                       address: salon.address,
                                       categories: salon.categories,
                                       languageCodes: salon.languageCodes,
-                                      isFullWidth: true,
                                       onTap: () {
                                         GoRouter.of(context).push(
                                           RouteNames.salonDetails,
@@ -773,33 +676,177 @@ class _HomePageState extends State<HomePage> {
                                           },
                                         );
                                       },
-                                    ),
-                                  );
-                                },
-                                childCount: state.recommendedSalons.length,
+                                    );
+                                  },
+                                ),
+                    ),
+                  ),
+
+                  // Content spacing
+                  SliverToBoxAdapter(child: AppSizes.heightL),
+
+                  // Top Salons Section Header
+                  SliverToBoxAdapter(
+                    child: SectionHeader(
+                      title: 'Top Salons',
+                      subtitle: 'Highest rated salons in your area',
+                      onSeeAllTap: () {
+                        // Navigate to see all top salons
+                        context.go(RouteNames.explore);
+                      },
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: AppSizes.heightS),
+                  // Horizontal Scrollable Salon Cards - Top Salons
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 300,
+                      child: state.isTopSalonsLoading
+                          ? HomeShimmers.buildSalonCardsShimmer(context)
+                          : state.topSalons.isEmpty
+                              ? const Center(child: Text('No top salons found'))
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSizes.paddingM),
+                                  itemCount: state.topSalons.length,
+                                  itemBuilder: (context, index) {
+                                    final salon = state.topSalons[index];
+                                    return SalonCard(
+                                      storeId: int.tryParse(salon.id) ?? 0,
+                                      salonName: salon.salonName,
+                                      salonImage: salon.salonImage,
+                                      images: salon.images,
+                                      rating: salon.rating,
+                                      reviewCount: salon.reviewCount,
+                                      distance: salon.distance,
+                                      isPremium: salon.isPremium,
+                                      isFavorite: salon.isFavorite,
+                                      serviceName: salon.serviceName,
+                                      servicePrice: salon.servicePrice,
+                                      address: salon.address,
+                                      categories: salon.categories,
+                                      languageCodes: salon.languageCodes,
+                                      onTap: () {
+                                        GoRouter.of(context).push(
+                                          RouteNames.salonDetails,
+                                          extra: {
+                                            'salonId': salon.id,
+                                            'salonName': salon.salonName,
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                    ),
+                  ),
+
+                  // Bottom spacing
+                  SliverToBoxAdapter(child: AppSizes.heightXXL),
+
+                  // Recommended for You Section Header (No category filter)
+                  SliverToBoxAdapter(
+                    child: SectionHeader(
+                      title: 'Recommended for You',
+                      subtitle: 'Based on your preferences',
+                      onSeeAllTap: () {
+                        context.go(RouteNames.explore);
+                        // Navigate to see all recommendations
+                      },
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: AppSizes.heightS),
+
+                  // Vertical Full-Width Salon Cards with infinite scroll
+                  state.isRecommendedSalonsLoading &&
+                          state.recommendedSalons.isEmpty
+                      ? SliverPadding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingM),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: AppSizes.paddingM),
+                                child:
+                                    HomeShimmers.buildVerticalSalonCardShimmer(
+                                        context),
                               ),
+                              childCount: 3,
                             ),
                           ),
+                        )
+                      : state.recommendedSalons.isEmpty
+                          ? const SliverToBoxAdapter(
+                              child: Center(
+                                  child: Text('No recommendations found')),
+                            )
+                          : SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSizes.paddingM),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final salon =
+                                        state.recommendedSalons[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: AppSizes.paddingM),
+                                      child: SalonCard(
+                                        storeId: int.tryParse(salon.id) ?? 0,
+                                        salonName: salon.salonName,
+                                        salonImage: salon.salonImage,
+                                        images: salon.images,
+                                        rating: salon.rating,
+                                        reviewCount: salon.reviewCount,
+                                        distance: salon.distance,
+                                        isPremium: salon.isPremium,
+                                        isFavorite: salon.isFavorite,
+                                        serviceName: salon.serviceName,
+                                        servicePrice: salon.servicePrice,
+                                        address: salon.address,
+                                        categories: salon.categories,
+                                        languageCodes: salon.languageCodes,
+                                        isFullWidth: true,
+                                        onTap: () {
+                                          GoRouter.of(context).push(
+                                            RouteNames.salonDetails,
+                                            extra: {
+                                              'salonId': salon.id,
+                                              'salonName': salon.salonName,
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  childCount: state.recommendedSalons.length,
+                                ),
+                              ),
+                            ),
 
-                // Loading indicator for infinite scroll
-                if (state.isLoadingMoreRecommended)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSizes.paddingM),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
+                  // Loading indicator for infinite scroll
+                  if (state.isLoadingMoreRecommended)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSizes.paddingM),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                // Bottom spacing
-                SliverToBoxAdapter(child: AppSizes.heightXXL),
-              ],
-            );
+                  // Bottom spacing
+                  SliverToBoxAdapter(child: AppSizes.heightXXL),
+                ],
+              );
             },
           ),
         ),
@@ -810,7 +857,8 @@ class _HomePageState extends State<HomePage> {
 
 /// Delegate for sticky category section
 class _CategorySectionDelegate extends SliverPersistentHeaderDelegate {
-  final Function(String categoryName, int categoryIndex, String categoryId)? onCategoryTap;
+  final Function(String categoryName, int categoryIndex, String categoryId)?
+      onCategoryTap;
 
   _CategorySectionDelegate({this.onCategoryTap});
 
