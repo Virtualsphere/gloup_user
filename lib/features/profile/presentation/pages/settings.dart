@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -25,9 +26,9 @@ class _SettingsState extends State<Settings> {
       // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
         title: "Settings",
-        centerTitle: false,
+        centerTitle: true,
         onBack: () {
-          Navigator.of(context).pop();
+          GoRouter.of(context).pop();
         },
       ),
       body: SafeArea(
@@ -60,7 +61,7 @@ class _SettingsState extends State<Settings> {
                     context,
                     title: 'Delete Account',
                     submitOnTap: () async {
-                      Navigator.of(context).pop();
+                      GoRouter.of(context).pop();
                       // await deleteUser();
                     },
                   );
@@ -75,9 +76,8 @@ class _SettingsState extends State<Settings> {
                 children: [
                   Text(
                     'Guest User',
-                    style: context.textTheme.displaySmall?.copyWith(
+                    style: context.textTheme.titleSmall?.copyWith(
                       color: context.colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),
@@ -107,7 +107,7 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(width: 4),
                           Text(
                             'Add',
-                            style: context.textTheme.labelLarge?.copyWith(
+                            style: context.textTheme.bodySmall?.copyWith(
                               color: isDarkMode
                                   ? AppColors.black
                                   : AppColors.white,

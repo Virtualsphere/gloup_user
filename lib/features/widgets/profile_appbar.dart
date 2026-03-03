@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -23,6 +24,12 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 40,
       titleSpacing: 10,
       elevation: 0,
+      shape: Border(
+        bottom: BorderSide(
+          color: AppColors.border,
+          width: AppSizes.borderWidthThin,
+        ),
+      ),
       leading: IconButton(
         padding: EdgeInsets.only(left: 16.0),
         icon: Icon(
@@ -34,7 +41,6 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: context.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
           color: isDarkMode ? AppColors.white : AppColors.black,
         ),
       ),

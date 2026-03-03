@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -42,9 +43,9 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
       // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
           title: "Invite & Earn",
-          centerTitle: false,
+          centerTitle: true,
           onBack: () {
-            Navigator.of(context).pop();
+            GoRouter.of(context).pop();
           }),
       body: SafeArea(
         child: Column(

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
@@ -58,9 +59,9 @@ class _MyReviewsState extends State<MyReviews> {
       // backgroundColor: AppColors.background,
       appBar: ProfileAppBar(
           title: "My Reviews",
-          centerTitle: false,
+          centerTitle: true,
           onBack: () {
-            Navigator.of(context).pop();
+            GoRouter.of(context).pop();
           }),
       body: SafeArea(
           child: ListView.builder(

@@ -26,7 +26,7 @@ class ActionBar extends StatelessWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: AppColors.background,
-      centerTitle: false,
+      centerTitle: true,
       elevation: 0,
       leading: isBackButton
           ? Padding(
@@ -64,7 +64,6 @@ class ActionBar extends StatelessWidget {
       title: BodyTextColors(
         title: title,
         fontSize: 20,
-        fontWeight: FontWeight.w500,
         color: AppColors.primary,
         isBodoniModa: false,
       ),
