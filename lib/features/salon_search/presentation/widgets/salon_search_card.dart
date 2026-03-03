@@ -130,6 +130,8 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
+                  width: 100,
+                  height: 100,
                   color: AppColors.primary.withValues(alpha: 0.1),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -306,7 +308,12 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                   widget.categories!.isNotEmpty)
                 const SizedBox(width: AppSizes.spaceM),
               if (widget.categories != null && widget.categories!.isNotEmpty)
-                Expanded(child: _buildCategoryBadges(isDarkMode)),
+                Expanded(
+                  child: Container(
+                  constraints: const BoxConstraints(maxWidth: 190),
+                    child: _buildCategoryBadges(isDarkMode),
+                  ),
+                ),
             ],
           ),
         ],
@@ -420,12 +427,12 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
     final displayCategories = categories.take(2).toList();
     final hasMoreCategories = categories.length > 2;
 
-    return Wrap(
+    return Row(
       spacing: 4,
-      runSpacing: 4,
       children: [
         // Category badges (up to 2)
         ...displayCategories.map((category) => Container(
+        constraints: const BoxConstraints(maxWidth: 70),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingS,
                 vertical: 2,

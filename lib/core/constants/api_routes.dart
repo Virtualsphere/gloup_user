@@ -2,7 +2,7 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'http://172.29.81.222:5678';
+  static const String baseUrl = 'http://192.168.1.2:5678';
   
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl = 'https://v1.gloup.in/images';
@@ -38,6 +38,9 @@ class ApiRoutes {
 
   // Coupons
   static const String getActiveCoupons = '$baseUrl/user/app/v2/get/activecoupons';
+
+  // Map Markers (Clustered)
+  static const String mapMarkersClustered = '$baseUrl/user/app/v2/salons/map-markers-clustered';
 
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {

@@ -74,6 +74,16 @@ import 'package:tressy/features/coupons/domain/repositories/coupon_repository.da
 import 'package:tressy/features/coupons/domain/usecases/get_active_coupons_usecase.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
 
+// Salon Search Feature
+import 'package:tressy/features/salon_search/data/datasources/search_remote_datasource.dart';
+import 'package:tressy/features/salon_search/data/repositories/search_repository_impl.dart';
+import 'package:tressy/features/salon_search/domain/repositories/search_repository.dart';
+import 'package:tressy/features/salon_search/domain/usecases/get_nearby_salons_usecase.dart';
+import 'package:tressy/features/salon_search/domain/usecases/search_salons_usecase.dart';
+import 'package:tressy/features/salon_search/presentation/bloc/search_bloc.dart';
+import 'package:tressy/features/salon_search/domain/usecases/get_clustered_markers_usecase.dart';
+import 'package:tressy/features/salon_search/presentation/bloc/map_markers_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -321,4 +331,45 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<CouponRemoteDataSource>(
     () => CouponRemoteDataSourceImpl(sl()),
   );
+
+  // Salon Search Feature
+  // BLoC - Factory for new instance each time
+  // SearchBloc - ONLY for bottom sheet salon list
+  sl.registerFactory<SearchBloc>(() => SearchBloc(
+        getNearbySalonsUseCase: sl(),
+        searchSalonsUseCase: sl(),
+      ));
+
+  // MapMarkersBloc - ONLY for map markers
+  sl.registerFactory<MapMarkersBloc>(() => MapMarkersBloc(
+        getClusteredMarkersUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<GetNearbySalonsUseCase>(
+    () => GetNearbySalonsUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<SearchSalonsUseCase>(
+    () => SearchSalonsUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<GetClusteredMarkersUseCase>(
+    () => GetClusteredMarkersUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<SearchRemoteDataSource>(
+    () => SearchRemoteDataSourceImpl(
+      homeDataSource: sl(),
+      salonDataSource: sl(),
+      dioClient: sl(),
+    ),
+  );
+
 }
