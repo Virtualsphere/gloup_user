@@ -12,3 +12,13 @@ class GetProfileUseCase {
     return await repository.getProfile();
   }
 }
+
+class UpdateProfileUseCase {
+  final ProfileRepository repository;
+
+  UpdateProfileUseCase(this.repository);
+
+  Future<Either<Failure, ProfileEntity>> call(ProfileEntity profile) async {
+    return repository.updateProfile(profile);
+  }
+}

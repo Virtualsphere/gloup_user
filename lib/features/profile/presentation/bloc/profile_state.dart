@@ -25,6 +25,8 @@ class ProfileLoaded extends ProfileState {
   List<Object?> get props => [profile];
 }
 
+class ProfileUpdating extends ProfileState {}
+
 class ProfileFailure extends ProfileState {
   final String message;
 

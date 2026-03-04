@@ -261,25 +261,27 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<SlotRemoteDataSource>(
     () => SlotRemoteDataSourceImpl(sl()),
   );
+
   // ─── Profile ───────────────────────────────────────
-// Bloc
-
-  sl.registerFactory(
-    () => ProfileBloc(getProfileUseCase: sl()),
-  );
-  // UseCase
-  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
-
-  // Repository
-  sl.registerLazySingleton<ProfileRepository>(
-    () => ProfileRepositoryImpl(sl()),
-  );
-
-  // DataSource
+// DataSource
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(sl()),
+        () => ProfileRemoteDataSourceImpl(sl()),
   );
 
+// Repository
+  sl.registerLazySingleton<ProfileRepository>(
+        () => ProfileRepositoryImpl(sl()),
+  );
+
+// UseCases
+  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+
+// Bloc
+  sl.registerFactory(() => ProfileBloc(
+    getProfileUseCase: sl(),
+    updateProfileUseCase: sl(),
+  ));
   // Guest Feature
   // BLoC - Factory for new instance each time
   sl.registerFactory<GuestBloc>(() => GuestBloc(
