@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
@@ -21,7 +20,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ProfileModel> getProfile() async {
     try {
-      final response = await dioClient.post(
+      final response = await dioClient.get(
         ApiRoutes.getUserProfile,
         options: Options(
           headers: {'userauth': LocalStorageService.accessToken},
@@ -48,41 +47,21 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ProfileModel> updateProfile(ProfileEntity profile) async {
     try {
-      final formData = ProfileModel(
-        id: profile.id,
-        firstname: profile.firstname,
-        lastname: profile.lastname,
-        phone: profile.phone,
-        email: profile.email,
-        dateOfBirth: profile.dateOfBirth,
-        city: profile.city,
-        invitedCode: profile.invitedCode,
-        wallet: profile.wallet,
-        profilePic: profile.profilePic,
-        fullProfilePicUrl: profile.fullProfilePicUrl,
-        gender: profile.gender,
-        country: profile.country,
-        status: profile.status,
-      );
+      final model = ProfileModel.fromEntity(profile);
+      final formData = await model.toFormData();
 
-      debugPrint("Multipart Fields: $formData");
-
-      final response = await dioClient.post(
+      final response = await dioClient.patch(
         ApiRoutes.getUserProfile,
         data: formData,
         options: Options(
           headers: {
             'userauth': LocalStorageService.accessToken,
           },
-          contentType: Headers.multipartFormDataContentType,
         ),
       );
 
       if (response.statusCode == 200) {
-        return ProfileModel.fromJson(
-          response.data['data'],
-          imageBaseUrl: ApiRoutes.imageBaseUrl,
-        );
+        return model;
       } else {
         throw ServerException(
           message: response.data['message'] ?? 'Update failed',

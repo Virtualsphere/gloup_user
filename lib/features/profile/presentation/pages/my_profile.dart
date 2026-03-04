@@ -106,7 +106,9 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   bool get _hasChanges {
-    return firstNameController.text != _initialFirstName ||
+    final bool imageChanged = profileImageNotifier.value != null;
+
+    return imageChanged || firstNameController.text != _initialFirstName ||
         lastNameController.text != _initialLastName ||
         emailController.text != _initialEmail ||
         mobileController.text != _initialMobile ||
@@ -554,9 +556,7 @@ class _MyProfileState extends State<MyProfile> {
     if (currentState is ProfileLoaded) {
       final currentProfile = currentState.profile;
 
-      final File? selectedImage = profileImageNotifier.value;
-
-      final updatedProfileEntity = currentProfile.copyWith(
+      final updatedProfile = currentProfile.copyWith(
         firstname: firstNameController.text.trim(),
         lastname: lastNameController.text.trim(),
         email: emailController.text.trim(),
@@ -564,14 +564,13 @@ class _MyProfileState extends State<MyProfile> {
         dateOfBirth: dateOfBirthController.text.trim(),
         country: countryController.text.trim(),
         gender: _selectedGender,
-        profilePic: selectedImage != null
-            ? selectedImage.path
-            : currentProfile.profilePic,
+        profilePic: profileImageNotifier.value?.path ??
+            currentProfile.profilePic,
       );
 
-      context.read<ProfileBloc>().add(
-            UpdateProfileEvent(updatedProfileEntity),
-          );
+      context
+          .read<ProfileBloc>()
+          .add(UpdateProfileEvent(updatedProfile));
     }
   }
 
@@ -586,6 +585,7 @@ class _MyProfileState extends State<MyProfile> {
         );
         if (croppedFile != null) {
           profileImageNotifier.value = File(croppedFile.path);
+          setState(() {});
         }
       }
     } catch (e) {

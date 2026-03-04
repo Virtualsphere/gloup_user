@@ -1,4 +1,6 @@
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
 
 class ProfileModel extends ProfileEntity {
   const ProfileModel({
@@ -33,7 +35,6 @@ class ProfileModel extends ProfileEntity {
         final cleanBase = imageBaseUrl.endsWith('/')
             ? imageBaseUrl.substring(0, imageBaseUrl.length - 1)
             : imageBaseUrl;
-
         fullProfilePicUrl = '$cleanBase/$imagePath';
       }
     }
@@ -73,67 +74,6 @@ class ProfileModel extends ProfileEntity {
       'status': status,
     };
   }
-}
-
-/*
-import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
-
-class ProfileModel extends ProfileEntity {
-  const ProfileModel({
-    required super.id,
-    required super.firstname,
-    required super.lastname,
-    required super.phone,
-    required super.email,
-    required super.dateOfBirth,
-    required super.city,
-    required super.invitedCode,
-    required super.wallet,
-    required super.profilePic,
-    required super.fullProfilePicUrl,
-    required super.gender,
-    required super.country,
-    required super.status,
-  });
-
-  factory ProfileModel.fromJson(
-      Map<String, dynamic> json, {
-        String? imageBaseUrl,
-      }) {
-    final imagePath = json['profilePic']?.toString() ?? '';
-    String fullProfilePicUrl = '';
-
-    if (imagePath.isNotEmpty) {
-      if (imagePath.startsWith('http')) {
-        fullProfilePicUrl = imagePath;
-      } else if (imageBaseUrl != null && imageBaseUrl.isNotEmpty) {
-        final cleanBase = imageBaseUrl.endsWith('/')
-            ? imageBaseUrl.substring(0, imageBaseUrl.length - 1)
-            : imageBaseUrl;
-
-        fullProfilePicUrl = '$cleanBase/$imagePath';
-      }
-    }
-
-    return ProfileModel(
-      id: json['id'] ?? 0,
-      firstname: json['firstname'] ?? '',
-      lastname: json['lastname'] ?? '',
-      phone: json['phone']  ?? '',
-      email: json['email'] ?? '',
-      dateOfBirth: json['date_of_birth'] ?? '',
-      city: json['city'] ?? '',
-      invitedCode: json['invited_code'] ?? '',
-      wallet: json['wallet'] ?? '',
-      profilePic: imagePath, // raw path
-      fullProfilePicUrl: fullProfilePicUrl, // full url for UI
-      gender: json['gender'] ?? '',
-      country: json['country'] ?? '',
-      status: json['status'] ?? '',
-    );
-  }
 
   Future<FormData> toFormData() async {
     final formData = FormData();
@@ -146,25 +86,42 @@ class ProfileModel extends ProfileEntity {
       MapEntry("email", email),
       MapEntry("date_of_birth", dateOfBirth),
       MapEntry("city", city),
+      MapEntry("invited_code", invitedCode),
+      MapEntry("wallet", wallet.toString()),
       MapEntry("gender", gender),
       MapEntry("country", country),
       MapEntry("status", status),
     ]);
 
     if (profilePic.isNotEmpty &&
-        !profilePic.startsWith('http') &&
         File(profilePic).existsSync()) {
       formData.files.add(
         MapEntry(
           "profilePic",
-          await MultipartFile.fromFile(
-            profilePic,
-            filename: profilePic.split('/').last,
-          ),
+          await MultipartFile.fromFile(profilePic),
         ),
       );
     }
 
     return formData;
   }
-}*/
+
+  factory ProfileModel.fromEntity(ProfileEntity entity) {
+    return ProfileModel(
+      id: entity.id,
+      firstname: entity.firstname,
+      lastname: entity.lastname,
+      phone: entity.phone,
+      email: entity.email,
+      dateOfBirth: entity.dateOfBirth,
+      city: entity.city,
+      invitedCode: entity.invitedCode,
+      wallet: entity.wallet,
+      profilePic: entity.profilePic,
+      fullProfilePicUrl: entity.fullProfilePicUrl,
+      gender: entity.gender,
+      country: entity.country,
+      status: entity.status,
+    );
+  }
+}
