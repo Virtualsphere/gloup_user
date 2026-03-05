@@ -5,6 +5,7 @@ class ProfileEntity extends Equatable {
   final String firstname;
   final String lastname;
   final int phone;
+  final int age;
   final String email;
   final String dateOfBirth;
   final String city;
@@ -21,6 +22,7 @@ class ProfileEntity extends Equatable {
     required this.firstname,
     required this.lastname,
     required this.phone,
+    required this.age,
     required this.email,
     required this.dateOfBirth,
     required this.city,
@@ -39,6 +41,7 @@ class ProfileEntity extends Equatable {
     String? firstname,
     String? lastname,
     int? phone,
+    int? age,
     String? email,
     String? dateOfBirth,
     String? city,
@@ -51,6 +54,7 @@ class ProfileEntity extends Equatable {
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
       phone: phone ?? this.phone,
+      age: age ?? this.age,
       email: email ?? this.email,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       city: city ?? this.city,
@@ -70,6 +74,7 @@ class ProfileEntity extends Equatable {
     firstname,
     lastname,
     phone,
+    age,
     email,
     dateOfBirth,
     city,

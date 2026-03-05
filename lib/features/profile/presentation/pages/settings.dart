@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/add_person_bottom_sheet.dart';
@@ -10,19 +16,38 @@ import 'package:tressy/features/profile/presentation/pages/support.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_dialogues.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class Settings extends StatelessWidget {
+  final ProfileEntity profile;
+
+  const Settings({
+    super.key,
+    required this.profile,
+  });
 
   @override
-  State<Settings> createState() => _SettingsState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) =>
+      sl<GuestBloc>()
+        ..add(const LoadGuestsEvent()),
+      child: SettingsView(profile: profile),
+    );
+  }
 }
 
-class _SettingsState extends State<Settings> {
+class SettingsView extends StatefulWidget {
+  final ProfileEntity profile;
+  const SettingsView({super.key, required this.profile});
+
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      // backgroundColor: context.colorScheme.surface,
       appBar: ProfileAppBar(
         title: "Settings",
         centerTitle: false,
@@ -35,9 +60,11 @@ class _SettingsState extends State<Settings> {
           children: [
             const SizedBox(height: AppSizes.paddingM),
             ProfileDeleteCard(
-              name: "John Doe",
-              gender: "Female",
-              imageUrl: "https://i.pravatar.cc/300",
+              name: widget.profile.fullName,
+              gender: widget.profile.gender,
+              imageUrl: widget.profile.fullProfilePicUrl,
+              age: 10,
+              phone: "${widget.profile.phone}",
             ),
             SizedBox(
               height: AppSizes.paddingM,
@@ -75,9 +102,8 @@ class _SettingsState extends State<Settings> {
                 children: [
                   Text(
                     'Guest User',
-                    style: context.textTheme.displaySmall?.copyWith(
+                    style: context.textTheme.bodySmall?.copyWith(
                       color: context.colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),
@@ -124,18 +150,46 @@ class _SettingsState extends State<Settings> {
             ),
             const SizedBox(height: AppSizes.padding),
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: ProfileDeleteCard(
-                      name: "John Doe",
-                      gender: "Female",
-                      imageUrl: "https://i.pravatar.cc/300",
-                      showMenuButton: true,
-                    ),
+              child: BlocBuilder<GuestBloc, GuestState>(
+                builder: (context, state) {
+
+                  if (state.isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (state.errorMessage != null) {
+                    return Center(
+                      child: Text(state.errorMessage!),
+                    );
+                  }
+
+                  final guests = state.guests;
+
+                  if (guests.isEmpty) {
+                    return const Center(
+                      child: Text("No guests added"),
+                    );
+                  }
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: guests.length,
+                    itemBuilder: (context, index) {
+                      final guest = guests[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: ProfileDeleteCard(
+                          name: guest.name,
+                          gender: guest.gender,
+                          imageUrl: "",
+                          age: guest.age,
+                          phone: guest.phone,
+                          showMenuButton: true,
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -152,6 +206,8 @@ class ProfileDeleteCard extends StatelessWidget {
   final String gender;
   final String? imageUrl;
   final bool showMenuButton;
+  final int age;
+  final String phone;
   final VoidCallback? onMenuTap;
 
   const ProfileDeleteCard({
@@ -159,6 +215,8 @@ class ProfileDeleteCard extends StatelessWidget {
     required this.name,
     required this.gender,
     this.imageUrl,
+    required this.age,
+    required this.phone,
     this.showMenuButton = false,
     this.onMenuTap,
   });
@@ -196,11 +254,18 @@ class ProfileDeleteCard extends StatelessWidget {
                         size: 28,
                       )
                     : ClipOval(
-                        child: Image.network(
-                          imageUrl!,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                  child: Image.network(
+                    imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.image_outlined,
+                        color: AppColors.border,
+                        size: 28.0,
+                      );
+                    },
+                  ),
+                ),
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -211,10 +276,9 @@ class ProfileDeleteCard extends StatelessWidget {
                       name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.displaySmall?.copyWith(
+                      style: context.textTheme.bodySmall?.copyWith(
                         color: context.colorScheme.onSurface,
                         fontSize: AppSizes.font,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -231,10 +295,9 @@ class ProfileDeleteCard extends StatelessWidget {
                             gender,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: context.textTheme.displaySmall?.copyWith(
+                            style: context.textTheme.bodySmall?.copyWith(
                               color: context.colorScheme.onSurface,
                               fontSize: AppSizes.font,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -253,10 +316,10 @@ class ProfileDeleteCard extends StatelessWidget {
                       onTap: () {
                         showEditPersonBottomSheet(
                           context,
-                          initialName: 'John Doe',
-                          initialAge: 28,
-                          initialGender: 'Male',
-                          initialPhone: null,
+                          initialName: name,
+                          initialAge: age,
+                          initialGender: gender,
+                          initialPhone: phone,
                           onSave: (result) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

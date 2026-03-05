@@ -138,7 +138,7 @@ class ProfileListTile extends StatelessWidget {
       ),
       title:  Text(
         title.capitalize(),
-        style: context.textTheme.displaySmall?.copyWith(
+        style: context.textTheme.bodySmall?.copyWith(
           color: isDarkMode ? AppColors.white : AppColors.black,
           fontSize: 16,
           fontWeight: FontWeight.w300,

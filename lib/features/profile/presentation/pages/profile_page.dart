@@ -170,7 +170,7 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.settings_outlined,
                         label: 'Settings',
                         onTap: () {
-                          context.pushNamed(RouteNames.settings);
+                          context.pushNamed(RouteNames.settings, extra: profile);
                         },
                       ),
                     ],
@@ -197,15 +197,15 @@ class ProfilePage extends StatelessWidget {
                             submitOnTap: () async {
                               // Clear all user data
                               await LocalStorageService.clearAll();
-                              
+
                               // Set onboarding as completed so it doesn't show again
                               await LocalStorageService.setOnboardingCompleted(true);
-                              
+
                               // Pop the dialog first
                               if (context.mounted) {
                                 Navigator.of(context).pop();
                               }
-                              
+
                               // Navigate to login page and clear stack
                               if (context.mounted) {
                                 context.go('/login');
@@ -507,9 +507,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: AppSizes.paddingL),
-                
+
                 // Wallet shimmer
                 Container(
                   height: 170,
@@ -518,9 +518,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                
+
                 const SizedBox(height: AppSizes.paddingL),
-                
+
                 // Menu items shimmer
                 Container(
                   decoration: BoxDecoration(
@@ -568,9 +568,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                     }),
                   ),
                 ),
-                
+
                 const SizedBox(height: AppSizes.paddingL),
-                
+
                 // Support & Logout shimmer
                 Container(
                   decoration: BoxDecoration(

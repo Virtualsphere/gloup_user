@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
@@ -256,7 +257,10 @@ class AppRouter {
     GoRoute(
       path: '/settings',
       name: RouteNames.settings,
-      builder: (context, state) => Settings(),
+      builder: (context, state) {
+        final profile = state.extra as ProfileEntity;
+        return Settings(profile: profile);
+      },
     ),
 
     //Profile
