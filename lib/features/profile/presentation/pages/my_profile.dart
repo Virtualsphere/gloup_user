@@ -40,6 +40,7 @@ class _MyProfileState extends State<MyProfile> {
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
 
   String _selectedGender = 'Not Selected';
+  int? calculatedAge;
 
   // Track initial values to detect changes
   String _initialFirstName = '';
@@ -106,7 +107,9 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   bool get _hasChanges {
-    return firstNameController.text != _initialFirstName ||
+    final bool imageChanged = profileImageNotifier.value != null;
+
+    return imageChanged || firstNameController.text != _initialFirstName ||
         lastNameController.text != _initialLastName ||
         emailController.text != _initialEmail ||
         mobileController.text != _initialMobile ||
@@ -299,8 +302,9 @@ class _MyProfileState extends State<MyProfile> {
                                   final selectedDate = await pickDate(context);
                                   if (selectedDate != null) {
                                     dateOfBirthController.text =
-                                        DateFormat('dd/MM/yyyy')
+                                        DateFormat('dd-MM-yyyy')
                                             .format(selectedDate);
+                                    calculatedAge = calculateAge(selectedDate);
                                     setState(() {});
                                   }
                                 },
@@ -554,24 +558,22 @@ class _MyProfileState extends State<MyProfile> {
     if (currentState is ProfileLoaded) {
       final currentProfile = currentState.profile;
 
-      final File? selectedImage = profileImageNotifier.value;
-
-      final updatedProfileEntity = currentProfile.copyWith(
+      final updatedProfile = currentProfile.copyWith(
         firstname: firstNameController.text.trim(),
         lastname: lastNameController.text.trim(),
         email: emailController.text.trim(),
         phone: int.tryParse(mobileController.text.trim()),
+        age: calculatedAge,
         dateOfBirth: dateOfBirthController.text.trim(),
         country: countryController.text.trim(),
         gender: _selectedGender,
-        profilePic: selectedImage != null
-            ? selectedImage.path
-            : currentProfile.profilePic,
+        profilePic: profileImageNotifier.value?.path ??
+            currentProfile.profilePic,
       );
 
-      context.read<ProfileBloc>().add(
-            UpdateProfileEvent(updatedProfileEntity),
-          );
+      context
+          .read<ProfileBloc>()
+          .add(UpdateProfileEvent(updatedProfile));
     }
   }
 
@@ -586,11 +588,25 @@ class _MyProfileState extends State<MyProfile> {
         );
         if (croppedFile != null) {
           profileImageNotifier.value = File(croppedFile.path);
+          setState(() {});
         }
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
     }
+  }
+
+  //calculate age:-
+  int calculateAge(DateTime birthDate) {
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
   }
 
   Future<DateTime?> pickDate(BuildContext context) async {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tressy/features/widgets/custom_safe_area.dart';
 import 'package:tressy/features/widgets/custom_snackbar.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -36,7 +35,6 @@ class _TermsConditionsState extends State<TermsConditions> {
             setState(() => isLoading = false);
           },
           onNavigationRequest: (NavigationRequest request) {
-            // Prevent redirect loop (optional)
             if (request.url
                 .startsWith('https://gloup.in/terms-and-conditions')) {
               return NavigationDecision.navigate;
@@ -50,22 +48,18 @@ class _TermsConditionsState extends State<TermsConditions> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: isLoading
+    return Scaffold(
+      appBar: ProfileAppBar(
+        title: "Terms Conditions",
+        centerTitle: true,
+        onBack: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      body: isLoading
           ? const CustomLoadingIndicator()
-          : Column(
-              children: [
-                ProfileAppBar(
-                  title: "",
-                  centerTitle: false,
-                  onBack: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Expanded(
-                  child: WebViewWidget(controller: controller),
-                ),
-              ],
+          : SafeArea(
+              child: WebViewWidget(controller: controller),
             ),
     );
   }
