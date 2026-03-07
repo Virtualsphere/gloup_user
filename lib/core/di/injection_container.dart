@@ -415,7 +415,7 @@ Future<void> initializeDependencies() async {
   );
 
   // Appointments Feature
-  sl.registerFactory<AppointmentsBloc>(() => AppointmentsBloc(
+  sl.registerLazySingleton<AppointmentsBloc>(() => AppointmentsBloc(
         getAllAppointmentsUseCase: sl(),
       ));
 

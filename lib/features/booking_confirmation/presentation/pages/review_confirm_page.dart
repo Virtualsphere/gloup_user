@@ -37,6 +37,8 @@ import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dart';
+import 'package:tressy/features/bookings/presentation/bloc/appointments_event.dart';
 import 'package:tressy/shared/widgets/payment_success_dialog.dart';
 import 'package:tressy/shared/widgets/payment_failed_dialog.dart';
 
@@ -249,6 +251,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
               context,
               paymentId: _lastPaymentId ?? '',
               onViewBooking: () {
+                sl<AppointmentsBloc>().add(const LoadAppointmentsEvent());
                 GoRouter.of(context).go(RouteNames.bookings);
               },
             );

@@ -9,6 +9,7 @@ import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dar
 import 'package:tressy/features/bookings/presentation/bloc/appointments_event.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/features/bookings/presentation/widgets/bookings_shimmer.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,7 +28,7 @@ class _BookingsPageState extends State<BookingsPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _appointmentsBloc = sl<AppointmentsBloc>();
     _appointmentsBloc.add(const LoadAppointmentsEvent());
   }
@@ -35,7 +36,6 @@ class _BookingsPageState extends State<BookingsPage>
   @override
   void dispose() {
     _tabController.dispose();
-    _appointmentsBloc.close();
     super.dispose();
   }
 
@@ -153,6 +153,7 @@ class _BookingsPageState extends State<BookingsPage>
               tabs: const [
                 Tab(text: 'Upcoming'),
                 Tab(text: 'Completed'),
+                Tab(text: 'Past'),
               ],
             ),
           ),
@@ -162,7 +163,7 @@ class _BookingsPageState extends State<BookingsPage>
             child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
               builder: (context, state) {
                 if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return BookingsShimmer.bookingListShimmer(context);
                 }
                 if (state.errorMessage != null) {
                   return Center(
@@ -197,11 +198,21 @@ class _BookingsPageState extends State<BookingsPage>
                   );
                 }
 
+                final booked = state.upcoming
+                    .where((a) =>
+                        a.appointmentStatus.toLowerCase() == 'booked')
+                    .toList();
+                final completed = state.upcoming
+                    .where((a) =>
+                        a.appointmentStatus.toLowerCase() == 'completed')
+                    .toList();
+
                 return TabBarView(
                   controller: _tabController,
                   children: [
-                    _buildList(state.upcoming, 'upcoming', isDarkMode),
-                    _buildList(state.past, 'completed', isDarkMode),
+                    _buildList(booked, 'upcoming', isDarkMode),
+                    _buildList(completed, 'completed', isDarkMode),
+                    _buildList(state.past, 'past', isDarkMode),
                   ],
                 );
               },
@@ -249,272 +260,327 @@ class _BookingsPageState extends State<BookingsPage>
     );
   }
 
-  Widget _buildBookingCard(AppointmentEntity appointment, String tabStatus, bool isDarkMode) {
-    final status = tabStatus;
+  Widget _buildBookingCard(
+      AppointmentEntity appointment, String tabStatus, bool isDarkMode) {
+    final Color statusColor;
+    final Color statusBgColor;
+    final String statusText;
 
-    Color statusColor;
-    Color statusBgColor;
-    String statusText;
-
-    switch (status) {
+    switch (tabStatus) {
       case 'upcoming':
-        statusColor = Colors.blue;
-        statusBgColor = Colors.blue.withValues(alpha: 0.1);
+        statusColor = const Color(0xFF2979FF);
+        statusBgColor = const Color(0xFF2979FF).withValues(alpha: 0.12);
         statusText = 'Upcoming';
         break;
       case 'completed':
-        statusColor = Colors.green;
-        statusBgColor = Colors.green.withValues(alpha: 0.1);
+        statusColor = const Color(0xFF00C853);
+        statusBgColor = const Color(0xFF00C853).withValues(alpha: 0.12);
         statusText = 'Completed';
         break;
-      default:
+      default: // past
         statusColor = AppColors.textSecondary;
-        statusBgColor = AppColors.textSecondary.withValues(alpha: 0.1);
-        statusText = status;
+        statusBgColor = AppColors.textSecondary.withValues(alpha: 0.12);
+        statusText = 'Past';
     }
 
     final imageUrl = appointment.images.isNotEmpty
         ? '${ApiRoutes.imageBaseUrl}/${appointment.images.first}'
         : null;
 
+    final address = [appointment.addressLine1, appointment.city]
+        .where((s) => s.isNotEmpty)
+        .join(', ');
+
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSizes.paddingL),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.border,
-          width: 1,
+          color: isDarkMode
+              ? AppColors.borderDark.withValues(alpha: 0.6)
+              : AppColors.borderColor,
         ),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? AppColors.black.withValues(alpha: 0.1)
-                : AppColors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.black.withValues(alpha: isDarkMode ? 0.18 : 0.07),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Salon Info Header
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingM),
-            child: Row(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Banner image with gradient overlay ──
+            Stack(
               children: [
-                // Salon Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                SizedBox(
+                  height: 130,
+                  width: double.infinity,
                   child: imageUrl != null
                       ? Image.network(
                           imageUrl,
-                          width: 60,
-                          height: 60,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholderImage(),
+                          errorBuilder: (_, __, ___) => _bannerPlaceholder(isDarkMode),
                         )
-                      : _placeholderImage(),
+                      : _bannerPlaceholder(isDarkMode),
                 ),
-                const SizedBox(width: AppSizes.spaceM),
-                // Salon Details
-                Expanded(
+                // Gradient overlay
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.65),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Salon name + address on image
+                Positioned(
+                  left: 14,
+                  right: 14,
+                  bottom: 12,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         appointment.salonName,
-                        style: context.textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black54,
+                              blurRadius: 4,
+                            ),
+                          ],
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 14,
-                            color: isDarkMode
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              [
-                                appointment.addressLine1,
-                                appointment.city,
-                              ]
-                                  .where((s) => s.isNotEmpty)
-                                  .join(', '),
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: isDarkMode
-                                    ? AppColors.textSecondaryDark
-                                    : AppColors.textSecondary,
+                      if (address.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on,
+                                size: 12, color: Colors.white70),
+                            const SizedBox(width: 3),
+                            Expanded(
+                              child: Text(
+                                address,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 11,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Color(0xFFFFA500),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            appointment.averageRating.toStringAsFixed(1),
-                            style: context.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          Divider(height: 1, thickness: 1, color: AppColors.border),
-
-          // Booking Details
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Booking ID & Status
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Booking ID: #${appointment.id}',
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                // Status badge top-right
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: statusBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: statusColor.withValues(alpha: 0.4)),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.paddingS,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusBgColor,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusS),
-                      ),
-                      child: Text(
-                        statusText,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSizes.spaceM),
-
-                // Date & Time
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 16,
-                      color: isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _formatDate(appointment.bookingDate),
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: AppSizes.spaceL),
-                    Icon(
-                      Icons.access_time,
-                      size: 16,
-                      color: isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${_formatTime(appointment.slotFrom)} - ${_formatTime(appointment.slotTo)}',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSizes.spaceM),
-
-                // Services
-                Text(
-                  'Services:',
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: AppSizes.spaceS),
-                ...appointment.items.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: Text(
-                            '• ${item.serviceName}',
-                            style: context.textTheme.bodySmall,
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
                           ),
                         ),
+                        const SizedBox(width: 5),
                         Text(
-                          '₹${item.amount.toInt()}',
-                          style: context.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
+                          statusText,
+                          style: TextStyle(
+                            color: statusColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
                     ),
-                  );
-                }),
-                const SizedBox(height: AppSizes.spaceM),
-
-                // Total Amount
-                Container(
-                  padding: const EdgeInsets.all(AppSizes.paddingS),
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.primaryDark.withValues(alpha: 0.1)
-                        : AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
-                  child: Row(
+                ),
+                // Rating badge top-left
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star_rounded,
+                            size: 13, color: Color(0xFFFFD600)),
+                        const SizedBox(width: 3),
+                        Text(
+                          appointment.averageRating.toStringAsFixed(1),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // ── Booking info ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Booking ID row
+                  Row(
+                    children: [
+                      Icon(Icons.receipt_long_outlined,
+                          size: 14,
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Booking #${appointment.id}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Date & Time pills
+                  Row(
+                    children: [
+                      _infoPill(
+                        icon: Icons.calendar_today_outlined,
+                        label: _formatDate(appointment.bookingDate),
+                        isDarkMode: isDarkMode,
+                      ),
+                      const SizedBox(width: 8),
+                      _infoPill(
+                        icon: Icons.access_time_rounded,
+                        label:
+                            '${_formatTime(appointment.slotFrom)} – ${_formatTime(appointment.slotTo)}',
+                        isDarkMode: isDarkMode,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Services header
+                  Text(
+                    'Services',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Service rows
+                  ...appointment.items.map((item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: isDarkMode
+                                    ? AppColors.primaryDark
+                                    : AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                item.serviceName,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: isDarkMode
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '₹${item.amount.toInt()}',
+                              style: context.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: isDarkMode
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+
+                  const SizedBox(height: 10),
+
+                  // Divider + Total
+                  Divider(
+                      color: isDarkMode
+                          ? AppColors.dividerDark
+                          : AppColors.divider,
+                      height: 1),
+                  const SizedBox(height: 10),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Paid Amount',
+                        'Total Paid',
                         style: context.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           color: isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                         ),
                       ),
                       Text(
@@ -528,39 +594,83 @@ class _BookingsPageState extends State<BookingsPage>
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 14),
+                ],
+              ),
             ),
-          ),
 
-          // Directions Button
-          Container(
-            padding: const EdgeInsets.all(AppSizes.paddingM),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: AppColors.border, width: 1),
+            // ── Directions button ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _openMapsDirections(
+                    appointment.latitude,
+                    appointment.longitude,
+                    appointment.salonName,
+                  ),
+                  icon: const Icon(Icons.directions_outlined, size: 18),
+                  label: const Text('Get Directions'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode
+                        ? AppColors.primaryDark
+                        : AppColors.primary,
+                    foregroundColor: isDarkMode
+                        ? AppColors.black
+                        : AppColors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               ),
             ),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _openMapsDirections(
-                  appointment.latitude,
-                  appointment.longitude,
-                  appointment.salonName,
-                ),
-                icon: const Icon(Icons.directions, size: 18),
-                label: const Text('Get Directions'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor:
-                      isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                  side: BorderSide(
-                    color:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoPill({
+    required IconData icon,
+    required String label,
+    required bool isDarkMode,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? AppColors.primaryDark.withValues(alpha: 0.08)
+            : AppColors.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDarkMode
+              ? AppColors.borderDark.withValues(alpha: 0.5)
+              : AppColors.borderColor,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 13,
+            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
             ),
           ),
         ],
@@ -568,12 +678,20 @@ class _BookingsPageState extends State<BookingsPage>
     );
   }
 
-  Widget _placeholderImage() {
+  Widget _bannerPlaceholder(bool isDarkMode) {
     return Container(
-      width: 60,
-      height: 60,
-      color: AppColors.primary.withValues(alpha: 0.1),
-      child: Icon(Icons.store, color: AppColors.primary, size: 30),
+      color: isDarkMode
+          ? AppColors.primaryDark.withValues(alpha: 0.08)
+          : AppColors.primary.withValues(alpha: 0.06),
+      child: Center(
+        child: Icon(
+          Icons.storefront_outlined,
+          size: 48,
+          color: isDarkMode
+              ? AppColors.primaryDark.withValues(alpha: 0.3)
+              : AppColors.primary.withValues(alpha: 0.25),
+        ),
+      ),
     );
   }
 }

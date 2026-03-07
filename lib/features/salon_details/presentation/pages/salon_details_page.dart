@@ -437,46 +437,46 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           ),
                           const SizedBox(width: AppSizes.spaceS),
                           // Favorite button
-                          Container(
-                            decoration: BoxDecoration(
-                              color: _isCollapsed
-                                  ? Colors.transparent
-                                  : AppColors.black.withValues(alpha: 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child:
-                                BlocBuilder<SalonDetailBloc, SalonDetailState>(
-                              builder: (context, state) {
-                                return IconButton(
-                                  padding:
-                                      const EdgeInsets.all(AppSizes.paddingXS),
-                                  constraints: const BoxConstraints(),
-                                  icon: SvgPicture.asset(
-                                    state.isFavorite
-                                        ? 'assets/icons/ic_heart_fill.svg'
-                                        : 'assets/icons/ic_heart.svg',
-                                    width: AppSizes.iconS,
-                                    height: AppSizes.iconS,
-                                    colorFilter: ColorFilter.mode(
-                                      state.isFavorite
-                                          ? Colors.red
-                                          : (_isCollapsed
-                                              ? (isDarkMode
-                                                  ? AppColors.white
-                                                  : AppColors.black)
-                                              : AppColors.white),
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    context
-                                        .read<SalonDetailBloc>()
-                                        .add(const ToggleFavoriteEvent());
-                                  },
-                                );
-                              },
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     color: _isCollapsed
+                          //         ? Colors.transparent
+                          //         : AppColors.black.withValues(alpha: 0.5),
+                          //     shape: BoxShape.circle,
+                          //   ),
+                          //   child:
+                          //       BlocBuilder<SalonDetailBloc, SalonDetailState>(
+                          //     builder: (context, state) {
+                          //       return IconButton(
+                          //         padding:
+                          //             const EdgeInsets.all(AppSizes.paddingXS),
+                          //         constraints: const BoxConstraints(),
+                          //         icon: SvgPicture.asset(
+                          //           state.isFavorite
+                          //               ? 'assets/icons/ic_heart_fill.svg'
+                          //               : 'assets/icons/ic_heart.svg',
+                          //           width: AppSizes.iconS,
+                          //           height: AppSizes.iconS,
+                          //           colorFilter: ColorFilter.mode(
+                          //             state.isFavorite
+                          //                 ? Colors.red
+                          //                 : (_isCollapsed
+                          //                     ? (isDarkMode
+                          //                         ? AppColors.white
+                          //                         : AppColors.black)
+                          //                     : AppColors.white),
+                          //             BlendMode.srcIn,
+                          //           ),
+                          //         ),
+                          //         onPressed: () {
+                          //           context
+                          //               .read<SalonDetailBloc>()
+                          //               .add(const ToggleFavoriteEvent());
+                          //         },
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
