@@ -268,18 +268,18 @@ class _BookingsPageState extends State<BookingsPage>
 
     switch (tabStatus) {
       case 'upcoming':
-        statusColor = const Color(0xFF2979FF);
-        statusBgColor = const Color(0xFF2979FF).withValues(alpha: 0.12);
+        statusColor = AppColors.white;
+        statusBgColor = AppColors.info;
         statusText = 'Upcoming';
         break;
       case 'completed':
-        statusColor = const Color(0xFF00C853);
-        statusBgColor = const Color(0xFF00C853).withValues(alpha: 0.12);
+        statusColor = AppColors.white;
+        statusBgColor =  AppColors.success;
         statusText = 'Completed';
         break;
       default: // past
-        statusColor = AppColors.textSecondary;
-        statusBgColor = AppColors.textSecondary.withValues(alpha: 0.12);
+        statusColor = AppColors.white;
+        statusBgColor = AppColors.textSecondary;
         statusText = 'Past';
     }
 
@@ -401,8 +401,6 @@ class _BookingsPageState extends State<BookingsPage>
                     decoration: BoxDecoration(
                       color: statusBgColor,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: statusColor.withValues(alpha: 0.4)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
