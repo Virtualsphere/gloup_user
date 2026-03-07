@@ -27,9 +27,7 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-      sl<GuestBloc>()
-        ..add(const LoadGuestsEvent()),
+      create: (_) => sl<GuestBloc>()..add(const LoadGuestsEvent()),
       child: SettingsView(profile: profile),
     );
   }
@@ -37,6 +35,7 @@ class Settings extends StatelessWidget {
 
 class SettingsView extends StatefulWidget {
   final ProfileEntity profile;
+
   const SettingsView({super.key, required this.profile});
 
   @override
@@ -65,6 +64,7 @@ class _SettingsViewState extends State<SettingsView> {
               imageUrl: widget.profile.fullProfilePicUrl,
               age: 10,
               phone: "${widget.profile.phone}",
+              profileImage: true,
             ),
             SizedBox(
               height: AppSizes.paddingM,
@@ -152,7 +152,6 @@ class _SettingsViewState extends State<SettingsView> {
             Expanded(
               child: BlocBuilder<GuestBloc, GuestState>(
                 builder: (context, state) {
-
                   if (state.isLoading) {
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -208,6 +207,7 @@ class ProfileDeleteCard extends StatelessWidget {
   final bool showMenuButton;
   final int age;
   final String phone;
+  final bool profileImage;
   final VoidCallback? onMenuTap;
 
   const ProfileDeleteCard({
@@ -218,6 +218,7 @@ class ProfileDeleteCard extends StatelessWidget {
     required this.age,
     required this.phone,
     this.showMenuButton = false,
+    this.profileImage = false,
     this.onMenuTap,
   });
 
@@ -240,34 +241,36 @@ class ProfileDeleteCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                width: 65,
-                height: 65,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  shape: BoxShape.circle,
-                ),
-                child: imageUrl == null || imageUrl!.isEmpty
-                    ? const Icon(
-                        Icons.image_outlined,
-                        color: Colors.grey,
-                        size: 28,
-                      )
-                    : ClipOval(
-                  child: Image.network(
-                    imageUrl ?? '',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.image_outlined,
-                        color: AppColors.border,
-                        size: 28.0,
-                      );
-                    },
+              if (profileImage == true) ...[
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
                   ),
+                  child: imageUrl == null || imageUrl!.isEmpty
+                      ? const Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey,
+                          size: 28,
+                        )
+                      : ClipOval(
+                          child: Image.network(
+                            imageUrl ?? '',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.image_outlined,
+                                color: AppColors.border,
+                                size: 28.0,
+                              );
+                            },
+                          ),
+                        ),
                 ),
-              ),
-              const SizedBox(width: 15),
+                const SizedBox(width: 15),
+              ],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,8 +287,12 @@ class ProfileDeleteCard extends StatelessWidget {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.wc,
+                        Icon(
+                          gender.toLowerCase() == 'male'
+                              ? Icons.male
+                              : gender.toLowerCase() == 'female'
+                                  ? Icons.female
+                                  : Icons.wc,
                           size: 18,
                           color: AppColors.info,
                         ),

@@ -146,13 +146,13 @@ class ProfilePage extends StatelessWidget {
                           context.pushNamed(RouteNames.profile);
                         },
                       ),
-                      _MenuItem(
+                     /* _MenuItem(
                         icon: Icons.star_border,
                         label: 'My Reviews',
                         onTap: () {
                           context.pushNamed(RouteNames.reviews);
                         },
-                      ),
+                      ),*/
                       _MenuItem(
                         icon: Icons.person_add_alt_1_outlined,
                         label: 'Invite & Earn',
@@ -248,7 +248,7 @@ class WalletBalanceContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 170,
+      height: 120,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -301,7 +301,7 @@ class WalletBalanceContainer extends StatelessWidget {
                   ],
                 ),
                 if (isViewWalletButton) ...{
-                  GestureDetector(
+                  /*GestureDetector(
                     onTap: viewWalletOnTap,
                     child: Container(
                       height: 32,
@@ -323,7 +323,7 @@ class WalletBalanceContainer extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
+                  )*/
                 } else ...{
                   Padding(
                     padding: const EdgeInsets.only(right: 60),

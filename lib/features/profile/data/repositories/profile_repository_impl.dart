@@ -10,7 +10,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   ProfileRepositoryImpl(this.dataSource);
 
-  //get profile data:-
+  ///get profile data:-
   @override
   Future<Either<Failure, ProfileEntity>> getProfile() async {
     try {
@@ -29,7 +29,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
-  //update profile date:-
+  ///update profile date:-
   @override
   Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile) async {
     try {

@@ -16,7 +16,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   ProfileRemoteDataSourceImpl(this.dioClient);
 
-  //get profile:-
+  ///get profile:-
   @override
   Future<ProfileModel> getProfile() async {
     try {
@@ -43,7 +43,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
   }
 
-  //update profile:-
+  ///update profile:-
   @override
   Future<ProfileModel> updateProfile(ProfileEntity profile) async {
     try {
