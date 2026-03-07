@@ -3,6 +3,7 @@ import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/domain/repositories/profile_repository.dart';
 
+///get profile:-
 class GetProfileUseCase {
   final ProfileRepository repository;
 
@@ -13,6 +14,7 @@ class GetProfileUseCase {
   }
 }
 
+///update profile:-
 class UpdateProfileUseCase {
   final ProfileRepository repository;
 
