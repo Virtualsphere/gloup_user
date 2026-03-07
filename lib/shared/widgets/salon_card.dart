@@ -10,7 +10,6 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart'
 import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 
 class SalonCard extends StatefulWidget {

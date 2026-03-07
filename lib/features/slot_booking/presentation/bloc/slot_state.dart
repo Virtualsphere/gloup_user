@@ -5,6 +5,7 @@ class SlotState extends Equatable {
   final bool isLoading;
   final List<SlotEntity> slots;
   final String? selectedSlotTime;
+  final int? selectedSlotId;
   final String? errorMessage;
   final String? currentDate;
   final int? currentSalonId;
@@ -13,6 +14,7 @@ class SlotState extends Equatable {
     this.isLoading = false,
     this.slots = const [],
     this.selectedSlotTime,
+    this.selectedSlotId,
     this.errorMessage,
     this.currentDate,
     this.currentSalonId,
@@ -29,6 +31,7 @@ class SlotState extends Equatable {
       isLoading: true,
       slots: slots,
       selectedSlotTime: selectedSlotTime,
+      selectedSlotId: selectedSlotId,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
     );
@@ -44,6 +47,7 @@ class SlotState extends Equatable {
       isLoading: false,
       slots: slots,
       selectedSlotTime: selectedSlotTime,
+      selectedSlotId: selectedSlotId,
       currentDate: date,
       currentSalonId: salonId,
     );
@@ -55,6 +59,7 @@ class SlotState extends Equatable {
       isLoading: false,
       slots: slots,
       selectedSlotTime: selectedSlotTime,
+      selectedSlotId: selectedSlotId,
       errorMessage: message,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
@@ -62,11 +67,12 @@ class SlotState extends Equatable {
   }
 
   /// Update selected slot
-  SlotState copyWithSelectedSlot(String? time) {
+  SlotState copyWithSelectedSlot(String? time, int? slotId) {
     return SlotState(
       isLoading: isLoading,
       slots: slots,
       selectedSlotTime: time,
+      selectedSlotId: slotId,
       errorMessage: errorMessage,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
@@ -89,6 +95,7 @@ class SlotState extends Equatable {
         isLoading,
         slots,
         selectedSlotTime,
+        selectedSlotId,
         errorMessage,
         currentDate,
         currentSalonId,

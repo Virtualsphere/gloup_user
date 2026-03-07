@@ -268,7 +268,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       bottomNavigationBar: BlocBuilder<SlotBloc, SlotState>(
         builder: (context, state) {
           return state.hasSelectedSlot
-              ? _buildBottomBar(context, isDarkMode, state.selectedSlotTime!)
+              ? _buildBottomBar(context, isDarkMode, state.selectedSlotTime!, state.selectedSlotId)
               : const SizedBox.shrink();
         },
       ),
@@ -301,7 +301,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                     if (isSelected) {
                       context.read<SlotBloc>().add(const ClearSelectedSlotEvent());
                     } else {
-                      context.read<SlotBloc>().add(SelectSlotEvent(slot.time));
+                      context.read<SlotBloc>().add(SelectSlotEvent(slot.time, slot.salonId));
                     }
                   },
             child: Container(
@@ -416,7 +416,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context, bool isDarkMode, String selectedTime) {
+  Widget _buildBottomBar(BuildContext context, bool isDarkMode, String selectedTime, int? selectedSlotId) {
     return Container(
       padding: EdgeInsets.only(
         left: AppSizes.paddingM,
@@ -482,6 +482,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                 'selectedDate': DateFormat('yyyy-MM-dd').format(selectedDate),
                 'selectedTime': selectedTime,
                 'selectedTimeFormatted': _formatTimeRange(selectedTime),
+                'slotId': selectedSlotId,
               };
               
               GoRouter.of(context).push(

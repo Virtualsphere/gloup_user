@@ -1,9 +1,11 @@
 /// Domain entity for time slot
 class SlotEntity {
+  final int salonId;
   final String time;
   final String status; // "available" or "booked"
 
   const SlotEntity({
+    required this.salonId,
     required this.time,
     required this.status,
   });

@@ -16,7 +16,6 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart
 import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategoryPage extends StatefulWidget {

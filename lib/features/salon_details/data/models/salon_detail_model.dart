@@ -1,5 +1,5 @@
 class SalonDetailModel {
-  final String id;
+  final int id;
   final String name;
   final bool isNew;
   final bool isPremium;
@@ -60,7 +60,7 @@ class SalonDetailModel {
         [];
     
     return SalonDetailModel(
-      id: data['id']?.toString() ?? '',
+      id: data['id'] ?? 0,
       name: data['name'] ?? '',
       isNew: data['isNew'] ?? false,
       isPremium: (data['isPremium'] == 1 || data['isPremium'] == true),
@@ -124,7 +124,7 @@ class SalonDetailModel {
 }
 
 class ServiceModel {
-  final String id;
+  final int id;
   final String name;
   final String duration;
   final double price;
@@ -146,7 +146,7 @@ class ServiceModel {
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
     return ServiceModel(
-      id: json['id'] ?? '',
+      id: (json['id'] ?? 0) is int ? json['id'] ?? 0 : int.tryParse(json['id'].toString()) ?? 0,
       name: json['name'] ?? '',
       duration: json['duration'] ?? '',
       price: (json['price'] ?? 0).toDouble(),

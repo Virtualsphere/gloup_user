@@ -39,13 +39,13 @@ class SlotBloc extends Bloc<SlotEvent, SlotState> {
     SelectSlotEvent event,
     Emitter<SlotState> emit,
   ) {
-    emit(state.copyWithSelectedSlot(event.time));
+    emit(state.copyWithSelectedSlot(event.time, event.slotId));
   }
 
   void _onClearSelectedSlot(
     ClearSelectedSlotEvent event,
     Emitter<SlotState> emit,
   ) {
-    emit(state.copyWithSelectedSlot(null));
+    emit(state.copyWithSelectedSlot(null, null));
   }
 }

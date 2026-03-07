@@ -2,7 +2,7 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'http://192.168.1.13:5678';
+  static const String baseUrl = 'http://192.168.1.3:5678';
   
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl = 'https://v1.gloup.in/images';
@@ -35,6 +35,13 @@ class ApiRoutes {
   static const String updateGuest = '$baseUrl/user/app/v2/guest/update';
   //profile
   static const String getUserProfile = '$baseUrl/user/app/v2/profile';
+
+  // Order
+  static const String createOrder = '$baseUrl/user/app/v2/createorder';
+  static const String paymentSuccess = '$baseUrl/user/app/v2/paymentsuccess';
+
+  // Razorpay
+  static const String razorpayKey = 'rzp_live_T01AE9lLGbNxLd';
 
   // Coupons
   static const String getActiveCoupons = '$baseUrl/user/app/v2/get/activecoupons';

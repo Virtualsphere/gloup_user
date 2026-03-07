@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
-import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/order_bloc.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/order_event.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/order_state.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/guest_shimmers.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_event.dart';
@@ -31,6 +33,10 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/recomm
 import 'package:tressy/shared/widgets/primary_button.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/shared/widgets/payment_success_dialog.dart';
+import 'package:tressy/shared/widgets/payment_failed_dialog.dart';
 
 class ReviewConfirmPage extends StatefulWidget {
   final Map<String, dynamic>? bookingData;
@@ -51,17 +57,74 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
   bool useGloupCash = false; // Gloup Cash checkbox state
   List<Map<String, dynamic>> addedServices = []; // Track added recommended services
   List<CouponData> availableCoupons = []; // Coupons from API
-  
+  String? _lastPaymentId;
+  late Razorpay _razorpay;
+  late OrderBloc _orderBloc;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _orderBloc = sl<OrderBloc>();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
-  
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _razorpay.clear();
+    _orderBloc.close();
     super.dispose();
+  }
+
+  void _openRazorpay(String razorpayOrderId, double amount, String salonName) {
+    final options = {
+      'key': ApiRoutes.razorpayKey,
+      'amount': (amount * 100).toInt(), // Razorpay expects paise
+      'order_id': razorpayOrderId,
+      'name': salonName,
+      'description': 'Salon Booking Payment',
+      'send_sms_hash': true,
+      'prefill': {
+        'contact': '',
+      },
+      'theme': {'color': '#000000'},
+    };
+    _razorpay.open(options);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    _lastPaymentId = response.paymentId;
+    _orderBloc.add(
+      VerifyPaymentEvent(
+        razorpayOrderId: response.orderId ?? '',
+        razorpayPaymentId: response.paymentId ?? '',
+        razorpaySignature: response.signature ?? '',
+      ),
+    );
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    _orderBloc.add(const ResetOrderEvent());
+    if (mounted) {
+      PaymentFailedDialog.show(
+        context,
+        message: response.message ?? 'Something went wrong. Please try again.',
+        onRetry: () {
+          // User can re-tap the Pay button to try again
+        },
+      );
+    }
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    CustomToast.showInfo(
+      context,
+      'External wallet selected: ${response.walletName}',
+    );
   }
   
   @override
@@ -171,8 +234,37 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
         BlocProvider(
           create: (context) => sl<CouponBloc>()..add(const GetActiveCouponsEvent()),
         ),
+        BlocProvider<OrderBloc>.value(value: _orderBloc),
       ],
-      child: Scaffold(
+      child: BlocListener<OrderBloc, OrderState>(
+        listener: (context, orderState) {
+          if (orderState.isSuccess && orderState.order != null) {
+            final order = orderState.order!;
+            final salonName = widget.bookingData?['salonName'] as String? ?? 'Salon';
+            _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+          } else if (orderState.isPaymentVerified) {
+            PaymentSuccessDialog.show(
+              context,
+              paymentId: _lastPaymentId ?? '',
+              onViewBooking: () {
+                // Navigate to bookings screen
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            );
+          } else if (orderState.errorMessage != null) {
+            // Show failed dialog if verification failed, else toast for order creation errors
+            if (orderState.isVerifyingPayment == false && _lastPaymentId != null) {
+              PaymentFailedDialog.show(
+                context,
+                message: orderState.errorMessage!,
+                onRetry: () {},
+              );
+            } else {
+              CustomToast.showError(context, orderState.errorMessage!);
+            }
+          }
+        },
+        child: Scaffold(
       backgroundColor:
           isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
@@ -271,8 +363,6 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
                           final profile = profileState is ProfileLoaded ? profileState.profile : null;
                           final userName = profile?.fullName ?? 'User';
                           final userGender = profile?.gender ?? 'Not Selected';
-                          final userPhone = profile?.phone.toString();
-                          
                           // Calculate age from date of birth if available
                           int? userAge;
                           if (profile?.dateOfBirth != null && profile!.dateOfBirth.isNotEmpty) {
@@ -542,17 +632,6 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
                         final isCouponValid = (discountedAmount + 30) >= minAmountRequired;
                         final amountNeeded = minAmountRequired - discountedAmount - 30;
                         
-                        // Debug logging
-                        print('DEBUG Coupon Validation:');
-                        print('  Original Amount: ₹$originalAmount');
-                        print('  Service Discount: ₹$serviceDiscount');
-                        print('  Discounted Amount: ₹$discountedAmount');
-                        print('  Coupon Discount: ₹$minAmountRequired');
-                        print('  Calculation: $discountedAmount + 30 = ${discountedAmount + 30}');
-                        print('  Is Valid: $isCouponValid (${discountedAmount + 30} >= $minAmountRequired)');
-                        print('  Selected Coupon: $selectedCouponCode');
-                        print('  Display Coupon: ${displayCoupon.couponCode}');
-                        
                         // Auto-deselect coupon if it becomes invalid
                         if (!isCouponValid && selectedCouponCode == displayCoupon.couponCode) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -709,6 +788,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
           // _buildGloupCashCheckbox(context, isDarkMode),
           _buildBottomConfirmButton(context, isDarkMode, isLoggedIn),
         ],
+      ),
       ),
       ),
     );
@@ -954,21 +1034,55 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
             const SizedBox(width: AppSizes.spaceXL),
             // Right side - Pay button with amount
             Expanded(
-              child: PrimaryButton(
-                text: 'Pay ₹${finalTotal.toStringAsFixed(0)}',
-                onPressed: () {
-                  // TODO: Implement Razorpay payment
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Redirecting to payment...'),
-                      backgroundColor: AppColors.success,
-                      duration: Duration(seconds: 2),
-                    ),
+              child: BlocBuilder<OrderBloc, OrderState>(
+                builder: (context, orderState) => PrimaryButton(
+                text: orderState.isLoading
+                    ? 'Processing...'
+                    : 'Pay ₹${finalTotal.toStringAsFixed(0)}',
+                onPressed: orderState.isLoading ? null : () {
+                  final allSelectedServices = [
+                    ...((widget.bookingData!['selectedServices'] as List?)
+                            ?.cast<Map<String, dynamic>>() ??
+                        []),
+                    ...addedServices,
+                  ];
+
+                  final servicesPayload = allSelectedServices
+                      .map((s) => {'service_id': s['id']})
+                      .toList();
+
+                  final guestState = context.read<GuestBloc>().state;
+                  final selectedGuest = selectedBookingFor == 'someone_else' &&
+                          selectedSomeoneElseIndex != null &&
+                          selectedSomeoneElseIndex! < guestState.guests.length
+                      ? guestState.guests[selectedSomeoneElseIndex!]
+                      : null;
+
+                  final request = CreateOrderRequest(
+                    bookingDate: widget.bookingData!['selectedDate'] ?? '',
+                    slotId: widget.bookingData!['slotId'] as int? ?? 0,
+                    services: servicesPayload,
+                    isCombo: false,
+                    bookingFor: selectedBookingFor,
+                    guestId: selectedGuest?.guestId,
+                    professionalId: widget.bookingData!['professionalId'] as int?,
+                    storeId: widget.bookingData!['salonId'],
+                    gst: gst,
+                    platformFee: platformFee,
+                    serviceAmount: serviceAmount,
+                    serviceDiscount: serviceDiscount,
+                    couponDiscount: couponDiscount > 0 ? couponDiscount : null,
+                    couponCode: selectedCouponCode,
+                    walletAmountUsed: gloupCash,
+                    finalAmount: finalTotal,
                   );
+
+                  context.read<OrderBloc>().add(CreateOrderEvent(request));
                 },
                 backgroundColor: AppColors.success,
                 textColor: AppColors.white,
                 height: 52,
+              ),
               ),
             ),
           ],
@@ -1169,7 +1283,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
             price = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
           }
 
-          final serviceId = service['id'] as String? ?? name;
+          final serviceId = service['id'] as int? ?? name;
           final isAdded = addedServices.any((s) => (s['id'] ?? s['name']) == serviceId);
 
           return RecommendedServiceCard(

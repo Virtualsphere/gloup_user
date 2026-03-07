@@ -138,7 +138,10 @@ class MapMarkerManager {
     final image = await picture.toImage(size.toInt(), size.toInt());
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
 
-    return BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
+    return BitmapDescriptor.bytes(
+      bytes!.buffer.asUint8List(),
+      imagePixelRatio: 3.0,
+    );
   }
 
   /// Get cluster size based on count

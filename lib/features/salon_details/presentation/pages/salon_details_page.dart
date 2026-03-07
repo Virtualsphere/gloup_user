@@ -64,7 +64,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       0; // For review filter badges (0 = All, 1-5 = stars)
 
   // Track selected services
-  final Map<String, ServiceEntity> _selectedServices = {};
+  final Map<int, ServiceEntity> _selectedServices = {};
 
   // Animation controller for bottom nav bar
   late AnimationController _bottomNavController;

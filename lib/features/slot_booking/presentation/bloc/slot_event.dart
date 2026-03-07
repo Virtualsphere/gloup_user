@@ -24,11 +24,12 @@ class LoadSlotsEvent extends SlotEvent {
 /// Event to select a slot
 class SelectSlotEvent extends SlotEvent {
   final String time;
+  final int slotId;
 
-  const SelectSlotEvent(this.time);
+  const SelectSlotEvent(this.time, this.slotId);
 
   @override
-  List<Object?> get props => [time];
+  List<Object?> get props => [time, slotId];
 }
 
 /// Event to clear selected slot

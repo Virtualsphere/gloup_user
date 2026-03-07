@@ -67,6 +67,14 @@ import 'package:tressy/features/booking_confirmation/domain/usecases/add_guest_u
 import 'package:tressy/features/booking_confirmation/domain/usecases/update_guest_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 
+// Order Feature
+import 'package:tressy/features/booking_confirmation/data/datasources/booking_remote_datasource.dart';
+import 'package:tressy/features/booking_confirmation/data/repositories/order_repository_impl.dart';
+import 'package:tressy/features/booking_confirmation/domain/repositories/order_repository.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/create_order_usecase.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/verify_payment_usecase.dart';
+import 'package:tressy/features/booking_confirmation/presentation/bloc/order_bloc.dart';
+
 // Coupon Feature
 import 'package:tressy/features/coupons/data/datasources/coupon_remote_datasource.dart';
 import 'package:tressy/features/coupons/data/repositories/coupon_repository_impl.dart';
@@ -311,6 +319,31 @@ Future<void> initializeDependencies() async {
   // Data Sources
   sl.registerLazySingleton<GuestRemoteDataSource>(
     () => GuestRemoteDataSourceImpl(sl()),
+  );
+
+  // Order Feature
+  // BLoC - Factory for new instance each time
+  sl.registerFactory<OrderBloc>(() => OrderBloc(
+        createOrderUseCase: sl(),
+        verifyPaymentUseCase: sl(),
+      ));
+
+  // Use Cases
+  sl.registerLazySingleton<CreateOrderUseCase>(
+    () => CreateOrderUseCase(sl()),
+  );
+  sl.registerLazySingleton<VerifyPaymentUseCase>(
+    () => VerifyPaymentUseCase(sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImpl(sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<BookingRemoteDataSource>(
+    () => BookingRemoteDataSourceImpl(sl()),
   );
 
   // Coupon Feature

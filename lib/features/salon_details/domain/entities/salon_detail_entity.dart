@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Salon Detail Entity
 class SalonDetailEntity extends Equatable {
-  final String id;
+  final int id;
   final String name;
   final bool isNew;
   final bool isPremium;
@@ -73,7 +73,7 @@ class SalonDetailEntity extends Equatable {
 
 /// Service Entity
 class ServiceEntity extends Equatable {
-  final String id;
+  final int id;
   final String name;
   final String duration;
   final double price;

@@ -465,8 +465,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             Container(
               constraints: BoxConstraints(
                   maxWidth: showDistance
-                      ? 130
-                      : 200), // Limit width when distance is shown
+                      ? context.screenWidth * 0.25
+                      : context.screenWidth * 0.45), // Limit width when distance is shown
               child: Text(
                 widget.address ?? '',
                 style: context.textTheme.bodySmall?.copyWith(
