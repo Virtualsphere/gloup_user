@@ -36,6 +36,9 @@ class ApiRoutes {
   //profile
   static const String getUserProfile = '$baseUrl/user/app/v2/profile';
 
+  // Appointments
+  static const String getAllAppointments = '$baseUrl/user/app/getallapointments';
+
   // Order
   static const String createOrder = '$baseUrl/user/app/v2/createorder';
   static const String paymentSuccess = '$baseUrl/user/app/v2/paymentsuccess';

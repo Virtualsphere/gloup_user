@@ -82,6 +82,13 @@ import 'package:tressy/features/coupons/domain/repositories/coupon_repository.da
 import 'package:tressy/features/coupons/domain/usecases/get_active_coupons_usecase.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
 
+// Appointments Feature
+import 'package:tressy/features/bookings/data/datasources/appointments_remote_datasource.dart';
+import 'package:tressy/features/bookings/data/repositories/appointments_repository_impl.dart';
+import 'package:tressy/features/bookings/domain/repositories/appointments_repository.dart';
+import 'package:tressy/features/bookings/domain/usecases/get_all_appointments_usecase.dart';
+import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dart';
+
 // Salon Search Feature
 import 'package:tressy/features/salon_search/data/datasources/search_remote_datasource.dart';
 import 'package:tressy/features/salon_search/data/repositories/search_repository_impl.dart';
@@ -405,6 +412,23 @@ Future<void> initializeDependencies() async {
       salonDataSource: sl(),
       dioClient: sl(),
     ),
+  );
+
+  // Appointments Feature
+  sl.registerFactory<AppointmentsBloc>(() => AppointmentsBloc(
+        getAllAppointmentsUseCase: sl(),
+      ));
+
+  sl.registerLazySingleton<GetAllAppointmentsUseCase>(
+    () => GetAllAppointmentsUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<AppointmentsRepository>(
+    () => AppointmentsRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<AppointmentsRemoteDataSource>(
+    () => AppointmentsRemoteDataSourceImpl(sl()),
   );
 
 }

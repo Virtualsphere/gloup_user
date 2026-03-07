@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
@@ -247,8 +249,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage> with WidgetsBindi
               context,
               paymentId: _lastPaymentId ?? '',
               onViewBooking: () {
-                // Navigate to bookings screen
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                GoRouter.of(context).go(RouteNames.bookings);
               },
             );
           } else if (orderState.errorMessage != null) {
