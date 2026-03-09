@@ -146,7 +146,12 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
             LocalStorageService.setAccessToken(authEntity.token);
             LocalStorageService.setLoggedIn(true);
           }
-          
+
+          CustomToast.showSuccess(context, 'Login successful!');
+          Navigator.pop(context);
+        } else if (state is SocialAuthSuccess) {
+          LocalStorageService.setAccessToken(state.token);
+          LocalStorageService.setLoggedIn(true);
           CustomToast.showSuccess(context, 'Login successful!');
           Navigator.pop(context);
         } else if (state is AuthFailure) {
@@ -421,16 +426,14 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                         // iOS/macOS: Only show Apple Sign-In
                         AppleSignInButton(
                           onPressed: () {
-                            // TODO: Implement Apple sign-in
-                            CustomToast.showInfo(context, 'Apple Sign-In coming soon');
+                            context.read<AuthBloc>().add(const AppleSignInEvent());
                           },
                         ),
                       ] else ...[
                         // Android/Others: Only show Google Sign-In
                         GoogleSignInButton(
                           onPressed: () {
-                            // TODO: Implement Google sign-in
-                            CustomToast.showInfo(context, 'Google Sign-In coming soon');
+                            context.read<AuthBloc>().add(const GoogleSignInEvent());
                           },
                         ),
                       ],

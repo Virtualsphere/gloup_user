@@ -11,6 +11,7 @@ import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 class LoginRequiredWidget extends StatefulWidget {
   final Widget child;
   final VoidCallback? onLoginPressed;
+  final VoidCallback? onLoginSuccess;
   final String? title;
   final String? message;
   final String? buttonText;
@@ -21,6 +22,7 @@ class LoginRequiredWidget extends StatefulWidget {
     super.key,
     required this.child,
     this.onLoginPressed,
+    this.onLoginSuccess,
     this.title,
     this.message,
     this.buttonText,
@@ -56,10 +58,18 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
   }
 
   void _checkAuthentication() {
+    final wasAuthenticated = _isAuthenticated;
+    final nowAuthenticated = LocalStorageService.accessToken != null &&
+        LocalStorageService.accessToken!.isNotEmpty;
+
     setState(() {
-      _isAuthenticated = LocalStorageService.accessToken != null &&
-          LocalStorageService.accessToken!.isNotEmpty;
+      _isAuthenticated = nowAuthenticated;
     });
+
+    // Fire callback only when auth transitions false → true (just logged in)
+    if (!wasAuthenticated && nowAuthenticated) {
+      widget.onLoginSuccess?.call();
+    }
   }
 
   @override

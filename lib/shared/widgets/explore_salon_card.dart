@@ -465,7 +465,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             Container(
               constraints: BoxConstraints(
                   maxWidth: showDistance
-                      ? context.screenWidth * 0.25
+                      ? context.screenWidth * 0.24
                       : context.screenWidth * 0.45), // Limit width when distance is shown
               child: Text(
                 widget.address ?? '',
@@ -587,7 +587,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
 
   Widget _buildCategoryBadges(bool isDarkMode) {
     final categories = widget.categories ?? [];
-    final displayCategories = categories.take(2).toList();
+    final displayCategories = categories.take(1).toList();
     final hasMoreCategories = categories.length > 2;
 
     return Row(

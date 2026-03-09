@@ -12,6 +12,9 @@ class ApiRoutes {
   static const String sendOtp = '$baseUrl/user/auth/sendOTP';
   static const String verifyOtp = '$baseUrl/user/auth/verifyOTP';
   static const String deviceId = '$baseUrl/user/auth/deviceId';
+  static const String googleLogin = '$baseUrl/user/auth/googlelogin';
+  static const String appleLogin = '$baseUrl/user/auth/appleLogin';
+  static const String logout = '$baseUrl/user/auth/logout';
   
   // Home Endpoints
   static const String getBanners = '$baseUrl/user/app/v2/getbanner';

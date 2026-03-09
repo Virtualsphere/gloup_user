@@ -9,7 +9,6 @@ import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/strings.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/di/injection_container.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -34,9 +33,18 @@ class ProfilePage extends StatelessWidget {
       showBrowseAsGuest: false,
       child: BlocProvider(
         create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
-        child: BlocBuilder<ProfileBloc, ProfileState>(
+        child: BlocConsumer<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfileLoggedOut) {
+              context.go('/login');
+            } else if (state is ProfileFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            }
+          },
           builder: (context, state) {
-            // Show loading shimmer
+            // Show loading shimmer on initial load
             if (state is ProfileLoading) {
               return Scaffold(
                 appBar: ProfileAppBar(title: 'Personal Profile', centerTitle: false),
@@ -44,13 +52,17 @@ class ProfilePage extends StatelessWidget {
               );
             }
 
+            final isLoggingOut = state is ProfileLoggingOut;
+
             // Get profile data from state
             final profile = state is ProfileLoaded ? state.profile : null;
             final userName = profile?.fullName ?? 'Guest User';
             final walletAmount = profile?.wallet ?? '0.00';
             final profilePicUrl = profile?.fullProfilePicUrl ?? '';
 
-            return Scaffold(
+            return Stack(
+              children: [
+            Scaffold(
         appBar: ProfileAppBar(title: 'Personal Profile',centerTitle: false,),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -194,22 +206,9 @@ class ProfilePage extends StatelessWidget {
                           CustomDialogues.showCancelDialogue(
                             context,
                             title: 'Logout',
-                            submitOnTap: () async {
-                              // Clear all user data
-                              await LocalStorageService.clearAll();
-
-                              // Set onboarding as completed so it doesn't show again
-                              await LocalStorageService.setOnboardingCompleted(true);
-
-                              // Pop the dialog first
-                              if (context.mounted) {
-                                Navigator.of(context).pop();
-                              }
-
-                              // Navigate to login page and clear stack
-                              if (context.mounted) {
-                                context.go('/login');
-                              }
+                            submitOnTap: () {
+                              Navigator.of(context).pop();
+                              context.read<ProfileBloc>().add(const LogoutEvent());
                             },
                           );
                         },
@@ -223,7 +222,33 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ),
+              // Logout progress overlay
+              if (isLoggingOut)
+                Container(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  child: const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                        SizedBox(height: AppSizes.spaceM),
+                        Text(
+                          'Logging out...',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: AppSizes.fontM,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          );
           },
         ),
       ),

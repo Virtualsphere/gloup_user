@@ -41,4 +41,44 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure('Unexpected error: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, AuthEntity>> googleLogin(String idToken) async {
+    try {
+      final result = await remoteDataSource.googleLogin(idToken);
+      return Right(result);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthEntity>> appleLogin({
+    required String authorizationCode,
+    required String identityToken,
+    required String userIdentifier,
+  }) async {
+    try {
+      final result = await remoteDataSource.appleLogin(
+        authorizationCode: authorizationCode,
+        identityToken: identityToken,
+        userIdentifier: userIdentifier,
+      );
+      return Right(result);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
 }

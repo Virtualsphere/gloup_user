@@ -14,6 +14,17 @@ class GetProfileUseCase {
   }
 }
 
+///logout:-
+class LogoutUseCase {
+  final ProfileRepository repository;
+
+  LogoutUseCase(this.repository);
+
+  Future<Either<Failure, void>> call() async {
+    return repository.logout();
+  }
+}
+
 ///update profile:-
 class UpdateProfileUseCase {
   final ProfileRepository repository;

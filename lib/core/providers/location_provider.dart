@@ -10,10 +10,10 @@ class LocationProvider extends ChangeNotifier {
   static const String _keyCity = 'user_city';
   static const String _keyArea = 'user_area';
 
-  // Default coordinates (Bangalore)
-  static const double _defaultLatitude = 12.9716;
-  static const double _defaultLongitude = 77.5946;
-  static const String _defaultCity = 'Bangalore';
+  // Default coordinates (Chennai)
+  static const double _defaultLatitude = 13.0827;
+  static const double _defaultLongitude = 80.2707;
+  static const String _defaultCity = 'Chennai';
   static const String _defaultArea = '';
 
   // Private state

@@ -29,6 +29,24 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await dataSource.logout();
+      return const Right(null);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
+
   ///update profile date:-
   @override
   Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile) async {

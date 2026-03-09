@@ -9,6 +9,12 @@ import 'package:tressy/features/auth/domain/entities/auth_entity.dart';
 abstract class AuthRemoteDataSource {
   Future<AuthEntity> sendOtp(String phone);
   Future<AuthEntity> verifyOtp(String phone, String otp);
+  Future<AuthEntity> googleLogin(String idToken);
+  Future<AuthEntity> appleLogin({
+    required String authorizationCode,
+    required String identityToken,
+    required String userIdentifier,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -63,6 +69,58 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       } else {
         throw ServerException(
           message: response.data['message'] ?? 'Failed to verify OTP',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<AuthEntity> googleLogin(String idToken) async {
+    try {
+      final response = await dioClient.post(
+        ApiRoutes.googleLogin,
+        data: {'token': idToken},
+      );
+
+      if (response.statusCode == 200) {
+        return VerifyOtpModel.fromJson(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Google login failed',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<AuthEntity> appleLogin({
+    required String authorizationCode,
+    required String identityToken,
+    required String userIdentifier,
+  }) async {
+    try {
+      final response = await dioClient.post(
+        ApiRoutes.appleLogin,
+        data: {
+          'authorizationCode': authorizationCode,
+          'identityToken': identityToken,
+          'userIdentifier': userIdentifier,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return VerifyOtpModel.fromJson(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Apple login failed',
         );
       }
     } on DioException catch (e) {

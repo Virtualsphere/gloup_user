@@ -1495,6 +1495,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       latitude: salonDetail.location.latitude,
       longitude: salonDetail.location.longitude,
       address: salonDetail.location.address,
+      salonName: salonDetail.name,
     );
   }
 

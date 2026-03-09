@@ -44,6 +44,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
       title: 'Login to View Favorites',
       message: 'Please login to save and view your favorite salons.',
       showBrowseAsGuest: false,
+      onLoginSuccess: () {
+        context.read<FavoritesBloc>().add(const LoadFavoritesEvent());
+      },
       child: BlocListener<FavoritesBloc, FavoritesState>(
         listenWhen: (previous, current) {
           // Only listen for status changes to reload list

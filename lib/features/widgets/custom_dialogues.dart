@@ -10,6 +10,7 @@ import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 
 class CustomDialogues {
+
   static Future<dynamic> showCancelDialogue(
       BuildContext context, {
         required String title,

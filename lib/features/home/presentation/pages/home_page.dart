@@ -19,8 +19,9 @@ import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/shared/widgets/location_permission_dialog.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
@@ -49,6 +50,18 @@ class _HomePageState extends State<HomePage> {
     _getCurrentLocation();
   }
 
+  Future<void> _setChennaiDefault() async {
+    final locationProvider = context.read<LocationProvider>();
+    await locationProvider.updateLocation(
+      latitude: 13.0827,
+      longitude: 80.2707,
+      city: 'Chennai',
+      area: '',
+      silent: true,
+    );
+    setState(() => _isLoadingLocation = false);
+  }
+
   Future<void> _getCurrentLocation() async {
     final locationProvider = context.read<LocationProvider>();
 
@@ -66,20 +79,35 @@ class _HomePageState extends State<HomePage> {
       // Check location permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
+        // Show pre-permission dialog once per install
+        final dialogShown =
+            LocalStorageService.getBool('location_permission_dialog_shown') ??
+                false;
+        if (!dialogShown) {
+          bool userAllowed = false;
+          await LocationPermissionDialog.show(
+            context,
+            onAllow: () => userAllowed = true,
+            onDeny: () => userAllowed = false,
+          );
+          await LocalStorageService.setBool(
+              'location_permission_dialog_shown', true);
+          if (!userAllowed) {
+            await _setChennaiDefault();
+            return;
+          }
+        }
+
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          setState(() {
-            _isLoadingLocation = false;
-          });
+          await _setChennaiDefault();
           debugPrint('Location permission denied');
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
+        await _setChennaiDefault();
         debugPrint('Location permission denied forever');
         return;
       }

@@ -9,6 +9,7 @@ import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> getProfile();
   Future<ProfileModel> updateProfile(ProfileEntity profile);
+  Future<void> logout();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -69,6 +70,27 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
     } on DioException catch (e) {
       throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      final response = await dioClient.post(
+        ApiRoutes.logout,
+        options: Options(
+          headers: {'userauth': LocalStorageService.accessToken},
+        ),
+      );
+      if (response.statusCode != 200) {
+        throw ServerException(
+          message: response.data['message'] ?? 'Logout failed',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
     }
   }
 

@@ -27,6 +27,14 @@ class ProfileLoaded extends ProfileState {
 
 class ProfileUpdating extends ProfileState {}
 
+class ProfileLoggingOut extends ProfileState {
+  const ProfileLoggingOut();
+}
+
+class ProfileLoggedOut extends ProfileState {
+  const ProfileLoggedOut();
+}
+
 class ProfileFailure extends ProfileState {
   final String message;
 

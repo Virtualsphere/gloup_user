@@ -10,6 +10,7 @@ import 'package:tressy/features/auth/domain/repositories/auth_repository.dart';
 import 'package:tressy/features/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:tressy/features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:tressy/features/auth/services/social_auth_service.dart';
 import 'package:tressy/features/category/data/datasources/category_remote_datasource.dart';
 import 'package:tressy/features/category/data/repositories/category_repository_impl.dart';
 import 'package:tressy/features/category/domain/repositories/category_repository.dart';
@@ -114,10 +115,15 @@ Future<void> initializeDependencies() async {
   // ==================== Features ====================
 
   // Auth Feature
+  // Services
+  sl.registerLazySingleton<SocialAuthService>(() => SocialAuthService());
+
   // BLoC
   sl.registerFactory<AuthBloc>(() => AuthBloc(
         sendOtpUseCase: sl(),
         verifyOtpUseCase: sl(),
+        socialAuthService: sl(),
+        authRepository: sl(),
       ));
 
   // Use Cases
@@ -291,11 +297,13 @@ Future<void> initializeDependencies() async {
 // UseCases
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
 
 // Bloc
   sl.registerFactory(() => ProfileBloc(
     getProfileUseCase: sl(),
     updateProfileUseCase: sl(),
+    logoutUseCase: sl(),
   ));
   // Guest Feature
   // BLoC - Factory for new instance each time

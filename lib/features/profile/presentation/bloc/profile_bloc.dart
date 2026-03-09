@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -7,11 +8,17 @@ import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetProfileUseCase getProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
+  final LogoutUseCase logoutUseCase;
 
-  ProfileBloc({required this.getProfileUseCase, required this.updateProfileUseCase,}) : super(const ProfileInitial()) {
+  ProfileBloc({
+    required this.getProfileUseCase,
+    required this.updateProfileUseCase,
+    required this.logoutUseCase,
+  }) : super(const ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<RefreshProfileEvent>(_onRefreshProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
+    on<LogoutEvent>(_onLogout);
   }
 
   Future<void> _onGetProfile(GetProfileEvent event, Emitter<ProfileState> emit) async {
@@ -57,6 +64,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         );
       },
     );
+  }
+
+  Future<void> _onLogout(LogoutEvent event, Emitter<ProfileState> emit) async {
+    emit(const ProfileLoggingOut());
+    final result = await logoutUseCase();
+    if (result.isLeft()) {
+      final failure = result.fold((f) => f, (_) => null)!;
+      emit(ProfileFailure(_mapFailureToMessage(failure)));
+    } else {
+      await LocalStorageService.clearAll();
+      await LocalStorageService.setOnboardingCompleted(true);
+      emit(const ProfileLoggedOut());
+    }
   }
 
   String _mapFailureToMessage(Failure failure) {

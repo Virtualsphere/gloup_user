@@ -81,6 +81,9 @@ class _BookingsPageState extends State<BookingsPage>
       title: 'Login to View Bookings',
       message: 'Please login to view and manage your salon bookings.',
       showBrowseAsGuest: false,
+      onLoginSuccess: () {
+        _appointmentsBloc.add(const LoadAppointmentsEvent());
+      },
       child: BlocProvider<AppointmentsBloc>.value(
         value: _appointmentsBloc,
         child: _buildContent(context),

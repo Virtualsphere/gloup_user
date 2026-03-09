@@ -8,6 +8,7 @@ import 'package:tressy/core/constants/app_images.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_event.dart';
@@ -93,6 +94,14 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
           final completePhone = _phoneController.text;
           GoRouter.of(context).push(RouteNames.otp, extra: completePhone);
+        } else if (state is SocialAuthSuccess) {
+          setState(() {
+            _isLoading = false;
+          });
+          LocalStorageService.setAccessToken(state.token);
+          LocalStorageService.setLoggedIn(true);
+          CustomToast.showSuccess(context, 'Login successful!');
+          GoRouter.of(context).go(RouteNames.home);
         } else if (state is AuthFailure) {
           setState(() {
             _isLoading = false;
@@ -246,19 +255,19 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
                         AppSizes.heightL,
 
-                        // Google Sign-In Button
-                        GoogleSignInButton(
-                          onPressed: () {
-                            // TODO: Implement Google sign-in
-                          },
-                        ),
-
                         // Apple Sign-In
                         if (Platform.isIOS || Platform.isMacOS) ...[
                           AppSizes.heightM,
                           AppleSignInButton(
                             onPressed: () {
-                              // TODO: Implement Apple sign-in
+                              context.read<AuthBloc>().add(const AppleSignInEvent());
+                            },
+                          ),
+                        ] else ...[
+                          // Google Sign-In Button
+                          GoogleSignInButton(
+                            onPressed: () {
+                              context.read<AuthBloc>().add(const GoogleSignInEvent());
                             },
                           ),
                         ],
@@ -314,7 +323,8 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: isDarkMode ? AppColors.white : AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                        borderRadius:
+                            BorderRadius.circular(AppSizes.radiusCircular),
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSizes.paddingL,

@@ -32,3 +32,11 @@ class VerifyOtpEvent extends AuthEvent {
 class ResetAuthEvent extends AuthEvent {
   const ResetAuthEvent();
 }
+
+class GoogleSignInEvent extends AuthEvent {
+  const GoogleSignInEvent();
+}
+
+class AppleSignInEvent extends AuthEvent {
+  const AppleSignInEvent();
+}

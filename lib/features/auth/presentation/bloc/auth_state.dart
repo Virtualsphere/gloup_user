@@ -34,6 +34,15 @@ class OtpVerifiedSuccess extends AuthState {
   List<Object?> get props => [authEntity];
 }
 
+class SocialAuthSuccess extends AuthState {
+  final String token;
+
+  const SocialAuthSuccess(this.token);
+
+  @override
+  List<Object?> get props => [token];
+}
+
 class AuthFailure extends AuthState {
   final String message;
 

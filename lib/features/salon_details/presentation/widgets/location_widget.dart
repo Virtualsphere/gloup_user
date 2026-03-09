@@ -4,17 +4,20 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationWidget extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String address;
+  final String salonName;
 
   const LocationWidget({
     super.key,
     required this.latitude,
     required this.longitude,
     required this.address,
+    required this.salonName,
   });
 
   @override
@@ -23,6 +26,16 @@ class LocationWidget extends StatefulWidget {
 
 class _LocationWidgetState extends State<LocationWidget> {
   late Set<Marker> _markers;
+
+  Future<void> _openMapsDirections(
+      String lat, String lng, String salonName) async {
+    final uri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&destination_place_id=$salonName&travelmode=driving',
+    );
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   void initState() {
@@ -97,8 +110,11 @@ class _LocationWidgetState extends State<LocationWidget> {
         // Get Direction button
         OutlinedButton(
           onPressed: () {
-            // TODO: Open Google Maps with directions
-            // Example: Open maps app with coordinates
+            _openMapsDirections(
+              widget.latitude.toString(),
+              widget.longitude.toString(),
+              widget.salonName,
+            );
           },
           style: OutlinedButton.styleFrom(
             side: BorderSide(
