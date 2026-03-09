@@ -80,137 +80,139 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: Stack(
-        children: [
-          // Background PageView with Content
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            itemCount: _onboardingBackgrounds.length,
-            physics: const PageScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Container(
-                color: AppColors.background,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Background image
-                    Image.asset(
-                      _onboardingBackgrounds[index],
-                      fit: BoxFit.cover,
-                    ),
-                    // Content Overlay - positioned above bottom controls
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 160,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXL),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Title
-                            Text(
-                              _onboardingContent[index]['title']!,
-                              style: context.textTheme.headlineMedium?.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            AppSizes.heightXL,
-                            // Content
-                            Text(
-                              _onboardingContent[index]['content']!,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textSecondary,
-                                height: 1.5,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          
-          // Bottom Controls
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: AppSizes.paddingXL,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Page Indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _onboardingBackgrounds.length,
-                      (index) => _buildIndicator(index == _currentPage),
-                    ),
-                  ),
-                  AppSizes.heightL,
-                  
-                  // Skip and Next Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        body: Stack(
+          children: [
+            // Background PageView with Content
+            PageView.builder(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              itemCount: _onboardingBackgrounds.length,
+              physics: const PageScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  color: AppColors.background,
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      // Skip Button
-                      TextButton(
-                        onPressed: _navigateToLogin,
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingL,
-                            vertical: AppSizes.paddingM,
-                          ),
-                        ),
-                        child: Text(
-                          'Skip',
-                          style: context.textTheme.labelLarge?.copyWith(
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
+                      // Background image
+                      Image.asset(
+                        _onboardingBackgrounds[index],
+                        fit: BoxFit.cover,
                       ),
-
-                      // Next Button
-                      ElevatedButton(
-                        onPressed: _nextPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.onPrimary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingXL,
-                            vertical: AppSizes.paddingM,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusS),
-                          ),
-                        ),
-                        child: Text(
-                          _currentPage == _onboardingBackgrounds.length - 1 
-                            ? 'Get Started' 
-                            : 'Next',
-                          style: context.textTheme.labelLarge?.copyWith(
-                            color: AppColors.onPrimary,
+                      // Content Overlay - positioned above bottom controls
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 160,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXL),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Title
+                              Text(
+                                _onboardingContent[index]['title']!,
+                                style: context.textTheme.headlineMedium?.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              AppSizes.heightXL,
+                              // Content
+                              Text(
+                                _onboardingContent[index]['content']!,
+                                style: context.textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  height: 1.5,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                ],
+                );
+              },
+            ),
+            
+            // Bottom Controls
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: AppSizes.paddingXL,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Page Indicator
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        _onboardingBackgrounds.length,
+                        (index) => _buildIndicator(index == _currentPage),
+                      ),
+                    ),
+                    AppSizes.heightL,
+                    
+                    // Skip and Next Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Skip Button
+                        TextButton(
+                          onPressed: _navigateToLogin,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingL,
+                              vertical: AppSizes.paddingM,
+                            ),
+                          ),
+                          child: Text(
+                            'Skip',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+      
+                        // Next Button
+                        ElevatedButton(
+                          onPressed: _nextPage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.onPrimary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingXL,
+                              vertical: AppSizes.paddingM,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                            ),
+                          ),
+                          child: Text(
+                            _currentPage == _onboardingBackgrounds.length - 1 
+                              ? 'Get Started' 
+                              : 'Next',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: AppColors.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

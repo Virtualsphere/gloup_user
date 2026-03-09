@@ -32,6 +32,5 @@ class SalonDetailBloc extends Bloc<SalonDetailEvent, SalonDetailState> {
     Emitter<SalonDetailState> emit,
   ) {
     emit(state.copyWithFavoriteToggled());
-    // TODO: Call API to update favorite status on server
   }
 }

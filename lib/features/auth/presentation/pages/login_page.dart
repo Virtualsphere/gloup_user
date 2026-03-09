@@ -44,7 +44,6 @@ class _LoginPageContent extends StatefulWidget {
 class _LoginPageContentState extends State<_LoginPageContent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _phoneController = TextEditingController();
-  String _countryCode = '+91';
   bool _isLoading = false;
 
   @override
@@ -60,7 +59,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   void _onCountryChanged(CountryCode countryCode) {
     setState(() {
-      _countryCode = countryCode.dialCode ?? '+91';
     });
   }
 
