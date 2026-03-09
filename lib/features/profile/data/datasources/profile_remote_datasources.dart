@@ -9,6 +9,7 @@ import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> getProfile();
   Future<ProfileModel> updateProfile(ProfileEntity profile);
+  Future<DeleteProfile> deleteProfile();
   Future<void> logout();
 }
 
@@ -85,6 +86,33 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (response.statusCode != 200) {
         throw ServerException(
           message: response.data['message'] ?? 'Logout failed',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  ///Delete Profile:-
+  @override
+  Future<DeleteProfile> deleteProfile() async {
+    try {
+      final response = await dioClient.delete(
+        ApiRoutes.deleteProfile,
+        options: Options(
+          headers: {
+            'userauth': LocalStorageService.accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return DeleteProfile.fromJson(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'] ?? 'Delete profile failed',
         );
       }
     } on DioException catch (e) {

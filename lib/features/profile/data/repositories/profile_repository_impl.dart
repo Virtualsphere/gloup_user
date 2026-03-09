@@ -65,4 +65,23 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return Left(ServerFailure('Unexpected error: ${e.toString()}'));
     }
   }
+
+  ///Delete Profile:-
+  @override
+  Future<Either<Failure, DeleteProfileEntity>> deleteProfile() async {
+    try {
+      final model = await dataSource.deleteProfile();
+      return Right(model);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
 }

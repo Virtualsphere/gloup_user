@@ -35,3 +35,14 @@ class UpdateProfileUseCase {
     return repository.updateProfile(profile);
   }
 }
+
+///Delete Profile:-
+class DeleteProfileUseCase {
+  final ProfileRepository repository;
+
+  DeleteProfileUseCase(this.repository);
+
+  Future<Either<Failure, DeleteProfileEntity>> call() async {
+    return await repository.deleteProfile();
+  }
+}

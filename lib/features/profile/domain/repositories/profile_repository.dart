@@ -5,5 +5,6 @@ import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 abstract class ProfileRepository {
   Future<Either<Failure, ProfileEntity>> getProfile();
   Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile);
+  Future<Either<Failure, DeleteProfileEntity>> deleteProfile();
   Future<Either<Failure, void>> logout();
 }

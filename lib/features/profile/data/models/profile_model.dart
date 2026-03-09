@@ -130,3 +130,25 @@ class ProfileModel extends ProfileEntity {
     );
   }
 }
+
+///Delete Profile:-
+class DeleteProfile extends DeleteProfileEntity {
+  const DeleteProfile({
+    super.success,
+    super.message,
+  });
+
+  factory DeleteProfile.fromJson(Map<String, dynamic> json) {
+    return DeleteProfile(
+      success: json['success'] as bool?,
+      message: json['message'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "success": success,
+      "message": message,
+    };
+  }
+}
