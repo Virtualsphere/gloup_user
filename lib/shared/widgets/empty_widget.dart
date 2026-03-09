@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_sizes.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
 
 class EmptyWidget extends StatelessWidget {
   final String message;

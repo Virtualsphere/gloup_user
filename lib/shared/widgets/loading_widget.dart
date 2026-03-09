@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_colors.dart';
 
 class LoadingWidget extends StatelessWidget {
   final String? message;

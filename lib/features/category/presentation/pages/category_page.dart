@@ -416,7 +416,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         child: SalonSearchCard(
                           salonName: salon.salonName,
                           salonImage: salon.salonImage,
-                          imageUrl: salon.images?.firstOrNull ?? '',
+                          imageUrl: salon.images.firstOrNull ?? '',
                           rating: salon.rating,
                           reviewCount: salon.reviewCount,
                           distance: salon.distance,

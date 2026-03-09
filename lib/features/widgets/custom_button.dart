@@ -45,14 +45,6 @@ class CustomFullButton extends StatelessWidget {
         : (backgroundColor ??
         (isDarkMode ? AppColors.onPrimary : AppColors.primary));
 
-    // Determine text color
-    final txtColor = isButtonDisabled
-        ? (disabledTextColor ??
-        (isDarkMode
-            ? AppColors.textSecondaryDark
-            : AppColors.textSecondary))
-        : (textColor ?? (isDarkMode ? AppColors.primary : AppColors.onPrimary));
-
     return GestureDetector(
       onTap: isDisabled ? null : onTap,
       child: Container(

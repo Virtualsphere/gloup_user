@@ -2,17 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'core/constants/app_strings.dart';
-import 'core/di/injection_container.dart';
-import 'core/providers/location_provider.dart';
-import 'core/router/app_router.dart';
-import 'core/services/firebase_notification_service.dart';
-import 'core/theme/app_theme.dart';
-import 'core/theme/theme_provider.dart';
-import 'core/utils/local_storage_service.dart';
-import 'features/category/presentation/bloc/category_bloc.dart';
-import 'features/favorites/presentation/bloc/favorites_bloc.dart';
-import 'firebase_options.dart';
+import 'package:tressy/core/constants/app_strings.dart';
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/providers/location_provider.dart';
+import 'package:tressy/core/router/app_router.dart';
+import 'package:tressy/core/services/firebase_notification_service.dart';
+import 'package:tressy/core/theme/app_theme.dart';
+import 'package:tressy/core/theme/theme_provider.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
+import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

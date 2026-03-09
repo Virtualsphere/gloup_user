@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../shared/extensions/context_extensions.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ServiceCard extends StatelessWidget {
   final String serviceName;

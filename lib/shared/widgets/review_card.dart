@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_sizes.dart';
-import '../extensions/context_extensions.dart';
+import 'package:tressy/core/constants/app_colors.dart';
+import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ReviewCard extends StatelessWidget {
   final String userName;
