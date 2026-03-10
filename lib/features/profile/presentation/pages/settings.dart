@@ -15,6 +15,7 @@ import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/add_person_bottom_sheet.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/edit_person_bottom_sheet.dart';
 import 'package:tressy/features/profile/presentation/pages/support.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
@@ -54,13 +55,11 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
-
         /// SHOW LOADER
         if (state is ProfileDeleting) {
           showDialog(
@@ -74,7 +73,6 @@ class _SettingsViewState extends State<SettingsView> {
 
         /// DELETE SUCCESS
         if (state is ProfileDeleted) {
-
           Navigator.pop(context); // close loader
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -87,13 +85,12 @@ class _SettingsViewState extends State<SettingsView> {
             MaterialPageRoute(
               builder: (_) => const LoginPage(),
             ),
-                (route) => false,
+            (route) => false,
           );
         }
 
         /// ERROR
         if (state is ProfileFailure) {
-
           Navigator.pop(context); // close loader
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -101,7 +98,6 @@ class _SettingsViewState extends State<SettingsView> {
           );
         }
       },
-
       child: Scaffold(
         appBar: ProfileAppBar(
           title: "Settings",
@@ -133,7 +129,8 @@ class _SettingsViewState extends State<SettingsView> {
                     color: context.colorScheme.surface,
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 margin: EdgeInsets.symmetric(horizontal: 15),
                 child: ProfileListTile(
                   title: 'Delete Account',
@@ -145,8 +142,8 @@ class _SettingsViewState extends State<SettingsView> {
                       submitOnTap: () async {
                         Navigator.of(context).pop();
                         context.read<ProfileBloc>().add(
-                          const DeleteProfileEvent(),
-                        );
+                              const DeleteProfileEvent(),
+                            );
                       },
                     );
                   },
@@ -184,8 +181,9 @@ class _SettingsViewState extends State<SettingsView> {
                           children: [
                             Icon(
                               Icons.add,
-                              color:
-                              isDarkMode ? AppColors.black : AppColors.white,
+                              color: isDarkMode
+                                  ? AppColors.black
+                                  : AppColors.white,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -244,6 +242,33 @@ class _SettingsViewState extends State<SettingsView> {
                             age: guest.age,
                             phone: guest.phone,
                             showMenuButton: true,
+                            onEdit: () {
+                              if (guest.guestId == null) return;
+
+                              showEditPersonBottomSheet(
+                                context,
+                                initialName: guest.name,
+                                initialAge: guest.age,
+                                initialGender: guest.gender,
+                                initialPhone: guest.phone,
+                                onSave: (result) {
+                                  context.read<GuestBloc>().add(
+                                        UpdateGuestEvent(
+                                          guestId: guest.guestId!,
+                                          name: result.fullName,
+                                          gender: result.gender,
+                                          age: result.age,
+                                          phone: result.phone,
+                                        ),
+                                      );
+
+                                  CustomToast.showInfo(
+                                    context,
+                                    'Updating ${result.fullName}...',
+                                  );
+                                },
+                              );
+                            },
                           ),
                         );
                       },
@@ -267,7 +292,8 @@ class ProfileDeleteCard extends StatelessWidget {
   final int age;
   final String phone;
   final bool profileImage;
-  final VoidCallback? onMenuTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const ProfileDeleteCard({
     super.key,
@@ -278,7 +304,8 @@ class ProfileDeleteCard extends StatelessWidget {
     required this.phone,
     this.showMenuButton = false,
     this.profileImage = false,
-    this.onMenuTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -380,21 +407,9 @@ class ProfileDeleteCard extends StatelessWidget {
                       title: 'Edit',
                       value: '/edit',
                       onTap: () {
-                        showEditPersonBottomSheet(
-                          context,
-                          initialName: name,
-                          initialAge: age,
-                          initialGender: gender,
-                          initialPhone: phone,
-                          onSave: (result) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Profile updated: ${result.fullName}'),
-                              ),
-                            );
-                          },
-                        );
+                        if (onEdit != null) {
+                          onEdit!();
+                        }
                       },
                     ),
                     PopupMenuItemData(
@@ -406,6 +421,9 @@ class ProfileDeleteCard extends StatelessWidget {
                           title: 'delete this guest user?',
                           submitOnTap: () {
                             Navigator.of(context).pop();
+                            /*if (onDelete != null) {
+                              onDelete!();
+                            }*/
                           },
                         );
                       },
