@@ -58,8 +58,6 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     try {
       final token = LocalStorageService.accessToken;
 
-      print('🔐 Verify Payment → orderId=$razorpayOrderId paymentId=$razorpayPaymentId');
-
       final response = await dioClient.post(
         ApiRoutes.paymentSuccess,
         data: {
@@ -72,7 +70,6 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
             : null,
       );
 
-      print('🔐 Verify Payment response: ${response.statusCode} → ${response.data}');
 
       if (response.data['success'] != true) {
         throw ApiException(
@@ -81,11 +78,9 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      print('🔐 Verify Payment DioException: ${e.type} → ${e.message}');
       throw _handleDioException(e);
     } catch (e) {
       if (e is ApiException) rethrow;
-      print('🔐 Verify Payment unexpected error: $e');
       throw ApiException(message: 'Unexpected error: ${e.toString()}');
     }
   }

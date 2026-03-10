@@ -186,9 +186,6 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
 
   /// Update map markers from MapMarkersLoaded state
   Future<void> _updateMapMarkersFromState(MapMarkersLoaded state) async {
-    print(
-        '🗺️ MapMarkersLoaded: zoom=${state.zoom}, clustering=${state.clusteringEnabled}, clusters=${state.clusters.length}, markers=${state.markers.length}');
-
     final isDarkMode = context.theme.brightness == Brightness.dark;
     Set<Marker> newMarkers = {};
 
@@ -199,21 +196,13 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
       if (state.zoom < 14) {
         // Zoomed out - prefer clusters, fallback to markers if no clusters
         if (state.clusters.isNotEmpty) {
-          print(
-              '📊 Zoom ${state.zoom} < 14: Creating ${state.clusters.length} cluster markers...');
           final clusterMarkers = await _markerManager.createClusterMarkers(
             clusters: state.clusters,
             isDarkMode: isDarkMode,
             onClusterTap: _onClusterTap,
           );
           newMarkers.addAll(clusterMarkers);
-          print(
-              '✅ Added ${clusterMarkers.length} clusters (individual markers hidden)');
         } else if (state.markers.isNotEmpty) {
-          // Backend didn't cluster, but we're zoomed out - show markers anyway
-          print('⚠️ Zoom ${state.zoom} < 14 but no clusters from backend');
-          print(
-              '📍 Showing ${state.markers.length} individual markers as fallback...');
           final individualMarkers =
               await _markerManager.createIndividualMarkers(
             markers: state.markers,
@@ -221,13 +210,10 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
             onMarkerTap: _onMarkerTap,
           );
           newMarkers.addAll(individualMarkers);
-          print('✅ Added ${individualMarkers.length} individual markers');
         }
       } else {
         // Zoomed in - show ONLY individual markers
         if (state.markers.isNotEmpty) {
-          print(
-              '📍 Zoom ${state.zoom} >= 14: Creating ${state.markers.length} individual markers...');
           final individualMarkers =
               await _markerManager.createIndividualMarkers(
             markers: state.markers,
@@ -235,17 +221,15 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
             onMarkerTap: _onMarkerTap,
           );
           newMarkers.addAll(individualMarkers);
-          print(
-              '✅ Added ${individualMarkers.length} individual markers (clusters hidden)');
         } else {
-          print(
-              '⚠️ Zoom ${state.zoom} >= 14 but no individual markers from backend');
+          debugPrint(
+              'Zoom ${state.zoom} >= 14 but no individual markers from backend');
         }
       }
 
       if (newMarkers.isEmpty) {
-        print(
-            '⚠️ No markers to show: zoom=${state.zoom}, clusters=${state.clusters.length}, markers=${state.markers.length}');
+        debugPrint(
+            'No markers to show: zoom=${state.zoom}, clusters=${state.clusters.length}, markers=${state.markers.length}');
       }
 
       // Update markers on map
@@ -254,10 +238,9 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
           _markers.clear();
           _markers.addAll(newMarkers);
         });
-        print('✅ Map updated with ${_markers.length} total markers');
       }
     } catch (e) {
-      print('❌ Error updating map markers: $e');
+      debugPrint('❌ Error updating map markers: $e');
     }
   }
 

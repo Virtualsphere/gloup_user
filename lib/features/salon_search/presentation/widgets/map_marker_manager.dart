@@ -37,7 +37,6 @@ class MapMarkerManager {
       );
     }
 
-    print('✅ Created ${googleMarkers.length} individual markers (default black)');
     return googleMarkers;
   }
 
@@ -81,7 +80,6 @@ class MapMarkerManager {
       );
     }
 
-    print('✅ Created ${googleMarkers.length} cluster markers');
     return googleMarkers;
   }
 

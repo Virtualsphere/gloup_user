@@ -1,5 +1,3 @@
-/// Domain Entities for Map Markers
-
 class MapMarkersEntity {
   final int zoom;
   final bool clusteringEnabled;

@@ -27,15 +27,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final List<Map<String, String>> _onboardingContent = [
     {
       'title': 'Salon. Spa. Style. All in One App',
-      'content': 'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
+      'content':
+          'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
     },
     {
       'title': 'Save Time, Look Gorgeous!',
-      'content': 'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
+      'content':
+          'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
     },
     {
       'title': 'One App. Endless Beauty Choices.',
-      'content': '800+ Verified Salons\n3000+ Services at your fingertips\nBeauty, Spa & Self-Care – Made Simple!',
+      'content':
+          '800+ Verified Salons\n3000+ Services at your fingertips\nBeauty, Spa & Self-Care – Made Simple!',
     },
   ];
 
@@ -71,7 +74,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _navigateToLogin() async {
     // Mark onboarding as completed
     await LocalStorageService.setOnboardingCompleted(true);
-    
+
     // Navigate to login or auth screen
     if (mounted) {
       context.go(RouteNames.login);
@@ -107,7 +110,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       right: 0,
                       bottom: 160,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXL),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingXL),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -139,74 +143,78 @@ class _OnboardingPageState extends State<OnboardingPage> {
               );
             },
           ),
-          
+
           // Bottom Controls
           Positioned(
             left: 0,
             right: 0,
             bottom: AppSizes.paddingXL,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Page Indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _onboardingBackgrounds.length,
-                      (index) => _buildIndicator(index == _currentPage),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Page Indicator
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        _onboardingBackgrounds.length,
+                        (index) => _buildIndicator(index == _currentPage),
+                      ),
                     ),
-                  ),
-                  AppSizes.heightL,
-                  
-                  // Skip and Next Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Skip Button
-                      TextButton(
-                        onPressed: _navigateToLogin,
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingL,
-                            vertical: AppSizes.paddingM,
-                          ),
-                        ),
-                        child: Text(
-                          'Skip',
-                          style: context.textTheme.labelLarge?.copyWith(
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
+                    AppSizes.heightL,
 
-                      // Next Button
-                      ElevatedButton(
-                        onPressed: _nextPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.onPrimary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingXL,
-                            vertical: AppSizes.paddingM,
+                    // Skip and Next Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Skip Button
+                        TextButton(
+                          onPressed: _navigateToLogin,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingL,
+                              vertical: AppSizes.paddingM,
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusS),
-                          ),
-                        ),
-                        child: Text(
-                          _currentPage == _onboardingBackgrounds.length - 1 
-                            ? 'Get Started' 
-                            : 'Next',
-                          style: context.textTheme.labelLarge?.copyWith(
-                            color: AppColors.onPrimary,
+                          child: Text(
+                            'Skip',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+
+                        // Next Button
+                        ElevatedButton(
+                          onPressed: _nextPage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.onPrimary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.paddingXL,
+                              vertical: AppSizes.paddingM,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusS),
+                            ),
+                          ),
+                          child: Text(
+                            _currentPage == _onboardingBackgrounds.length - 1
+                                ? 'Get Started'
+                                : 'Next',
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: AppColors.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -222,9 +230,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 8.0,
       width: isActive ? 24.0 : 8.0,
       decoration: BoxDecoration(
-        color: isActive 
-          ? AppColors.primary 
-          : AppColors.textSecondary.withValues(alpha: 0.3),
+        color: isActive
+            ? AppColors.primary
+            : AppColors.textSecondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(4.0),
       ),
     );

@@ -32,7 +32,6 @@ class SocialAuthError extends SocialCredential {
 /// Gets the native provider credential (token / code) from Google or Apple.
 /// The actual backend call is handled by [AuthRemoteDataSource].
 class SocialAuthService {
-  // TODO: Set your Google client ID from Firebase / GCP console if needed
   static const _googleClientId = '';
 
   final _googleSignIn = GoogleSignIn(

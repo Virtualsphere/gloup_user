@@ -112,7 +112,7 @@ class _CategorySectionState extends State<CategorySection> {
                               return _buildCategory(
                                 context,
                                 category.label,
-                                category.imageUrl ?? '',
+                                category.imageUrl,
                                 id: category.id,
                                 index: index,
                               );

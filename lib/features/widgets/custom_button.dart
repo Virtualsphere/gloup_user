@@ -37,13 +37,7 @@ class CustomFullButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    final isButtonDisabled = isDisabled || isLoading || onTap == null;
 
-    final bgColor = isButtonDisabled
-        ? (disabledBackgroundColor ??
-        (isDarkMode ? AppColors.borderDark : AppColors.border))
-        : (backgroundColor ??
-        (isDarkMode ? AppColors.onPrimary : AppColors.primary));
 
     return GestureDetector(
       onTap: isDisabled ? null : onTap,

@@ -61,7 +61,7 @@ Future<void> initializeLocalNotifications() async {
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const darwinSettings = DarwinInitializationSettings(
-    requestAlertPermission: false, // Permission requested on home screen
+    requestAlertPermission: false,
     requestBadgePermission: false,
     requestSoundPermission: false,
   );
