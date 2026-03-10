@@ -1,13 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
+import 'package:http/http.dart' as http;
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -24,10 +24,14 @@ class _LocationPageState extends State<LocationPage> {
   String _currentFullAddress = '';
   double? _currentLatitude;
   double? _currentLongitude;
-  
+
   // Nearby locations
   List<Map<String, dynamic>> _nearbyLocations = [];
-  
+
+  // Autocomplete predictions
+  List<Map<String, dynamic>> _predictions = [];
+  Timer? _debounceTimer;
+
   // Google Places API Key
   static const String _googlePlacesApiKey = 'AIzaSyBACvmG9-ekKRhJYRhSTVa7Et10IArFzUs';
 
@@ -35,7 +39,6 @@ class _LocationPageState extends State<LocationPage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    // Add listener to rebuild UI when search text changes
     _searchController.addListener(() {
       setState(() {});
     });
@@ -43,6 +46,7 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -98,8 +102,7 @@ class _LocationPageState extends State<LocationPage> {
 
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
-          
-          // Build full address
+
           String fullAddress = '';
           if (place.subLocality != null && place.subLocality!.isNotEmpty) {
             fullAddress = place.subLocality!;
@@ -113,15 +116,14 @@ class _LocationPageState extends State<LocationPage> {
           if (place.postalCode != null && place.postalCode!.isNotEmpty) {
             fullAddress += ' - ${place.postalCode!}';
           }
-          
+
           setState(() {
             _currentCity = place.locality ?? place.administrativeArea ?? 'Unknown';
             _currentArea = place.subLocality ?? place.thoroughfare ?? '';
             _currentFullAddress = fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
             _isLoadingLocation = false;
           });
-          
-          // Load nearby locations
+
           _loadNearbyLocations(position.latitude, position.longitude);
         } else {
           setState(() {
@@ -142,48 +144,32 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<void> _loadNearbyLocations(double lat, double lng) async {
     try {
-      // Use Google Places Nearby Search API to get real nearby locations
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
         '?location=$lat,$lng'
-        '&radius=5000' // 5km radius
-        '&type=locality' // Get nearby localities/neighborhoods
-        '&key=$_googlePlacesApiKey'
+        '&radius=5000'
+        '&type=locality'
+        '&key=$_googlePlacesApiKey',
       );
 
-      debugPrint('Fetching nearby locations from Google Places API...');
-      
       final response = await http.get(url);
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         if (data['status'] == 'OK' && data['results'] != null) {
           final results = data['results'] as List;
-          
-          debugPrint('Found ${results.length} nearby locations');
-          
           List<Map<String, dynamic>> locations = [];
-          
+
           for (var i = 0; i < results.length && i < 10; i++) {
             final place = results[i];
-            
-            // Calculate distance from current location
             final placeLat = place['geometry']['location']['lat'];
             final placeLng = place['geometry']['location']['lng'];
-            
-            final distance = Geolocator.distanceBetween(
-              lat,
-              lng,
-              placeLat,
-              placeLng,
-            );
-            
+
+            final distance = Geolocator.distanceBetween(lat, lng, placeLat, placeLng);
             final distanceInKm = (distance / 1000).toStringAsFixed(1);
-            
-            // Get full address
-            String fullAddress = place['vicinity'] ?? place['name'] ?? '';
-            
+            final fullAddress = place['vicinity'] ?? place['name'] ?? '';
+
             locations.add({
               'name': place['name'] ?? 'Unknown',
               'area': place['vicinity'] ?? '',
@@ -193,41 +179,31 @@ class _LocationPageState extends State<LocationPage> {
               'longitude': placeLng,
             });
           }
-          
-          // Sort by distance
+
           locations.sort((a, b) {
             final distA = double.parse(a['distance'].toString().replaceAll(' km away', ''));
             final distB = double.parse(b['distance'].toString().replaceAll(' km away', ''));
             return distA.compareTo(distB);
           });
-          
+
           if (mounted) {
             setState(() {
               _nearbyLocations = locations;
             });
           }
-          
-          debugPrint('Successfully loaded ${locations.length} nearby locations');
         } else {
-          debugPrint('Google Places API returned status: ${data['status']}');
-          // Fallback to geocoding-based locations
           _loadFallbackNearbyLocations(lat, lng);
         }
       } else {
-        debugPrint('Failed to fetch nearby locations: ${response.statusCode}');
-        // Fallback to geocoding-based locations
         _loadFallbackNearbyLocations(lat, lng);
       }
     } catch (e) {
       debugPrint('Error loading nearby locations: $e');
-      // Fallback to geocoding-based locations
       _loadFallbackNearbyLocations(lat, lng);
     }
   }
 
-  // Fallback method if Google Places API fails
   Future<void> _loadFallbackNearbyLocations(double lat, double lng) async {
-    // Generate nearby locations using geocoding
     setState(() {
       _nearbyLocations = List.generate(5, (index) {
         final latOffset = (index + 1) * 0.01;
@@ -241,18 +217,16 @@ class _LocationPageState extends State<LocationPage> {
       });
     });
 
-    // Get address for each nearby location
     for (var i = 0; i < _nearbyLocations.length; i++) {
       try {
         List<Placemark> placemarks = await placemarkFromCoordinates(
           _nearbyLocations[i]['latitude'],
           _nearbyLocations[i]['longitude'],
         );
-        
+
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
-          
-          // Build full address
+
           String fullAddress = '';
           if (place.subLocality != null && place.subLocality!.isNotEmpty) {
             fullAddress = place.subLocality!;
@@ -263,9 +237,9 @@ class _LocationPageState extends State<LocationPage> {
           if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
             fullAddress += fullAddress.isEmpty ? place.administrativeArea! : ', ${place.administrativeArea!}';
           }
-          
+
           setState(() {
-            _nearbyLocations[i]['name'] = 
+            _nearbyLocations[i]['name'] =
                 place.subLocality ?? place.locality ?? place.administrativeArea ?? 'Location ${i + 1}';
             _nearbyLocations[i]['area'] = place.locality ?? '';
             _nearbyLocations[i]['fullAddress'] = fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
@@ -277,65 +251,100 @@ class _LocationPageState extends State<LocationPage> {
     }
   }
 
-  // Handle place selection from Google Places
-  void _handlePlaceSelection(Prediction prediction) async {
-    if (prediction.lat == null || prediction.lng == null) {
+  void _onSearchChanged(String query) {
+    _debounceTimer?.cancel();
+    if (query.isEmpty) {
+      setState(() {
+        _predictions = [];
+      });
       return;
     }
+    _debounceTimer = Timer(const Duration(milliseconds: 400), () {
+      _searchPlaces(query);
+    });
+  }
 
+  Future<void> _searchPlaces(String query) async {
     try {
-      final lat = double.parse(prediction.lat!);
-      final lng = double.parse(prediction.lng!);
-      
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      
-      if (placemarks.isNotEmpty && mounted) {
-        Placemark place = placemarks[0];
-        
-        // Navigate back with selected location
-        Navigator.pop(context, {
-          'city': place.locality ?? place.administrativeArea ?? '',
-          'area': place.subLocality ?? prediction.description ?? '',
-          'latitude': lat,
-          'longitude': lng,
-        });
+      String locationBias = '';
+      if (_currentLatitude != null && _currentLongitude != null) {
+        locationBias = '&location=$_currentLatitude,$_currentLongitude&radius=50000';
+      }
+
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+        '?input=${Uri.encodeComponent(query)}'
+        '&components=country:in'
+        '&key=$_googlePlacesApiKey'
+        '$locationBias',
+      );
+
+      final response = await http.get(url);
+      if (response.statusCode == 200 && mounted) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK' && data['predictions'] != null) {
+          setState(() {
+            _predictions = List<Map<String, dynamic>>.from(data['predictions']);
+          });
+        } else {
+          setState(() {
+            _predictions = [];
+          });
+        }
       }
     } catch (e) {
-      debugPrint('Error handling place selection: $e');
+      debugPrint('Error searching places: $e');
     }
   }
 
-  // Extract main name from full address
+  Future<void> _handlePredictionTap(Map<String, dynamic> prediction) async {
+    final placeId = prediction['place_id'];
+    if (placeId == null) return;
+
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/details/json'
+        '?place_id=$placeId'
+        '&fields=geometry,name,formatted_address'
+        '&key=$_googlePlacesApiKey',
+      );
+
+      final response = await http.get(url);
+      if (response.statusCode == 200 && mounted) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK') {
+          final result = data['result'];
+          final lat = result['geometry']['location']['lat'] as double;
+          final lng = result['geometry']['location']['lng'] as double;
+
+          List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+          if (placemarks.isNotEmpty && mounted) {
+            Placemark place = placemarks[0];
+            Navigator.pop(context, {
+              'city': place.locality ?? place.administrativeArea ?? '',
+              'area': place.subLocality ?? prediction['description'] ?? '',
+              'latitude': lat,
+              'longitude': lng,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting place details: $e');
+    }
+  }
+
   String _extractMainName(String fullAddress) {
     if (fullAddress.isEmpty) return '';
     final parts = fullAddress.split(',');
     return parts.first.trim();
   }
 
-  // Build prediction card widget
-  Widget _buildPredictionCard(BuildContext context, Prediction prediction, bool isDarkMode) {
-    // Calculate distance if current location is available
-    String? distance;
-    if (_currentLatitude != null && 
-        _currentLongitude != null && 
-        prediction.lat != null && 
-        prediction.lng != null) {
-      try {
-        final searchLat = double.parse(prediction.lat!);
-        final searchLng = double.parse(prediction.lng!);
-        final distanceInMeters = Geolocator.distanceBetween(
-          _currentLatitude!,
-          _currentLongitude!,
-          searchLat,
-          searchLng,
-        );
-        final distanceInKm = (distanceInMeters / 1000).toStringAsFixed(1);
-        distance = '$distanceInKm km away';
-      } catch (e) {
-        debugPrint('Error calculating distance: $e');
-      }
-    }
-    
+  Widget _buildPredictionCard(BuildContext context, Map<String, dynamic> prediction, bool isDarkMode) {
+    final description = prediction['description'] as String? ?? '';
+    final mainText = (prediction['structured_formatting']?['main_text'] as String?)
+        ?? _extractMainName(description);
+
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
@@ -361,9 +370,7 @@ class _LocationPageState extends State<LocationPage> {
             ),
             child: Icon(
               Icons.location_on,
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
+              color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
               size: 20,
             ),
           ),
@@ -373,7 +380,7 @@ class _LocationPageState extends State<LocationPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _extractMainName(prediction.description ?? ''),
+                  mainText,
                   style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -382,48 +389,20 @@ class _LocationPageState extends State<LocationPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  prediction.description ?? '',
+                  description,
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
+                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (distance != null) ...[
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.navigation,
-                        size: 12,
-                        color: isDarkMode
-                            ? AppColors.primaryDark
-                            : AppColors.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        distance,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),
           Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color: isDarkMode
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
+            color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
           ),
         ],
       ),
@@ -433,6 +412,7 @@ class _LocationPageState extends State<LocationPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
+    final isSearching = _searchController.text.isNotEmpty;
 
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
@@ -462,13 +442,13 @@ class _LocationPageState extends State<LocationPage> {
       ),
       body: Column(
         children: [
-          // Google Places Search Field with Card-Style Results
+          // Search Field
           Padding(
             padding: const EdgeInsets.all(AppSizes.paddingL),
-            child: GooglePlaceAutoCompleteTextField(
-              textEditingController: _searchController,
-              googleAPIKey: _googlePlacesApiKey,
-              inputDecoration: InputDecoration(
+            child: TextField(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              decoration: InputDecoration(
                 hintText: 'Search for area, street name...',
                 hintStyle: context.textTheme.bodyMedium?.copyWith(
                   color: isDarkMode ? AppColors.textHintDark : AppColors.textHint,
@@ -477,17 +457,17 @@ class _LocationPageState extends State<LocationPage> {
                   Icons.search,
                   color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 ),
-                suffixIcon: _searchController.text.isNotEmpty
+                suffixIcon: isSearching
                     ? IconButton(
                         icon: Icon(
                           Icons.clear,
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
+                          color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                         ),
                         onPressed: () {
                           _searchController.clear();
-                          setState(() {});
+                          setState(() {
+                            _predictions = [];
+                          });
                         },
                       )
                     : null,
@@ -501,7 +481,10 @@ class _LocationPageState extends State<LocationPage> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(
+                    color: AppColors.border,
+                    width: AppSizes.borderWidthThin,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -515,109 +498,47 @@ class _LocationPageState extends State<LocationPage> {
                   vertical: AppSizes.paddingM,
                 ),
               ),
-              debounceTime: 400,
-              countries: const ["in"],
-              isLatLngRequired: true,
-              getPlaceDetailWithLatLng: (Prediction prediction) {
-                _handlePlaceSelection(prediction);
-              },
-              itemClick: (Prediction prediction) {
-                _handlePlaceSelection(prediction);
-              },
-              seperatedBuilder: const SizedBox(height: AppSizes.spaceS),
-              // Show search results in card style with "Use Current Location" as first item
-              itemBuilder: (context, index, Prediction prediction) {
-                // Show "Use Current Location" card as the very first item (index 0)
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      // Add spacing between search input and predictions
-                      const SizedBox(height: AppSizes.spaceM),
-                      // "Use Current Location" card
-                      InkWell(
-                        onTap: _isLoadingLocation
-                            ? null
-                            : () {
-                                if (_currentLatitude != null && _currentLongitude != null) {
-                                  Navigator.pop(context, {
-                                    'city': _currentCity,
-                                    'area': _currentArea,
-                                    'latitude': _currentLatitude,
-                                    'longitude': _currentLongitude,
-                                  });
-                                }
-                              },
-                        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                        child: Container(
-                          padding: const EdgeInsets.all(AppSizes.paddingL),
-                          decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.my_location,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                              const SizedBox(width: AppSizes.spaceM),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Use current location',
-                                      style: context.textTheme.titleSmall?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    if (_isLoadingLocation)
-                                      Text(
-                                        'Getting your location...',
-                                        style: context.textTheme.bodySmall?.copyWith(
-                                          color: Colors.white.withValues(alpha: 0.8),
-                                        ),
-                                      )
-                                    else if (_currentFullAddress.isNotEmpty)
-                                      Text(
-                                        _currentFullAddress,
-                                        style: context.textTheme.bodySmall?.copyWith(
-                                          color: Colors.white.withValues(alpha: 0.8),
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSizes.spaceM),
-                      // First prediction result
-                      _buildPredictionCard(context, prediction, isDarkMode),
-                    ],
-                  );
-                }
-                
-                // For all other items, just show the prediction card
-                return _buildPredictionCard(context, prediction, isDarkMode);
-              },
-              // Only show the widget when searching
-              isCrossBtnShown: false,
             ),
           ),
 
-          // Show current location and nearby when not searching
-          if (_searchController.text.isEmpty) ...[
+          // Search results
+          if (isSearching) ...[
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                itemCount: _predictions.length + 1,
+                separatorBuilder: (_, __) => const SizedBox(height: AppSizes.spaceS),
+                itemBuilder: (context, index) {
+                  // First item: "Use current location"
+                  if (index == 0) {
+                    return InkWell(
+                      onTap: _isLoadingLocation
+                          ? null
+                          : () {
+                              if (_currentLatitude != null && _currentLongitude != null) {
+                                Navigator.pop(context, {
+                                  'city': _currentCity,
+                                  'area': _currentArea,
+                                  'latitude': _currentLatitude,
+                                  'longitude': _currentLongitude,
+                                });
+                              }
+                            },
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                      child: _buildCurrentLocationCard(context, isDarkMode),
+                    );
+                  }
+
+                  final prediction = _predictions[index - 1];
+                  return InkWell(
+                    onTap: () => _handlePredictionTap(prediction),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    child: _buildPredictionCard(context, prediction, isDarkMode),
+                  );
+                },
+              ),
+            ),
+          ] else ...[
             // Current Location Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
@@ -635,58 +556,7 @@ class _LocationPageState extends State<LocationPage> {
                         }
                       },
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                child: Container(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.my_location,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      const SizedBox(width: AppSizes.spaceM),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Use current location',
-                              style: context.textTheme.titleSmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (_isLoadingLocation)
-                              Text(
-                                'Getting your location...',
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                ),
-                              )
-                            else if (_currentFullAddress.isNotEmpty)
-                              Text(
-                                _currentFullAddress,
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
+                child: _buildCurrentLocationCard(context, isDarkMode),
               ),
             ),
 
@@ -716,6 +586,53 @@ class _LocationPageState extends State<LocationPage> {
               ),
             ],
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentLocationCard(BuildContext context, bool isDarkMode) {
+    return Container(
+      padding: const EdgeInsets.all(AppSizes.paddingL),
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+        borderRadius: BorderRadius.circular(AppSizes.radiusM),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.my_location, color: Colors.white, size: 24),
+          const SizedBox(width: AppSizes.spaceM),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Use current location',
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (_isLoadingLocation)
+                  Text(
+                    'Getting your location...',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                  )
+                else if (_currentFullAddress.isNotEmpty)
+                  Text(
+                    _currentFullAddress,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
         ],
       ),
     );
@@ -752,84 +669,71 @@ class _LocationPageState extends State<LocationPage> {
           child: Row(
             children: [
               Container(
-              padding: const EdgeInsets.all(AppSizes.paddingS),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.surfaceDark.withValues(alpha: 0.5)
-                    : AppColors.surface.withValues(alpha: 0.8),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.border,
+                padding: const EdgeInsets.all(AppSizes.paddingS),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.surfaceDark.withValues(alpha: 0.5)
+                      : AppColors.surface.withValues(alpha: 0.8),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Icon(
+                  Icons.location_on,
+                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  size: 20,
                 ),
               ),
-              child: Icon(
-                Icons.location_on,
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: AppSizes.spaceM),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    location['name'] ?? '',
-                    style: context.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  if (location['fullAddress'] != null) ...[
+              const SizedBox(width: AppSizes.spaceM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      location['fullAddress'],
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
+                      location['name'] ?? '',
+                      style: context.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                  if (location['distance'] != null) ...[
-                    if (location['fullAddress'] != null)
-                      const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.navigation,
-                          size: 12,
-                          color: isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
+                    const SizedBox(height: 4),
+                    if (location['fullAddress'] != null) ...[
+                      Text(
+                        location['fullAddress'],
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          location['distance'],
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: isDarkMode
-                                ? AppColors.primaryDark
-                                : AppColors.primary,
-                            fontWeight: FontWeight.w500,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    if (location['distance'] != null) ...[
+                      if (location['fullAddress'] != null) const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.navigation,
+                            size: 12,
+                            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 4),
+                          Text(
+                            location['distance'],
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+                color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
               ),
             ],
           ),

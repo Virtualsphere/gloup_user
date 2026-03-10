@@ -18,8 +18,8 @@ class ThemeProvider extends ChangeNotifier {
   /// Check if light mode is enabled
   bool get isLightMode => _themeMode == ThemeMode.light;
 
-  /// Check if system mode is enabled
-  bool get isSystemMode => _themeMode == ThemeMode.system;
+  // /// Check if system mode is enabled
+  // bool get isSystemMode => _themeMode == ThemeMode.system;
 
   /// Load theme mode from shared preferences
   Future<void> _loadThemeMode() async {
@@ -30,7 +30,7 @@ class ThemeProvider extends ChangeNotifier {
       if (themeModeString != null) {
         _themeMode = ThemeMode.values.firstWhere(
           (mode) => mode.toString() == themeModeString,
-          orElse: () => ThemeMode.system,
+          orElse: () => ThemeMode.light,
         );
         notifyListeners();
       }

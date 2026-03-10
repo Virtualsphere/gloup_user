@@ -4,6 +4,7 @@ import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/bookings/domain/entities/appointment_entity.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_event.dart';
@@ -30,7 +31,11 @@ class _BookingsPageState extends State<BookingsPage>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _appointmentsBloc = sl<AppointmentsBloc>();
-    _appointmentsBloc.add(const LoadAppointmentsEvent());
+    final isAuthenticated = LocalStorageService.accessToken != null &&
+        LocalStorageService.accessToken!.isNotEmpty;
+    if (isAuthenticated) {
+      _appointmentsBloc.add(const LoadAppointmentsEvent());
+    }
   }
 
   @override
@@ -66,7 +71,8 @@ class _BookingsPageState extends State<BookingsPage>
     }
   }
 
-  Future<void> _openMapsDirections(String lat, String lng, String salonName) async {
+  Future<void> _openMapsDirections(
+      String lat, String lng, String salonName) async {
     final uri = Uri.parse(
       'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&destination_place_id=$salonName&travelmode=driving',
     );
@@ -202,12 +208,11 @@ class _BookingsPageState extends State<BookingsPage>
                 }
 
                 final booked = state.upcoming
-                    .where((a) =>
-                        a.appointmentStatus.toLowerCase() == 'booked')
+                    .where((a) => a.appointmentStatus.toLowerCase() == 'booked')
                     .toList();
                 final completed = state.upcoming
-                    .where((a) =>
-                        a.appointmentStatus.toLowerCase() == 'completed')
+                    .where(
+                        (a) => a.appointmentStatus.toLowerCase() == 'completed')
                     .toList();
 
                 return TabBarView(
@@ -277,7 +282,7 @@ class _BookingsPageState extends State<BookingsPage>
         break;
       case 'completed':
         statusColor = AppColors.white;
-        statusBgColor =  AppColors.success;
+        statusBgColor = AppColors.success;
         statusText = 'Completed';
         break;
       default: // past
@@ -327,7 +332,8 @@ class _BookingsPageState extends State<BookingsPage>
                       ? Image.network(
                           imageUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _bannerPlaceholder(isDarkMode),
+                          errorBuilder: (_, __, ___) =>
+                              _bannerPlaceholder(isDarkMode),
                         )
                       : _bannerPlaceholder(isDarkMode),
                 ),
@@ -399,8 +405,8 @@ class _BookingsPageState extends State<BookingsPage>
                   top: 10,
                   right: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: statusBgColor,
                       borderRadius: BorderRadius.circular(20),
@@ -434,8 +440,8 @@ class _BookingsPageState extends State<BookingsPage>
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.45),
                       borderRadius: BorderRadius.circular(20),
@@ -614,12 +620,10 @@ class _BookingsPageState extends State<BookingsPage>
                   icon: const Icon(Icons.directions_outlined, size: 18),
                   label: const Text('Get Directions'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDarkMode
-                        ? AppColors.primaryDark
-                        : AppColors.primary,
-                    foregroundColor: isDarkMode
-                        ? AppColors.black
-                        : AppColors.white,
+                    backgroundColor:
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    foregroundColor:
+                        isDarkMode ? AppColors.black : AppColors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -671,7 +675,9 @@ class _BookingsPageState extends State<BookingsPage>
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
+              color: isDarkMode
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimary,
             ),
           ),
         ],

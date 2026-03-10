@@ -552,24 +552,24 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           },
                         ),
                       ),
-                      Positioned(
-                        top: 0,
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColors.black.withValues(alpha: 0.85),
-                                AppColors.black.withValues(alpha: 0.05),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: 0,
+                      //   bottom: 0,
+                      //   left: 0,
+                      //   right: 0,
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //       gradient: LinearGradient(
+                      //         begin: Alignment.topCenter,
+                      //         end: Alignment.bottomCenter,
+                      //         colors: [
+                      //           AppColors.black.withValues(alpha: 0.),
+                      //           AppColors.black.withValues(alpha: 0.05),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 );

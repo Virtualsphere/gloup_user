@@ -277,7 +277,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
   Widget _buildSlotsGrid(BuildContext context, SlotState state, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: const EdgeInsets.only(left: AppSizes.paddingM , right:  AppSizes.paddingM, bottom:  AppSizes.paddingXL,),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
