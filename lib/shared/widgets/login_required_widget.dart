@@ -89,7 +89,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
     final backgroundHeight = screenHeight * 0.25;
 
     return Scaffold(
-      backgroundColor: context.colorScheme.surface,
+      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
       body: Stack(
         children: [
           // Background Image (same as login_page.dart)
@@ -101,7 +101,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
                 isDarkMode
-                    ? AppColors.black.withValues(alpha: 0.6)
+                    ? AppColors.black.withValues(alpha: 0.5)
                     : Colors.transparent,
                 BlendMode.darken,
               ),
@@ -120,7 +120,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
             bottom: 0,
             child: Container(
               decoration: BoxDecoration(
-                color: context.colorScheme.surface,
+                color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusXL),
                   topRight: Radius.circular(AppSizes.radiusXL),
@@ -149,6 +149,9 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                       child: Image.asset(
                         'assets/images/png/salon_chair.png',
                         fit: BoxFit.contain,
+                        color: isDarkMode
+                            ? AppColors.primaryDark.withValues(alpha: 0.5)
+                            : AppColors.primary.withValues(alpha: 0.9),
                       ),
                     ),
 
@@ -197,7 +200,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: isDarkMode ? AppColors.primary : AppColors.onPrimary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -206,7 +209,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                         child: Text(
                           widget.buttonText ?? 'Login to Continue',
                           style: context.textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
+                            color: isDarkMode ? AppColors.primary : AppColors.onPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

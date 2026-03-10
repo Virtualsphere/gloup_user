@@ -109,7 +109,8 @@ class _MyProfileState extends State<MyProfile> {
   bool get _hasChanges {
     final bool imageChanged = profileImageNotifier.value != null;
 
-    return imageChanged || firstNameController.text != _initialFirstName ||
+    return imageChanged ||
+        firstNameController.text != _initialFirstName ||
         lastNameController.text != _initialLastName ||
         emailController.text != _initialEmail ||
         mobileController.text != _initialMobile ||
@@ -178,7 +179,9 @@ class _MyProfileState extends State<MyProfile> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<ProfileBloc>().add(const GetProfileEvent());
+                        context
+                            .read<ProfileBloc>()
+                            .add(const GetProfileEvent());
                       },
                       child: const Text('Retry'),
                     ),
@@ -193,7 +196,7 @@ class _MyProfileState extends State<MyProfile> {
         final profile = state is ProfileLoaded ? state.profile : null;
         return Scaffold(
           backgroundColor:
-              isDarkMode ? AppColors.primary : AppColors.background,
+              isDarkMode ? AppColors.backgroundDark : AppColors.background,
           appBar: ProfileAppBar(
             title: "Your Profile",
             centerTitle: false,
@@ -217,7 +220,9 @@ class _MyProfileState extends State<MyProfile> {
                             bottom: 15,
                           ),
                           decoration: BoxDecoration(
-                            color: context.colorScheme.surface,
+                            color: isDarkMode
+                                ? AppColors.surfaceDark
+                                : AppColors.surface,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: Column(
@@ -448,7 +453,7 @@ class _MyProfileState extends State<MyProfile> {
 
                         // ── Profile Picture ──────────────────────────
                         Positioned(
-                          top: 30,
+                          top: 60,
                           left: 0,
                           right: 0,
                           child: Stack(
@@ -456,14 +461,14 @@ class _MyProfileState extends State<MyProfile> {
                             fit: StackFit.loose,
                             children: [
                               Container(
-                                height: 132,
-                                width: 132,
+                                height: 96,
+                                width: 96,
                                 clipBehavior: Clip.hardEdge,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: isDarkMode
-                                      ? AppColors.black.withValues(alpha: 0.6)
-                                      : AppColors.transparent,
+                                      ? AppColors.backgroundDark
+                                      : AppColors.background,
                                 ),
                                 child: ValueListenableBuilder<File?>(
                                   valueListenable: profileImageNotifier,
@@ -482,11 +487,6 @@ class _MyProfileState extends State<MyProfile> {
                                                     '',
                                                 imageType: ImageType.profilepic,
                                               ),
-                                        if (isDarkMode)
-                                          Container(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.5),
-                                          ),
                                       ],
                                     );
                                   },
@@ -496,7 +496,7 @@ class _MyProfileState extends State<MyProfile> {
                               // Edit icon
                               Positioned(
                                 bottom: 10,
-                                right: 5,
+                                right: 15,
                                 left: size.width * .25,
                                 child: InkWell(
                                   onTap: () {
@@ -537,10 +537,10 @@ class _MyProfileState extends State<MyProfile> {
           ),
           bottomNavigationBar: SafeArea(
             child: Container(
-              color: isDarkMode ? AppColors.primary : AppColors.white,
+              color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0, vertical: 15.0),
                 child: PrimaryButton(
                   text: 'Update Profile',
                   isLoading: state is ProfileLoading,
@@ -573,13 +573,11 @@ class _MyProfileState extends State<MyProfile> {
         dateOfBirth: dateOfBirthController.text.trim(),
         country: countryController.text.trim(),
         gender: _selectedGender,
-        profilePic: profileImageNotifier.value?.path ??
-            currentProfile.profilePic,
+        profilePic:
+            profileImageNotifier.value?.path ?? currentProfile.profilePic,
       );
 
-      context
-          .read<ProfileBloc>()
-          .add(UpdateProfileEvent(updatedProfile));
+      context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
     }
   }
 

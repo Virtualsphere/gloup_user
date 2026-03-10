@@ -33,6 +33,7 @@ class CustomNetworkImage extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       placeholder: (context, child) {
+              final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -47,11 +48,16 @@ class CustomNetworkImage extends StatelessWidget {
               AppIcons.placeGallery,
               width: placeHolderHeight,
               height: placeHolderHeight,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primaryDark : AppColors.primaryDark,
+                BlendMode.modulate
+              ),
             ),
           ),
         );
       },
       errorWidget: (context, url, error) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -60,12 +66,17 @@ class CustomNetworkImage extends StatelessWidget {
               ),
               fit: BoxFit.cover,
             ),
+            color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
           ),
           child: Center(
             child: SvgPicture.asset(
               AppIcons.placeGallery,
               width: placeHolderHeight,
               height: placeHolderHeight,
+              colorFilter: ColorFilter.mode(
+                isDarkMode ? AppColors.primary.withValues(alpha: 0.3) : AppColors.primaryDark.withValues(alpha: 0.9),
+                BlendMode.modulate
+              ),
             ),
           ),
         );

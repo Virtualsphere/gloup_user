@@ -1354,7 +1354,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                       Icons.person,
                       size: 20,
                       color: selectedBookingFor == 'myself'
-                          ? AppColors.white
+                          ? (isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.textPrimaryDark)
                           : (isDarkMode
                               ? AppColors.textPrimaryDark
                               : AppColors.textPrimary),
@@ -1365,7 +1367,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                             color: selectedBookingFor == 'myself'
-                                ? AppColors.white
+                                ? (isDarkMode
+                                    ? AppColors.primary
+                                    : AppColors.textPrimaryDark)
                                 : (isDarkMode
                                     ? AppColors.textPrimaryDark
                                     : AppColors.textPrimary),
@@ -1415,7 +1419,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                       Icons.people,
                       size: 20,
                       color: selectedBookingFor == 'someone_else'
-                          ? AppColors.white
+                          ? (isDarkMode
+                              ? AppColors.primary
+                              : AppColors.textPrimaryDark)
                           : (isDarkMode
                               ? AppColors.textPrimaryDark
                               : AppColors.textPrimary),
@@ -1426,7 +1432,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                             color: selectedBookingFor == 'someone_else'
-                                ? AppColors.white
+                                ? (isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.textPrimaryDark)
                                 : (isDarkMode
                                     ? AppColors.textPrimaryDark
                                     : AppColors.textPrimary),

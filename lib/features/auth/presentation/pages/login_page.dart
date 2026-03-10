@@ -109,7 +109,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
         }
       },
       child: Scaffold(
-        backgroundColor: context.colorScheme.surface,
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         body: Stack(
           children: [
             Positioned(
@@ -139,7 +139,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               bottom: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
+                  color: isDarkMode ? AppColors.surfaceDark : AppColors.background,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppSizes.radiusXL),
                     topRight: Radius.circular(AppSizes.radiusXL),

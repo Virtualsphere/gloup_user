@@ -11,10 +11,12 @@ import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CategorySection extends StatefulWidget {
-  final Function(String categoryName, int categoryIndex, String categoryId)? onCategoryTap;
+  final Function(String categoryName, int categoryIndex, String categoryId)?
+      onCategoryTap;
   final int? selectedCategoryIndex;
   final bool showActiveBorder;
-  final List<CategoryEntity>? categories; // Optional categories passed from parent
+  final List<CategoryEntity>?
+      categories; // Optional categories passed from parent
   final bool? isLoading; // Optional loading state
   final String? error; // Optional error message
 
@@ -39,7 +41,7 @@ class _CategorySectionState extends State<CategorySection> {
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedCategoryIndex ?? -1;
-    
+
     // Load categories if not passed directly
     if (widget.categories == null) {
       context.read<CategoryBloc>().add(const LoadCategoriesEvent());
@@ -60,7 +62,9 @@ class _CategorySectionState extends State<CategorySection> {
   @override
   Widget build(BuildContext context) {
     // If categories are passed directly, use them (for standalone usage)
-    if (widget.categories != null || widget.isLoading != null || widget.error != null) {
+    if (widget.categories != null ||
+        widget.isLoading != null ||
+        widget.error != null) {
       return _buildCategoryContent(
         context,
         categories: widget.categories ?? [],
@@ -106,7 +110,8 @@ class _CategorySectionState extends State<CategorySection> {
                         Expanded(
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.only(right: AppSizes.paddingS),
+                            padding:
+                                const EdgeInsets.only(right: AppSizes.paddingS),
                             itemCount: categories.length,
                             itemBuilder: (context, index) {
                               final category = categories[index];
@@ -137,7 +142,9 @@ class _CategorySectionState extends State<CategorySection> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color:  isActive ?  ( isDarkMode ?  AppColors.primaryDark : AppColors.primary) : Colors.transparent,
+            color: isActive
+                ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                : Colors.transparent,
             width: 2.5,
           ),
         ),
@@ -188,7 +195,11 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontS,
-                  color: isActive ? isDarkMode ?  AppColors.primaryDark : AppColors.primary : null,
+                  color: isActive
+                      ? isDarkMode
+                          ? AppColors.primaryDark
+                          : AppColors.primary
+                      : null,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -259,7 +270,8 @@ class _CategorySectionState extends State<CategorySection> {
                               color: AppColors.primary.withValues(alpha: 0.1),
                               child: Center(
                                 child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
                                       ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : null,
@@ -270,11 +282,16 @@ class _CategorySectionState extends State<CategorySection> {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+                              color: isDarkMode
+                                  ? AppColors.primaryDark.withValues(alpha: 0.1)
+                                  : AppColors.primary.withValues(alpha: 0.1),
                               child: Icon(
-                                Icons.image,
-                                color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3),
-                                size: 30,
+                                Icons.content_cut,
+                                color: isDarkMode
+                                    ? AppColors.primaryDark
+                                        .withValues(alpha: 0.3)
+                                    : AppColors.primary.withValues(alpha: 0.3),
+                                size: AppSizes.iconM,
                               ),
                             );
                           },

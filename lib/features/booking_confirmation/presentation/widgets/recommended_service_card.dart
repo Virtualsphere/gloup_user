@@ -23,18 +23,19 @@ class RecommendedServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Calculate if there's a discount
-    final hasDiscount = discountPercentage != null && 
-        discountPercentage!.isNotEmpty && 
-        discountPercentage != '0%' && 
+    final hasDiscount = discountPercentage != null &&
+        discountPercentage!.isNotEmpty &&
+        discountPercentage != '0%' &&
         discountPercentage != '0';
-    
+
     double? discountedPrice;
     if (hasDiscount) {
       final discountValue = int.tryParse(
-        discountPercentage!.replaceAll('%', '').trim(),
-      ) ?? 0;
+            discountPercentage!.replaceAll('%', '').trim(),
+          ) ??
+          0;
       discountedPrice = price - (price * discountValue / 100);
     }
 
@@ -63,7 +64,7 @@ class RecommendedServiceCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: AppSizes.spaceS),
-          
+
           // Duration with clock icon
           Row(
             children: [
@@ -85,9 +86,9 @@ class RecommendedServiceCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           Spacer(),
-          
+
           // Price and Add button row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,7 +124,7 @@ class RecommendedServiceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Add/Added button
               GestureDetector(
                 onTap: onAdd,
@@ -131,14 +132,18 @@ class RecommendedServiceCard extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: isAdded 
-                        ? AppColors.success 
-                        : (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary),
+                    color: isAdded
+                        ? AppColors.success
+                        : (isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary),
                     borderRadius: BorderRadius.circular(AppSizes.radiusS),
                   ),
                   child: Icon(
                     isAdded ? Icons.check : Icons.add,
-                    color: AppColors.white,
+                    color: isDarkMode
+                        ? AppColors.textPrimary
+                        : AppColors.textPrimaryDark,
                     size: 20,
                   ),
                 ),

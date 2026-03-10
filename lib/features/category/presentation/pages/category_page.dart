@@ -214,8 +214,8 @@ class _CategoryPageState extends State<CategoryPage> {
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(
           color: isDarkMode
-              ? AppColors.white.withValues(alpha: 0.08)
-              : AppColors.black.withValues(alpha: 0.08),
+              ? AppColors.primaryDark.withValues(alpha: 0.08)
+              : AppColors.primary.withValues(alpha: 0.08),
           width: 1,
         ),
       ),
@@ -283,9 +283,9 @@ class _CategoryPageState extends State<CategoryPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: context.colorScheme.surface,
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         appBar: AppBar(
-        backgroundColor: context.colorScheme.surface,
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: Border(

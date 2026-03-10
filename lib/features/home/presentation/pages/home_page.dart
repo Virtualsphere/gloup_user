@@ -865,7 +865,7 @@ class _HomePageState extends State<HomePage> {
                         child: Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+                              isDarkMode ? AppColors.primaryDark : AppColors.primary,
                             ),
                           ),
                         ),

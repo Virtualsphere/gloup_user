@@ -40,7 +40,7 @@ class CustomDropDownField extends StatelessWidget {
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-          fillColor: isDarkMode ? AppColors.black : AppColors.white,
+          fillColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
@@ -139,9 +139,9 @@ class CustomCountryPicker extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadiusDirectional.circular(10),
-        color: isDarkMode ? AppColors.black : AppColors.white,
+        color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         border: Border.all(
-          color: isDarkMode ? AppColors.transparent : AppColors.border,
+          color: AppColors.transparent,
           width: 1,
         ),
       ),

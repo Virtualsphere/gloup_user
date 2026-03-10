@@ -147,7 +147,7 @@ class _SalonCardState extends State<SalonCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildImageCarousel(isFavorite, isLoading),
+                _buildImageCarousel(isFavorite, isLoading, isDarkMode),
                 SizedBox(
                     height:
                         widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
@@ -167,7 +167,7 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildImageCarousel(bool isFavorite, bool isLoading) {
+  Widget _buildImageCarousel(bool isFavorite, bool isLoading, bool isDarkmode) {
     return Stack(
       children: [
         // Carousel images
@@ -194,7 +194,9 @@ class _SalonCardState extends State<SalonCard> {
                   return Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: AppColors.background,
+                      color: isDarkmode
+                          ? AppColors.primaryDark.withValues(alpha: 0.1)
+                          : AppColors.primary.withValues(alpha: 0.1),
                     ),
                     child: Image.network(
                       imageUrl,
@@ -281,7 +283,7 @@ class _SalonCardState extends State<SalonCard> {
             child: Container(
               padding: const EdgeInsets.all(AppSizes.paddingS),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color:  isDarkmode ? AppColors.surfaceDark : AppColors.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -309,7 +311,7 @@ class _SalonCardState extends State<SalonCard> {
                       width: 18,
                       height: 18,
                       colorFilter: ColorFilter.mode(
-                        isFavorite ? Colors.red : AppColors.textSecondary,
+                        isFavorite ? Colors.red : (isDarkmode ? AppColors.textSecondaryDark : AppColors.textSecondary),
                         BlendMode.srcIn,
                       ),
                     ),

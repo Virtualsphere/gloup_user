@@ -29,8 +29,8 @@ class GoogleSignInButton extends StatelessWidget {
         onPressed: isDisabled ? null : onPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor: isDarkMode 
-            ? AppColors.textPrimaryDark 
-            : AppColors.textPrimary,
+            ? AppColors.surfaceDark 
+            : AppColors.surface,
           side: BorderSide(
             color: isDisabled
               ? (isDarkMode ? AppColors.borderDark : AppColors.border)

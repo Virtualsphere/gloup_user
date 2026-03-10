@@ -64,88 +64,80 @@ class ProfileTextField extends StatelessWidget {
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: isDarkMode
-                  ? AppColors.white
-                  : AppColors.black,
+              color: isDarkMode ? AppColors.white : AppColors.black,
             ),
             decoration: InputDecoration(
               counterText: '',
-              labelText: labelText,
+              // labelText: labelText,
               hintText: hintText,
               filled: true,
-              fillColor: isDarkMode
-                  ? AppColors.black: AppColors.white,
+              fillColor:
+                  isDarkMode ? AppColors.backgroundDark : AppColors.background,
               hintStyle: context.textTheme.bodyLarge?.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                color: isDarkMode ? AppColors.white: AppColors.black,
+                color: isDarkMode ? AppColors.white : AppColors.black,
               ),
               labelStyle: context.textTheme.bodyLarge?.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                color: isDarkMode ? AppColors.white: AppColors.black,
+                color: isDarkMode ? AppColors.white : AppColors.black,
               ),
               contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: isDarkMode
-                      ? AppColors.transparent
-                      : AppColors.border,
+                  color: AppColors.transparent,
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: isDarkMode
-                      ? AppColors.transparent
-                      : AppColors.border,
+                  color: isDarkMode ? AppColors.transparent : AppColors.border,
                   width: 1,
                 ),
               ),
               suffixIcon: isEmpty
                   ? null
                   : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (showClear)
-                    GestureDetector(
-                      onTap: onClearTap ??
-                              () {
-                            controller?.clear();
-                          },
-                      child: Padding(
-                        padding:
-                        EdgeInsets.only(right: 5.0, left: 15.0),
-                        child: Icon(
-                          Icons.clear,
-                          size: 18,
-                          color: isDarkMode
-                              ? AppColors.white : AppColors.greyColor,
-                        ),
-                      ),
-                    ),
-                  if (showChange)
-                    GestureDetector(
-                      onTap: onChangeTap,
-                      child: const Padding(
-                        padding:
-                        EdgeInsets.only(right: 10.0, left: 15.0),
-                        child: Text(
-                          "CHANGE",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (showClear)
+                          GestureDetector(
+                            onTap: onClearTap ??
+                                () {
+                                  controller?.clear();
+                                },
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 5.0, left: 15.0),
+                              child: Icon(
+                                Icons.clear,
+                                size: 18,
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : AppColors.greyColor,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        if (showChange)
+                          GestureDetector(
+                            onTap: onChangeTap,
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 10.0, left: 15.0),
+                              child: Text(
+                                "CHANGE",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-              ),
             ),
             validator: validator,
           );
