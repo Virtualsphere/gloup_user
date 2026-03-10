@@ -142,7 +142,7 @@ class _MyProfileState extends State<MyProfile> {
           return SafeArea(
             child: Scaffold(
               backgroundColor:
-                  isDarkMode ? AppColors.primary : AppColors.background,
+                  isDarkMode ? AppColors.backgroundDark : AppColors.background,
               appBar: ProfileAppBar(
                 title: "Your Profile",
                 centerTitle: false,

@@ -18,7 +18,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return AppBar(
-      backgroundColor: context.colorScheme.surface,
+      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
       surfaceTintColor: Colors.transparent,
       centerTitle: centerTitle,
       leadingWidth: 40,

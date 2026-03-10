@@ -393,7 +393,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.border,
+                color: isDarkMode ? AppColors.borderDark : AppColors.border,
                 width: 1,
               ),
             ),
@@ -404,7 +404,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
                       ),
                     ),
                   )

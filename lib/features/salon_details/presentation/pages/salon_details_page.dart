@@ -238,7 +238,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: context.colorScheme.surface,
+          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
           body: Stack(
             children: [
@@ -251,7 +251,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     pinned: true,
                     expandedHeight: carouselHeight,
                     collapsedHeight: collapsedHeight,
-                    backgroundColor: context.colorScheme.surface,
+                    backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed
@@ -295,7 +295,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     pinned: true,
                     delegate: _StickyHeaderDelegate(
                       child: Container(
-                        color: context.colorScheme.surface,
+                        color: isDarkMode
+                            ? AppColors.backgroundDark
+                            : AppColors.background,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -2054,7 +2056,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
+        color: isDarkMode
+            ? AppColors.backgroundDark
+            : AppColors.background,
         border: Border(
           bottom: BorderSide(
             color: isDarkMode

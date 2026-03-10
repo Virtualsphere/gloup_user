@@ -101,9 +101,9 @@ class _BookingsPageState extends State<BookingsPage>
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: context.colorScheme.surface,
+      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
-        backgroundColor: context.colorScheme.surface,
+        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
@@ -142,7 +142,7 @@ class _BookingsPageState extends State<BookingsPage>
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: Colors.white,
+              labelColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
               unselectedLabelColor: isDarkMode
                   ? AppColors.textSecondaryDark
                   : AppColors.textSecondary,

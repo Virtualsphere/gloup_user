@@ -60,9 +60,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
           }
         },
         child: Scaffold(
-          backgroundColor: context.colorScheme.surface,
+          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           appBar: AppBar(
-            backgroundColor: context.colorScheme.surface,
+            backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: false,

@@ -415,7 +415,7 @@ class _SalonCardState extends State<SalonCard> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.border,
+                color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.7) : AppColors.primary.withValues(alpha: 0.7),
                 width: 1.5,
               ),
             ),
@@ -425,10 +425,10 @@ class _SalonCardState extends State<SalonCard> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    child: const Icon(
+                    color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+                    child: Icon(
                       Icons.store,
-                      color: AppColors.primary,
+                      color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.7) : AppColors.primary.withValues(alpha: 0.7),
                       size: 20,
                     ),
                   );

@@ -32,7 +32,7 @@ class SearchBarWidget extends StatelessWidget {
               vertical: AppSizes.paddingS,
             ),
         decoration: BoxDecoration(
-          color: context.colorScheme.surface,
+          color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
         ),
         child: Row(

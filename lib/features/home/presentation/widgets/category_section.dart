@@ -88,9 +88,10 @@ class _CategorySectionState extends State<CategorySection> {
     required bool isLoading,
     String? error,
   }) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       height: 120,
-      color: context.colorScheme.surface,
+      color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
       child: isLoading
           ? _buildCategoryShimmer()
           : error != null
@@ -269,10 +270,10 @@ class _CategorySectionState extends State<CategorySection> {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              child: const Icon(
+                              color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+                              child: Icon(
                                 Icons.image,
-                                color: AppColors.primary,
+                                color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3),
                                 size: 30,
                               ),
                             );
@@ -316,7 +317,7 @@ class _CategorySectionState extends State<CategorySection> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.error_outline,
+              Icons.error_outline_outlined,
               color: AppColors.error,
               size: 32,
             ),

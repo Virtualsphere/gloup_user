@@ -99,6 +99,7 @@ class _SettingsViewState extends State<SettingsView> {
         }
       },
       child: Scaffold(
+      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
         appBar: ProfileAppBar(
           title: "Settings",
           centerTitle: false,
@@ -123,7 +124,7 @@ class _SettingsViewState extends State<SettingsView> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
+                  color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
                     color: context.colorScheme.surface,
@@ -315,7 +316,7 @@ class ProfileDeleteCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 15),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : AppColors.white,
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
           color: context.colorScheme.surface,

@@ -47,7 +47,8 @@ class ProfilePage extends StatelessWidget {
             // Show loading shimmer on initial load
             if (state is ProfileLoading) {
               return Scaffold(
-                appBar: ProfileAppBar(title: 'Personal Profile', centerTitle: false),
+                appBar: ProfileAppBar(
+                    title: 'Personal Profile', centerTitle: false),
                 body: _ProfilePageShimmer(isDarkMode: isDarkMode),
               );
             }
@@ -62,193 +63,225 @@ class ProfilePage extends StatelessWidget {
 
             return Stack(
               children: [
-            Scaffold(
-        appBar: ProfileAppBar(title: 'Personal Profile',centerTitle: false,),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingL,
-                vertical: AppSizes.paddingL,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Header: Name + Avatar ──────────────────────────────
-                  Container(
-                    padding: EdgeInsets.only(left: 16.0,right: 16.0,top: 10.0,bottom: 10.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: isDarkMode ? AppColors.black : AppColors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: context.colorScheme.onSurface,
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Personal Profile',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: context.colorScheme.onSurface,
-                                  fontSize: AppSizes.fontM,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: AppSizes.paddingM),
-                        // Profile Avatar
-                        Container(
-                          height: 50,
-                          width: 50,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(shape: BoxShape.circle),
-                          child: profilePicUrl.isNotEmpty
-                              ? CustomNetworkImage(
-                                  imageUrl: profilePicUrl,
-                                  imageType: ImageType.profilepic,
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.person_outline,
-                                    color: Colors.grey,
-                                    size: 28,
-                                  ),
-                                ),
-                        ),
-                      ],
-                    ),
+                Scaffold(
+                  backgroundColor: isDarkMode
+                      ? AppColors.backgroundDark
+                      : AppColors.background,
+                  appBar: ProfileAppBar(
+                    title: 'Personal Profile',
+                    centerTitle: false,
                   ),
+                  body: SafeArea(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSizes.paddingL,
+                          vertical: AppSizes.paddingL,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ── Header: Name + Avatar ──────────────────────────────
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 16.0,
+                                  right: 16.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: isDarkMode
+                                        ? AppColors.white
+                                            .withValues(alpha: 0.08)
+                                        : AppColors.black
+                                            .withValues(alpha: 0.08),
+                                    blurRadius: 1,
+                                  ),
+                                ],
+                                color: isDarkMode
+                                    ? AppColors.surfaceDark
+                                    : AppColors.surface,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          userName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: context.textTheme.bodySmall
+                                              ?.copyWith(
+                                            color:
+                                                context.colorScheme.onSurface,
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Personal Profile',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: context.textTheme.bodySmall
+                                              ?.copyWith(
+                                            color:
+                                                context.colorScheme.onSurface,
+                                            fontSize: AppSizes.fontM,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSizes.paddingM),
+                                  // Profile Avatar
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: const BoxDecoration(
+                                        shape: BoxShape.circle),
+                                    child: profilePicUrl.isNotEmpty
+                                        ? CustomNetworkImage(
+                                            imageUrl: profilePicUrl,
+                                            imageType: ImageType.profilepic,
+                                          )
+                                        : Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade200,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.person_outline,
+                                              color: Colors.grey,
+                                              size: 28,
+                                            ),
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                  const SizedBox(height: AppSizes.paddingL),
+                            const SizedBox(height: AppSizes.paddingL),
 
-                  // ── Wallet Balance Card ────────────────────────────────
-                  WalletBalanceContainer(
-                    amount: walletAmount,
-                    isViewWalletButton: true,
-                    viewWalletOnTap: () {
-                      context.pushNamed(RouteNames.wallet);
-                    },
-                  ),
-                  const SizedBox(height: AppSizes.paddingL),
-                  // ── Main Menu Card ─────────────────────────────────────
-                  _MenuCard(
-                    items: [
-                      _MenuItem(
-                        icon: Icons.person_outline,
-                        label: 'Profile',
-                        onTap: () {
-                          context.pushNamed(RouteNames.profile);
-                        },
-                      ),
-                     /* _MenuItem(
+                            // ── Wallet Balance Card ────────────────────────────────
+                            WalletBalanceContainer(
+                              amount: walletAmount,
+                              isViewWalletButton: true,
+                              viewWalletOnTap: () {
+                                context.pushNamed(RouteNames.wallet);
+                              },
+                            ),
+                            const SizedBox(height: AppSizes.paddingL),
+                            // ── Main Menu Card ─────────────────────────────────────
+                            _MenuCard(
+                              items: [
+                                _MenuItem(
+                                  icon: Icons.person_outline,
+                                  label: 'Profile',
+                                  onTap: () {
+                                    context.pushNamed(RouteNames.profile);
+                                  },
+                                ),
+                                /* _MenuItem(
                         icon: Icons.star_border,
                         label: 'My Reviews',
                         onTap: () {
                           context.pushNamed(RouteNames.reviews);
                         },
                       ),*/
-                      _MenuItem(
-                        icon: Icons.person_add_alt_1_outlined,
-                        label: 'Invite & Earn',
-                        onTap: () {
-                          context.pushNamed(RouteNames.inviteAndEarn);
-                        },
-                      ),
-                      _MenuItem(
-                        icon: Icons.color_lens_outlined,
-                        label: 'Switch Theme',
-                        trailing: true,
-                        onTap: () {},
-                      ),
-                      _MenuItem(
-                        icon: Icons.settings_outlined,
-                        label: 'Settings',
-                        onTap: () {
-                          context.pushNamed(RouteNames.settings, extra: profile);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSizes.paddingM),
+                                _MenuItem(
+                                  icon: Icons.person_add_alt_1_outlined,
+                                  label: 'Invite & Earn',
+                                  onTap: () {
+                                    context.pushNamed(RouteNames.inviteAndEarn);
+                                  },
+                                ),
+                                _MenuItem(
+                                  icon: Icons.color_lens_outlined,
+                                  label: 'Switch Theme',
+                                  trailing: true,
+                                  onTap: () {},
+                                ),
+                                _MenuItem(
+                                  icon: Icons.settings_outlined,
+                                  label: 'Settings',
+                                  onTap: () {
+                                    context.pushNamed(RouteNames.settings,
+                                        extra: profile);
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppSizes.paddingM),
 
-                  // ── Support & Logout Card ──────────────────────────────
-                  _MenuCard(
-                    items: [
-                      _MenuItem(
-                        icon: Icons.help_outline,
-                        label: 'Support',
-                        onTap: () {
-                          context.pushNamed(RouteNames.support);
-                        },
-                      ),
-                      _MenuItem(
-                        icon: Icons.logout,
-                        label: 'Logout',
-                        onTap: () {
-                          CustomDialogues.showCancelDialogue(
-                            context,
-                            title: 'Logout',
-                            submitOnTap: () {
-                              Navigator.of(context).pop();
-                              context.read<ProfileBloc>().add(const LogoutEvent());
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                            // ── Support & Logout Card ──────────────────────────────
+                            _MenuCard(
+                              items: [
+                                _MenuItem(
+                                  icon: Icons.help_outline,
+                                  label: 'Support',
+                                  onTap: () {
+                                    context.pushNamed(RouteNames.support);
+                                  },
+                                ),
+                                _MenuItem(
+                                  icon: Icons.logout,
+                                  label: 'Logout',
+                                  onTap: () {
+                                    CustomDialogues.showCancelDialogue(
+                                      context,
+                                      title: 'Logout',
+                                      submitOnTap: () {
+                                        Navigator.of(context).pop();
+                                        context
+                                            .read<ProfileBloc>()
+                                            .add(const LogoutEvent());
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
 
-                  const SizedBox(height: AppSizes.paddingL),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-              // Logout progress overlay
-              if (isLoggingOut)
-                Container(
-                  color: Colors.black.withValues(alpha: 0.45),
-                  child: const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                            const SizedBox(height: AppSizes.paddingL),
+                          ],
                         ),
-                        SizedBox(height: AppSizes.spaceM),
-                        Text(
-                          'Logging out...',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: AppSizes.fontM,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-            ],
-          );
+                // Logout progress overlay
+                if (isLoggingOut)
+                  Container(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    child: const Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(AppColors.white),
+                          ),
+                          SizedBox(height: AppSizes.spaceM),
+                          Text(
+                            'Logging out...',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: AppSizes.fontM,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            );
           },
         ),
       ),
@@ -383,7 +416,7 @@ class _MenuCard extends StatelessWidget {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.black : AppColors.white,
+          color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           borderRadius: BorderRadius.circular(16.0)),
       child: Column(
         children: List.generate(items.length, (index) {
@@ -484,7 +517,8 @@ class _ProfilePageShimmer extends StatelessWidget {
           ),
           child: Shimmer.fromColors(
             baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
-            highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+            highlightColor:
+                isDarkMode ? AppColors.borderDark : AppColors.background,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -505,7 +539,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                               width: 150,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                color: isDarkMode
+                                    ? AppColors.surfaceDark
+                                    : AppColors.divider,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -514,7 +550,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                               width: 100,
                               height: 14,
                               decoration: BoxDecoration(
-                                color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                color: isDarkMode
+                                    ? AppColors.surfaceDark
+                                    : AppColors.divider,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -525,7 +563,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.divider,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -539,7 +579,8 @@ class _ProfilePageShimmer extends StatelessWidget {
                 Container(
                   height: 170,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                    color:
+                        isDarkMode ? AppColors.surfaceDark : AppColors.divider,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -567,7 +608,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                                   width: 24,
                                   height: 24,
                                   decoration: BoxDecoration(
-                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    color: isDarkMode
+                                        ? AppColors.surfaceDark
+                                        : AppColors.divider,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -576,7 +619,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                                   width: 120,
                                   height: 16,
                                   decoration: BoxDecoration(
-                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    color: isDarkMode
+                                        ? AppColors.surfaceDark
+                                        : AppColors.divider,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -586,7 +631,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                           if (index < 4)
                             Divider(
                               height: 1,
-                              color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.divider,
                             ),
                         ],
                       );
@@ -617,7 +664,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                                   width: 24,
                                   height: 24,
                                   decoration: BoxDecoration(
-                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    color: isDarkMode
+                                        ? AppColors.surfaceDark
+                                        : AppColors.divider,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -626,7 +675,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                                   width: 100,
                                   height: 16,
                                   decoration: BoxDecoration(
-                                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                                    color: isDarkMode
+                                        ? AppColors.surfaceDark
+                                        : AppColors.divider,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -636,7 +687,9 @@ class _ProfilePageShimmer extends StatelessWidget {
                           if (index < 1)
                             Divider(
                               height: 1,
-                              color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.divider,
                             ),
                         ],
                       );

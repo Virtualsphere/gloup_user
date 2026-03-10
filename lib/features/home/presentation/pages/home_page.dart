@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> {
 
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
-
+        final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocProvider(
       create: (context) {
         final locationProvider = context.read<LocationProvider>();
@@ -283,8 +283,9 @@ class _HomePageState extends State<HomePage> {
                 context, 'Failed to update favorite. Please try again.');
           }
         },
+      
         child: Scaffold(
-          backgroundColor: context.colorScheme.surface,
+          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               return CustomScrollView(
@@ -296,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                     expandedHeight: carouselHeight,
                     collapsedHeight: 70,
                     toolbarHeight: 70,
-                    backgroundColor: context.colorScheme.surface,
+                    backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed

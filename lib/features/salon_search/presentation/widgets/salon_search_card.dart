@@ -81,7 +81,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Left side - Image with rounded corners and margin
-                _buildImage(),
+                _buildImage(isDarkMode),
                 const SizedBox(width: AppSizes.spaceM),
                 // Right side - Content
                 Expanded(
@@ -103,20 +103,14 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(bool isDarkMode) {
     return Container(
       width: 100,
       height: 100,
       margin: const EdgeInsets.only(left: AppSizes.paddingS),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        
       ),
       child: Stack(
         children: [
@@ -132,20 +126,20 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                 return Container(
                   width: 100,
                   height: 100,
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.content_cut,
-                        color: AppColors.primary.withValues(alpha: 0.3),
+                        color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3),
                         size: 32,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'No image',
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: AppColors.primary.withValues(alpha: 0.4),
+                          color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.4) : AppColors.primary.withValues(alpha: 0.4),
                           fontSize: 9,
                         ),
                       ),
