@@ -206,20 +206,13 @@ flutter_launcher_icons:
 
 # Flutter Native Splash Configuration
 flutter_native_splash:
-  # Light mode splash screen
-  color: "#FFFFFF"  # Pure White
+  color: "#FFFFFF"
   image: assets/logos/app_logo.png
-  
-  # Dark mode splash screen
-  color_dark: "#000000"  # Pure Black
-  image_dark: assets/logos/app_logo.png
-  
+
   # Android specific settings
   android_12:
     image: assets/logos/app_logo.png
     icon_background_color: "#FFFFFF"
-    image_dark: assets/logos/app_logo.png
-    icon_background_color_dark: "#000000"
   
   # iOS specific settings
   ios: true

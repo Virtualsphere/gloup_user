@@ -109,7 +109,7 @@ class _FilterBadgesState extends State<FilterBadges> {
             ),
             const SizedBox(width: AppSizes.spaceXS),
             Text(
-              'Price',
+              'Gender',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
                 fontWeight: FontWeight.w600,
@@ -117,11 +117,11 @@ class _FilterBadgesState extends State<FilterBadges> {
               ),
             ),
             const SizedBox(width: AppSizes.spaceXS),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
-              size: 16,
-            ),
+            // Icon(
+            //   Icons.keyboard_arrow_down,
+            //   color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
+            //   size: 16,
+            // ),
           ],
         ),
       ),
