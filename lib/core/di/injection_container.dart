@@ -298,13 +298,17 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteProfileUseCase(sl()));
 
 // Bloc
   sl.registerFactory(() => ProfileBloc(
     getProfileUseCase: sl(),
     updateProfileUseCase: sl(),
     logoutUseCase: sl(),
+    deleteProfileUseCase: sl(),
   ));
+
+
   // Guest Feature
   // BLoC - Factory for new instance each time
   sl.registerFactory<GuestBloc>(() => GuestBloc(

@@ -9,19 +9,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetProfileUseCase getProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
   final LogoutUseCase logoutUseCase;
+  final DeleteProfileUseCase deleteProfileUseCase;
 
   ProfileBloc({
     required this.getProfileUseCase,
     required this.updateProfileUseCase,
     required this.logoutUseCase,
+    required this.deleteProfileUseCase,
   }) : super(const ProfileInitial()) {
     on<GetProfileEvent>(_onGetProfile);
     on<RefreshProfileEvent>(_onRefreshProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<LogoutEvent>(_onLogout);
+    on<DeleteProfileEvent>(_onDeleteProfile);
   }
 
-  Future<void> _onGetProfile(GetProfileEvent event, Emitter<ProfileState> emit) async {
+  ///Get Profile:-
+  Future<void> _onGetProfile(
+      GetProfileEvent event, Emitter<ProfileState> emit) async {
     emit(const ProfileLoading());
 
     final result = await getProfileUseCase();
@@ -32,7 +37,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
-  Future<void> _onRefreshProfile(RefreshProfileEvent event, Emitter<ProfileState> emit) async {
+  Future<void> _onRefreshProfile(
+      RefreshProfileEvent event, Emitter<ProfileState> emit) async {
     final result = await getProfileUseCase();
 
     result.fold(
@@ -41,26 +47,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
-  //update profile:-
+  ///Update Profile:-
   Future<void> _onUpdateProfile(
-      UpdateProfileEvent event,
-      Emitter<ProfileState> emit,
-      ) async {
+    UpdateProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
     emit(ProfileUpdating());
 
     final result = await updateProfileUseCase(event.profile);
 
     await result.fold(
-          (failure) async {
+      (failure) async {
         emit(ProfileFailure(failure.message));
       },
-          (_) async {
+      (_) async {
         final refresh = await getProfileUseCase();
 
         refresh.fold(
-              (failure) =>
-              emit(ProfileFailure(failure.message)),
-              (profile) => emit(ProfileLoaded(profile)),
+          (failure) => emit(ProfileFailure(failure.message)),
+          (profile) => emit(ProfileLoaded(profile)),
         );
       },
     );
@@ -77,6 +82,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await LocalStorageService.setOnboardingCompleted(true);
       emit(const ProfileLoggedOut());
     }
+  }
+
+  ///Delete Profile:-
+  Future<void> _onDeleteProfile(
+      DeleteProfileEvent event,
+      Emitter<ProfileState> emit,
+      ) async {
+    emit(ProfileDeleting());
+
+    final result = await deleteProfileUseCase();
+
+    await result.fold(
+          (failure) async {
+        emit(ProfileFailure(_mapFailureToMessage(failure)));
+      },
+          (response) async {
+        if (response.success == true) {
+          await LocalStorageService.clearAll();
+          await LocalStorageService.setOnboardingCompleted(true);
+
+          emit(ProfileDeleted(
+            response.message ?? "Profile deleted successfully",
+          ));
+        } else {
+          emit(ProfileFailure(
+            response.message ?? "Failed to delete profile",
+          ));
+        }
+      },
+    );
   }
 
   String _mapFailureToMessage(Failure failure) {

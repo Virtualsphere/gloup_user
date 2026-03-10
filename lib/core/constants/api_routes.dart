@@ -40,6 +40,7 @@ class ApiRoutes {
   static const String updateGuest = '$baseUrl/user/app/v2/guest/update';
   //profile
   static const String getUserProfile = '$baseUrl/user/app/v2/profile';
+  static const String deleteProfile = '$baseUrl/user/app/v2/profile';
 
   // Appointments
   static const String getAllAppointments = '$baseUrl/user/app/getallapointments';

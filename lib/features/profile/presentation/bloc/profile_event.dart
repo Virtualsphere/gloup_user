@@ -28,3 +28,7 @@ class UpdateProfileEvent extends ProfileEvent {
 class LogoutEvent extends ProfileEvent {
   const LogoutEvent();
 }
+
+class DeleteProfileEvent extends ProfileEvent {
+  const DeleteProfileEvent();
+}

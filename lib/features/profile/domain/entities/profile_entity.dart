@@ -87,3 +87,16 @@ class ProfileEntity extends Equatable {
     status,
   ];
 }
+
+class DeleteProfileEntity extends Equatable {
+  final bool? success;
+  final String? message;
+
+  const DeleteProfileEntity({
+    this.success,
+    this.message,
+  });
+
+  @override
+  List<Object?> get props => [success, message];
+}
