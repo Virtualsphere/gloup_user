@@ -115,8 +115,8 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
 
                   // Check if coupon can be applied
                   final minAmountRequired = coupon.discountAmount.toDouble();
-                  final isCouponValid = (widget.serviceAmount + 30) >= minAmountRequired;
-                  final amountNeeded = minAmountRequired - widget.serviceAmount - 30;
+                  final isCouponValid = widget.serviceAmount >= (minAmountRequired + 30);
+                  final amountNeeded = (minAmountRequired + 30 - widget.serviceAmount).clamp(0, double.infinity);
                   
                   String? disabledReason;
                   if (!isCouponValid) {

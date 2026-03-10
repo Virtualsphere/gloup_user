@@ -305,6 +305,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   horizontal: AppSizes.paddingS,
                   vertical: AppSizes.paddingXS,
                 ),
+                constraints: BoxConstraints(maxWidth: 130),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -319,12 +320,17 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      widget.serviceName!,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 10,
-                        color: AppColors.textPrimary,
+                    Container(
+                    constraints: BoxConstraints(maxWidth: 80),
+                      child: Text(
+                        widget.serviceName!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                     Padding(
@@ -340,6 +346,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     ),
                     Text(
                       '₹${widget.servicePrice!.toInt()}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: context.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 10,

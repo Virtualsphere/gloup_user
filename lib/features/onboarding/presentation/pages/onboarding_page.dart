@@ -27,15 +27,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final List<Map<String, String>> _onboardingContent = [
     {
       'title': 'Salon. Spa. Style. All in One App',
-      'content': 'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
+      'content':
+          'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
     },
     {
       'title': 'Save Time, Look Gorgeous!',
-      'content': 'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
+      'content':
+          'No more waiting – find salons near you instantly!\nExclusive Offers & Discounts available\nSmart Beauty Starts Here!',
     },
     {
       'title': 'One App. Endless Beauty Choices.',
-      'content': '800+ Verified Salons\n3000+ Services at your fingertips\nBeauty, Spa & Self-Care – Made Simple!',
+      'content':
+          '800+ Verified Salons\n3000+ Services at your fingertips\nBeauty, Spa & Self-Care – Made Simple!',
     },
   ];
 
@@ -71,7 +74,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _navigateToLogin() async {
     // Mark onboarding as completed
     await LocalStorageService.setOnboardingCompleted(true);
-    
+
     // Navigate to login or auth screen
     if (mounted) {
       context.go(RouteNames.login);
@@ -80,74 +83,76 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.surface,
-        body: Stack(
-          children: [
-            // Background PageView with Content
-            PageView.builder(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              itemCount: _onboardingBackgrounds.length,
-              physics: const PageScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Container(
-                  color: AppColors.background,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Background image
-                      Image.asset(
-                        _onboardingBackgrounds[index],
-                        fit: BoxFit.cover,
-                      ),
-                      // Content Overlay - positioned above bottom controls
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 160,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXL),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Title
-                              Text(
-                                _onboardingContent[index]['title']!,
-                                style: context.textTheme.headlineMedium?.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
+    return Scaffold(
+      backgroundColor: AppColors.surface,
+      body: Stack(
+        children: [
+          // Background PageView with Content
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            itemCount: _onboardingBackgrounds.length,
+            physics: const PageScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Container(
+                color: AppColors.background,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Background image
+                    Image.asset(
+                      _onboardingBackgrounds[index],
+                      fit: BoxFit.cover,
+                    ),
+                    // Content Overlay - positioned above bottom controls
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 160,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingXL),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Title
+                            Text(
+                              _onboardingContent[index]['title']!,
+                              style: context.textTheme.headlineMedium?.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.bold,
                               ),
-                              AppSizes.heightXL,
-                              // Content
-                              Text(
-                                _onboardingContent[index]['content']!,
-                                style: context.textTheme.bodyMedium?.copyWith(
-                                  color: AppColors.textSecondary,
-                                  height: 1.5,
-                                ),
-                                textAlign: TextAlign.center,
+                              textAlign: TextAlign.center,
+                            ),
+                            AppSizes.heightXL,
+                            // Content
+                            Text(
+                              _onboardingContent[index]['content']!,
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.5,
                               ),
-                            ],
-                          ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            
-            // Bottom Controls
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: AppSizes.paddingXL,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          // Bottom Controls
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: AppSizes.paddingXL,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -160,7 +165,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     AppSizes.heightL,
-                    
+
                     // Skip and Next Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,7 +186,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             ),
                           ),
                         ),
-      
+
                         // Next Button
                         ElevatedButton(
                           onPressed: _nextPage,
@@ -193,13 +198,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               vertical: AppSizes.paddingM,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusS),
                             ),
                           ),
                           child: Text(
-                            _currentPage == _onboardingBackgrounds.length - 1 
-                              ? 'Get Started' 
-                              : 'Next',
+                            _currentPage == _onboardingBackgrounds.length - 1
+                                ? 'Get Started'
+                                : 'Next',
                             style: context.textTheme.labelLarge?.copyWith(
                               color: AppColors.onPrimary,
                             ),
@@ -211,8 +217,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -224,9 +230,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 8.0,
       width: isActive ? 24.0 : 8.0,
       decoration: BoxDecoration(
-        color: isActive 
-          ? AppColors.primary 
-          : AppColors.textSecondary.withValues(alpha: 0.3),
+        color: isActive
+            ? AppColors.primary
+            : AppColors.textSecondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(4.0),
       ),
     );

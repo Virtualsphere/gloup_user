@@ -139,47 +139,51 @@ class _MyProfileState extends State<MyProfile> {
       builder: (context, state) {
         // Handle loading state
         if (state is ProfileLoading) {
-          return Scaffold(
-            backgroundColor:
-                isDarkMode ? AppColors.primary : AppColors.background,
-            appBar: ProfileAppBar(
-              title: "Your Profile",
-              centerTitle: false,
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            body: const Center(
-              child: CircularProgressIndicator(),
+          return SafeArea(
+            child: Scaffold(
+              backgroundColor:
+                  isDarkMode ? AppColors.primary : AppColors.background,
+              appBar: ProfileAppBar(
+                title: "Your Profile",
+                centerTitle: false,
+                onBack: () => Navigator.of(context).pop(),
+              ),
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           );
         }
 
         // Handle failure state
         if (state is ProfileFailure) {
-          return Scaffold(
-            backgroundColor:
-                isDarkMode ? AppColors.primary : AppColors.background,
-            appBar: ProfileAppBar(
-              title: "Your Profile",
-              centerTitle: false,
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    state.message,
-                    style: context.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProfileBloc>().add(const GetProfileEvent());
-                    },
-                    child: const Text('Retry'),
-                  ),
-                ],
+          return SafeArea(
+            child: Scaffold(
+              backgroundColor:
+                  isDarkMode ? AppColors.primary : AppColors.background,
+              appBar: ProfileAppBar(
+                title: "Your Profile",
+                centerTitle: false,
+                onBack: () => Navigator.of(context).pop(),
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.message,
+                      style: context.textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(const GetProfileEvent());
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -531,19 +535,21 @@ class _MyProfileState extends State<MyProfile> {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-            color: isDarkMode ? AppColors.primary : AppColors.white,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-              child: PrimaryButton(
-                text: 'Update Profile',
-                isLoading: state is ProfileLoading,
-                onPressed: (_isFormValid && _hasChanges)
-                    ? () {
-                        _onUpdateProfile();
-                      }
-                    : null,
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              color: isDarkMode ? AppColors.primary : AppColors.white,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                child: PrimaryButton(
+                  text: 'Update Profile',
+                  isLoading: state is ProfileLoading,
+                  onPressed: (_isFormValid && _hasChanges)
+                      ? () {
+                          _onUpdateProfile();
+                        }
+                      : null,
+                ),
               ),
             ),
           ),

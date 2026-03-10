@@ -285,10 +285,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           collapseMode: CollapseMode.pin,
                           centerTitle: false,
                           titlePadding: EdgeInsets.zero,
-                          title: !isFullyExpanded
-                              ? _buildCollapsedHeader(
-                                  context, isDarkMode, state)
-                              : null,
                         );
                       },
                     ),
@@ -608,82 +604,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       ],
     );
   }
-
-  // Build collapsed header with buttons
-  Widget _buildCollapsedHeader(
-      BuildContext context, bool isDarkMode, SalonDetailState state) {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-      ),
-      padding: EdgeInsets.only(
-        left: AppSizes.paddingM,
-        right: AppSizes.paddingM,
-        top: MediaQuery.of(context).padding.top,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button
-          IconButton(
-            padding: const EdgeInsets.all(AppSizes.paddingXS),
-            constraints: const BoxConstraints(),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: isDarkMode ? AppColors.white : AppColors.black,
-              size: AppSizes.iconS,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          // Share and Favorite buttons
-          Row(
-            children: [
-              // Share button
-              IconButton(
-                padding: const EdgeInsets.all(AppSizes.paddingXS),
-                constraints: const BoxConstraints(),
-                icon: Icon(
-                  Icons.share,
-                  color: isDarkMode ? AppColors.white : AppColors.black,
-                  size: AppSizes.iconS,
-                ),
-                onPressed: () {
-                  // TODO: Implement share functionality
-                },
-              ),
-              const SizedBox(width: AppSizes.spaceXS),
-              // Favorite button
-              IconButton(
-                padding: const EdgeInsets.all(AppSizes.paddingXS),
-                constraints: const BoxConstraints(),
-                icon: SvgPicture.asset(
-                  state.isFavorite
-                      ? 'assets/icons/ic_heart_fill.svg'
-                      : 'assets/icons/ic_heart.svg',
-                  width: AppSizes.iconS,
-                  height: AppSizes.iconS,
-                  colorFilter: ColorFilter.mode(
-                    state.isFavorite
-                        ? Colors.red
-                        : (isDarkMode ? AppColors.white : AppColors.black),
-                    BlendMode.srcIn,
-                  ),
-                ),
-                onPressed: () {
-                  context
-                      .read<SalonDetailBloc>()
-                      .add(const ToggleFavoriteEvent());
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildTitleAndCrownSection(
       BuildContext context, bool isDarkMode, SalonDetailEntity salonDetail) {
     return Column(
