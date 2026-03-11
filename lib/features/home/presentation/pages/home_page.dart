@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> {
 
     final screenHeight = context.screenHeight;
     final carouselHeight = screenHeight * 0.35; // 35% for carousel
-        final isDarkMode = context.theme.brightness == Brightness.dark;
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocProvider(
       create: (context) {
         final locationProvider = context.read<LocationProvider>();
@@ -283,9 +283,9 @@ class _HomePageState extends State<HomePage> {
                 context, 'Failed to update favorite. Please try again.');
           }
         },
-      
         child: Scaffold(
-          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          backgroundColor:
+              isDarkMode ? AppColors.backgroundDark : AppColors.background,
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               return CustomScrollView(
@@ -297,7 +297,9 @@ class _HomePageState extends State<HomePage> {
                     expandedHeight: carouselHeight,
                     collapsedHeight: 70,
                     toolbarHeight: 70,
-                    backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+                    backgroundColor: isDarkMode
+                        ? AppColors.backgroundDark
+                        : AppColors.background,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed
@@ -406,7 +408,11 @@ class _HomePageState extends State<HomePage> {
                                                             AppColors.black
                                                                 .withValues(
                                                                     alpha:
-                                                                        0.05),
+                                                                        0.5),
+                                                            AppColors.transparent,
+                                                            AppColors.transparent,
+                                                            AppColors.transparent,
+
                                                           ],
                                                         ),
                                                       ),
@@ -441,8 +447,8 @@ class _HomePageState extends State<HomePage> {
                                                 vertical: AppSizes.paddingS,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: AppColors.white
-                                                    .withValues(alpha: 0.95),
+                                               color: isDarkMode
+                                                    ? AppColors.backgroundDark : AppColors.background,
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppSizes.radiusM),
@@ -459,7 +465,9 @@ class _HomePageState extends State<HomePage> {
                                                       valueColor:
                                                           AlwaysStoppedAnimation<
                                                               Color>(
-                                                        AppColors.primary,
+                                                        isDarkMode
+                                                            ? AppColors.primaryDark
+                                                            : AppColors.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -469,7 +477,9 @@ class _HomePageState extends State<HomePage> {
                                                     style: context
                                                         .textTheme.bodySmall
                                                         ?.copyWith(
-                                                      color: AppColors.primary,
+                                                      color: isDarkMode
+                                                          ? AppColors.textPrimaryDark
+                                                          : AppColors.textPrimary,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -539,9 +549,9 @@ class _HomePageState extends State<HomePage> {
                                           width: 40,
                                           height: 40,
                                           decoration: BoxDecoration(
-                                            color: AppColors.white.withValues(
-                                              alpha: 0.95,
-                                            ),
+                                            color: isDarkMode
+                                                ? AppColors.backgroundDark
+                                                : AppColors.background,
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               BoxShadow(
@@ -555,15 +565,13 @@ class _HomePageState extends State<HomePage> {
                                             ],
                                           ),
                                           child: Center(
-                                            child: Text(
-                                              'U', // User avatar placeholder
-                                              style: TextStyle(
-                                                fontSize: AppSizes.fontL,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.primary,
-                                              ),
-                                            ),
-                                          ),
+                                              child: Icon(
+                                            Icons.person,
+                                            color: isDarkMode
+                                                ? AppColors.primaryDark
+                                                : AppColors.primary,
+                                            size: AppSizes.iconS,
+                                          )),
                                         ),
                                       ),
                                     ],
@@ -865,7 +873,9 @@ class _HomePageState extends State<HomePage> {
                         child: Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                              isDarkMode
+                                  ? AppColors.primaryDark
+                                  : AppColors.primary,
                             ),
                           ),
                         ),

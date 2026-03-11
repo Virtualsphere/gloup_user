@@ -526,11 +526,12 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
         padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingS),
         itemCount: state.salons.length,
         itemBuilder: (context, index) {
+        
           final salon = state.salons[index];
           return SalonSearchCard(
             salonName: salon.salonName,
             salonImage: salon.salonImage,
-            imageUrl: salon.salonImage,
+            imageUrl: salon.images.first,
             rating: salon.rating,
             reviewCount: salon.reviewCount,
             distance: salon.distance,

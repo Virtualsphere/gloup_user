@@ -33,7 +33,7 @@ class HomeShimmers {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.image_outlined,
+                Icons.cut_outlined,
                 size: 80,
                 color: isDarkMode
                     ? AppColors.textSecondaryDark

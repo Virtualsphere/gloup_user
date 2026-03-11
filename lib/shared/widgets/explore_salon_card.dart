@@ -135,7 +135,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Left side - Image carousel
-                _buildImageCarousel(),
+                _buildImageCarousel(isDarkMode),
                 const SizedBox(width: AppSizes.spaceM),
                 // Right side - Content
                 Expanded(
@@ -165,7 +165,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
     );
   }
 
-  Widget _buildImageCarousel() {
+  Widget _buildImageCarousel(bool isDarkMode) {
     return SizedBox(
       width: 130,
       height: 150, // Add fixed height to prevent infinite height error
@@ -195,7 +195,9 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     return Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: isDarkMode
+                            ? AppColors.primaryDark.withValues(alpha: 0.1)
+                            : AppColors.primary.withValues(alpha: 0.1),
                       ),
                       child: Image.network(
                         imageUrl,
@@ -321,7 +323,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                    constraints: BoxConstraints(maxWidth: 80),
+                      constraints: BoxConstraints(maxWidth: 80),
                       child: Text(
                         widget.serviceName!,
                         maxLines: 1,
@@ -474,7 +476,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               constraints: BoxConstraints(
                   maxWidth: showDistance
                       ? context.screenWidth * 0.24
-                      : context.screenWidth * 0.45), // Limit width when distance is shown
+                      : context.screenWidth *
+                          0.45), // Limit width when distance is shown
               child: Text(
                 widget.address ?? '',
                 style: context.textTheme.bodySmall?.copyWith(
