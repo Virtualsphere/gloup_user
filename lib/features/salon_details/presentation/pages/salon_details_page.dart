@@ -1065,6 +1065,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                       'id': service.id,
                                       'name': service.name,
                                       'price': service.price,
+                                      'originalPrice': service.originalPrice,
                                       'duration': service.duration,
                                       'discountPercentage':
                                           service.discountPercentage,
@@ -1076,6 +1077,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                       'id': service.id,
                                       'name': service.name,
                                       'price': service.price,
+                                      'originalPrice': service.originalPrice,
                                       'duration': service.duration,
                                       'discountPercentage':
                                           service.discountPercentage,
@@ -1083,6 +1085,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                     })
                                 .toList()
                           };
+
+                          print('salonData: $salonData');
 
                           context.pushNamed(
                             RouteNames.slotBooking,
@@ -2129,10 +2133,10 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent =>
-      270.0; // Height for combined sections + tab bar (250 + 56)
+      280.0; // Height for combined sections + tab bar (250 + 56)
 
   @override
-  double get maxExtent => 270.0; // Same as min for fixed height
+  double get maxExtent => 280.0; // Same as min for fixed height
 
   @override
   Widget build(

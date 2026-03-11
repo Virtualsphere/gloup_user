@@ -490,6 +490,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                 extra: updatedBookingData,
               );
             },
+            textColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
             width: 120,
           ),
         ],

@@ -6,6 +6,7 @@ class RecommendedServiceCard extends StatelessWidget {
   final String name;
   final String duration;
   final double price;
+  final double originalPrice;
   final String? discountPercentage;
   final bool isAdded;
   final VoidCallback onAdd;
@@ -15,6 +16,7 @@ class RecommendedServiceCard extends StatelessWidget {
     required this.name,
     required this.duration,
     required this.price,
+    required this.originalPrice,
     this.discountPercentage,
     this.isAdded = false,
     required this.onAdd,
@@ -29,15 +31,6 @@ class RecommendedServiceCard extends StatelessWidget {
         discountPercentage!.isNotEmpty &&
         discountPercentage != '0%' &&
         discountPercentage != '0';
-
-    double? discountedPrice;
-    if (hasDiscount) {
-      final discountValue = int.tryParse(
-            discountPercentage!.replaceAll('%', '').trim(),
-          ) ??
-          0;
-      discountedPrice = price - (price * discountValue / 100);
-    }
 
     return Container(
       width: 150,
@@ -101,8 +94,8 @@ class RecommendedServiceCard extends StatelessWidget {
                     // Discounted price (bold)
                     Text(
                       hasDiscount
-                          ? '₹${discountedPrice!.toStringAsFixed(0)}'
-                          : '₹${price.toStringAsFixed(0)}',
+                          ? '₹${price.toStringAsFixed(0)}'
+                          : '₹${originalPrice.toStringAsFixed(0)}',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: isDarkMode
@@ -113,7 +106,7 @@ class RecommendedServiceCard extends StatelessWidget {
                     // Original price (strikethrough if discounted)
                     if (hasDiscount)
                       Text(
-                        '₹${price.toStringAsFixed(0)}',
+                        '₹${originalPrice.toStringAsFixed(0)}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               decoration: TextDecoration.lineThrough,
                               color: isDarkMode

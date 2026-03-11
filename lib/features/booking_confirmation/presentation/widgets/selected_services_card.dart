@@ -65,8 +65,11 @@ class SelectedServicesCard extends StatelessWidget {
     Map<String, dynamic> service,
     bool isDarkMode,
   ) {
+
+    print('service: $service');
     final name = service['name'] as String? ?? 'N/A';
     final duration = service['duration'] as String? ?? 'N/A';
+    final originalPrice = service['originalPrice'] as double? ?? 0.0;
     final price = service['price'] as double? ?? 0.0;
     final discountPercentage = service['discountPercentage'] as String? ?? '';
     final isPopular = service['isPopular'] as bool? ?? false;
@@ -76,13 +79,13 @@ class SelectedServicesCard extends StatelessWidget {
         discountPercentage != '0%' && 
         discountPercentage != '0';
     
-    double? discountedPrice;
-    if (hasDiscount) {
-      final discountValue = int.tryParse(
-        discountPercentage.replaceAll('%', '').trim(),
-      ) ?? 0;
-      discountedPrice = price - (price * discountValue / 100);
-    }
+    // double? discountedPrice;
+    // if (hasDiscount) {
+    //   final discountValue = int.tryParse(
+    //     discountPercentage.replaceAll('%', '').trim(),
+    //   ) ?? 0;
+    //   discountedPrice = price - (price * discountValue / 100);
+    // }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +169,7 @@ class SelectedServicesCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '₹${price.toStringAsFixed(0)}',
+                    '₹${originalPrice.toStringAsFixed(0)}',
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: AppSizes.fontS,
                       decoration: TextDecoration.lineThrough,
@@ -177,7 +180,7 @@ class SelectedServicesCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    '₹${discountedPrice!.toStringAsFixed(0)}',
+                    '₹${price.toStringAsFixed(0)}',
                     style: context.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: AppSizes.fontM,

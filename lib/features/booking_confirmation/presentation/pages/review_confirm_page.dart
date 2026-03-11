@@ -171,7 +171,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final allServices = [...selectedServices, ...addedServices];
 
     return allServices.fold<double>(0.0, (total, service) {
-      final price = service['price'];
+      final price = service['originalPrice'];
       if (price == null) return total;
 
       // 'price' field contains the ORIGINAL price (before discount)
@@ -189,6 +189,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   }
 
   // Calculate total service discount from selected services
+  // Discount = originalPrice - price (server-provided values, no percentage calc)
   double get _totalServiceDiscount {
     if (widget.bookingData == null) return 0.0;
 
@@ -199,35 +200,30 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final allServices = [...selectedServices, ...addedServices];
 
     return allServices.fold<double>(0.0, (total, service) {
+      final originalPriceValue = service['originalPrice'];
       final priceValue = service['price'];
-      final discountPercentageStr = service['discountPercentage'] as String?;
 
-      if (priceValue == null ||
-          discountPercentageStr == null ||
-          discountPercentageStr.isEmpty) {
-        return total;
+      if (originalPriceValue == null || priceValue == null) return total;
+
+      double originalPrice = 0.0;
+      if (originalPriceValue is num) {
+        originalPrice = originalPriceValue.toDouble();
+      } else if (originalPriceValue is String) {
+        originalPrice =
+            double.tryParse(originalPriceValue.replaceAll('₹', '').trim()) ??
+                0.0;
       }
 
-      // Parse original price
-      double originalPrice = 0.0;
+      double price = 0.0;
       if (priceValue is num) {
-        originalPrice = priceValue.toDouble();
+        price = priceValue.toDouble();
       } else if (priceValue is String) {
-        originalPrice =
+        price =
             double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
       }
 
-      // Parse discount percentage
-      final discountPercent = int.tryParse(
-            discountPercentageStr.replaceAll('%', '').trim(),
-          ) ??
-          0;
-
-      if (discountPercent <= 0) return total;
-
-      // Calculate discount amount: originalPrice * (discountPercent / 100)
-      final discountAmount = originalPrice * (discountPercent / 100);
-      return total + discountAmount;
+      final discount = originalPrice - price;
+      return total + (discount > 0 ? discount : 0.0);
     });
   }
 
@@ -1134,8 +1130,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               }
             },
             backgroundColor:
-                isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
-            textColor: AppColors.white,
+                isDarkMode ? AppColors.background : AppColors.backgroundDark,
+            textColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
             height: 52,
           ),
         ),
@@ -1486,6 +1482,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         itemBuilder: (context, index) {
           final service = recommendedServices[index];
           final name = service['name'] as String? ?? 'N/A';
+          final originalPrice = service['originalPrice'] as double? ?? 0.0;
           final duration = service['duration'] as String? ?? 'N/A';
           final priceValue = service['price'];
           final discountPercentage = service['discountPercentage'] as String?;
@@ -1507,6 +1504,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
             name: name,
             duration: duration,
             price: price,
+            originalPrice: originalPrice,
             discountPercentage: discountPercentage,
             isAdded: isAdded,
             onAdd: () {
@@ -1521,6 +1519,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                     'id': serviceId,
                     'name': name,
                     'price': price,
+                    'originalPrice': originalPrice,
                     'duration': duration,
                     'discountPercentage': discountPercentage,
                     'isPopular': service['isPopular'] ?? false,
