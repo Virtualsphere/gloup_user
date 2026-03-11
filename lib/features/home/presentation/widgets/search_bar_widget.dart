@@ -32,8 +32,17 @@ class SearchBarWidget extends StatelessWidget {
               vertical: AppSizes.paddingS,
             ),
         decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: showBorder ? Border.all(
+            color: isDarkMode
+                ? AppColors.borderDark
+                : AppColors.border,
+            width: 1 ,
+          ) : Border.all(
+            color: Colors.transparent,
+            width: 0,
+          )
         ),
         child: Row(
           children: [
@@ -43,8 +52,8 @@ class SearchBarWidget extends StatelessWidget {
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
                 isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+                    ? AppColors.primaryDark
+                    : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),
@@ -52,7 +61,7 @@ class SearchBarWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 'Search for salons, parlors, or massages...',
-                style: context.textTheme.bodyMedium?.copyWith(
+                style: context.textTheme.bodySmall?.copyWith(
                   color:
                       isDarkMode ? AppColors.textHintDark : AppColors.textHint,
                 ),

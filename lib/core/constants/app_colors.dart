@@ -46,9 +46,9 @@ class AppColors {
   static const Color accentLight = tertiaryLight;
 
   // Background Colors
-  static const Color background = Color(0xFFFFFFFF);
+  static const Color background = Color(0xFFF5F5F5);
   static const Color backgroundDark = Color(0xFF121212);
-  static const Color surface = Color(0xFFF1F1F1);
+  static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF171717);
 
   // Text Colors - Light Theme

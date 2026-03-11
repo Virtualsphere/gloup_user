@@ -41,7 +41,7 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: context.textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: AppSizes.fontXL,
                     color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
@@ -51,7 +51,7 @@ class SectionHeader extends StatelessWidget {
                   const SizedBox(height: AppSizes.spaceXS),
                   Text(
                     subtitle!,
-                    style: context.textTheme.bodySmall?.copyWith(
+                    style: context.textTheme.titleSmall?.copyWith(
                       color: AppColors.textSecondary,
                       fontSize: AppSizes.fontS,
                     ),

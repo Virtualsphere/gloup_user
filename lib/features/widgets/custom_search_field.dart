@@ -44,7 +44,7 @@ class CustomSearchField extends StatelessWidget {
           readOnly: isReadOnly,
           onTap: onTap,
           onFieldSubmitted: onSubmitted,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: AppColors.primary,

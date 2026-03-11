@@ -49,8 +49,10 @@ class _FilterBadgesState extends State<FilterBadges> {
 
   @override
   Widget build(BuildContext context) {
+  final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       height: 50,
+      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
       padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingS),
       child: ListView(
         scrollDirection: Axis.horizontal,

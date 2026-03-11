@@ -39,7 +39,7 @@ class HeaderTextBlack extends StatelessWidget {
       //         color: AppColors.primary,
       //       )
       //     :
-      GoogleFonts.outfit(
+      GoogleFonts.inter(
               fontSize: fontSize,
               fontWeight: fontWeight,
               color: AppColors.primary,
@@ -72,7 +72,7 @@ class BodyTextHint extends StatelessWidget {
       title,
       overflow: overflow,
       textAlign: textAlign,
-      style: GoogleFonts.outfit(
+      style: GoogleFonts.inter(
         fontSize: fontSize,
         fontWeight: fontWeight,
         color: isSecondary ? AppColors.secondary : AppColors.textSecondaryDark,
@@ -115,7 +115,7 @@ class BodyTextColors extends StatelessWidget {
       //         color: color,
       //       )
       //     :
-      GoogleFonts.outfit(
+      GoogleFonts.inter(
               fontSize: fontSize,
               fontWeight: fontWeight,
               color: color,
@@ -141,7 +141,7 @@ class AppTextStyle {
     this.height,
   });
 
-  TextStyle get textStyle => GoogleFonts.outfit(
+  TextStyle get textStyle => GoogleFonts.inter(
         fontSize: fontSize,
         fontWeight: fontWeight,
         decoration: decoration,

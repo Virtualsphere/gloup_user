@@ -59,7 +59,7 @@ class CustomToast {
           Flexible(
             child: Text(
               message,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: textColor,
@@ -122,7 +122,7 @@ class CustomToast {
           Flexible(
             child: Text(
               message,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: AppColors.white,

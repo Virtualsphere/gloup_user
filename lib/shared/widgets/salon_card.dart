@@ -121,12 +121,6 @@ class _SalonCardState extends State<SalonCard> {
             decoration: BoxDecoration(
               color: context.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
-              border: Border.all(
-                color: isDarkMode
-                    ? AppColors.white.withValues(alpha: 0.08)
-                    : AppColors.black.withValues(alpha: 0.08),
-                width: 1,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: isDarkMode
@@ -135,23 +129,17 @@ class _SalonCardState extends State<SalonCard> {
                   blurRadius: 1,
                 ),
               ],
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: isDarkMode ? AppColors.white.withValues(alpha: 0.08) :  AppColors.black.withValues(alpha: 0.08),
-              //     blurRadius: 8,
-              //     offset: const Offset(0, 2),
-              //   ),
-              // ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 _buildImageCarousel(isFavorite, isLoading, isDarkMode),
                 SizedBox(
                     height:
                         widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
                 _buildSalonInfo(isDarkMode),
+                // Spacer(),
                 SizedBox(
                     height:
                         widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
@@ -283,7 +271,7 @@ class _SalonCardState extends State<SalonCard> {
             child: Container(
               padding: const EdgeInsets.all(AppSizes.paddingS),
               decoration: BoxDecoration(
-                color:  isDarkmode ? AppColors.surfaceDark : AppColors.surface,
+                color: isDarkmode ? AppColors.surfaceDark : AppColors.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -311,7 +299,11 @@ class _SalonCardState extends State<SalonCard> {
                       width: 18,
                       height: 18,
                       colorFilter: ColorFilter.mode(
-                        isFavorite ? Colors.red : (isDarkmode ? AppColors.textSecondaryDark : AppColors.textSecondary),
+                        isFavorite
+                            ? Colors.red
+                            : (isDarkmode
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary),
                         BlendMode.srcIn,
                       ),
                     ),
@@ -412,13 +404,15 @@ class _SalonCardState extends State<SalonCard> {
         children: [
           // Salon circular image
           Container(
-            width: 40,
-            height: 40,
+            width: AppSizes.iconM,
+            height: AppSizes.iconM,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.7) : AppColors.primary.withValues(alpha: 0.7),
-                width: 1.5,
+                color: isDarkMode
+                    ? AppColors.primaryDark.withValues(alpha: 0.5)
+                    : AppColors.primary.withValues(alpha: 0.5),
+                width: 1,
               ),
             ),
             child: ClipOval(
@@ -427,12 +421,16 @@ class _SalonCardState extends State<SalonCard> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
-                    child: Icon(
-                      Icons.store,
-                      color:isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.7) : AppColors.primary.withValues(alpha: 0.7),
-                      size: 20,
-                    ),
+                    padding: EdgeInsets.all(3.0),
+                    child: SvgPicture.asset(AppIcons.icStore,
+                        width: AppSizes.iconXS,
+                        height: AppSizes.iconXS,
+                        colorFilter: ColorFilter.mode(
+                          isDarkMode
+                              ? AppColors.primaryDark.withValues(alpha: 0.7)
+                              : AppColors.primary.withValues(alpha: 0.7),
+                          BlendMode.srcIn,
+                        )),
                   );
                 },
               ),
@@ -445,16 +443,19 @@ class _SalonCardState extends State<SalonCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  widget.salonName,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                    height: 1.3,
+                Container(
+                  constraints: const BoxConstraints(minHeight:  35),
+                  child: Text(
+                    widget.salonName,
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -504,17 +505,17 @@ class _SalonCardState extends State<SalonCard> {
           // Location row
           Row(
             children: [
-              Icon(
-                Icons.location_on,
-                color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                size: 14,
+              SvgPicture.asset(
+                AppIcons.icLocation,
+                width: AppSizes.iconXS,
+                height: AppSizes.iconXS,
               ),
               const SizedBox(width: 4),
               Container(
-                constraints: const BoxConstraints(maxWidth: 180),
+                constraints: const BoxConstraints(maxWidth:  180),
                 child: Text(
                   widget.address ?? '',
-                  style: context.textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodyMedium?.copyWith(
                     overflow: TextOverflow.ellipsis,
                     color: isDarkMode
                         ? AppColors.textSecondaryDark
@@ -635,7 +636,6 @@ class _SalonCardState extends State<SalonCard> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Category badges
         ...displayCategories.map((category) => Container(
               constraints: const BoxConstraints(maxWidth: 75),
               margin: const EdgeInsets.only(left: 6),
@@ -644,9 +644,7 @@ class _SalonCardState extends State<SalonCard> {
                 vertical: 6,
               ),
               decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                    : AppColors.textSecondary.withValues(alpha: 0.15),
+                color: Color(0xFFF6F1FE),
                 borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               ),
               child: Text(
@@ -654,9 +652,7 @@ class _SalonCardState extends State<SalonCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
+                  color: Color(0xFF8F89CA),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

@@ -14,6 +14,8 @@ class AppIcons {
   static const icHeartFill = 'assets/icons/ic_heart_fill.svg';
   static const icCalendar = 'assets/icons/ic_calendar.svg';
   static const icCalendarFill = 'assets/icons/ic_calendar_fill.svg';
+  static const icLocation = 'assets/icons/ic_location_2.svg';
+  static const icStore = 'assets/icons/ic_store.svg';
 
   // UI icons
   static const icCrown = 'assets/icons/ic_crown.svg';
@@ -40,6 +42,7 @@ class AppIcons {
   static const String bfButton = 'assets/images/svg/bf_button.svg';
   static const String pen = 'assets/images/svg/pen.svg';
   static const String system = 'assets/images/svg/system.svg';
+  static const String location = 'assets/images/svg/ic_location_2.svg';
   static const String locationFill = 'assets/images/svg/location_fill.svg';
   static const String linedIn = 'assets/images/svg/linked_in.svg';
   static const String camera = 'assets/images/svg/camera.svg';

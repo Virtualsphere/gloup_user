@@ -95,7 +95,7 @@ class _CategorySectionState extends State<CategorySection> {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       height: 120,
-      color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
       child: isLoading
           ? _buildCategoryShimmer()
           : error != null
@@ -221,7 +221,7 @@ class _CategorySectionState extends State<CategorySection> {
     final bool isActive = _selectedIndex == index;
 
     return Container(
-      width: 80,
+      width: 70,
       margin: const EdgeInsets.only(
         left: AppSizes.paddingS,
         top: AppSizes.paddingS,

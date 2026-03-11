@@ -297,9 +297,8 @@ class _HomePageState extends State<HomePage> {
                     expandedHeight: carouselHeight,
                     collapsedHeight: 70,
                     toolbarHeight: 70,
-                    backgroundColor: isDarkMode
-                        ? AppColors.backgroundDark
-                        : AppColors.background,
+                    backgroundColor:
+                        isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed
@@ -322,6 +321,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.symmetric(
                               vertical: AppSizes.paddingS,
                             ),
+                            showBorder: _isCollapsed ? false : true,
                           )
                         : null,
                     flexibleSpace: FlexibleSpaceBar(
@@ -387,37 +387,37 @@ class _HomePageState extends State<HomePage> {
                                                       },
                                                     ),
                                                   ),
-                                                  Positioned(
-                                                    top: 0,
-                                                    bottom: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        gradient:
-                                                            LinearGradient(
-                                                          begin: Alignment
-                                                              .topCenter,
-                                                          end: Alignment
-                                                              .bottomCenter,
-                                                          colors: [
-                                                            AppColors.black
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.85),
-                                                            AppColors.black
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.5),
-                                                            AppColors.transparent,
-                                                            AppColors.transparent,
-                                                            AppColors.transparent,
+                                                  // Positioned(
+                                                  //   top: 0,
+                                                  //   bottom: 0,
+                                                  //   left: 0,
+                                                  //   right: 0,
+                                                  //   child: Container(
+                                                  //     decoration: BoxDecoration(
+                                                  //       gradient:
+                                                  //           LinearGradient(
+                                                  //         begin: Alignment
+                                                  //             .topCenter,
+                                                  //         end: Alignment
+                                                  //             .bottomCenter,
+                                                  //         colors: [
+                                                  //           AppColors.black
+                                                  //               .withValues(
+                                                  //                   alpha:
+                                                  //                       0.85),
+                                                  //           AppColors.black
+                                                  //               .withValues(
+                                                  //                   alpha:
+                                                  //                       0.5),
+                                                  //           AppColors.transparent,
+                                                  //           AppColors.transparent,
+                                                  //           AppColors.transparent,
 
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
                                                 ],
                                               ),
                                             );
@@ -447,11 +447,13 @@ class _HomePageState extends State<HomePage> {
                                                 vertical: AppSizes.paddingS,
                                               ),
                                               decoration: BoxDecoration(
-                                               color: isDarkMode
-                                                    ? AppColors.backgroundDark : AppColors.background,
+                                                color: isDarkMode
+                                                    ? AppColors.backgroundDark
+                                                    : AppColors.background,
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        AppSizes.radiusM),
+                                                  AppSizes.radiusM,
+                                                ),
                                               ),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
@@ -466,7 +468,8 @@ class _HomePageState extends State<HomePage> {
                                                           AlwaysStoppedAnimation<
                                                               Color>(
                                                         isDarkMode
-                                                            ? AppColors.primaryDark
+                                                            ? AppColors
+                                                                .primaryDark
                                                             : AppColors.primary,
                                                       ),
                                                     ),
@@ -478,8 +481,10 @@ class _HomePageState extends State<HomePage> {
                                                         .textTheme.bodySmall
                                                         ?.copyWith(
                                                       color: isDarkMode
-                                                          ? AppColors.textPrimaryDark
-                                                          : AppColors.textPrimary,
+                                                          ? AppColors
+                                                              .textPrimaryDark
+                                                          : AppColors
+                                                              .textPrimary,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -576,7 +581,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-                                  Spacer(),
+                                  AppSizes.heightM,
                                   // Search bar below location
                                   SearchBarWidget(
                                       onTap: () {
@@ -585,7 +590,7 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       },
                                       onSettingsTap: () {}),
-                                  AppSizes.heightM,
+                                  Spacer(),
                                   if (state.carouselBanners.isNotEmpty)
                                     Row(
                                       mainAxisAlignment:
@@ -610,9 +615,9 @@ class _HomePageState extends State<HomePage> {
                                                 BorderRadius.circular(4),
                                             color: _currentCarouselIndex ==
                                                     entry.key
-                                                ? AppColors.white
-                                                : AppColors.white
-                                                    .withValues(alpha: 0.4),
+                                                ? AppColors.primary
+                                                : AppColors.greyColor
+                                                    .withValues(alpha: 0.3),
                                           ),
                                         );
                                       }).toList(),
@@ -627,8 +632,6 @@ class _HomePageState extends State<HomePage> {
                       collapseMode: CollapseMode.parallax,
                     ),
                   ),
-
-                  SliverToBoxAdapter(child: AppSizes.heightS),
 
                   // Sticky Category Section
                   SliverPersistentHeader(
@@ -647,8 +650,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  SliverToBoxAdapter(child: AppSizes.heightS),
-
                   // Filter Badges Section
                   SliverToBoxAdapter(
                     child: FilterBadges(
@@ -657,7 +658,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightM),
 
                   // Popular Services Nearby Section Header
                   SliverToBoxAdapter(
@@ -671,12 +672,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  SliverToBoxAdapter(child: AppSizes.heightS),
+                  SliverToBoxAdapter(child: AppSizes.heightM),
 
                   // Horizontal Scrollable Salon Cards - Popular Services
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 300,
+                      height: context.screenHeight * 0.33,
                       child: state.isPopularServicesLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.popularServices.isEmpty
@@ -738,7 +739,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Top Salons
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 300,
+              height: context.screenHeight * 0.33,
                       child: state.isTopSalonsLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.topSalons.isEmpty

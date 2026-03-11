@@ -91,7 +91,7 @@ class CustomFullPayButton extends StatelessWidget {
         children: [
           Text(
             payTitle,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w400,
               color: AppColors.secondaryColor,
@@ -108,7 +108,7 @@ class CustomFullPayButton extends StatelessWidget {
           ),
           Text(
             '$title /-',
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w400,
               color: AppColors.primary,
@@ -147,7 +147,7 @@ class CustomOutlineButton extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w400,
               color: titleColor,

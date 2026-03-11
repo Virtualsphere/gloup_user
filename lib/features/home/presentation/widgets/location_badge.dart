@@ -34,7 +34,7 @@ class LocationBadge extends StatelessWidget {
           children: [
             const Icon(
               Icons.location_on,
-              color: AppColors.textLight,
+              color: AppColors.primary,
               size: AppSizes.iconM,
             ),
             const SizedBox(width: 6),
@@ -48,13 +48,13 @@ class LocationBadge extends StatelessWidget {
                       location,
                       style: context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textLight,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(width: 4),
                     const Icon(
                       Icons.keyboard_arrow_down,
-                      color: AppColors.textLight,
+                      color: AppColors.primary,
                       size: AppSizes.iconS,
                     ),
                   ],
@@ -63,7 +63,7 @@ class LocationBadge extends StatelessWidget {
                   Text(
                     addressLine2!,
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textLight.withValues(alpha: 0.8),
+                      color: AppColors.primary.withValues(alpha: 0.8),
                       fontSize: AppSizes.fontXS,
                     ),
                   ),

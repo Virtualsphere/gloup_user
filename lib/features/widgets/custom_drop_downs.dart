@@ -191,7 +191,7 @@ class CustomCountryPicker extends StatelessWidget {
             ),
           ),
         ),
-        headerTextStyle: GoogleFonts.outfit(
+        headerTextStyle: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: isDarkMode ? AppColors.white : AppColors.black,

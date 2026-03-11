@@ -77,7 +77,7 @@ class CustomTextField extends StatelessWidget {
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: prefixWidget,
         ),
-        errorStyle: GoogleFonts.outfit(
+        errorStyle: GoogleFonts.inter(
           fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
