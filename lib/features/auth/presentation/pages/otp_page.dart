@@ -166,7 +166,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
         }
       },
       child: Scaffold(
-        backgroundColor: context.colorScheme.surface,
+        backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         body: Stack(
           children: [
             // Background Image
@@ -197,7 +197,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
               bottom: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
+                  color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppSizes.radiusXL),
                     topRight: Radius.circular(AppSizes.radiusXL),

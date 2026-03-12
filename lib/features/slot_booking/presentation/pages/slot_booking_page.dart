@@ -184,9 +184,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
         ),
         title: Text(
           'Book Slot',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          )
         ),
         centerTitle: false,
         titleSpacing: 0,

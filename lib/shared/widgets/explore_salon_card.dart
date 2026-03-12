@@ -116,12 +116,12 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             decoration: BoxDecoration(
               color: context.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppSizes.radiusS),
-              border: Border.all(
-                color: isDarkMode
-                    ? AppColors.white.withValues(alpha: 0.08)
-                    : AppColors.black.withValues(alpha: 0.08),
-                width: 1,
-              ),
+              // border: Border.all(
+              //   color: isDarkMode
+              //       ? AppColors.white.withValues(alpha: 0.08)
+              //       : AppColors.black.withValues(alpha: 0.08),
+              //   width: 1,
+              // ),
               boxShadow: [
                 BoxShadow(
                   color: isDarkMode
@@ -323,7 +323,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      constraints: BoxConstraints(maxWidth: 80),
+                      constraints: BoxConstraints(maxWidth: 70),
                       child: Text(
                         widget.serviceName!,
                         maxLines: 1,
@@ -372,9 +372,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         Expanded(
           child: Text(
             widget.salonName,
-            style: context.textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
               color: isDarkMode
                   ? AppColors.textPrimaryDark
                   : AppColors.textPrimary,
@@ -466,10 +465,10 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         // Location and distance
         Row(
           children: [
-            Icon(
-              Icons.location_on,
-              color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-              size: 14,
+            SvgPicture.asset(
+              AppIcons.icLocation,
+              width: AppSizes.iconXS,
+              height: AppSizes.iconXS,
             ),
             const SizedBox(width: 4),
             Container(
@@ -479,7 +478,17 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                       : context.screenWidth *
                           0.45), // Limit width when distance is shown
               child: Text(
-                widget.address ?? '',
+                () {
+                  final parts = (widget.address ?? '')
+                      .split(',')
+                      .map((e) => e.trim())
+                      .where(
+                          (e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
+                      .toList();
+                  return parts.length > 2
+                      ? parts.sublist(parts.length - 2).join(', ')
+                      : parts.join(', ');
+                }(),
                 style: context.textTheme.bodySmall?.copyWith(
                   overflow: TextOverflow.ellipsis,
                   color: isDarkMode
@@ -519,17 +528,13 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         ),
         const SizedBox(height: AppSizes.spaceS),
         // Language and Category badges row
-        if ((widget.languageCodes != null &&
-                widget.languageCodes!.isNotEmpty) ||
-            (widget.categories != null && widget.categories!.isNotEmpty)) ...[
-          Row(
-            children: [
-              _buildLanguageBadges(isDarkMode),
-              Spacer(),
-              _buildCategoryBadges(isDarkMode),
-            ],
-          ),
-        ],
+        Row(
+          children: [
+            _buildLanguageBadges(isDarkMode),
+            Spacer(),
+            _buildCategoryBadges(isDarkMode),
+          ],
+        ),
       ],
     );
   }
@@ -546,58 +551,77 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Language badges (max 2 for grid layout)
-        ...displayLanguages.asMap().entries.map((entry) {
+        ...displayLanguages.asMap().entries.expand((entry) {
           final languageCode = entry.value;
           final index = entry.key;
           final iconPath = getLanguageIcon(languageCode);
+          final isLast = index == displayLanguages.length - 1;
 
-          return Padding(
-            padding: EdgeInsets.only(
-                right: index < displayLanguages.length - 1 ? 6 : 4),
-            child: iconPath != null
-                ? SvgPicture.asset(
-                    iconPath,
-                    width: 11,
-                    height: 11,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    colorFilter: ColorFilter.mode(
-                      isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                      BlendMode.srcIn,
-                    ),
-                  )
-                : Container(
-                    width: 11,
-                    height: 11,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.primaryDark.withValues(alpha: 0.2)
-                          : AppColors.primary.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        languageCode.length >= 2
-                            ? languageCode.substring(0, 2).toUpperCase()
-                            : languageCode.toUpperCase(),
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
+          final icon = iconPath != null
+              ? SvgPicture.asset(
+                  iconPath,
+                  width: 11,
+                  height: 11,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                  colorFilter: ColorFilter.mode(
+                    isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                    BlendMode.srcIn,
+                  ),
+                )
+              : Container(
+                  width: 11,
+                  height: 11,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+                        : AppColors.textSecondary.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      languageCode.length >= 2
+                          ? languageCode.substring(0, 2).toUpperCase()
+                          : languageCode.toUpperCase(),
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-          );
+                );
+
+          return [
+            icon,
+            if (!isLast)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Container(
+                  width: 4,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ];
         }),
       ],
     );
   }
 
   Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = widget.categories ?? [];
+    final categories = (widget.categories == null || widget.categories!.isEmpty)
+        ? ['Haircut', 'Facial']
+        : widget.categories!;
     final displayCategories = categories.take(1).toList();
     final hasMoreCategories = categories.length > 2;
 
@@ -613,9 +637,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 vertical: 4,
               ),
               decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                    : AppColors.textSecondary.withValues(alpha: 0.15),
+                color: Color(0xFFF6F1FE),
                 borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
               ),
               child: Text(
@@ -623,9 +645,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
+                  color: Color(0xFF8F89CA),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

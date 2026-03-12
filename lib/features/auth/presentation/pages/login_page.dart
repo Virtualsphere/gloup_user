@@ -109,7 +109,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
         }
       },
       child: Scaffold(
-        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         body: Stack(
           children: [
             Positioned(
@@ -139,7 +139,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               bottom: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.surfaceDark : AppColors.background,
+                  color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppSizes.radiusXL),
                     topRight: Radius.circular(AppSizes.radiusXL),
@@ -269,32 +269,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                             },
                           ),
                         ],
-
-                        AppSizes.heightL,
-
-                        // Continue as Guest Button
-                        // Center(
-                        //   child: TextButton(
-                        //     onPressed: () {
-                        //       context.pushTo(RouteNames.home);
-                        //     },
-                        //     style: TextButton.styleFrom(
-                        //       padding: const EdgeInsets.symmetric(
-                        //         horizontal: AppSizes.paddingL,
-                        //         vertical: AppSizes.paddingM,
-                        //       ),
-                        //     ),
-                        //     child: Text(
-                        //       'Continue as Guest',
-                        //       style: context.textTheme.labelLarge?.copyWith(
-                        //         color: isDarkMode
-                        //             ? AppColors.textPrimaryDark
-                        //             : AppColors.textPrimary,
-                        //         fontWeight: FontWeight.w600,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
 
                         AppSizes.heightL,
                       ],

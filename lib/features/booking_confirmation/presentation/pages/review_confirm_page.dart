@@ -20,6 +20,7 @@ import 'package:tressy/features/coupons/presentation/bloc/coupon_state.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/offer_banner.dart';
 import 'package:tressy/shared/widgets/salon_info_card.dart';
@@ -296,9 +297,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                   ),
                   title: Text(
                     'Review & Confirm',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    )
                   ),
                   centerTitle: false,
                   titleSpacing: 0,

@@ -110,7 +110,6 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
       margin: const EdgeInsets.only(left: AppSizes.paddingS),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        
       ),
       child: Stack(
         children: [
@@ -126,20 +125,26 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                 return Container(
                   width: 100,
                   height: 100,
-                  color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+                  color: isDarkMode
+                      ? AppColors.primaryDark.withValues(alpha: 0.1)
+                      : AppColors.primary.withValues(alpha: 0.1),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.content_cut,
-                        color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3),
+                        color: isDarkMode
+                            ? AppColors.primaryDark.withValues(alpha: 0.3)
+                            : AppColors.primary.withValues(alpha: 0.3),
                         size: 32,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'No image',
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.4) : AppColors.primary.withValues(alpha: 0.4),
+                          color: isDarkMode
+                              ? AppColors.primaryDark.withValues(alpha: 0.4)
+                              : AppColors.primary.withValues(alpha: 0.4),
                           fontSize: 9,
                         ),
                       ),
@@ -236,7 +241,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
             Expanded(
               child: Text(
                 widget.salonName,
-                style: context.textTheme.titleMedium?.copyWith(
+                style: context.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDarkMode
                       ? AppColors.textPrimaryDark
@@ -288,83 +293,85 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
           const SizedBox(height: AppSizes.spaceM),
         ],
         // Languages and Categories
-        if ((widget.languageCodes != null &&
-                widget.languageCodes!.isNotEmpty) ||
-            (widget.categories != null && widget.categories!.isNotEmpty)) ...[
-          Row(
-            children: [
-              if (widget.languageCodes != null &&
-                  widget.languageCodes!.isNotEmpty)
-                _buildLanguageBadges(isDarkMode),
-              if (widget.languageCodes != null &&
-                  widget.languageCodes!.isNotEmpty &&
-                  widget.categories != null &&
-                  widget.categories!.isNotEmpty)
-                const SizedBox(width: AppSizes.spaceM),
-              if (widget.categories != null && widget.categories!.isNotEmpty)
-                Expanded(
-                  child: Container(
-                  constraints: const BoxConstraints(maxWidth: 190),
-                    child: _buildCategoryBadges(isDarkMode),
-                  ),
-                ),
-            ],
-          ),
-        ],
+        Row(
+          children: [
+            _buildLanguageBadges(isDarkMode),
+            const Spacer(),
+            _buildCategoryBadges(isDarkMode),
+          ],
+        ),
       ],
     );
   }
 
   Widget _buildLanguageBadges(bool isDarkMode) {
     final languageCodes = widget.languageCodes ?? [];
-    final displayLanguages = languageCodes.take(3).toList();
+    final displayLanguages =
+        languageCodes.isEmpty ? ['en', 'ta'] : languageCodes.take(3).toList();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: displayLanguages.asMap().entries.map((entry) {
+      children: displayLanguages.asMap().entries.expand((entry) {
         final languageCode = entry.value;
         final index = entry.key;
         final iconPath = getLanguageIcon(languageCode);
+        final isLast = index == displayLanguages.length - 1;
 
-        return Padding(
-          padding: EdgeInsets.only(
-              right: index < displayLanguages.length - 1 ? 6 : 4),
-          child: iconPath != null
-              ? SvgPicture.asset(
-                  iconPath,
-                  width: 12,
-                  height: 12,
-                  colorFilter: ColorFilter.mode(
-                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                    BlendMode.srcIn,
-                  ),
-                )
-              : Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.primaryDark.withValues(alpha: 0.2)
-                        : AppColors.primary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      languageCode.length >= 2
-                          ? languageCode.substring(0, 2).toUpperCase()
-                          : languageCode.toUpperCase(),
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.primaryDark
-                            : AppColors.primary,
-                        fontSize: 7,
-                        fontWeight: FontWeight.bold,
-                      ),
+        final icon = iconPath != null
+            ? SvgPicture.asset(
+                iconPath,
+                width: 12,
+                height: 12,
+                colorFilter: ColorFilter.mode(
+                  isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  BlendMode.srcIn,
+                ),
+              )
+            : Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+                      : AppColors.textSecondary.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    languageCode.length >= 2
+                        ? languageCode.substring(0, 2).toUpperCase()
+                        : languageCode.toUpperCase(),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
+                      fontSize: 7,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-        );
+              );
+
+        return [
+          icon,
+          if (!isLast)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+        ];
       }).toList(),
     );
   }
@@ -372,16 +379,25 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
   Widget _buildRatingAndDistance(bool isDarkMode) {
     return Row(
       children: [
-        Icon(
-          Icons.location_on,
-          color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-          size: 14,
+        SvgPicture.asset(
+          AppIcons.icLocation,
+          width: AppSizes.iconXS,
+          height: AppSizes.iconXS,
         ),
         const SizedBox(width: 4),
         Container(
           constraints: const BoxConstraints(maxWidth: 130),
           child: Text(
-            widget.address ?? '',
+            () {
+              final parts = (widget.address ?? '')
+                  .split(',')
+                  .map((e) => e.trim())
+                  .where((e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
+                  .toList();
+              return parts.length > 2
+                  ? parts.sublist(parts.length - 2).join(', ')
+                  : parts.join(', ');
+            }(),
             style: context.textTheme.bodyMedium?.copyWith(
               overflow: TextOverflow.ellipsis,
               color: isDarkMode
@@ -417,7 +433,9 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
   }
 
   Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = widget.categories ?? [];
+    final categories = (widget.categories == null || widget.categories!.isEmpty)
+        ? ['Haircut', 'Facial']
+        : widget.categories!;
     final displayCategories = categories.take(2).toList();
     final hasMoreCategories = categories.length > 2;
 
@@ -426,7 +444,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
       children: [
         // Category badges (up to 2)
         ...displayCategories.map((category) => Container(
-        constraints: const BoxConstraints(maxWidth: 70),
+              constraints: const BoxConstraints(maxWidth: 70),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingS,
                 vertical: 2,
@@ -456,17 +474,13 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                  : AppColors.textSecondary.withValues(alpha: 0.15),
+              color: Color(0xFFF6F1FE),
               borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             ),
             child: Text(
               '+${categories.length - 2}',
               style: context.textTheme.bodySmall?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+                color: Color(0xFF8F89CA),
                 fontWeight: FontWeight.w700,
               ),
             ),

@@ -166,7 +166,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           builder: (context, scrollController) {
             return Container(
               decoration: BoxDecoration(
-                color: context.colorScheme.surface,
+                color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusXL),
                   topRight: Radius.circular(AppSizes.radiusXL),
@@ -223,14 +223,14 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                               ),
                       ),
 
-                      const SizedBox(height: AppSizes.spaceM),
+                      const SizedBox(height: AppSizes.spaceS),
 
                       // Subtitle
                       Text(
                         _showOtpInput
                             ? 'Enter the 4-digit code sent to $_fullPhoneNumber'
                             : 'Enter Mobile Number to Get OTP for Login',
-                        style: context.textTheme.bodyLarge?.copyWith(
+                        style: context.textTheme.bodyMedium?.copyWith(
                           color: isDarkMode
                               ? AppColors.textSecondaryDark
                               : AppColors.textSecondary,

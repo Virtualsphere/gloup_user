@@ -443,9 +443,8 @@ class _SalonCardState extends State<SalonCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  constraints: const BoxConstraints(minHeight:  35),
-                  child: Text(
+                if (widget.isFullWidth)
+                  Text(
                     widget.salonName,
                     style: context.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -455,8 +454,23 @@ class _SalonCardState extends State<SalonCard> {
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  )
+                else
+                  SizedBox(
+                    height: 40,
+                    child: Text(
+                      widget.salonName,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary,
+                        height: 1.3,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -514,7 +528,10 @@ class _SalonCardState extends State<SalonCard> {
               Container(
                 constraints: const BoxConstraints(maxWidth:  180),
                 child: Text(
-                  widget.address ?? '',
+                  () {
+                    final parts = (widget.address ?? '').split(',').map((e) => e.trim()).where((e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e)).toList();
+                    return parts.length > 2 ? parts.sublist(parts.length - 2).join(', ') : parts.join(', ');
+                  }(),
                   style: context.textTheme.bodyMedium?.copyWith(
                     overflow: TextOverflow.ellipsis,
                     color: isDarkMode
@@ -551,9 +568,7 @@ class _SalonCardState extends State<SalonCard> {
           ),
           const SizedBox(height: AppSizes.spaceS),
           // Language and Category badges row (separate)
-          if ((widget.languageCodes != null &&
-                  widget.languageCodes!.isNotEmpty) ||
-              (widget.categories != null && widget.categories!.isNotEmpty)) ...[
+          ...[
             const SizedBox(height: AppSizes.spaceS),
             Row(
               children: [
@@ -580,56 +595,73 @@ class _SalonCardState extends State<SalonCard> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Language badges (max 3)
-        ...displayLanguages.asMap().entries.map((entry) {
+        ...displayLanguages.asMap().entries.expand((entry) {
           final languageCode = entry.value;
           final index = entry.key;
           final iconPath = getLanguageIcon(languageCode);
+          final isLast = index == displayLanguages.length - 1;
 
-          return Padding(
-            padding: EdgeInsets.only(
-                right: index < displayLanguages.length - 1 ? 10 : 6),
-            child: iconPath != null
-                ? SvgPicture.asset(
-                    iconPath,
-                    width: 14,
-                    height: 14,
-                    colorFilter: ColorFilter.mode(
-                      isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                      BlendMode.srcIn,
-                    ),
-                  )
-                : Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.primaryDark.withValues(alpha: 0.2)
-                          : AppColors.primary.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        languageCode.length >= 2
-                            ? languageCode.substring(0, 2).toUpperCase()
-                            : languageCode.toUpperCase(),
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                        ),
+          final icon = iconPath != null
+              ? SvgPicture.asset(
+                  iconPath,
+                  width: 14,
+                  height: 14,
+                  colorFilter: ColorFilter.mode(
+                    isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    BlendMode.srcIn,
+                  ),
+                )
+              : Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+                        : AppColors.textSecondary.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      languageCode.length >= 2
+                          ? languageCode.substring(0, 2).toUpperCase()
+                          : languageCode.toUpperCase(),
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-          );
+                );
+
+          return [
+            icon,
+            if (!isLast)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Container(
+                  width: 4,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ];
         }),
       ],
     );
   }
 
   Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = widget.categories ?? [];
+    final categories = (widget.categories == null || widget.categories!.isEmpty)
+        ? ['Haircut', 'Facial']
+        : widget.categories!;
     final displayCategories = categories.take(2).toList();
     final hasMoreCategories = categories.length > 2;
 

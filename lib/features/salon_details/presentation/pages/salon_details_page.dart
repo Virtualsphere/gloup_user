@@ -238,7 +238,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
           body: Stack(
             children: [
@@ -296,8 +296,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     delegate: _StickyHeaderDelegate(
                       child: Container(
                         color: isDarkMode
-                            ? AppColors.backgroundDark
-                            : AppColors.background,
+                            ? AppColors.surfaceDark
+                            : AppColors.surface,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -554,24 +554,6 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           },
                         ),
                       ),
-                      // Positioned(
-                      //   top: 0,
-                      //   bottom: 0,
-                      //   left: 0,
-                      //   right: 0,
-                      //   child: Container(
-                      //     decoration: BoxDecoration(
-                      //       gradient: LinearGradient(
-                      //         begin: Alignment.topCenter,
-                      //         end: Alignment.bottomCenter,
-                      //         colors: [
-                      //           AppColors.black.withValues(alpha: 0.),
-                      //           AppColors.black.withValues(alpha: 0.05),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 );
@@ -620,12 +602,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 salonDetail.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodyLarge?.copyWith(
+                style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDarkMode
                       ? AppColors.textPrimaryDark
                       : AppColors.textPrimary,
-                  fontSize: AppSizes.fontXL,
                 ),
               ),
             ),
@@ -744,8 +725,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   salonDetail.gender,
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -772,7 +753,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -802,7 +783,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconXS,
               height: AppSizes.iconXS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -874,7 +855,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
+               isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -1174,11 +1155,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             children: [
               Text(
                 title,
-                style: context.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: context.textTheme.titleSmall?.copyWith(
                   color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
+                      ? AppColors.primaryDark
+                      : AppColors.primary,
                 ),
               ),
               if (title == 'Team' || title == 'Reviews')
@@ -2061,8 +2041,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       width: double.infinity,
       decoration: BoxDecoration(
         color: isDarkMode
-            ? AppColors.backgroundDark
-            : AppColors.background,
+            ? AppColors.surfaceDark
+            : AppColors.surface,
         border: Border(
           bottom: BorderSide(
             color: isDarkMode

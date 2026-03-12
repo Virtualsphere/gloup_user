@@ -89,7 +89,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
     final backgroundHeight = screenHeight * 0.25;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+      backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
       body: Stack(
         children: [
           // Background Image (same as login_page.dart)
@@ -120,7 +120,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
             bottom: 0,
             child: Container(
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+                color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusXL),
                   topRight: Radius.circular(AppSizes.radiusXL),

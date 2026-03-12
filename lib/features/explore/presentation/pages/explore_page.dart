@@ -146,9 +146,9 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
         _checkLocationChange();
 
         return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
           appBar: AppBar(
-            backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+            backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: false,
@@ -254,13 +254,11 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                               'Explore Salons',
                               style: context.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 22,
                               ),
                             ),
-                            const SizedBox(height: AppSizes.spaceXS),
                             Text(
                               'Discover the best salons near you',
-                              style: context.textTheme.bodyMedium?.copyWith(
+                              style: context.textTheme.bodySmall?.copyWith(
                                 color: context.colorScheme.onSurface
                                     .withValues(alpha: 0.6),
                               ),

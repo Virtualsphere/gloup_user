@@ -407,7 +407,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(AppSizes.radiusL),
               topRight: Radius.circular(AppSizes.radiusL),

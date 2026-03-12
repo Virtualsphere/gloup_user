@@ -283,9 +283,9 @@ class _CategoryPageState extends State<CategoryPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         appBar: AppBar(
-        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: Border(
@@ -343,11 +343,11 @@ class _CategoryPageState extends State<CategoryPage> {
                 children: [
                   Text(
                     'Salons offering $_selectedCategoryName',
-                    style: context.textTheme.titleLarge?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceS),
+                  const SizedBox(height: AppSizes.spaceXS),
                   Text(
                     'Browse through our curated list of salons',
                     style: context.textTheme.bodyMedium?.copyWith(

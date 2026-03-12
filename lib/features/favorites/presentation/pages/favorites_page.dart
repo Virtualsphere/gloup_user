@@ -140,13 +140,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               'My Favorites',
                               style: context.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 22,
                               ),
                             ),
-                            const SizedBox(height: AppSizes.spaceXS),
                             Text(
                               'Your collection of favorite salons',
-                              style: context.textTheme.bodyMedium?.copyWith(
+                              style: context.textTheme.bodySmall?.copyWith(
                                 color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
