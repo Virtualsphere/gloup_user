@@ -5,11 +5,15 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/coupon
 
 class CouponData {
   final int discountAmount;
+  final int id;
   final String couponCode;
+  final String discountType; // 'flat' | 'percentage'
 
   CouponData({
     required this.discountAmount,
+    required this.id,
     required this.couponCode,
+    this.discountType = 'flat',
   });
 }
 
@@ -126,6 +130,7 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
                   return CouponCard(
                     discountAmount: coupon.discountAmount,
                     couponCode: coupon.couponCode,
+                    discountType: coupon.discountType,
                     isSelected: isSelected,
                     isEnabled: isCouponValid,
                     disabledReason: disabledReason,

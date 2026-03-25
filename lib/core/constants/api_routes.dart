@@ -2,12 +2,14 @@ class ApiRoutes {
   ApiRoutes._();
 
   // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'https://v1.gloup.in';
-  // static const String baseUrl = 'http://192.168.1.3:5678';
+  static const String baseUrl = 'https://api.v1.gloup.in';
+  // static const String baseUrl = 'http://192.168.1.14:5678';
   
   // Image Base URL - For appending to image paths from API
-  static const String imageBaseUrl = 'https://v1.gloup.in/images';
-  static const String imageProfileUrl = 'https://v1.gloup.in/profilepic';
+  static const String imageBaseUrl = 'https://cdn.gloup.in/uploads/common/store';
+  static const String bannerImageBaseUrl = 'https://cdn.gloup.in/uploads/common/banner';
+  static const String categoryImageBaseUrl = 'https://cdn.gloup.in/uploads/common/category';
+  static const String imageProfileUrl = 'https://cdn.gloup.in/uploads/common/profile-pictures';
 
   // Auth Endpoints
   static const String sendOtp = '$baseUrl/user/auth/sendOTP';

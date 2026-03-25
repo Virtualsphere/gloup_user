@@ -437,32 +437,6 @@ class _CategoryPageState extends State<CategoryPage> {
                             );
                           },
                         ),
-                        // child: SalonCard(
-                        //   storeId: int.tryParse(salon.id) ?? 0,
-                        //   salonName: salon.salonName,
-                        //   salonImage: salon.salonImage,
-                        //   images: salon.images,
-                        //   rating: salon.rating,
-                        //   reviewCount: salon.reviewCount,
-                        //   distance: salon.distance,
-                        //   isPremium: salon.isPremium,
-                        //   isFavorite: salon.isFavorite,
-                        //   serviceName: salon.serviceName,
-                        //   servicePrice: salon.servicePrice,
-                        //   address: salon.address,
-                        //   categories: salon.categories,
-                        //   languageCodes: salon.languageCodes,
-                        //   isFullWidth: true,
-                        //   onTap: () {
-                        //     GoRouter.of(context).push(
-                        //       RouteNames.salonDetails,
-                        //       extra: {
-                        //         'salonId': salon.id,
-                        //         'salonName': salon.salonName,
-                        //       },
-                        //     );
-                        //   },
-                        // ),
                       );
                     },
                     childCount: state.salons.length,

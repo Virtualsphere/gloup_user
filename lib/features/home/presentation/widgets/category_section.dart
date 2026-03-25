@@ -281,21 +281,6 @@ class _CategorySectionState extends State<CategorySection> {
                             );
                           },
                           errorBuilder: (context, error, stackTrace) {
-                            final key = title.trim().toLowerCase();
-                            final localImage = {
-                              'nails': 'assets/images/categories/nail.png',
-                              'nail': 'assets/images/categories/nail.png',
-                              'haircut': 'assets/images/categories/haircut.png',
-                              'hair cut': 'assets/images/categories/haircut.png',
-                              'facial': 'assets/images/categories/facial.png',
-                              'massage': 'assets/images/categories/massage.png',
-                              'beauty parlour': 'assets/images/categories/beauty_parler.png',
-                              'beauty parlor': 'assets/images/categories/beauty_parler.png',
-                              'beauty parler': 'assets/images/categories/beauty_parler.png',
-                            }[key];
-                            if (localImage != null) {
-                              return Image.asset(localImage, fit: BoxFit.cover);
-                            }
                             return Container(
                               color: isDarkMode
                                   ? AppColors.primaryDark.withValues(alpha: 0.1)
@@ -349,7 +334,7 @@ class _CategorySectionState extends State<CategorySection> {
           children: [
             Icon(
               Icons.error_outline_outlined,
-              color: AppColors.error,
+              color: AppColors.borderDark,
               size: 32,
             ),
             const SizedBox(height: AppSizes.spaceS),

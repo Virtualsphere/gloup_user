@@ -53,7 +53,7 @@ class HomeDataSourceImpl implements HomeDataSource {
           return bannerList
               .map((json) => CarouselBannerModel.fromJson(
                     json,
-                    imageBaseUrl: ApiRoutes.imageProfileUrl,
+                    imageBaseUrl: ApiRoutes.bannerImageBaseUrl,
                   ))
               .toList();
         } else {

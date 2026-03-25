@@ -251,7 +251,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     pinned: true,
                     expandedHeight: carouselHeight,
                     collapsedHeight: collapsedHeight,
-                    backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+                    backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed

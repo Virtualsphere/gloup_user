@@ -37,7 +37,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
           return categoryList
               .map((json) => CategoryModel.fromJson(
                 json,
-                imageBaseUrl: ApiRoutes.imageProfileUrl,
+                imageBaseUrl: ApiRoutes.categoryImageBaseUrl,
               ))
               .toList();
         } else {

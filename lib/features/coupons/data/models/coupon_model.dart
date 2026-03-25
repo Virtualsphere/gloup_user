@@ -4,14 +4,16 @@ class CouponModel extends CouponEntity {
   const CouponModel({
     required super.id,
     required super.code,
-    super.discountAmount = 50,
+    required super.discountAmount,
+    super.discountType,
   });
 
   factory CouponModel.fromJson(Map<String, dynamic> json) {
     return CouponModel(
       id: json['id'] as int? ?? 0,
       code: json['code'] as String? ?? '',
-      discountAmount: json['discountAmount'] as int? ?? 50, // Use API value or default
+      discountAmount: json['discountValue'] as int? ?? 0,
+      discountType: json['discountType'] as String? ?? 'flat',
     );
   }
 
@@ -19,7 +21,8 @@ class CouponModel extends CouponEntity {
     return {
       'id': id,
       'code': code,
-      'discountAmount': discountAmount,
+      'discount_value': discountAmount,
+      'discountType': discountType,
     };
   }
 }

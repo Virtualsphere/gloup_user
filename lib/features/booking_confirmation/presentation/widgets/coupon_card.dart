@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/app_sizes.dart';
 class CouponCard extends StatelessWidget {
   final int discountAmount;
   final String couponCode;
+  final String discountType; // 'flat' | 'percentage'
   final bool isSelected;
   final VoidCallback onTap;
   final bool isEnabled;
@@ -14,6 +15,7 @@ class CouponCard extends StatelessWidget {
     super.key,
     required this.discountAmount,
     required this.couponCode,
+    this.discountType = 'flat',
     required this.isSelected,
     required this.onTap,
     this.isEnabled = true,
@@ -79,7 +81,9 @@ class CouponCard extends StatelessWidget {
                                 ),
                             children: [
                               TextSpan(
-                                text: '₹$discountAmount',
+                                text: discountType == 'percentage'
+                                    ? '$discountAmount%'
+                                    : '₹$discountAmount',
                                 style: const TextStyle(fontWeight: FontWeight.w700),
                               ),
                               const TextSpan(text: ' with'),

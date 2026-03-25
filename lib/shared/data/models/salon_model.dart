@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 /// Shared Pagination Model
@@ -72,17 +73,23 @@ class SalonModel {
     String? imageBaseUrl,
   }) {
     final salonImagePath = json['salonImage'] ?? '';
-    final fullSalonImageUrl = imageBaseUrl != null && salonImagePath.isNotEmpty
-        ? '$imageBaseUrl/$salonImagePath'
+    final salonID = json['id']?.toString() ?? '';
+    final fullSalonImageUrl = (imageBaseUrl != null && salonImagePath.isNotEmpty)
+        ? '$imageBaseUrl/$salonID/images/$salonImagePath'
         : salonImagePath;
 
     final imagesList = (json['images'] as List<dynamic>?)?.map((image) {
           final imagePath = image?.toString() ?? '';
-          return imageBaseUrl != null && imagePath.isNotEmpty
-              ? '$imageBaseUrl/$imagePath'
+          return (imageBaseUrl != null && imagePath.isNotEmpty)
+              ? '$imageBaseUrl/$salonID/images/$imagePath'
               : imagePath;
         }).toList() ??
         [];
+
+    debugPrint('[SalonModel] salonID: $salonID');
+    debugPrint('[SalonModel] salonImagePath: $salonImagePath');
+    debugPrint('[SalonModel] fullSalonImageUrl: $fullSalonImageUrl');
+    debugPrint('[SalonModel] imagesList: $imagesList');
 
     return SalonModel(
       id: json['id']?.toString() ?? '',

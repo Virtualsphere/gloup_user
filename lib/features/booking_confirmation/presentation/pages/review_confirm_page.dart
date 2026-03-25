@@ -793,6 +793,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                 displayCoupon.discountAmount,
                                             couponCode:
                                                 displayCoupon.couponCode,
+                                            discountType:
+                                                displayCoupon.discountType,
                                             isSelected: selectedCouponCode ==
                                                 displayCoupon.couponCode,
                                             isEnabled: isCouponValid,
@@ -826,8 +828,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                   context,
                                                   couponCode:
                                                       displayCoupon.couponCode,
-                                                  discountAmount: displayCoupon
-                                                      .discountAmount,
+                                                  discountAmount: _resolveDiscount(
+                                                      displayCoupon,
+                                                      discountedAmount)
+                                                      .round(),
                                                 );
                                               }
                                             },
@@ -872,9 +876,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     context,
                                                     couponCode: selectedCoupon
                                                         .couponCode,
-                                                    discountAmount:
-                                                        selectedCoupon
-                                                            .discountAmount,
+                                                    discountAmount: _resolveDiscount(
+                                                        selectedCoupon,
+                                                        _totalServiceAmount -
+                                                            _totalServiceDiscount)
+                                                        .round(),
                                                   );
                                                 }
                                               },
@@ -922,11 +928,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               BillingSummaryCard(
                                 serviceAmount: _totalServiceAmount,
                                 couponDiscount: selectedCouponCode != null
-                                    ? availableCoupons
-                                        .firstWhere((c) =>
-                                            c.couponCode == selectedCouponCode)
-                                        .discountAmount
-                                        .toDouble()
+                                    ? _resolveDiscount(
+                                        availableCoupons.firstWhere((c) =>
+                                            c.couponCode == selectedCouponCode),
+                                        _totalServiceAmount - _totalServiceDiscount)
                                     : null,
                                 appliedCouponCode: selectedCouponCode,
                                 serviceDiscount: _totalServiceDiscount,
@@ -977,8 +982,18 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   CouponData _convertToCouponData(dynamic coupon) {
     return CouponData(
       discountAmount: coupon.discountAmount as int,
+      id: coupon.id as int,
       couponCode: coupon.code as String,
+      discountType: coupon.discountType as String,
     );
+  }
+
+  /// Resolve the actual discount amount based on coupon type.
+  double _resolveDiscount(CouponData coupon, double serviceAmount) {
+    if (coupon.discountType == 'percentage') {
+      return (coupon.discountAmount / 100) * serviceAmount;
+    }
+    return coupon.discountAmount.toDouble();
   }
 
   /// Calculate age from date of birth string
@@ -1142,11 +1157,16 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     // Calculate final total from billing summary
     final serviceAmount = _totalServiceAmount;
     final couponDiscount = selectedCouponCode != null
+        ? _resolveDiscount(
+            availableCoupons
+                .firstWhere((c) => c.couponCode == selectedCouponCode),
+            serviceAmount - _totalServiceDiscount)
+        : 0.0;
+    final couponId = selectedCouponCode != null
         ? availableCoupons
             .firstWhere((c) => c.couponCode == selectedCouponCode)
-            .discountAmount
-            .toDouble()
-        : 0.0;
+            .id
+        : null;
     final serviceDiscount = _totalServiceDiscount;
 
     // Calculate subtotal (after service discount and coupon)
@@ -1263,6 +1283,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             serviceDiscount: serviceDiscount,
                             couponDiscount:
                                 couponDiscount > 0 ? couponDiscount : null,
+                            couponId: couponId,
                             couponCode: selectedCouponCode,
                             walletAmountUsed: gloupCash,
                             finalAmount: finalTotal,

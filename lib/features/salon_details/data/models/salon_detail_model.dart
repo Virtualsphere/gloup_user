@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class SalonDetailModel {
   final int id;
   final String name;
@@ -49,15 +51,19 @@ class SalonDetailModel {
   }) {
     // Handle both direct data and nested data structure
     final data = json['data'] ?? json;
-    
+    final salonID = data['id']?.toString() ?? '';
+
     // Process images with base URL
     final imagesList = (data['images'] as List<dynamic>?)?.map((image) {
           final imagePath = image?.toString() ?? '';
-          return imageBaseUrl != null && imagePath.isNotEmpty
-              ? '$imageBaseUrl/$imagePath'
+          return (imageBaseUrl != null && imagePath.isNotEmpty)
+              ? '$imageBaseUrl/$salonID/images/$imagePath'
               : imagePath;
         }).toList() ??
         [];
+
+    debugPrint('[SalonDetailModel] salonID: $salonID');
+    debugPrint('[SalonDetailModel] imagesList: $imagesList');
     
     return SalonDetailModel(
       id: data['id'] ?? 0,

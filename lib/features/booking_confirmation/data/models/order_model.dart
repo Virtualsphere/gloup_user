@@ -15,6 +15,7 @@ class CreateOrderRequest {
   final double serviceAmount;
   final double serviceDiscount;
   final double? couponDiscount;
+  final int? couponId;
   final String? couponCode;
   final double walletAmountUsed;
   final double finalAmount;
@@ -33,6 +34,7 @@ class CreateOrderRequest {
     required this.serviceAmount,
     required this.serviceDiscount,
     this.couponDiscount,
+    this.couponId,
     this.couponCode,
     required this.walletAmountUsed,
     required this.finalAmount,
@@ -53,6 +55,7 @@ class CreateOrderRequest {
       'status': 'pending',
       'is_discounted': serviceDiscount > 0,
       'discounted_amount': serviceDiscount,
+      'discount_id': couponId,
       'wallet_amount_used': walletAmountUsed,
       'is_wallet': walletAmountUsed > 0,
     };
