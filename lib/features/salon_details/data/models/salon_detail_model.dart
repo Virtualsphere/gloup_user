@@ -96,7 +96,16 @@ class SalonDetailModel {
               ?.map((e) => ReviewModel.fromJson(e, imageBaseUrl: imageBaseUrl))
               .toList() ??
           [],
-      openingHours: Map<String, String>.from(data['openingHours'] ?? {}),
+      openingHours: (data['openingHours'] as Map<String, dynamic>? ?? {}).map(
+        (day, hours) {
+          if (hours is Map) {
+            final open = hours['open'] ?? '';
+            final close = hours['close'] ?? '';
+            return MapEntry(day, open.isNotEmpty && close.isNotEmpty ? '$open - $close' : 'Closed');
+          }
+          return MapEntry(day, hours?.toString() ?? 'Closed');
+        },
+      ),
       location: data['location'] != null 
           ? LocationModel.fromJson(data['location']) 
           : LocationModel(latitude: 0, longitude: 0, address: ''),
