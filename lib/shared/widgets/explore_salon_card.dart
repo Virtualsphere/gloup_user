@@ -471,12 +471,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               height: AppSizes.iconXS,
             ),
             const SizedBox(width: 4),
-            Container(
-              constraints: BoxConstraints(
-                  maxWidth: showDistance
-                      ? context.screenWidth * 0.24
-                      : context.screenWidth *
-                          0.45), // Limit width when distance is shown
+            Flexible(
               child: Text(
                 () {
                   final parts = (widget.address ?? '')
@@ -489,6 +484,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                       ? parts.sublist(parts.length - 2).join(', ')
                       : parts.join(', ');
                 }(),
+                maxLines: 1,
                 style: context.textTheme.bodySmall?.copyWith(
                   overflow: TextOverflow.ellipsis,
                   color: isDarkMode
@@ -531,8 +527,13 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         Row(
           children: [
             _buildLanguageBadges(isDarkMode),
-            Spacer(),
-            _buildCategoryBadges(isDarkMode),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: _buildCategoryBadges(isDarkMode),
+              ),
+            ),
           ],
         ),
       ],
@@ -629,25 +630,27 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Category badges
-        ...displayCategories.map((category) => Container(
-              constraints: const BoxConstraints(maxWidth: 55),
-              margin: const EdgeInsets.only(left: 4),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingS,
-                vertical: 4,
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFFF6F1FE),
-                borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-              ),
-              child: Text(
-                category,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: Color(0xFF8F89CA),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+        ...displayCategories.map((category) => Flexible(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 80),
+                margin: const EdgeInsets.only(left: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingS,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF6F1FE),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                ),
+                child: Text(
+                  category,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF8F89CA),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             )),
