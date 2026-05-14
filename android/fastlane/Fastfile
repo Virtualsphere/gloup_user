@@ -1,0 +1,52 @@
+default_platform(:android)
+
+platform :android do
+
+  desc "Build and distribute to Firebase App Distribution for Staging/QA"
+  lane :staging do
+    # Build the APK or AAB
+    gradle(
+      task: "assemble",
+      build_type: "Release"
+      # If you use flavors, change this to:
+      # task: "assemble",
+      # flavor: "Staging",
+      # build_type: "Release"
+    )
+
+    # Upload to Firebase App Distribution
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID"],
+      testers: "qa-team@example.com",
+      release_notes: "Automated staging build via GitHub Actions",
+      groups: "qa-team" # Make sure to create this group in Firebase Console
+    )
+  end
+
+  desc "Build and upload a new release to Google Play Internal Track"
+  lane :production do
+    # Ensure tests pass before production build
+    # sh "cd .. && flutter test"
+
+    # Build the App Bundle
+    gradle(
+      task: "bundle",
+      build_type: "Release"
+      # If you use flavors, change this to:
+      # task: "bundle",
+      # flavor: "Production",
+      # build_type: "Release"
+    )
+
+    # Upload to Google Play Internal Track
+    upload_to_play_store(
+      track: 'internal',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      # You can automate release notes reading from a file
+      # release_notes: { "en-US" => "Minor bug fixes and improvements." }
+    )
+  end
+
+end
