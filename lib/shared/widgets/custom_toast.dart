@@ -91,7 +91,7 @@ class CustomToast {
   static void showInfo(BuildContext context, String message) {
     show(context, message: message, isError: false, isSuccess: false);
   }
-  
+
   /// Show a warning toast
   static void showWarning(BuildContext context, String message) {
     FToast fToast = FToast();

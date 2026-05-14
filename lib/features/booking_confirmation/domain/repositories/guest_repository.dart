@@ -5,7 +5,7 @@ import 'package:tressy/features/booking_confirmation/domain/entities/guest_entit
 abstract class GuestRepository {
   /// Get all guests for the current user
   Future<Either<Failure, List<GuestEntity>>> getAllGuests();
-  
+
   /// Add a new guest
   Future<Either<Failure, void>> addGuest({
     required String name,
@@ -13,7 +13,7 @@ abstract class GuestRepository {
     required int age,
     required String phone,
   });
-  
+
   /// Update an existing guest
   Future<Either<Failure, void>> updateGuest({
     required int guestId,

@@ -22,7 +22,7 @@ class LocationProvider extends ChangeNotifier {
   String _city = _defaultCity;
   String _area = _defaultArea;
   bool _isLoading = false;
-  
+
   // Track if location was just updated (for showing toast)
   bool _locationJustUpdated = false;
   String? _lastUpdateMessage;
@@ -40,7 +40,7 @@ class LocationProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get locationJustUpdated => _locationJustUpdated;
   String? get lastUpdateMessage => _lastUpdateMessage;
-  
+
   /// Full address string
   String get fullAddress {
     if (_area.isNotEmpty && _city.isNotEmpty) {
@@ -62,12 +62,15 @@ class LocationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      _latitude = LocalStorageService.getDouble(_keyLatitude) ?? _defaultLatitude;
-      _longitude = LocalStorageService.getDouble(_keyLongitude) ?? _defaultLongitude;
+      _latitude =
+          LocalStorageService.getDouble(_keyLatitude) ?? _defaultLatitude;
+      _longitude =
+          LocalStorageService.getDouble(_keyLongitude) ?? _defaultLongitude;
       _city = LocalStorageService.getString(_keyCity) ?? _defaultCity;
       _area = LocalStorageService.getString(_keyArea) ?? _defaultArea;
 
-      debugPrint('LocationProvider: Loaded from storage - $_city, $_area ($_latitude, $_longitude)');
+      debugPrint(
+          'LocationProvider: Loaded from storage - $_city, $_area ($_latitude, $_longitude)');
     } catch (e) {
       debugPrint('LocationProvider: Error loading from storage: $e');
       // Keep default values on error
@@ -116,7 +119,8 @@ class LocationProvider extends ChangeNotifier {
         _lastUpdateMessage = 'Location updated to $_city';
       }
 
-      debugPrint('LocationProvider: Updated location - $_city, $_area ($_latitude, $_longitude)');
+      debugPrint(
+          'LocationProvider: Updated location - $_city, $_area ($_latitude, $_longitude)');
     } catch (e) {
       debugPrint('LocationProvider: Error updating location: $e');
     } finally {
@@ -124,7 +128,7 @@ class LocationProvider extends ChangeNotifier {
       notifyListeners(); // Triggers UI rebuild in all listening widgets
     }
   }
-  
+
   /// Clear the location update flag (call after showing toast)
   void clearUpdateFlag() {
     _locationJustUpdated = false;

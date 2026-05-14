@@ -34,7 +34,8 @@ class LoginRequiredWidget extends StatefulWidget {
   State<LoginRequiredWidget> createState() => _LoginRequiredWidgetState();
 }
 
-class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsBindingObserver {
+class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
+    with WidgetsBindingObserver {
   bool _isAuthenticated = false;
 
   @override
@@ -171,7 +172,8 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
 
                     // Message
                     Text(
-                      widget.message ?? 'Please login to access this feature and enjoy personalized experience.',
+                      widget.message ??
+                          'Please login to access this feature and enjoy personalized experience.',
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: isDarkMode
                             ? AppColors.textSecondaryDark
@@ -199,17 +201,24 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                          foregroundColor: isDarkMode ? AppColors.primary : AppColors.onPrimary,
+                          backgroundColor: isDarkMode
+                              ? AppColors.primaryDark
+                              : AppColors.primary,
+                          foregroundColor: isDarkMode
+                              ? AppColors.primary
+                              : AppColors.onPrimary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusM),
                           ),
                         ),
                         child: Text(
                           widget.buttonText ?? 'Login to Continue',
                           style: context.textTheme.titleMedium?.copyWith(
-                            color: isDarkMode ? AppColors.primary : AppColors.onPrimary,
+                            color: isDarkMode
+                                ? AppColors.primary
+                                : AppColors.onPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -219,7 +228,8 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                     const SizedBox(height: AppSizes.spaceL),
 
                     // Skip/Browse as guest option (only show if enabled and can pop)
-                    if (widget.showBrowseAsGuest && Navigator.of(context).canPop())
+                    if (widget.showBrowseAsGuest &&
+                        Navigator.of(context).canPop())
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -227,7 +237,9 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget> with WidgetsB
                         child: Text(
                           'Browse as Guest',
                           style: context.textTheme.bodyMedium?.copyWith(
-                            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                            color: isDarkMode
+                                ? AppColors.primaryDark
+                                : AppColors.primary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

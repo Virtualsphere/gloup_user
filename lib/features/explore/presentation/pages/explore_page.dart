@@ -146,9 +146,11 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
         _checkLocationChange();
 
         return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          backgroundColor:
+              isDarkMode ? AppColors.backgroundDark : AppColors.background,
           appBar: AppBar(
-            backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+            backgroundColor:
+                isDarkMode ? AppColors.backgroundDark : AppColors.background,
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: false,

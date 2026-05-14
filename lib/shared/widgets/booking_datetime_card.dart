@@ -18,7 +18,8 @@ class BookingDateTimeCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM, vertical: AppSizes.paddingS),
+      margin: const EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingM, vertical: AppSizes.paddingS),
       padding: const EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,

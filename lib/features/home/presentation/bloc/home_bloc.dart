@@ -137,7 +137,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         latitude: event.latitude,
         longitude: event.longitude,
         limit: event.limit ?? 10,
-        page: event.page ?? (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1),
+        page: event.page ??
+            (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1),
         gender: event.gender,
       ),
     );
@@ -150,16 +151,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       )),
       (salons) {
         // For load more, append to existing list; otherwise replace
-        final updatedSalons = event.isLoadMore 
-            ? [...state.recommendedSalons, ...salons]
-            : salons;
-        
+        final updatedSalons =
+            event.isLoadMore ? [...state.recommendedSalons, ...salons] : salons;
+
         // Calculate pagination info from response
         // Note: We need to get this from the repository response
         // For now, we'll use the page from the request
-        final currentPage = event.page ?? (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1);
+        final currentPage = event.page ??
+            (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1);
         final hasMore = salons.length >= (event.limit ?? 10);
-        
+
         emit(state.copyWith(
           isRecommendedSalonsLoading: false,
           isLoadingMoreRecommended: false,

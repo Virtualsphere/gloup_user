@@ -7,12 +7,14 @@ import 'package:tressy/features/coupons/presentation/bloc/coupon_state.dart';
 class CouponBloc extends Bloc<CouponEvent, CouponState> {
   final GetActiveCouponsUseCase getActiveCouponsUseCase;
 
-  CouponBloc({required this.getActiveCouponsUseCase}) : super(const CouponInitial()) {
+  CouponBloc({required this.getActiveCouponsUseCase})
+      : super(const CouponInitial()) {
     on<GetActiveCouponsEvent>(_onGetActiveCoupons);
     on<RefreshCouponsEvent>(_onRefreshCoupons);
   }
 
-  Future<void> _onGetActiveCoupons(GetActiveCouponsEvent event, Emitter<CouponState> emit) async {
+  Future<void> _onGetActiveCoupons(
+      GetActiveCouponsEvent event, Emitter<CouponState> emit) async {
     emit(const CouponLoading());
 
     final result = await getActiveCouponsUseCase();
@@ -23,7 +25,8 @@ class CouponBloc extends Bloc<CouponEvent, CouponState> {
     );
   }
 
-  Future<void> _onRefreshCoupons(RefreshCouponsEvent event, Emitter<CouponState> emit) async {
+  Future<void> _onRefreshCoupons(
+      RefreshCouponsEvent event, Emitter<CouponState> emit) async {
     final result = await getActiveCouponsUseCase();
 
     result.fold(

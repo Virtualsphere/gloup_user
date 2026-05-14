@@ -48,7 +48,7 @@ class _CancellationState extends State<Cancellation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  ProfileAppBar(
+      appBar: ProfileAppBar(
         title: "Cancellation",
         centerTitle: true,
         onBack: () {
@@ -58,8 +58,8 @@ class _CancellationState extends State<Cancellation> {
       body: isLoading
           ? const CustomLoadingIndicator()
           : SafeArea(
-        child: WebViewWidget(controller: controller),
-      ),
+              child: WebViewWidget(controller: controller),
+            ),
     );
   }
 }

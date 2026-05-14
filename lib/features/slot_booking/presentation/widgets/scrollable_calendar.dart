@@ -66,13 +66,14 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
     // Don't allow going to previous months from current month
     final now = DateTime.now();
     final currentMonthStart = DateTime(now.year, now.month, 1);
-    final previousMonthStart = DateTime(currentMonth.year, currentMonth.month - 1, 1);
-    
+    final previousMonthStart =
+        DateTime(currentMonth.year, currentMonth.month - 1, 1);
+
     // Only allow going back if we're not at the current month
     if (previousMonthStart.isBefore(currentMonthStart)) {
       return; // Don't go to previous months
     }
-    
+
     setState(() {
       currentMonth = DateTime(currentMonth.year, currentMonth.month - 1);
       _generateDates();
@@ -91,11 +92,11 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
     final today = DateTime.now();
     final todayDate = DateTime(today.year, today.month, today.day);
     final selectedDateOnly = DateTime(date.year, date.month, date.day);
-    
+
     if (selectedDateOnly.isBefore(todayDate)) {
       return; // Don't select past dates
     }
-    
+
     setState(() {
       selectedDate = date;
     });
@@ -134,10 +135,12 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                   onTap: () {
                     final now = DateTime.now();
                     final currentMonthStart = DateTime(now.year, now.month, 1);
-                    final displayedMonthStart = DateTime(currentMonth.year, currentMonth.month, 1);
-                    
+                    final displayedMonthStart =
+                        DateTime(currentMonth.year, currentMonth.month, 1);
+
                     // Only allow if not displaying current month
-                    if (!displayedMonthStart.isAtSameMomentAs(currentMonthStart)) {
+                    if (!displayedMonthStart
+                        .isAtSameMomentAs(currentMonthStart)) {
                       _previousMonth();
                     }
                   },
@@ -150,14 +153,21 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                       size: AppSizes.iconS,
                       color: () {
                         final now = DateTime.now();
-                        final currentMonthStart = DateTime(now.year, now.month, 1);
-                        final displayedMonthStart = DateTime(currentMonth.year, currentMonth.month, 1);
-                        final isCurrentMonth = displayedMonthStart.isAtSameMomentAs(currentMonthStart);
-                        
+                        final currentMonthStart =
+                            DateTime(now.year, now.month, 1);
+                        final displayedMonthStart =
+                            DateTime(currentMonth.year, currentMonth.month, 1);
+                        final isCurrentMonth = displayedMonthStart
+                            .isAtSameMomentAs(currentMonthStart);
+
                         if (isCurrentMonth) {
-                          return isDarkMode ? AppColors.textDisabledDark : AppColors.textDisabled;
+                          return isDarkMode
+                              ? AppColors.textDisabledDark
+                              : AppColors.textDisabled;
                         }
-                        return isDarkMode ? AppColors.primaryDark : AppColors.primary;
+                        return isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary;
                       }(),
                     ),
                   ),
@@ -222,7 +232,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                 final isSelected = date.day == selectedDate.day &&
                     date.month == selectedDate.month &&
                     date.year == selectedDate.year;
-                
+
                 // Check if date is in the past
                 final today = DateTime.now();
                 final todayDate = DateTime(today.year, today.month, today.day);
@@ -232,76 +242,81 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                 return GestureDetector(
                   onTap: isPastDate ? null : () => _selectDate(date),
                   child: Container(
-                      width: 55,
-                      margin: const EdgeInsets.only(right: AppSizes.spaceS),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? (isDarkMode
-                                ? AppColors.primaryDark
-                                : AppColors.primary)
-                            : isPastDate
-                                ? isDarkMode
-                            ? AppColors.textSecondaryDark.withValues(alpha: 0.3)
-                            : AppColors.textSecondary.withValues(alpha: 0.3)
-                                : (isDarkMode
-                                    ? AppColors.backgroundDark.withValues(alpha: 0.5)
-                                    : AppColors.background),
-                        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                        border: !isSelected || isPastDate
-                            ? Border.all(
-                                color: isDarkMode
-                                    ? AppColors.borderDark
-                                    : AppColors.border,
-                                width: AppSizes.borderWidth,
-                              )
-                            : null,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Day name (Mon, Tue, etc.)
-                          Text(
-                            DateFormat('EEE').format(date),
-                            style: context.textTheme.bodySmall?.copyWith(
-                              fontSize: AppSizes.fontS,
-                              fontWeight: FontWeight.w400,
-                              color: isSelected
-                                  ? (isDarkMode
-                                      ? AppColors.black
-                                      : AppColors.white)
-                                  : isPastDate
-                                      ? (isDarkMode
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary)
-                                      : (isDarkMode
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary),
-                            ),
-                          ),
-                          const SizedBox(height: AppSizes.spaceS),
-                          // Date number
-                          Text(
-                            date.day.toString(),
-                            style: context.textTheme.bodyLarge?.copyWith(
-                              fontSize: AppSizes.fontL,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? (isDarkMode
-                                      ? AppColors.black
-                                      : AppColors.white)
-                                  : isPastDate
-                                      ? (isDarkMode
-                                          ? AppColors.textPrimaryDark.withValues(alpha: 0.7)
-                                          : AppColors.textPrimary.withValues(alpha: 0.7))
-                                      : (isDarkMode
-                                          ? AppColors.textPrimaryDark
-                                          : AppColors.textPrimary),
-                            ),
-                          ),
-                        ],
-                      ),
+                    width: 55,
+                    margin: const EdgeInsets.only(right: AppSizes.spaceS),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? (isDarkMode
+                              ? AppColors.primaryDark
+                              : AppColors.primary)
+                          : isPastDate
+                              ? isDarkMode
+                                  ? AppColors.textSecondaryDark
+                                      .withValues(alpha: 0.3)
+                                  : AppColors.textSecondary
+                                      .withValues(alpha: 0.3)
+                              : (isDarkMode
+                                  ? AppColors.backgroundDark
+                                      .withValues(alpha: 0.5)
+                                  : AppColors.background),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                      border: !isSelected || isPastDate
+                          ? Border.all(
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.border,
+                              width: AppSizes.borderWidth,
+                            )
+                          : null,
                     ),
-                  );
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Day name (Mon, Tue, etc.)
+                        Text(
+                          DateFormat('EEE').format(date),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            fontSize: AppSizes.fontS,
+                            fontWeight: FontWeight.w400,
+                            color: isSelected
+                                ? (isDarkMode
+                                    ? AppColors.black
+                                    : AppColors.white)
+                                : isPastDate
+                                    ? (isDarkMode
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary)
+                                    : (isDarkMode
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary),
+                          ),
+                        ),
+                        const SizedBox(height: AppSizes.spaceS),
+                        // Date number
+                        Text(
+                          date.day.toString(),
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            fontSize: AppSizes.fontL,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected
+                                ? (isDarkMode
+                                    ? AppColors.black
+                                    : AppColors.white)
+                                : isPastDate
+                                    ? (isDarkMode
+                                        ? AppColors.textPrimaryDark
+                                            .withValues(alpha: 0.7)
+                                        : AppColors.textPrimary
+                                            .withValues(alpha: 0.7))
+                                    : (isDarkMode
+                                        ? AppColors.textPrimaryDark
+                                        : AppColors.textPrimary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
           ),

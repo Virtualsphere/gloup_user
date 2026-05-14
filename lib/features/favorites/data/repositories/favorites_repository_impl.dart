@@ -32,7 +32,8 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
     try {
       final result = await remoteDataSource.getFavorites();
       // Convert SalonModel list to SalonEntity list
-      final entities = result.favorites.map((model) => model.toEntity()).toList();
+      final entities =
+          result.favorites.map((model) => model.toEntity()).toList();
       return Right(entities);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

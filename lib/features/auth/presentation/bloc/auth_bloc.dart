@@ -38,7 +38,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onVerifyOtp(VerifyOtpEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onVerifyOtp(
+      VerifyOtpEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await verifyOtpUseCase(event.phone, event.otp);
@@ -100,7 +101,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         result.fold(
           (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
-          (entity) => emit(SocialAuthSuccess((entity as VerifyOtpEntity).token)),
+          (entity) =>
+              emit(SocialAuthSuccess((entity as VerifyOtpEntity).token)),
         );
       default:
         emit(const AuthFailure('Unexpected credential type'));

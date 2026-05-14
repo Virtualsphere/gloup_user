@@ -67,7 +67,8 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
-        side: const BorderSide(color: AppColors.primary, width: AppSizes.borderWidth),
+        side: const BorderSide(
+            color: AppColors.primary, width: AppSizes.borderWidth),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
           vertical: AppSizes.paddingM,
@@ -108,7 +109,8 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        borderSide: const BorderSide(color: AppColors.primary, width: AppSizes.borderWidthThick),
+        borderSide: const BorderSide(
+            color: AppColors.primary, width: AppSizes.borderWidthThick),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -116,7 +118,8 @@ class AppTheme {
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        borderSide: const BorderSide(color: AppColors.error, width: AppSizes.borderWidthThick),
+        borderSide: const BorderSide(
+            color: AppColors.error, width: AppSizes.borderWidthThick),
       ),
       hintStyle: const TextStyle(color: AppColors.textHint),
       labelStyle: const TextStyle(color: AppColors.textSecondary),
@@ -199,7 +202,8 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
-        side: const BorderSide(color: AppColors.primary, width: AppSizes.borderWidth),
+        side: const BorderSide(
+            color: AppColors.primary, width: AppSizes.borderWidth),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
           vertical: AppSizes.paddingM,
@@ -240,7 +244,8 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        borderSide: const BorderSide(color: AppColors.primary, width: AppSizes.borderWidthThick),
+        borderSide: const BorderSide(
+            color: AppColors.primary, width: AppSizes.borderWidthThick),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -248,7 +253,8 @@ class AppTheme {
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        borderSide: const BorderSide(color: AppColors.error, width: AppSizes.borderWidthThick),
+        borderSide: const BorderSide(
+            color: AppColors.error, width: AppSizes.borderWidthThick),
       ),
       hintStyle: const TextStyle(color: AppColors.textHintDark),
       labelStyle: const TextStyle(color: AppColors.textSecondaryDark),

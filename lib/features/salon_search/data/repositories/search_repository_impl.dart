@@ -57,7 +57,8 @@ class SearchRepositoryImpl implements SearchRepository {
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to fetch nearby salons: ${e.toString()}'));
+      return Left(
+          ServerFailure('Failed to fetch nearby salons: ${e.toString()}'));
     }
   }
 
@@ -128,7 +129,8 @@ class SearchRepositoryImpl implements SearchRepository {
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to fetch map markers: ${e.toString()}'));
+      return Left(
+          ServerFailure('Failed to fetch map markers: ${e.toString()}'));
     }
   }
 }

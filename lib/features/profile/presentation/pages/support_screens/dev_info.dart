@@ -89,7 +89,7 @@ class _DevInfoState extends State<DevInfo> {
                   SizedBox(height: 10),
                   BodyTextHint(
                     title:
-                    'We deliver premium IT services using the latest technologies at affordable rates. Whether you\'re starting from scratch or scaling an existing business, we\'re here to help—calm, committed, and always ready to support you.',
+                        'We deliver premium IT services using the latest technologies at affordable rates. Whether you\'re starting from scratch or scaling an existing business, we\'re here to help—calm, committed, and always ready to support you.',
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
                   ),
@@ -169,8 +169,8 @@ class CircleBorderContainer extends StatelessWidget {
       ),
       child: child != null
           ? Center(
-        child: child,
-      )
+              child: child,
+            )
           : SizedBox(),
     );
   }

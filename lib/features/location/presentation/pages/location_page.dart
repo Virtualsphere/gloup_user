@@ -33,7 +33,8 @@ class _LocationPageState extends State<LocationPage> {
   Timer? _debounceTimer;
 
   // Google Places API Key
-  static const String _googlePlacesApiKey = 'AIzaSyBACvmG9-ekKRhJYRhSTVa7Et10IArFzUs';
+  static const String _googlePlacesApiKey =
+      'AIzaSyBACvmG9-ekKRhJYRhSTVa7Et10IArFzUs';
 
   @override
   void initState() {
@@ -108,19 +109,25 @@ class _LocationPageState extends State<LocationPage> {
             fullAddress = place.subLocality!;
           }
           if (place.locality != null && place.locality!.isNotEmpty) {
-            fullAddress += fullAddress.isEmpty ? place.locality! : ', ${place.locality!}';
+            fullAddress +=
+                fullAddress.isEmpty ? place.locality! : ', ${place.locality!}';
           }
-          if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
-            fullAddress += fullAddress.isEmpty ? place.administrativeArea! : ', ${place.administrativeArea!}';
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.isNotEmpty) {
+            fullAddress += fullAddress.isEmpty
+                ? place.administrativeArea!
+                : ', ${place.administrativeArea!}';
           }
           if (place.postalCode != null && place.postalCode!.isNotEmpty) {
             fullAddress += ' - ${place.postalCode!}';
           }
 
           setState(() {
-            _currentCity = place.locality ?? place.administrativeArea ?? 'Unknown';
+            _currentCity =
+                place.locality ?? place.administrativeArea ?? 'Unknown';
             _currentArea = place.subLocality ?? place.thoroughfare ?? '';
-            _currentFullAddress = fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
+            _currentFullAddress =
+                fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
             _isLoadingLocation = false;
           });
 
@@ -166,7 +173,8 @@ class _LocationPageState extends State<LocationPage> {
             final placeLat = place['geometry']['location']['lat'];
             final placeLng = place['geometry']['location']['lng'];
 
-            final distance = Geolocator.distanceBetween(lat, lng, placeLat, placeLng);
+            final distance =
+                Geolocator.distanceBetween(lat, lng, placeLat, placeLng);
             final distanceInKm = (distance / 1000).toStringAsFixed(1);
             final fullAddress = place['vicinity'] ?? place['name'] ?? '';
 
@@ -181,8 +189,10 @@ class _LocationPageState extends State<LocationPage> {
           }
 
           locations.sort((a, b) {
-            final distA = double.parse(a['distance'].toString().replaceAll(' km away', ''));
-            final distB = double.parse(b['distance'].toString().replaceAll(' km away', ''));
+            final distA = double.parse(
+                a['distance'].toString().replaceAll(' km away', ''));
+            final distB = double.parse(
+                b['distance'].toString().replaceAll(' km away', ''));
             return distA.compareTo(distB);
           });
 
@@ -232,17 +242,24 @@ class _LocationPageState extends State<LocationPage> {
             fullAddress = place.subLocality!;
           }
           if (place.locality != null && place.locality!.isNotEmpty) {
-            fullAddress += fullAddress.isEmpty ? place.locality! : ', ${place.locality!}';
+            fullAddress +=
+                fullAddress.isEmpty ? place.locality! : ', ${place.locality!}';
           }
-          if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
-            fullAddress += fullAddress.isEmpty ? place.administrativeArea! : ', ${place.administrativeArea!}';
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.isNotEmpty) {
+            fullAddress += fullAddress.isEmpty
+                ? place.administrativeArea!
+                : ', ${place.administrativeArea!}';
           }
 
           setState(() {
-            _nearbyLocations[i]['name'] =
-                place.subLocality ?? place.locality ?? place.administrativeArea ?? 'Location ${i + 1}';
+            _nearbyLocations[i]['name'] = place.subLocality ??
+                place.locality ??
+                place.administrativeArea ??
+                'Location ${i + 1}';
             _nearbyLocations[i]['area'] = place.locality ?? '';
-            _nearbyLocations[i]['fullAddress'] = fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
+            _nearbyLocations[i]['fullAddress'] =
+                fullAddress.isEmpty ? 'Unknown Location' : fullAddress;
           });
         }
       } catch (e) {
@@ -268,7 +285,8 @@ class _LocationPageState extends State<LocationPage> {
     try {
       String locationBias = '';
       if (_currentLatitude != null && _currentLongitude != null) {
-        locationBias = '&location=$_currentLatitude,$_currentLongitude&radius=50000';
+        locationBias =
+            '&location=$_currentLatitude,$_currentLongitude&radius=50000';
       }
 
       final url = Uri.parse(
@@ -340,10 +358,12 @@ class _LocationPageState extends State<LocationPage> {
     return parts.first.trim();
   }
 
-  Widget _buildPredictionCard(BuildContext context, Map<String, dynamic> prediction, bool isDarkMode) {
+  Widget _buildPredictionCard(
+      BuildContext context, Map<String, dynamic> prediction, bool isDarkMode) {
     final description = prediction['description'] as String? ?? '';
-    final mainText = (prediction['structured_formatting']?['main_text'] as String?)
-        ?? _extractMainName(description);
+    final mainText =
+        (prediction['structured_formatting']?['main_text'] as String?) ??
+            _extractMainName(description);
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingM),
@@ -370,7 +390,9 @@ class _LocationPageState extends State<LocationPage> {
             ),
             child: Icon(
               Icons.location_on,
-              color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              color: isDarkMode
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
               size: 20,
             ),
           ),
@@ -391,7 +413,9 @@ class _LocationPageState extends State<LocationPage> {
                 Text(
                   description,
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    color: isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -402,7 +426,9 @@ class _LocationPageState extends State<LocationPage> {
           Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDarkMode
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
         ],
       ),
@@ -424,7 +450,8 @@ class _LocationPageState extends State<LocationPage> {
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            color:
+                isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
         ),
         title: Text(
@@ -451,17 +478,22 @@ class _LocationPageState extends State<LocationPage> {
               decoration: InputDecoration(
                 hintText: 'Search for area, street name...',
                 hintStyle: context.textTheme.bodyMedium?.copyWith(
-                  color: isDarkMode ? AppColors.textHintDark : AppColors.textHint,
+                  color:
+                      isDarkMode ? AppColors.textHintDark : AppColors.textHint,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                 ),
                 suffixIcon: isSearching
                     ? IconButton(
                         icon: Icon(
                           Icons.clear,
-                          color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                         ),
                         onPressed: () {
                           _searchController.clear();
@@ -489,7 +521,8 @@ class _LocationPageState extends State<LocationPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   borderSide: BorderSide(
-                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
                     width: 2,
                   ),
                 ),
@@ -505,9 +538,11 @@ class _LocationPageState extends State<LocationPage> {
           if (isSearching) ...[
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 itemCount: _predictions.length + 1,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSizes.spaceS),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSizes.spaceS),
                 itemBuilder: (context, index) {
                   // First item: "Use current location"
                   if (index == 0) {
@@ -515,7 +550,8 @@ class _LocationPageState extends State<LocationPage> {
                       onTap: _isLoadingLocation
                           ? null
                           : () {
-                              if (_currentLatitude != null && _currentLongitude != null) {
+                              if (_currentLatitude != null &&
+                                  _currentLongitude != null) {
                                 Navigator.pop(context, {
                                   'city': _currentCity,
                                   'area': _currentArea,
@@ -533,7 +569,8 @@ class _LocationPageState extends State<LocationPage> {
                   return InkWell(
                     onTap: () => _handlePredictionTap(prediction),
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                    child: _buildPredictionCard(context, prediction, isDarkMode),
+                    child:
+                        _buildPredictionCard(context, prediction, isDarkMode),
                   );
                 },
               ),
@@ -541,12 +578,14 @@ class _LocationPageState extends State<LocationPage> {
           ] else ...[
             // Current Location Card
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
               child: InkWell(
                 onTap: _isLoadingLocation
                     ? null
                     : () {
-                        if (_currentLatitude != null && _currentLongitude != null) {
+                        if (_currentLatitude != null &&
+                            _currentLongitude != null) {
                           Navigator.pop(context, {
                             'city': _currentCity,
                             'area': _currentArea,
@@ -565,7 +604,8 @@ class _LocationPageState extends State<LocationPage> {
             // Nearby Locations
             if (_nearbyLocations.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 child: Text(
                   'Nearby Locations',
                   style: context.textTheme.titleMedium?.copyWith(
@@ -576,7 +616,8 @@ class _LocationPageState extends State<LocationPage> {
               const SizedBox(height: AppSizes.spaceM),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                   itemCount: _nearbyLocations.length,
                   itemBuilder: (context, index) {
                     final location = _nearbyLocations[index];
@@ -647,14 +688,15 @@ class _LocationPageState extends State<LocationPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
       child: InkWell(
-        onTap: onTap ?? () {
-          Navigator.pop(context, {
-            'city': location['name'],
-            'area': location['area'] ?? '',
-            'latitude': location['latitude'],
-            'longitude': location['longitude'],
-          });
-        },
+        onTap: onTap ??
+            () {
+              Navigator.pop(context, {
+                'city': location['name'],
+                'area': location['area'] ?? '',
+                'latitude': location['latitude'],
+                'longitude': location['longitude'],
+              });
+            },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Container(
           padding: const EdgeInsets.all(AppSizes.paddingM),
@@ -679,7 +721,9 @@ class _LocationPageState extends State<LocationPage> {
                 ),
                 child: Icon(
                   Icons.location_on,
-                  color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   size: 20,
                 ),
               ),
@@ -701,26 +745,33 @@ class _LocationPageState extends State<LocationPage> {
                       Text(
                         location['fullAddress'],
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                     if (location['distance'] != null) ...[
-                      if (location['fullAddress'] != null) const SizedBox(height: 2),
+                      if (location['fullAddress'] != null)
+                        const SizedBox(height: 2),
                       Row(
                         children: [
                           Icon(
                             Icons.navigation,
                             size: 12,
-                            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                            color: isDarkMode
+                                ? AppColors.primaryDark
+                                : AppColors.primary,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             location['distance'],
                             style: context.textTheme.bodySmall?.copyWith(
-                              color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                              color: isDarkMode
+                                  ? AppColors.primaryDark
+                                  : AppColors.primary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -733,7 +784,9 @@ class _LocationPageState extends State<LocationPage> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
             ],
           ),

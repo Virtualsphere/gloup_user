@@ -52,7 +52,8 @@ extension ContextExtensions on BuildContext {
   }
 
   /// Navigate and replace current page
-  Future<T?> pushReplacement<T extends Object?, TO extends Object?>(Widget page) {
+  Future<T?> pushReplacement<T extends Object?, TO extends Object?>(
+      Widget page) {
     return Navigator.of(this).pushReplacement<T, TO>(
       MaterialPageRoute(builder: (_) => page),
     );
@@ -72,8 +73,14 @@ extension ContextExtensions on BuildContext {
   }
 
   /// Navigate to a named route using GoRouter
-  void goToNamed(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
-    GoRouter.of(this).goNamed(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  void goToNamed(String name,
+      {Map<String, String>? pathParameters,
+      Map<String, dynamic>? queryParameters,
+      Object? extra}) {
+    GoRouter.of(this).goNamed(name,
+        pathParameters: pathParameters ?? {},
+        queryParameters: queryParameters ?? {},
+        extra: extra);
   }
 
   /// Push a route using GoRouter
@@ -82,8 +89,14 @@ extension ContextExtensions on BuildContext {
   }
 
   /// Push a named route using GoRouter
-  Future<T?> pushToNamed<T extends Object?>(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
-    return GoRouter.of(this).pushNamed<T>(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  Future<T?> pushToNamed<T extends Object?>(String name,
+      {Map<String, String>? pathParameters,
+      Map<String, dynamic>? queryParameters,
+      Object? extra}) {
+    return GoRouter.of(this).pushNamed<T>(name,
+        pathParameters: pathParameters ?? {},
+        queryParameters: queryParameters ?? {},
+        extra: extra);
   }
 
   /// Replace current route using GoRouter
@@ -92,7 +105,13 @@ extension ContextExtensions on BuildContext {
   }
 
   /// Replace current named route using GoRouter
-  void replaceWithNamed(String name, {Map<String, String>? pathParameters, Map<String, dynamic>? queryParameters, Object? extra}) {
-    GoRouter.of(this).replaceNamed(name, pathParameters: pathParameters ?? {}, queryParameters: queryParameters ?? {}, extra: extra);
+  void replaceWithNamed(String name,
+      {Map<String, String>? pathParameters,
+      Map<String, dynamic>? queryParameters,
+      Object? extra}) {
+    GoRouter.of(this).replaceNamed(name,
+        pathParameters: pathParameters ?? {},
+        queryParameters: queryParameters ?? {},
+        extra: extra);
   }
 }

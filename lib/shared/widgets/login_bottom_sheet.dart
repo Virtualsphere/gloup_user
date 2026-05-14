@@ -88,7 +88,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
   void _handleLogin() {
     if (_formKey.currentState?.validate() ?? false) {
       _fullPhoneNumber = '$_selectedCountryCode${_phoneController.text}';
-      debugPrint('LoginBottomSheet: Sending OTP to: $_fullPhoneNumber (API will receive: ${_phoneController.text})');
+      debugPrint(
+          'LoginBottomSheet: Sending OTP to: $_fullPhoneNumber (API will receive: ${_phoneController.text})');
       // Send OTP with phone number only (no country code) to match verify flow
       context.read<AuthBloc>().add(SendOtpEvent(_phoneController.text));
     }
@@ -99,12 +100,13 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
       // Extract phone number without country code for API
       // Use the phone number from controller (without country code)
       final phoneNumber = _phoneController.text;
-      
-      debugPrint('LoginBottomSheet: Full: $_fullPhoneNumber, Phone only: $phoneNumber, OTP: ${_otpController.text}');
+
+      debugPrint(
+          'LoginBottomSheet: Full: $_fullPhoneNumber, Phone only: $phoneNumber, OTP: ${_otpController.text}');
       context.read<AuthBloc>().add(VerifyOtpEvent(
-        phone: phoneNumber,
-        otp: _otpController.text,
-      ));
+            phone: phoneNumber,
+            otp: _otpController.text,
+          ));
     } else {
       CustomToast.showWarning(context, 'Please enter complete OTP');
     }
@@ -186,7 +188,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                         child: Container(
                           width: 40,
                           height: 4,
-                          margin: const EdgeInsets.only(bottom: AppSizes.spaceL),
+                          margin:
+                              const EdgeInsets.only(bottom: AppSizes.spaceL),
                           decoration: BoxDecoration(
                             color: isDarkMode
                                 ? AppColors.borderDark
@@ -235,7 +238,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                               ? AppColors.textSecondaryDark
                               : AppColors.textSecondary,
                         ),
-                        textAlign: _showOtpInput ? TextAlign.center : TextAlign.start,
+                        textAlign:
+                            _showOtpInput ? TextAlign.center : TextAlign.start,
                       ),
 
                       const SizedBox(height: AppSizes.spaceXXL),
@@ -249,37 +253,53 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           autofillHints: const [AutofillHints.oneTimeCode],
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           defaultPinTheme: PinTheme(
-                            width: (context.screenWidth - (AppSizes.paddingXL * 2) - (AppSizes.spaceM * 3)) / 4,
+                            width: (context.screenWidth -
+                                    (AppSizes.paddingXL * 2) -
+                                    (AppSizes.spaceM * 3)) /
+                                4,
                             height: 60,
-                            textStyle: context.textTheme.headlineMedium?.copyWith(
+                            textStyle:
+                                context.textTheme.headlineMedium?.copyWith(
                               color: context.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                               fontSize: 24,
                             ),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                              color: isDarkMode
+                                  ? AppColors.surfaceDark
+                                  : AppColors.surface,
                               border: Border.all(
-                                color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                                color: isDarkMode
+                                    ? AppColors.borderDark
+                                    : AppColors.border,
                                 width: 1.5,
                               ),
-                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusM),
                             ),
                           ),
                           focusedPinTheme: PinTheme(
-                            width: (context.screenWidth - (AppSizes.paddingXL * 2) - (AppSizes.spaceM * 3)) / 4,
+                            width: (context.screenWidth -
+                                    (AppSizes.paddingXL * 2) -
+                                    (AppSizes.spaceM * 3)) /
+                                4,
                             height: 60,
-                            textStyle: context.textTheme.headlineMedium?.copyWith(
+                            textStyle:
+                                context.textTheme.headlineMedium?.copyWith(
                               color: context.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                               fontSize: 24,
                             ),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                              color: isDarkMode
+                                  ? AppColors.surfaceDark
+                                  : AppColors.surface,
                               border: Border.all(
                                 color: context.colorScheme.primary,
                                 width: 2,
                               ),
-                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusM),
                             ),
                           ),
                           onChanged: (value) {
@@ -307,9 +327,10 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                             : Align(
                                 alignment: Alignment.centerRight,
                                 child: TextButton(
-                                  onPressed: (_isResending || _resendCountdown > 0)
-                                      ? null
-                                      : _handleResendOtp,
+                                  onPressed:
+                                      (_isResending || _resendCountdown > 0)
+                                          ? null
+                                          : _handleResendOtp,
                                   style: TextButton.styleFrom(
                                     foregroundColor: isDarkMode
                                         ? AppColors.primaryDark
@@ -328,7 +349,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                                         )
                                       : Text(
                                           'Resend OTP',
-                                          style: context.textTheme.bodyMedium?.copyWith(
+                                          style: context.textTheme.bodyMedium
+                                              ?.copyWith(
                                             color: isDarkMode
                                                 ? AppColors.primaryDark
                                                 : AppColors.primary,
@@ -354,7 +376,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                             // Country Code Selector
                             CountryCodeSelector(
                               onChanged: (CountryCode code) {
-                                setState(() => _selectedCountryCode = code.dialCode ?? '+91');
+                                setState(() => _selectedCountryCode =
+                                    code.dialCode ?? '+91');
                               },
                               initialSelection: 'IN',
                             ),
@@ -386,57 +409,61 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
 
                         // Or Divider
                         Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: isDarkMode
-                                  ? AppColors.borderDark
-                                  : AppColors.border,
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingM,
-                            ),
-                            child: Text(
-                              'or',
-                              style: context.textTheme.bodyMedium?.copyWith(
+                          children: [
+                            Expanded(
+                              child: Divider(
                                 color: isDarkMode
-                                    ? AppColors.textSecondaryDark
-                                    : AppColors.textSecondary,
+                                    ? AppColors.borderDark
+                                    : AppColors.border,
+                                thickness: 1,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: isDarkMode
-                                  ? AppColors.borderDark
-                                  : AppColors.border,
-                              thickness: 1,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.paddingM,
+                              ),
+                              child: Text(
+                                'or',
+                                style: context.textTheme.bodyMedium?.copyWith(
+                                  color: isDarkMode
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondary,
+                                ),
+                              ),
                             ),
+                            Expanded(
+                              child: Divider(
+                                color: isDarkMode
+                                    ? AppColors.borderDark
+                                    : AppColors.border,
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: AppSizes.spaceL),
+
+                        // Platform-specific Social Sign-In
+                        if (Platform.isIOS || Platform.isMacOS) ...[
+                          // iOS/macOS: Only show Apple Sign-In
+                          AppleSignInButton(
+                            onPressed: () {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(const AppleSignInEvent());
+                            },
+                          ),
+                        ] else ...[
+                          // Android/Others: Only show Google Sign-In
+                          GoogleSignInButton(
+                            onPressed: () {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(const GoogleSignInEvent());
+                            },
                           ),
                         ],
-                      ),
-
-                      const SizedBox(height: AppSizes.spaceL),
-
-                      // Platform-specific Social Sign-In
-                      if (Platform.isIOS || Platform.isMacOS) ...[
-                        // iOS/macOS: Only show Apple Sign-In
-                        AppleSignInButton(
-                          onPressed: () {
-                            context.read<AuthBloc>().add(const AppleSignInEvent());
-                          },
-                        ),
-                      ] else ...[
-                        // Android/Others: Only show Google Sign-In
-                        GoogleSignInButton(
-                          onPressed: () {
-                            context.read<AuthBloc>().add(const GoogleSignInEvent());
-                          },
-                        ),
-                      ],
 
                         const SizedBox(height: AppSizes.spaceXL),
                       ],

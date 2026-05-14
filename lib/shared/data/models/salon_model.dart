@@ -74,9 +74,10 @@ class SalonModel {
   }) {
     final salonImagePath = json['salonImage'] ?? '';
     final salonID = json['id']?.toString() ?? '';
-    final fullSalonImageUrl = (imageBaseUrl != null && salonImagePath.isNotEmpty)
-        ? '$imageBaseUrl/$salonID/images/$salonImagePath'
-        : salonImagePath;
+    final fullSalonImageUrl =
+        (imageBaseUrl != null && salonImagePath.isNotEmpty)
+            ? '$imageBaseUrl/$salonID/images/$salonImagePath'
+            : salonImagePath;
 
     final imagesList = (json['images'] as List<dynamic>?)?.map((image) {
           final imagePath = image?.toString() ?? '';

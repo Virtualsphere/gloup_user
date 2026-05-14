@@ -57,7 +57,8 @@ class AppointmentsRemoteDataSourceImpl implements AppointmentsRemoteDataSource {
         final statusCode = e.response?.statusCode;
         final message = e.response?.data['message'] ?? e.message;
         if (statusCode == 401) return UnauthorizedException(message: message);
-        return ApiException(message: message ?? 'Request failed', statusCode: statusCode);
+        return ApiException(
+            message: message ?? 'Request failed', statusCode: statusCode);
       default:
         return ApiException(message: e.message ?? 'Unknown error occurred');
     }

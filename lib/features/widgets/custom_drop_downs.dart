@@ -40,26 +40,22 @@ class CustomDropDownField extends StatelessWidget {
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-          fillColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          fillColor:
+              isDarkMode ? AppColors.backgroundDark : AppColors.background,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-              color: isDarkMode
-                  ? AppColors.transparent
-                  : AppColors.border,
+              color: isDarkMode ? AppColors.transparent : AppColors.border,
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-              color: isDarkMode
-                  ? AppColors.transparent
-                  : AppColors.border,
+              color: isDarkMode ? AppColors.transparent : AppColors.border,
               width: 1,
             ),
           ),
-
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

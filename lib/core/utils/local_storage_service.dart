@@ -16,37 +16,37 @@ class LocalStorageService {
   /// Check if preferences are initialized
   static SharedPreferences get _prefs {
     if (_preferences == null) {
-      throw Exception('LocalStorageService not initialized. Call init() first.');
+      throw Exception(
+          'LocalStorageService not initialized. Call init() first.');
     }
     return _preferences!;
   }
 
   // Onboarding
-  static bool get hasCompletedOnboarding => _prefs.getBool(_keyOnboardingCompleted) ?? false;
-  
+  static bool get hasCompletedOnboarding =>
+      _prefs.getBool(_keyOnboardingCompleted) ?? false;
+
   static Future<void> setOnboardingCompleted(bool value) async {
     await _prefs.setBool(_keyOnboardingCompleted, value);
   }
 
   // Authentication
   static bool get isLoggedIn => _prefs.getBool(_keyIsLoggedIn) ?? false;
-  
+
   static Future<void> setLoggedIn(bool value) async {
     await _prefs.setBool(_keyIsLoggedIn, value);
   }
 
   // Token Management
   static String? get accessToken => _prefs.getString(_keyAccessToken);
-  
+
   static Future<void> setAccessToken(String token) async {
     await _prefs.setString(_keyAccessToken, token);
   }
 
-
   static Future<void> clearTokens() async {
     await _prefs.remove(_keyAccessToken);
   }
-
 
   // Clear all data (logout)
   static Future<void> clearAll() async {

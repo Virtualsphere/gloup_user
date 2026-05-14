@@ -22,9 +22,9 @@ class ProfileModel extends ProfileEntity {
   });
 
   factory ProfileModel.fromJson(
-      Map<String, dynamic> json, {
-        String? imageBaseUrl,
-      }) {
+    Map<String, dynamic> json, {
+    String? imageBaseUrl,
+  }) {
     final imagePath = json['profilePic']?.toString() ?? '';
 
     String fullProfilePicUrl = '';
@@ -97,8 +97,7 @@ class ProfileModel extends ProfileEntity {
       MapEntry("status", status),
     ]);
 
-    if (profilePic.isNotEmpty &&
-        File(profilePic).existsSync()) {
+    if (profilePic.isNotEmpty && File(profilePic).existsSync()) {
       formData.files.add(
         MapEntry(
           "profilePic",

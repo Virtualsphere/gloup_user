@@ -739,7 +739,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Top Salons
                   SliverToBoxAdapter(
                     child: SizedBox(
-              height: context.screenHeight * 0.33,
+                      height: context.screenHeight * 0.33,
                       child: state.isTopSalonsLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.topSalons.isEmpty

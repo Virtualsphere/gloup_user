@@ -17,14 +17,12 @@ class CountryCodeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         border: Border.all(
-          color: isDarkMode 
-            ? AppColors.borderDark 
-            : AppColors.border,
+          color: isDarkMode ? AppColors.borderDark : AppColors.border,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -46,15 +44,19 @@ class CountryCodeSelector extends StatelessWidget {
         dialogTextStyle: context.textTheme.bodyMedium?.copyWith(
           color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
         ),
-        dialogBackgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+        dialogBackgroundColor:
+            isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         searchDecoration: InputDecoration(
           labelText: 'Search Country',
           hintText: 'Search by name or code',
           labelStyle: context.textTheme.bodyMedium?.copyWith(
-            color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            color:
+                isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
           hintStyle: context.textTheme.bodyMedium?.copyWith(
-            color: isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDarkMode
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
           filled: true,
           fillColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
@@ -75,9 +77,9 @@ class CountryCodeSelector extends StatelessWidget {
           context.screenWidth * 0.9,
           context.screenHeight * 0.7,
         ),
-        barrierColor: isDarkMode 
-          ? AppColors.black.withValues(alpha: 0.5) 
-          : AppColors.black.withValues(alpha: 0.3),
+        barrierColor: isDarkMode
+            ? AppColors.black.withValues(alpha: 0.5)
+            : AppColors.black.withValues(alpha: 0.3),
         dialogItemPadding: const EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingM,

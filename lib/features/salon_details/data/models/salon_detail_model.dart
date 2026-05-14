@@ -64,7 +64,7 @@ class SalonDetailModel {
 
     debugPrint('[SalonDetailModel] salonID: $salonID');
     debugPrint('[SalonDetailModel] imagesList: $imagesList');
-    
+
     return SalonDetailModel(
       id: data['id'] ?? 0,
       name: data['name'] ?? '',
@@ -89,7 +89,8 @@ class SalonDetailModel {
               .toList() ??
           [],
       teamMembers: (data['teamMembers'] as List?)
-              ?.map((e) => TeamMemberModel.fromJson(e, imageBaseUrl: imageBaseUrl))
+              ?.map((e) =>
+                  TeamMemberModel.fromJson(e, imageBaseUrl: imageBaseUrl))
               .toList() ??
           [],
       reviews: (data['reviews'] as List?)
@@ -101,13 +102,17 @@ class SalonDetailModel {
           if (hours is Map) {
             final open = hours['open'] ?? '';
             final close = hours['close'] ?? '';
-            return MapEntry(day, open.isNotEmpty && close.isNotEmpty ? '$open - $close' : 'Closed');
+            return MapEntry(
+                day,
+                open.isNotEmpty && close.isNotEmpty
+                    ? '$open - $close'
+                    : 'Closed');
           }
           return MapEntry(day, hours?.toString() ?? 'Closed');
         },
       ),
-      location: data['location'] != null 
-          ? LocationModel.fromJson(data['location']) 
+      location: data['location'] != null
+          ? LocationModel.fromJson(data['location'])
           : LocationModel(latitude: 0, longitude: 0, address: ''),
     );
   }
@@ -161,7 +166,9 @@ class ServiceModel {
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
     return ServiceModel(
-      id: (json['id'] ?? 0) is int ? json['id'] ?? 0 : int.tryParse(json['id'].toString()) ?? 0,
+      id: (json['id'] ?? 0) is int
+          ? json['id'] ?? 0
+          : int.tryParse(json['id'].toString()) ?? 0,
       name: json['name'] ?? '',
       duration: json['duration'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
@@ -235,7 +242,7 @@ class TeamMemberModel {
     final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
         ? '$imageBaseUrl/$imagePath'
         : imagePath;
-    
+
     return TeamMemberModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
@@ -276,10 +283,12 @@ class ReviewModel {
     String? imageBaseUrl,
   }) {
     final userImagePath = json['userImage'];
-    final fullUserImageUrl = userImagePath != null && imageBaseUrl != null && userImagePath.toString().isNotEmpty
+    final fullUserImageUrl = userImagePath != null &&
+            imageBaseUrl != null &&
+            userImagePath.toString().isNotEmpty
         ? '$imageBaseUrl/$userImagePath'
         : userImagePath;
-    
+
     return ReviewModel(
       id: json['id'] ?? '',
       userName: json['userName'] ?? '',

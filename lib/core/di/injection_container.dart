@@ -286,12 +286,12 @@ Future<void> initializeDependencies() async {
   // ─── Profile ───────────────────────────────────────
 // DataSource
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-        () => ProfileRemoteDataSourceImpl(sl()),
+    () => ProfileRemoteDataSourceImpl(sl()),
   );
 
 // Repository
   sl.registerLazySingleton<ProfileRepository>(
-        () => ProfileRepositoryImpl(sl()),
+    () => ProfileRepositoryImpl(sl()),
   );
 
 // UseCases
@@ -302,12 +302,11 @@ Future<void> initializeDependencies() async {
 
 // Bloc
   sl.registerFactory(() => ProfileBloc(
-    getProfileUseCase: sl(),
-    updateProfileUseCase: sl(),
-    logoutUseCase: sl(),
-    deleteProfileUseCase: sl(),
-  ));
-
+        getProfileUseCase: sl(),
+        updateProfileUseCase: sl(),
+        logoutUseCase: sl(),
+        deleteProfileUseCase: sl(),
+      ));
 
   // Guest Feature
   // BLoC - Factory for new instance each time
@@ -321,11 +320,11 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<GetAllGuestsUseCase>(
     () => GetAllGuestsUseCase(sl()),
   );
-  
+
   sl.registerLazySingleton<AddGuestUseCase>(
     () => AddGuestUseCase(sl()),
   );
-  
+
   sl.registerLazySingleton<UpdateGuestUseCase>(
     () => UpdateGuestUseCase(sl()),
   );
@@ -442,5 +441,4 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<AppointmentsRemoteDataSource>(
     () => AppointmentsRemoteDataSourceImpl(sl()),
   );
-
 }

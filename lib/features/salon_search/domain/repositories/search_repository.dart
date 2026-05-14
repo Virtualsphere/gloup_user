@@ -13,7 +13,7 @@ abstract class SearchRepository {
     int? page,
     String? gender,
   });
-  
+
   /// Search salons with query and filters
   Future<Either<Failure, List<SalonEntity>>> searchSalons({
     required double latitude,

@@ -7,12 +7,13 @@ class CategoryModel extends CategoryEntity {
     required super.imageUrl,
   });
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json, {String? imageBaseUrl}) {
+  factory CategoryModel.fromJson(Map<String, dynamic> json,
+      {String? imageBaseUrl}) {
     final imagePath = json['imageUrl'] ?? '';
     final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
         ? '$imageBaseUrl/$imagePath'
         : imagePath;
-    
+
     return CategoryModel(
       id: json['id']?.toString() ?? '',
       label: (json['label'] as String?)?.trim() ?? '',

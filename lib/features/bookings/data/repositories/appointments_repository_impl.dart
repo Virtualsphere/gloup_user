@@ -11,7 +11,8 @@ class AppointmentsRepositoryImpl implements AppointmentsRepository {
   AppointmentsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, Map<String, List<AppointmentEntity>>>> getAllAppointments() async {
+  Future<Either<Failure, Map<String, List<AppointmentEntity>>>>
+      getAllAppointments() async {
     try {
       final result = await remoteDataSource.getAllAppointments();
       return Right({

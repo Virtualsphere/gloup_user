@@ -9,15 +9,15 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
-    
+
     if (!emailRegex.hasMatch(value)) {
       return AppStrings.validationEmail;
     }
-    
+
     return null;
   }
 
@@ -26,13 +26,13 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     final phoneRegex = RegExp(r'^\+?[\d\s-]{10,}$');
-    
+
     if (!phoneRegex.hasMatch(value)) {
       return AppStrings.validationPhone;
     }
-    
+
     return null;
   }
 
@@ -41,13 +41,13 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     final phoneRegex = RegExp(r'^\d{10}$');
-    
+
     if (!phoneRegex.hasMatch(value)) {
       return 'Please enter a valid 10-digit phone number';
     }
-    
+
     return null;
   }
 
@@ -79,11 +79,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     if (value.length < 6) {
       return AppStrings.validationPassword;
     }
-    
+
     return null;
   }
 
@@ -92,7 +92,7 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     return null;
   }
 
@@ -101,11 +101,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     if (value.length < length) {
       return 'Must be at least $length characters';
     }
-    
+
     return null;
   }
 
@@ -114,11 +114,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     if (value.length > length) {
       return 'Must be at most $length characters';
     }
-    
+
     return null;
   }
 
@@ -127,11 +127,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     if (value != password) {
       return AppStrings.validationPasswordMatch;
     }
-    
+
     return null;
   }
 
@@ -140,11 +140,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     if (double.tryParse(value) == null) {
       return 'Please enter a valid number';
     }
-    
+
     return null;
   }
 
@@ -153,15 +153,15 @@ class Validators {
     if (value == null || value.isEmpty) {
       return AppStrings.validationRequired;
     }
-    
+
     final urlRegex = RegExp(
       r'^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$',
     );
-    
+
     if (!urlRegex.hasMatch(value)) {
       return 'Please enter a valid URL';
     }
-    
+
     return null;
   }
 }

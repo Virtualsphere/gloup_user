@@ -30,7 +30,8 @@ class ActionBar extends StatelessWidget {
       elevation: 0,
       leading: isBackButton
           ? Padding(
-              padding: const EdgeInsets.only(left: 16.0,top: 10.0,bottom: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 16.0, top: 10.0, bottom: 10.0),
               child: GestureDetector(
                 onTap: () => context.pop(),
                 child: Container(

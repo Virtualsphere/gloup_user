@@ -33,7 +33,7 @@ class CustomNetworkImage extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       placeholder: (context, child) {
-              final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -49,9 +49,8 @@ class CustomNetworkImage extends StatelessWidget {
               width: placeHolderHeight,
               height: placeHolderHeight,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primaryDark,
-                BlendMode.modulate
-              ),
+                  isDarkMode ? AppColors.primaryDark : AppColors.primaryDark,
+                  BlendMode.modulate),
             ),
           ),
         );
@@ -66,7 +65,9 @@ class CustomNetworkImage extends StatelessWidget {
               ),
               fit: BoxFit.cover,
             ),
-            color: isDarkMode ? AppColors.primaryDark.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1),
+            color: isDarkMode
+                ? AppColors.primaryDark.withValues(alpha: 0.1)
+                : AppColors.primary.withValues(alpha: 0.1),
           ),
           child: Center(
             child: SvgPicture.asset(
@@ -74,9 +75,10 @@ class CustomNetworkImage extends StatelessWidget {
               width: placeHolderHeight,
               height: placeHolderHeight,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primary.withValues(alpha: 0.3) : AppColors.primaryDark.withValues(alpha: 0.9),
-                BlendMode.modulate
-              ),
+                  isDarkMode
+                      ? AppColors.primary.withValues(alpha: 0.3)
+                      : AppColors.primaryDark.withValues(alpha: 0.9),
+                  BlendMode.modulate),
             ),
           ),
         );
@@ -134,10 +136,10 @@ class CustomImageCropper {
 
 class CustomImagePicker {
   static Future<void> showImagePicker(
-      BuildContext context, {
-        required VoidCallback cameraOnTap,
-        required VoidCallback galleryOnTap,
-      }) async {
+    BuildContext context, {
+    required VoidCallback cameraOnTap,
+    required VoidCallback galleryOnTap,
+  }) async {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,

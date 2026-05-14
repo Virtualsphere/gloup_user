@@ -238,7 +238,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+          backgroundColor:
+              isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           bottomNavigationBar: _buildBottomNavBar(context, isDarkMode),
           body: Stack(
             children: [
@@ -251,7 +252,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     pinned: true,
                     expandedHeight: carouselHeight,
                     collapsedHeight: collapsedHeight,
-                    backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                    backgroundColor:
+                        isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     shape: _isCollapsed
@@ -588,7 +590,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       ],
     );
   }
-  
+
   Widget _buildTitleAndCrownSection(
       BuildContext context, bool isDarkMode, SalonDetailEntity salonDetail) {
     return Column(
@@ -753,7 +755,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -783,7 +787,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconXS,
               height: AppSizes.iconXS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -855,7 +861,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-               isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 BlendMode.srcIn,
               ),
             ),
@@ -977,7 +985,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   left: AppSizes.paddingM,
                   right: AppSizes.paddingM,
                   top: AppSizes.paddingM,
-                  bottom: AppSizes.paddingM + MediaQuery.of(context).padding.bottom,
+                  bottom:
+                      AppSizes.paddingM + MediaQuery.of(context).padding.bottom,
                 ),
                 decoration: BoxDecoration(
                   color: isDarkMode ? AppColors.surface : AppColors.surfaceDark,
@@ -1077,8 +1086,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                         backgroundColor: isDarkMode
                             ? AppColors.primary
                             : AppColors.onPrimary,
-                        textColor:
-                            isDarkMode ? AppColors.onPrimary : AppColors.primary,
+                        textColor: isDarkMode
+                            ? AppColors.onPrimary
+                            : AppColors.primary,
                         height: 56,
                         fontSize: AppSizes.fontL,
                       ),
@@ -1156,9 +1166,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               Text(
                 title,
                 style: context.textTheme.titleSmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.primaryDark
-                      : AppColors.primary,
+                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 ),
               ),
               if (title == 'Team' || title == 'Reviews')
@@ -2040,9 +2048,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? AppColors.surfaceDark
-            : AppColors.surface,
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         border: Border(
           bottom: BorderSide(
             color: isDarkMode

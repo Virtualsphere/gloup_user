@@ -38,13 +38,14 @@ class CustomFullButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-
     return GestureDetector(
       onTap: isDisabled ? null : onTap,
       child: Container(
         height: buttonHeight,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius,),
+          borderRadius: BorderRadius.circular(
+            borderRadius,
+          ),
           color: isDisabled
               ? (isDarkMode ? AppColors.borderDark : AppColors.border)
               : (isDarkMode ? AppColors.borderDark : AppColors.border),
@@ -222,7 +223,7 @@ class CustomPopupMenuButton extends StatelessWidget {
         ),
         surfaceTintColor: Colors.white,
         color: backgroundColor,
-      position: PopupMenuPosition.under,
+        position: PopupMenuPosition.under,
         iconColor: iconColor,
       ),
       child: PopupMenuButton(

@@ -32,19 +32,19 @@ class HeaderTextBlack extends StatelessWidget {
       maxLines: maxLines,
       textAlign: textAlign,
       style:
-      // isBodoniModa
-      //     ? GoogleFonts.bodoniModa(
-      //         fontSize: fontSize,
-      //         fontWeight: fontWeight,
-      //         color: AppColors.primary,
-      //       )
-      //     :
-      GoogleFonts.inter(
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: AppColors.primary,
-              decoration: textDecoration,
-            ),
+          // isBodoniModa
+          //     ? GoogleFonts.bodoniModa(
+          //         fontSize: fontSize,
+          //         fontWeight: fontWeight,
+          //         color: AppColors.primary,
+          //       )
+          //     :
+          GoogleFonts.inter(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: AppColors.primary,
+        decoration: textDecoration,
+      ),
     );
   }
 }
@@ -108,18 +108,18 @@ class BodyTextColors extends StatelessWidget {
       textAlign: textAlign,
       overflow: overflow,
       style:
-      // isBodoniModa
-      //     ? GoogleFonts.bodoniModa(
-      //         fontSize: fontSize,
-      //         fontWeight: fontWeight,
-      //         color: color,
-      //       )
-      //     :
-      GoogleFonts.inter(
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: color,
-            ),
+          // isBodoniModa
+          //     ? GoogleFonts.bodoniModa(
+          //         fontSize: fontSize,
+          //         fontWeight: fontWeight,
+          //         color: color,
+          //       )
+          //     :
+          GoogleFonts.inter(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+      ),
     );
   }
 }

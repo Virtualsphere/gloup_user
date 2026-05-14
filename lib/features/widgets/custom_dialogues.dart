@@ -10,12 +10,11 @@ import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 
 class CustomDialogues {
-
   static Future<dynamic> showCancelDialogue(
-      BuildContext context, {
-        required String title,
-        required VoidCallback submitOnTap,
-      }) async {
+    BuildContext context, {
+    required String title,
+    required VoidCallback submitOnTap,
+  }) async {
     return showDialog(
       context: context,
       useRootNavigator: false,
@@ -111,9 +110,9 @@ class CustomDialogues {
   }
 
   static Future<dynamic> showNotAllowedCancelDialogue(
-      BuildContext context, {
-        String title = 'Cancel Booking',
-      }) async {
+    BuildContext context, {
+    String title = 'Cancel Booking',
+  }) async {
     return showDialog(
       context: context,
       useRootNavigator: false,
@@ -136,7 +135,7 @@ class CustomDialogues {
                     Center(
                       child: BodyTextColors(
                         title:
-                        'Bookings can only be canceled up to 8 hours before the scheduled time.',
+                            'Bookings can only be canceled up to 8 hours before the scheduled time.',
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         color: AppColors.circleGreyColor,
@@ -170,7 +169,7 @@ class CustomDialogues {
                     Center(
                       child: BodyTextColors(
                         title:
-                        'Bookings can only be canceled up to 8 hours before the scheduled time.',
+                            'Bookings can only be canceled up to 8 hours before the scheduled time.',
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         color: AppColors.circleGreyColor,
@@ -214,9 +213,9 @@ class CustomDialogues {
   }
 
   static Future<dynamic> showLocationPermissionDialogue(
-      BuildContext context, {
-        required VoidCallback onOpenSettings,
-      }) async {
+    BuildContext context, {
+    required VoidCallback onOpenSettings,
+  }) async {
     return showDialog(
       context: context,
       useRootNavigator: false,
@@ -233,7 +232,7 @@ class CustomDialogues {
               padding: const EdgeInsets.only(top: 10),
               child: BodyTextColors(
                 title:
-                'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
+                    'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColors.circleGreyColor,
@@ -287,7 +286,7 @@ class CustomDialogues {
                     SizedBox(height: 15),
                     BodyTextColors(
                       title:
-                      'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
+                          'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: AppColors.circleGreyColor,

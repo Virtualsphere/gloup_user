@@ -112,12 +112,16 @@ class AppSizes {
   static const EdgeInsets paddingAllXL = EdgeInsets.all(paddingXL);
   static const EdgeInsets paddingAllXXL = EdgeInsets.all(paddingXXL);
 
-  static const EdgeInsets paddingHorizontal = EdgeInsets.symmetric(horizontal: padding);
-  static const EdgeInsets paddingVertical = EdgeInsets.symmetric(vertical: padding);
+  static const EdgeInsets paddingHorizontal =
+      EdgeInsets.symmetric(horizontal: padding);
+  static const EdgeInsets paddingVertical =
+      EdgeInsets.symmetric(vertical: padding);
 
   static const EdgeInsets marginAll = EdgeInsets.all(margin);
-  static const EdgeInsets marginHorizontal = EdgeInsets.symmetric(horizontal: margin);
-  static const EdgeInsets marginVertical = EdgeInsets.symmetric(vertical: margin);
+  static const EdgeInsets marginHorizontal =
+      EdgeInsets.symmetric(horizontal: margin);
+  static const EdgeInsets marginVertical =
+      EdgeInsets.symmetric(vertical: margin);
 
   // SizedBox helpers
   static const SizedBox heightXS = SizedBox(height: spaceXS);

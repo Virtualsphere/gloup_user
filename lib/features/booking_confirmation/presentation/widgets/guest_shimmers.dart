@@ -9,7 +9,7 @@ class GuestShimmers {
   /// Shimmer for guest list
   static Widget guestListShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -51,9 +51,9 @@ class GuestShimmers {
               shape: BoxShape.circle,
             ),
           ),
-          
+
           const SizedBox(width: AppSizes.spaceM),
-          
+
           // Content shimmer
           Expanded(
             child: Column(
@@ -64,13 +64,14 @@ class GuestShimmers {
                   width: 120,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                    color:
+                        isDarkMode ? AppColors.surfaceDark : AppColors.divider,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                
+
                 const SizedBox(height: AppSizes.spaceS),
-                
+
                 // Details row
                 Row(
                   children: [
@@ -78,7 +79,9 @@ class GuestShimmers {
                       width: 60,
                       height: 12,
                       decoration: BoxDecoration(
-                        color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                        color: isDarkMode
+                            ? AppColors.surfaceDark
+                            : AppColors.divider,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -87,7 +90,9 @@ class GuestShimmers {
                       width: 40,
                       height: 12,
                       decoration: BoxDecoration(
-                        color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                        color: isDarkMode
+                            ? AppColors.surfaceDark
+                            : AppColors.divider,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -96,7 +101,7 @@ class GuestShimmers {
               ],
             ),
           ),
-          
+
           // Radio button shimmer
           Container(
             width: 24,

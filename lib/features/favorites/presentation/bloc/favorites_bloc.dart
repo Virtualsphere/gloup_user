@@ -23,17 +23,17 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   ) async {
     // Check if we have an optimistic update for this store
     final hasOptimistic = state.optimisticUpdates.containsKey(event.storeId);
-    final currentValue = hasOptimistic 
-        ? state.optimisticUpdates[event.storeId]! 
+    final currentValue = hasOptimistic
+        ? state.optimisticUpdates[event.storeId]!
         : event.currentIsFavorite;
-    
+
     // Calculate the new value (toggle from current effective value)
     final newValue = !currentValue;
-    
+
     // Update the optimistic map
     final updatedMap = Map<int, bool>.from(state.optimisticUpdates);
     updatedMap[event.storeId] = newValue;
-    
+
     emit(state.copyWith(
       status: FavoritesStatus.loading,
       lastToggledStoreId: event.storeId,
@@ -50,8 +50,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
         // On failure, revert the optimistic update
         final revertedMap = Map<int, bool>.from(state.optimisticUpdates);
         revertedMap.remove(event.storeId);
-        
-        
+
         emit(state.copyWith(
           status: FavoritesStatus.failure,
           errorMessage: _mapFailureToMessage(failure),
@@ -62,7 +61,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
       (favoriteEntity) {
         // On success, keep the optimistic update
         // It will be used until widget receives fresh server data
-        
+
         emit(state.copyWith(
           status: FavoritesStatus.success,
           message: favoriteEntity.message,

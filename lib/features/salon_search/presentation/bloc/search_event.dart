@@ -44,7 +44,8 @@ class SearchSalonsEvent extends SearchEvent {
   });
 
   @override
-  List<Object?> get props => [latitude, longitude, query, categoryId, gender, limit];
+  List<Object?> get props =>
+      [latitude, longitude, query, categoryId, gender, limit];
 }
 
 /// Apply filters without search query

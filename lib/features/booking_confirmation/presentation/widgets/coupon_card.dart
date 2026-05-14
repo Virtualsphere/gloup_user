@@ -26,7 +26,8 @@ class CouponCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final Color surface = isDarkMode ? AppColors.surfaceDark : AppColors.surface;
+    final Color surface =
+        isDarkMode ? AppColors.surfaceDark : AppColors.surface;
     return GestureDetector(
       onTap: isEnabled ? onTap : null,
       child: Opacity(
@@ -36,10 +37,12 @@ class CouponCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            border: isEnabled ? null : Border.all(
-              color: isDarkMode ? AppColors.borderDark : AppColors.border,
-              width: 1,
-            ),
+            border: isEnabled
+                ? null
+                : Border.all(
+                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                    width: 1,
+                  ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +54,7 @@ class CouponCard extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isEnabled 
+                      color: isEnabled
                           ? AppColors.success.withValues(alpha: 0.12)
                           : Colors.grey.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -72,7 +75,10 @@ class CouponCard extends StatelessWidget {
                         Text.rich(
                           TextSpan(
                             text: 'Save ',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
                                   color: isEnabled
                                       ? (isDarkMode
                                           ? AppColors.textPrimaryDark
@@ -84,7 +90,8 @@ class CouponCard extends StatelessWidget {
                                 text: discountType == 'percentage'
                                     ? '$discountAmount%'
                                     : '₹$discountAmount',
-                                style: const TextStyle(fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700),
                               ),
                               const TextSpan(text: ' with'),
                             ],
@@ -93,9 +100,13 @@ class CouponCard extends StatelessWidget {
                         const SizedBox(height: AppSizes.spaceXS),
                         Text(
                           '"$couponCode"',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: isEnabled ? AppColors.success : Colors.grey,
+                                color:
+                                    isEnabled ? AppColors.success : Colors.grey,
                               ),
                         ),
                       ],
@@ -133,10 +144,11 @@ class CouponCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           disabledReason!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.warning,
-                                fontSize: 11,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.warning,
+                                    fontSize: 11,
+                                  ),
                         ),
                       ),
                     ],

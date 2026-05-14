@@ -58,8 +58,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   }
 
   void _onCountryChanged(CountryCode countryCode) {
-    setState(() {
-    });
+    setState(() {});
   }
 
   void _handleLogin() {
@@ -258,14 +257,18 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                           AppSizes.heightM,
                           AppleSignInButton(
                             onPressed: () {
-                              context.read<AuthBloc>().add(const AppleSignInEvent());
+                              context
+                                  .read<AuthBloc>()
+                                  .add(const AppleSignInEvent());
                             },
                           ),
                         ] else ...[
                           // Google Sign-In Button
                           GoogleSignInButton(
                             onPressed: () {
-                              context.read<AuthBloc>().add(const GoogleSignInEvent());
+                              context
+                                  .read<AuthBloc>()
+                                  .add(const GoogleSignInEvent());
                             },
                           ),
                         ],

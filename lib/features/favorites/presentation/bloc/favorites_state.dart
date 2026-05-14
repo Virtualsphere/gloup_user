@@ -13,7 +13,7 @@ class FavoritesState extends Equatable {
   final bool? lastToggledValue; // The new favorite status after toggle
   final Map<int, bool> optimisticUpdates; // Store optimistic updates
   final int _toastCounter; // Counter to ensure toast is shown only once
-  
+
   // Favorites list
   final FavoritesListStatus listStatus;
   final List<SalonEntity> favoritesList;
@@ -58,7 +58,7 @@ class FavoritesState extends Equatable {
       listErrorMessage: listErrorMessage ?? this.listErrorMessage,
     );
   }
-  
+
   int get toastCounter => _toastCounter;
 
   // Get favorite status for a store
@@ -66,19 +66,20 @@ class FavoritesState extends Equatable {
     // If we have an optimistic update for this store, check if it matches server value
     if (optimisticUpdates.containsKey(storeId)) {
       final optimisticValue = optimisticUpdates[storeId]!;
-      
+
       // If optimistic value matches server value, the server has been updated
       // We can trust the server value now
       if (optimisticValue == serverValue) {
         print('🔍 Optimistic matches server for $storeId - using server value');
         return serverValue;
       }
-      
+
       // Otherwise, still waiting for server to update, use optimistic
-      print('🔍 Using optimistic for $storeId: $optimisticValue (server: $serverValue)');
+      print(
+          '🔍 Using optimistic for $storeId: $optimisticValue (server: $serverValue)');
       return optimisticValue;
     }
-    
+
     // No optimistic update, use server value
     return serverValue;
   }

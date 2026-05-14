@@ -39,13 +39,13 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
   void _loadSlots() {
     final salonIdValue = widget.bookingData?['salonId'];
     int? salonId;
-    
+
     if (salonIdValue is int) {
       salonId = salonIdValue;
     } else if (salonIdValue is String) {
       salonId = int.tryParse(salonIdValue);
     }
-    
+
     if (salonId != null) {
       final dateStr = DateFormat('yyyy-MM-dd').format(selectedDate);
       context.read<SlotBloc>().add(
@@ -76,7 +76,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       // Calculate total duration from selected services
       int totalMinutes = 0;
       final selectedServices = widget.bookingData?['selectedServices'] as List?;
-      
+
       if (selectedServices != null && selectedServices.isNotEmpty) {
         for (var service in selectedServices) {
           final duration = service['duration'] as String?;
@@ -106,15 +106,19 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
       // Format start time
       final startPeriod = startHour >= 12 ? 'PM' : 'AM';
-      final startHour12 = startHour > 12 ? startHour - 12 : (startHour == 0 ? 12 : startHour);
-      final startFormatted = '${startHour12.toString().padLeft(2, '0')}:${startMinute.toString().padLeft(2, '0')} $startPeriod';
+      final startHour12 =
+          startHour > 12 ? startHour - 12 : (startHour == 0 ? 12 : startHour);
+      final startFormatted =
+          '${startHour12.toString().padLeft(2, '0')}:${startMinute.toString().padLeft(2, '0')} $startPeriod';
 
       // Format end time
       final endHour = endDateTime.hour;
       final endMinute = endDateTime.minute;
       final endPeriod = endHour >= 12 ? 'PM' : 'AM';
-      final endHour12 = endHour > 12 ? endHour - 12 : (endHour == 0 ? 12 : endHour);
-      final endFormatted = '${endHour12.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')} $endPeriod';
+      final endHour12 =
+          endHour > 12 ? endHour - 12 : (endHour == 0 ? 12 : endHour);
+      final endFormatted =
+          '${endHour12.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')} $endPeriod';
 
       return '$startFormatted - $endFormatted';
     } catch (e) {
@@ -130,7 +134,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       final minute = int.parse(parts[1]);
 
       final now = DateTime.now();
-      final selectedDay = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+      final selectedDay =
+          DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
       final today = DateTime(now.year, now.month, now.day);
 
       // If selected date is in the future, no slots are past
@@ -170,9 +175,11 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
-        backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor:
+            isDarkMode ? AppColors.backgroundDark : AppColors.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
@@ -182,12 +189,10 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(
-          'Book Slot',
-          style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          )
-        ),
+        title: Text('Book Slot',
+            style: context.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            )),
         centerTitle: false,
         titleSpacing: 0,
       ),
@@ -206,13 +211,22 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                       // Salon info card
                       if (widget.bookingData != null)
                         SalonInfoCard(
-                          salonName: widget.bookingData!['salonName'] as String? ?? 'N/A',
-                          salonImage: widget.bookingData!['salonImage'] as String?,
-                          rating: widget.bookingData!['rating'] as double? ?? 0.0,
-                          reviewCount: widget.bookingData!['reviewCount'] as int? ?? 0,
-                          gender: widget.bookingData!['gender'] as String? ?? 'N/A',
-                          address: widget.bookingData!['address'] as String? ?? 'N/A',
-                          isPremium: widget.bookingData!['isPremium'] as bool? ?? false,
+                          salonName:
+                              widget.bookingData!['salonName'] as String? ??
+                                  'N/A',
+                          salonImage:
+                              widget.bookingData!['salonImage'] as String?,
+                          rating:
+                              widget.bookingData!['rating'] as double? ?? 0.0,
+                          reviewCount:
+                              widget.bookingData!['reviewCount'] as int? ?? 0,
+                          gender:
+                              widget.bookingData!['gender'] as String? ?? 'N/A',
+                          address: widget.bookingData!['address'] as String? ??
+                              'N/A',
+                          isPremium:
+                              widget.bookingData!['isPremium'] as bool? ??
+                                  false,
                         ),
 
                       // Calendar widget
@@ -221,7 +235,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                           setState(() {
                             selectedDate = date;
                           });
-                          context.read<SlotBloc>().add(const ClearSelectedSlotEvent());
+                          context
+                              .read<SlotBloc>()
+                              .add(const ClearSelectedSlotEvent());
                           _loadSlots();
                         },
                       ),
@@ -230,7 +246,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
                       // Section title
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.paddingM),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -238,7 +255,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                             style: context.textTheme.bodyLarge?.copyWith(
                               fontSize: AppSizes.fontL,
                               fontWeight: FontWeight.w600,
-                              color: isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                              color: isDarkMode
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimary,
                             ),
                           ),
                         ),
@@ -268,16 +287,22 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       bottomNavigationBar: BlocBuilder<SlotBloc, SlotState>(
         builder: (context, state) {
           return state.hasSelectedSlot
-              ? _buildBottomBar(context, isDarkMode, state.selectedSlotTime!, state.selectedSlotId)
+              ? _buildBottomBar(context, isDarkMode, state.selectedSlotTime!,
+                  state.selectedSlotId)
               : const SizedBox.shrink();
         },
       ),
     );
   }
 
-  Widget _buildSlotsGrid(BuildContext context, SlotState state, bool isDarkMode) {
+  Widget _buildSlotsGrid(
+      BuildContext context, SlotState state, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.only(left: AppSizes.paddingM , right:  AppSizes.paddingM, bottom:  AppSizes.paddingXL,),
+      padding: const EdgeInsets.only(
+        left: AppSizes.paddingM,
+        right: AppSizes.paddingM,
+        bottom: AppSizes.paddingXL,
+      ),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -299,9 +324,13 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                 ? null
                 : () {
                     if (isSelected) {
-                      context.read<SlotBloc>().add(const ClearSelectedSlotEvent());
+                      context
+                          .read<SlotBloc>()
+                          .add(const ClearSelectedSlotEvent());
                     } else {
-                      context.read<SlotBloc>().add(SelectSlotEvent(slot.time, slot.salonId));
+                      context
+                          .read<SlotBloc>()
+                          .add(SelectSlotEvent(slot.time, slot.salonId));
                     }
                   },
             child: Container(
@@ -312,7 +341,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         ? (isDarkMode
                             ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
                             : AppColors.textSecondary.withValues(alpha: 0.2))
-                        : (isDarkMode ? AppColors.surfaceDark : AppColors.surface),
+                        : (isDarkMode
+                            ? AppColors.surfaceDark
+                            : AppColors.surface),
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
                 border: Border.all(
                   color: (isSelected || isBooked || isPast)
@@ -333,7 +364,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                           ? (isDarkMode
                               ? AppColors.textPrimaryDark.withValues(alpha: 0.5)
                               : AppColors.textPrimary.withValues(alpha: 0.5))
-                          : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary),
+                          : (isDarkMode
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -416,7 +449,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context, bool isDarkMode, String selectedTime, int? selectedSlotId) {
+  Widget _buildBottomBar(BuildContext context, bool isDarkMode,
+      String selectedTime, int? selectedSlotId) {
     return Container(
       padding: EdgeInsets.only(
         left: AppSizes.paddingM,
@@ -464,9 +498,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                   _formatTimeRange(selectedTime),
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDarkMode
-                        ? AppColors.primaryDark
-                        : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
                   ),
                 ),
               ],
@@ -484,7 +517,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                 'selectedTimeFormatted': _formatTimeRange(selectedTime),
                 'slotId': selectedSlotId,
               };
-              
+
               GoRouter.of(context).push(
                 RouteNames.reviewConfirm,
                 extra: updatedBookingData,

@@ -26,7 +26,7 @@ class ThemeProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final themeModeString = prefs.getString(_themeKey);
-      
+
       if (themeModeString != null) {
         _themeMode = ThemeMode.values.firstWhere(
           (mode) => mode.toString() == themeModeString,
@@ -42,7 +42,7 @@ class ThemeProvider extends ChangeNotifier {
   /// Set theme mode and save to preferences
   Future<void> setThemeMode(ThemeMode mode) async {
     if (_themeMode == mode) return;
-    
+
     _themeMode = mode;
     notifyListeners();
 

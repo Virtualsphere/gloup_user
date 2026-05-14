@@ -91,7 +91,7 @@ class MainScaffold extends StatelessWidget {
     required bool isActive,
   }) {
     final colorScheme = context.colorScheme;
-    
+
     return Expanded(
       child: InkWell(
         onTap: () => _onTap(index),

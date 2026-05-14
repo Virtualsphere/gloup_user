@@ -122,7 +122,9 @@ class BillingSummaryCard extends StatelessWidget {
           _buildRow(
             context,
             label: 'Platform fee',
-            value: isPlatformFeeWaived ? 'FREE' : '₹${platformFee.toStringAsFixed(0)}',
+            value: isPlatformFeeWaived
+                ? 'FREE'
+                : '₹${platformFee.toStringAsFixed(0)}',
             isBold: isPlatformFeeWaived,
             valueBold: true,
             valueColor: isPlatformFeeWaived ? AppColors.success : null,
@@ -155,7 +157,9 @@ class BillingSummaryCard extends StatelessWidget {
             value: '₹${finalTotal.toStringAsFixed(0)}',
             isBold: true,
             valueBold: true,
-            strikethrough: totalBeforeGloupCash != finalTotal ? totalBeforeGloupCash : null,
+            strikethrough: totalBeforeGloupCash != finalTotal
+                ? totalBeforeGloupCash
+                : null,
             isDarkMode: isDarkMode,
           ),
         ],
@@ -173,8 +177,10 @@ class BillingSummaryCard extends StatelessWidget {
     double? strikethrough,
     required bool isDarkMode,
   }) {
-    final textColor = isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final secondaryColor = isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final textColor =
+        isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final secondaryColor =
+        isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

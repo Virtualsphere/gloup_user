@@ -8,7 +8,7 @@ import 'package:tressy/shared/extensions/context_extensions.dart';
 class FilterBadges extends StatefulWidget {
   final Function(String gender)? onGenderSelected;
   final String? initialGender;
-  
+
   const FilterBadges({
     super.key,
     this.onGenderSelected,
@@ -49,7 +49,7 @@ class _FilterBadgesState extends State<FilterBadges> {
 
   @override
   Widget build(BuildContext context) {
-  final isDarkMode = context.theme.brightness == Brightness.dark;
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       height: 50,
       color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
@@ -154,18 +154,24 @@ class _FilterBadgesState extends State<FilterBadges> {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? (isDarkMode ? AppColors.primaryDark :  AppColors.primary)
+                ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
                 : context.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
             border: Border.all(
-              color: isSelected ? (isDarkMode ? AppColors.primaryDark:  AppColors.primary) :(isDarkMode ? AppColors.borderDark:  AppColors.border),
-              width:  1.0,
+              color: isSelected
+                  ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                  : (isDarkMode ? AppColors.borderDark : AppColors.border),
+              width: 1.0,
             ),
           ),
           child: Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: isSelected ? (isDarkMode ? AppColors.primary :  AppColors.primaryDark) : (isDarkMode ? AppColors.textSecondaryDark:  AppColors.textSecondary) ,
+              color: isSelected
+                  ? (isDarkMode ? AppColors.primary : AppColors.primaryDark)
+                  : (isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               fontSize: AppSizes.fontS,
             ),

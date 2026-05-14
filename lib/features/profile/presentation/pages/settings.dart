@@ -99,7 +99,8 @@ class _SettingsViewState extends State<SettingsView> {
         }
       },
       child: Scaffold(
-      backgroundColor: isDarkMode ? AppColors.backgroundDark : AppColors.background,
+        backgroundColor:
+            isDarkMode ? AppColors.backgroundDark : AppColors.background,
         appBar: ProfileAppBar(
           title: "Settings",
           centerTitle: false,

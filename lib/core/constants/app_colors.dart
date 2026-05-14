@@ -13,7 +13,8 @@ class AppColors {
   static const Color primaryDarkTheme = Color(0xFFFFFFFF); // White
   static const Color primaryLightDarkTheme = Color(0xFFF5F5F5); // Off White
   static const Color primaryDarkDarkTheme = Color(0xFFEEEEEE); // Light Gray
-  static const Color onPrimaryDarkTheme = Color(0xFF000000); // Black text on white
+  static const Color onPrimaryDarkTheme =
+      Color(0xFF000000); // Black text on white
 
   // Secondary Colors - Light Violet (Both Themes)
   static const Color secondary = Color(0xFFB39DDB); // Light Violet
@@ -23,7 +24,8 @@ class AppColors {
 
   // Secondary Colors - Dark Theme Variant
   static const Color secondaryDarkTheme = Color(0xFF9575CD); // Deeper Violet
-  static const Color secondaryLightDarkTheme = Color(0xFFB39DDB); // Medium Violet
+  static const Color secondaryLightDarkTheme =
+      Color(0xFFB39DDB); // Medium Violet
   static const Color secondaryDarkDarkTheme = Color(0xFF7E57C2); // Dark Violet
   static const Color onSecondaryDarkTheme = Color(0xFFFFFFFF); // White text
 

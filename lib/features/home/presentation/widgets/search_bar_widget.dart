@@ -32,18 +32,17 @@ class SearchBarWidget extends StatelessWidget {
               vertical: AppSizes.paddingS,
             ),
         decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          border: showBorder ? Border.all(
-            color: isDarkMode
-                ? AppColors.borderDark
-                : AppColors.border,
-            width: 1 ,
-          ) : Border.all(
-            color: Colors.transparent,
-            width: 0,
-          )
-        ),
+            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+            border: showBorder
+                ? Border.all(
+                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                    width: 1,
+                  )
+                : Border.all(
+                    color: Colors.transparent,
+                    width: 0,
+                  )),
         child: Row(
           children: [
             SvgPicture.asset(
@@ -51,9 +50,7 @@ class SearchBarWidget extends StatelessWidget {
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-                isDarkMode
-                    ? AppColors.primaryDark
-                    : AppColors.primary,
+                isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 BlendMode.srcIn,
               ),
             ),

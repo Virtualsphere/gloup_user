@@ -48,7 +48,9 @@ class ReviewSummaryWidget extends StatelessWidget {
                   return Icon(
                     index < averageRating.floor()
                         ? Icons.star
-                        : (index < averageRating ? Icons.star_half : Icons.star_border),
+                        : (index < averageRating
+                            ? Icons.star_half
+                            : Icons.star_border),
                     color: Colors.amber,
                     size: 20,
                   );
@@ -74,15 +76,20 @@ class ReviewSummaryWidget extends StatelessWidget {
           flex: 3,
           child: Column(
             children: [
-              _buildStarProgressBar(5, starCounts[5] ?? 0, totalReviews, isDarkMode),
+              _buildStarProgressBar(
+                  5, starCounts[5] ?? 0, totalReviews, isDarkMode),
               AppSizes.heightS,
-              _buildStarProgressBar(4, starCounts[4] ?? 0, totalReviews, isDarkMode),
+              _buildStarProgressBar(
+                  4, starCounts[4] ?? 0, totalReviews, isDarkMode),
               AppSizes.heightS,
-              _buildStarProgressBar(3, starCounts[3] ?? 0, totalReviews, isDarkMode),
+              _buildStarProgressBar(
+                  3, starCounts[3] ?? 0, totalReviews, isDarkMode),
               AppSizes.heightS,
-              _buildStarProgressBar(2, starCounts[2] ?? 0, totalReviews, isDarkMode),
+              _buildStarProgressBar(
+                  2, starCounts[2] ?? 0, totalReviews, isDarkMode),
               AppSizes.heightS,
-              _buildStarProgressBar(1, starCounts[1] ?? 0, totalReviews, isDarkMode),
+              _buildStarProgressBar(
+                  1, starCounts[1] ?? 0, totalReviews, isDarkMode),
             ],
           ),
         ),
@@ -90,7 +97,8 @@ class ReviewSummaryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStarProgressBar(int stars, int count, int total, bool isDarkMode) {
+  Widget _buildStarProgressBar(
+      int stars, int count, int total, bool isDarkMode) {
     final percentage = total > 0 ? count / total : 0.0;
 
     return Row(

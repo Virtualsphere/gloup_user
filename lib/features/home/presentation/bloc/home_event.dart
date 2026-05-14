@@ -71,7 +71,8 @@ class LoadRecommendedSalonsEvent extends HomeEvent {
   });
 
   @override
-  List<Object?> get props => [latitude, longitude, limit, page, gender, isLoadMore];
+  List<Object?> get props =>
+      [latitude, longitude, limit, page, gender, isLoadMore];
 }
 
 /// Event to load all home data at once

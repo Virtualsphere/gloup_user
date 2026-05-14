@@ -36,7 +36,7 @@ class HomeDataSourceImpl implements HomeDataSource {
     try {
       // Get auth token if available
       final token = LocalStorageService.accessToken;
-      
+
       final response = await dioClient.get(
         ApiRoutes.getBanners,
         options: token != null && token.isNotEmpty
@@ -46,7 +46,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         // Check if response has success field and data array
         if (data['success'] == true && data['data'] is List) {
           final List<dynamic> bannerList = data['data'];
@@ -106,7 +106,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['success'] == true && data['data'] != null) {
           // Parse the new response format with pagination
           return NearbyStoresResponseModel.fromJson(
@@ -120,7 +120,8 @@ class HomeDataSourceImpl implements HomeDataSource {
         }
       } else {
         throw ServerException(
-          message: response.data['message'] ?? 'Failed to fetch popular services',
+          message:
+              response.data['message'] ?? 'Failed to fetch popular services',
         );
       }
     } on DioException catch (e) {
@@ -144,7 +145,7 @@ class HomeDataSourceImpl implements HomeDataSource {
         'lat': latitude,
         'lng': longitude,
       };
-      
+
       if (limit != null) queryParams['limit'] = limit;
       if (page != null) queryParams['page'] = page;
       if (gender != null) queryParams['gender'] = gender;
@@ -162,7 +163,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['success'] == true) {
           // Parse the response with pagination
           return TopSalonsResponseModel.fromJson(

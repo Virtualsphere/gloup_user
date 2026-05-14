@@ -9,7 +9,7 @@ class ExploreShimmers {
   /// Shimmer for explore salon card list
   static Widget exploreSalonListShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -50,9 +50,9 @@ class ExploreShimmers {
               ),
             ),
           ),
-          
+
           const SizedBox(width: AppSizes.spaceM),
-          
+
           // Content shimmer
           Expanded(
             child: Padding(
@@ -65,13 +65,15 @@ class ExploreShimmers {
                     width: double.infinity,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                      color: isDarkMode
+                          ? AppColors.surfaceDark
+                          : AppColors.divider,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  
+
                   const SizedBox(height: AppSizes.spaceS),
-                  
+
                   // Rating row
                   Row(
                     children: [
@@ -79,7 +81,9 @@ class ExploreShimmers {
                         width: 60,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.divider,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -88,27 +92,31 @@ class ExploreShimmers {
                         width: 40,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.divider,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: AppSizes.spaceS),
-                  
+
                   // Address
                   Container(
                     width: 120,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                      color: isDarkMode
+                          ? AppColors.surfaceDark
+                          : AppColors.divider,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  
+
                   const Spacer(),
-                  
+
                   // Service and price row
                   Row(
                     children: [
@@ -116,7 +124,9 @@ class ExploreShimmers {
                         width: 80,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.divider,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -125,7 +135,9 @@ class ExploreShimmers {
                         width: 60,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.divider,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -135,7 +147,7 @@ class ExploreShimmers {
               ),
             ),
           ),
-          
+
           const SizedBox(width: AppSizes.spaceM),
         ],
       ),
@@ -145,7 +157,7 @@ class ExploreShimmers {
   /// Shimmer for section header
   static Widget sectionHeaderShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -181,14 +193,14 @@ class ExploreShimmers {
   static List<Widget> explorePageShimmerSlivers(BuildContext context) {
     return [
       const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
-      
+
       // Section header shimmer
       SliverToBoxAdapter(
         child: sectionHeaderShimmer(context),
       ),
-      
+
       const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
-      
+
       // Salon cards shimmer
       SliverToBoxAdapter(
         child: exploreSalonListShimmer(context),

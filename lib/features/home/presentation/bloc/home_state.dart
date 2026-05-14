@@ -71,20 +71,31 @@ class HomeState extends Equatable {
     return HomeState(
       isCarouselLoading: isCarouselLoading ?? this.isCarouselLoading,
       carouselBanners: carouselBanners ?? this.carouselBanners,
-      carouselError: clearCarouselError ? null : (carouselError ?? this.carouselError),
-      isPopularServicesLoading: isPopularServicesLoading ?? this.isPopularServicesLoading,
+      carouselError:
+          clearCarouselError ? null : (carouselError ?? this.carouselError),
+      isPopularServicesLoading:
+          isPopularServicesLoading ?? this.isPopularServicesLoading,
       popularServices: popularServices ?? this.popularServices,
-      popularServicesError: clearPopularServicesError ? null : (popularServicesError ?? this.popularServicesError),
+      popularServicesError: clearPopularServicesError
+          ? null
+          : (popularServicesError ?? this.popularServicesError),
       isTopSalonsLoading: isTopSalonsLoading ?? this.isTopSalonsLoading,
       topSalons: topSalons ?? this.topSalons,
-      topSalonsError: clearTopSalonsError ? null : (topSalonsError ?? this.topSalonsError),
-      isRecommendedSalonsLoading: isRecommendedSalonsLoading ?? this.isRecommendedSalonsLoading,
+      topSalonsError:
+          clearTopSalonsError ? null : (topSalonsError ?? this.topSalonsError),
+      isRecommendedSalonsLoading:
+          isRecommendedSalonsLoading ?? this.isRecommendedSalonsLoading,
       recommendedSalons: recommendedSalons ?? this.recommendedSalons,
-      recommendedSalonsError: clearRecommendedSalonsError ? null : (recommendedSalonsError ?? this.recommendedSalonsError),
-      recommendedCurrentPage: recommendedCurrentPage ?? this.recommendedCurrentPage,
-      recommendedTotalPages: recommendedTotalPages ?? this.recommendedTotalPages,
+      recommendedSalonsError: clearRecommendedSalonsError
+          ? null
+          : (recommendedSalonsError ?? this.recommendedSalonsError),
+      recommendedCurrentPage:
+          recommendedCurrentPage ?? this.recommendedCurrentPage,
+      recommendedTotalPages:
+          recommendedTotalPages ?? this.recommendedTotalPages,
       hasMoreRecommended: hasMoreRecommended ?? this.hasMoreRecommended,
-      isLoadingMoreRecommended: isLoadingMoreRecommended ?? this.isLoadingMoreRecommended,
+      isLoadingMoreRecommended:
+          isLoadingMoreRecommended ?? this.isLoadingMoreRecommended,
     );
   }
 

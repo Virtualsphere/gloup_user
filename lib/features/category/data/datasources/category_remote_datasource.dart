@@ -32,13 +32,13 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         final success = response.data['success'] ?? false;
         if (success && response.data['data'] != null) {
           final List<dynamic> categoryList = response.data['data'];
-          
+
           // Parse categories with base image URL
           return categoryList
               .map((json) => CategoryModel.fromJson(
-                json,
-                imageBaseUrl: ApiRoutes.categoryImageBaseUrl,
-              ))
+                    json,
+                    imageBaseUrl: ApiRoutes.categoryImageBaseUrl,
+                  ))
               .toList();
         } else {
           throw ServerException(
@@ -74,7 +74,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         'lng': longitude,
         'category': categoryId,
       };
-      
+
       if (limit != null) queryParams['limit'] = limit;
       if (page != null) queryParams['page'] = page;
       if (gender != null) queryParams['gender'] = gender;
@@ -87,7 +87,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['success'] == true) {
           // Parse the response with pagination
           return SalonsResponseModel.fromJson(
@@ -101,7 +101,8 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         }
       } else {
         throw ServerException(
-          message: response.data['message'] ?? 'Failed to fetch category salons',
+          message:
+              response.data['message'] ?? 'Failed to fetch category salons',
         );
       }
     } on DioException catch (e) {

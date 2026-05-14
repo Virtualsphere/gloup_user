@@ -33,15 +33,18 @@ class OrderState extends Equatable {
   }
 
   OrderState copyWithVerifyingPayment() {
-    return copyWith(isVerifyingPayment: true, isSuccess: false, errorMessage: null);
+    return copyWith(
+        isVerifyingPayment: true, isSuccess: false, errorMessage: null);
   }
 
   OrderState copyWithPaymentVerified() {
-    return copyWith(isVerifyingPayment: false, isSuccess: false, isPaymentVerified: true);
+    return copyWith(
+        isVerifyingPayment: false, isSuccess: false, isPaymentVerified: true);
   }
 
   OrderState copyWithVerifyError(String message) {
-    return copyWith(isVerifyingPayment: false, isSuccess: false, errorMessage: message);
+    return copyWith(
+        isVerifyingPayment: false, isSuccess: false, errorMessage: message);
   }
 
   OrderState copyWith({
@@ -65,5 +68,12 @@ class OrderState extends Equatable {
   OrderState copyWithReset() => const OrderState();
 
   @override
-  List<Object?> get props => [isLoading, order, errorMessage, isSuccess, isPaymentVerified, isVerifyingPayment];
+  List<Object?> get props => [
+        isLoading,
+        order,
+        errorMessage,
+        isSuccess,
+        isPaymentVerified,
+        isVerifyingPayment
+      ];
 }

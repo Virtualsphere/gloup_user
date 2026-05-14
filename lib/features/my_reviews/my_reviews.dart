@@ -438,7 +438,7 @@ class MyReviewContainer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                   height:  45.0,
+                    height: 45.0,
                     child: PrimaryButton(
                       text: 'Save',
                       isLoading: false,

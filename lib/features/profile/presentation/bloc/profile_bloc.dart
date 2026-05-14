@@ -86,18 +86,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ///Delete Profile:-
   Future<void> _onDeleteProfile(
-      DeleteProfileEvent event,
-      Emitter<ProfileState> emit,
-      ) async {
+    DeleteProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
     emit(ProfileDeleting());
 
     final result = await deleteProfileUseCase();
 
     await result.fold(
-          (failure) async {
+      (failure) async {
         emit(ProfileFailure(_mapFailureToMessage(failure)));
       },
-          (response) async {
+      (response) async {
         if (response.success == true) {
           await LocalStorageService.clearAll();
           await LocalStorageService.setOnboardingCompleted(true);

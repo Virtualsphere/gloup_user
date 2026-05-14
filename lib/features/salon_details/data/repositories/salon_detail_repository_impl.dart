@@ -16,7 +16,7 @@ class SalonDetailRepositoryImpl implements SalonDetailRepository {
   }) async {
     try {
       final model = await remoteDataSource.getSalonDetails(salonId: salonId);
-      
+
       // Map model to entity
       final entity = SalonDetailEntity(
         id: model.id,
@@ -82,7 +82,8 @@ class SalonDetailRepositoryImpl implements SalonDetailRepository {
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('An unexpected error occurred: ${e.toString()}'));
+      return Left(
+          ServerFailure('An unexpected error occurred: ${e.toString()}'));
     }
   }
 }

@@ -10,8 +10,7 @@ class ThemeImageToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
@@ -24,22 +23,18 @@ class ThemeImageToggle extends StatelessWidget {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: isDarkMode
-              ? Colors.grey.shade800
-              : Colors.grey.shade300,
+          color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
         ),
         child: AnimatedAlign(
           duration: const Duration(milliseconds: 300),
-          alignment:
-          isDarkMode ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isDarkMode ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             width: 26,
             height: 26,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
-            child:
-            SvgPicture.asset(
+            child: SvgPicture.asset(
               isDarkMode ? AppIcons.icSun : AppIcons.icMoon,
               width: 24,
               height: 24,

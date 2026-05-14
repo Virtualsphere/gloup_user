@@ -42,107 +42,111 @@ class CouponAppliedDialog extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.of(context).pop(),
         child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Lottie celebration animation overlay
-          Positioned.fill(
-            child: Lottie.asset(
-              'assets/animations/celebration_anim.json',
-              fit: BoxFit.contain,
-              repeat: false,
+          clipBehavior: Clip.none,
+          children: [
+            // Lottie celebration animation overlay
+            Positioned.fill(
+              child: Lottie.asset(
+                'assets/animations/celebration_anim.json',
+                fit: BoxFit.contain,
+                repeat: false,
+              ),
             ),
-          ),
 
-          // Main content
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingL),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: AppSizes.spaceXL),
+            // Main content
+            Padding(
+              padding: const EdgeInsets.all(AppSizes.paddingL),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: AppSizes.spaceXL),
 
-                // Check icon with layered circles
-                _buildCheckIcon(),
+                  // Check icon with layered circles
+                  _buildCheckIcon(),
 
-                const SizedBox(height: AppSizes.spaceL),
+                  const SizedBox(height: AppSizes.spaceL),
 
-                // Title
-                Text(
-                  'Coupon Applied',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-
-                const SizedBox(height: AppSizes.spaceS),
-
-                // Coupon code with success message
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '"$couponCode"',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.success,
+                  // Title
+                  Text(
+                    'Coupon Applied',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      const TextSpan(text: ' applied successfully'),
-                    ],
                   ),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
 
-                const SizedBox(height: AppSizes.spaceL),
+                  const SizedBox(height: AppSizes.spaceS),
 
-                // Savings card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                  // Coupon code with success message
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '"$couponCode"',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.success,
+                          ),
+                        ),
+                        const TextSpan(text: ' applied successfully'),
+                      ],
+                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
                   ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '₹$discountAmount',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.success,
-                            ),
-                      ),
-                      const SizedBox(height: AppSizes.spaceXS),
-                      Text(
-                        'Saved on this booking',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: isDarkMode
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondary,
-                            ),
-                      ),
-                    ],
+
+                  const SizedBox(height: AppSizes.spaceL),
+
+                  // Savings card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSizes.paddingL),
+                    decoration: BoxDecoration(
+                      color: AppColors.success.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '₹$discountAmount',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.success,
+                              ),
+                        ),
+                        const SizedBox(height: AppSizes.spaceXS),
+                        Text(
+                          'Saved on this booking',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: isDarkMode
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary,
+                                  ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: AppSizes.spaceL),
+                  const SizedBox(height: AppSizes.spaceL),
 
-                // Tap to continue hint
-                Text(
-                  'Tap to continue',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                      ),
-                ),
+                  // Tap to continue hint
+                  Text(
+                    'Tap to continue',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                  ),
 
-                const SizedBox(height: AppSizes.spaceS),
-              ],
+                  const SizedBox(height: AppSizes.spaceS),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );

@@ -4,12 +4,16 @@ class ApiRoutes {
   // Base URL - Update this with your actual API base URL
   static const String baseUrl = 'https://api.v1.gloup.in';
   // static const String baseUrl = 'http://192.168.1.14:5678';
-  
+
   // Image Base URL - For appending to image paths from API
-  static const String imageBaseUrl = 'https://cdn.gloup.in/uploads/common/store';
-  static const String bannerImageBaseUrl = 'https://cdn.gloup.in/uploads/common/banner';
-  static const String categoryImageBaseUrl = 'https://cdn.gloup.in/uploads/common/category';
-  static const String imageProfileUrl = 'https://cdn.gloup.in/uploads/common/profile-pictures';
+  static const String imageBaseUrl =
+      'https://cdn.gloup.in/uploads/common/store';
+  static const String bannerImageBaseUrl =
+      'https://cdn.gloup.in/uploads/common/banner';
+  static const String categoryImageBaseUrl =
+      'https://cdn.gloup.in/uploads/common/category';
+  static const String imageProfileUrl =
+      'https://cdn.gloup.in/uploads/common/profile-pictures';
 
   // Auth Endpoints
   static const String sendOtp = '$baseUrl/user/auth/sendOTP';
@@ -18,14 +22,14 @@ class ApiRoutes {
   static const String googleLogin = '$baseUrl/user/auth/googlelogin';
   static const String appleLogin = '$baseUrl/user/auth/appleLogin';
   static const String logout = '$baseUrl/user/auth/logout';
-  
+
   // Home Endpoints
   static const String getBanners = '$baseUrl/user/app/v2/getbanner';
   static const String getCategories = '$baseUrl/user/app/v2/getallcategory';
   static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
   static const String getAllStores = '$baseUrl/user/app/v2/get-all-stores';
   static const String getTopSalons = '$baseUrl/user/app/v2/salons/top';
-  
+
   // Favorites Endpoints
   static const String toggleFavorite = '$baseUrl/user/app/v2/favourites';
   static const String getFavorites = '$baseUrl/user/app/v2/favourites';
@@ -45,7 +49,8 @@ class ApiRoutes {
   static const String deleteProfile = '$baseUrl/user/app/v2/profile';
 
   // Appointments
-  static const String getAllAppointments = '$baseUrl/user/app/getallapointments';
+  static const String getAllAppointments =
+      '$baseUrl/user/app/getallapointments';
 
   // Order
   static const String createOrder = '$baseUrl/user/app/v2/createorder';
@@ -55,25 +60,29 @@ class ApiRoutes {
   static const String razorpayKey = 'rzp_live_T01AE9lLGbNxLd';
 
   // Coupons
-  static const String getActiveCoupons = '$baseUrl/user/app/v2/get/activecoupons';
+  static const String getActiveCoupons =
+      '$baseUrl/user/app/v2/get/activecoupons';
 
   // Map Markers (Clustered)
-  static const String mapMarkersClustered = '$baseUrl/user/app/v2/salons/map-markers-clustered';
+  static const String mapMarkersClustered =
+      '$baseUrl/user/app/v2/salons/map-markers-clustered';
 
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {
     if (params.isEmpty) return endpoint;
-    
+
     final queryString = params.entries
         .where((entry) => entry.value != null)
-        .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value.toString())}')
+        .map((entry) =>
+            '${entry.key}=${Uri.encodeComponent(entry.value.toString())}')
         .join('&');
-    
+
     return '$endpoint?$queryString';
   }
 
   // Helper method to build pagination URLs
-  static String withPagination(String endpoint, {int page = 1, int limit = 10}) {
+  static String withPagination(String endpoint,
+      {int page = 1, int limit = 10}) {
     return withQueryParams(endpoint, {'page': page, 'limit': limit});
   }
 }

@@ -20,7 +20,7 @@ class SectionHeader extends StatelessWidget {
       left: AppSizes.paddingM,
       right: AppSizes.paddingXS,
       top: AppSizes.paddingS,
-      bottom:  AppSizes.paddingS,
+      bottom: AppSizes.paddingS,
     ),
   });
 
@@ -44,7 +44,8 @@ class SectionHeader extends StatelessWidget {
                   style: context.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: AppSizes.fontXL,
-                    color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
                   ),
                 ),
                 if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -77,15 +78,19 @@ class SectionHeader extends StatelessWidget {
                     Text(
                       seeAllText!,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                        color: isDarkMode
+                            ? AppColors.primaryDark
+                            : AppColors.primary,
                         fontWeight: FontWeight.w600,
                         fontSize: AppSizes.fontM,
                       ),
                     ),
                     const SizedBox(width: AppSizes.spaceXS),
-                     Icon(
+                    Icon(
                       Icons.arrow_forward_ios,
-                      color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      color: isDarkMode
+                          ? AppColors.primaryDark
+                          : AppColors.primary,
                       size: 14,
                     ),
                   ],

@@ -28,11 +28,13 @@ class GuestModel extends GuestEntity {
         parsedGuestId = int.tryParse(json['id'].toString());
       }
     }
-    
+
     return GuestModel(
       guestId: parsedGuestId,
       name: json['name']?.toString() ?? '',
-      age: json['age'] is int ? json['age'] : int.tryParse(json['age']?.toString() ?? '0') ?? 0,
+      age: json['age'] is int
+          ? json['age']
+          : int.tryParse(json['age']?.toString() ?? '0') ?? 0,
       gender: json['gender']?.toString() ?? '',
       phone: json['phone']?.toString() ?? '',
       status: json['status']?.toString() ?? 'active',

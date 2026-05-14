@@ -17,7 +17,7 @@ abstract class SearchRemoteDataSource {
     int? page,
     String? gender,
   });
-  
+
   /// Search salons with filters (uses shared salon API)
   Future<SalonsResponseModel> searchSalons({
     required double latitude,
@@ -40,13 +40,13 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   final HomeDataSource homeDataSource;
   final SalonRemoteDataSource salonDataSource;
   final DioClient dioClient;
-  
+
   SearchRemoteDataSourceImpl({
     required this.homeDataSource,
     required this.salonDataSource,
     required this.dioClient,
   });
-  
+
   @override
   Future<NearbyStoresResponseModel> getNearbySalons({
     required double latitude,
@@ -64,7 +64,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       gender: gender,
     );
   }
-  
+
   @override
   Future<SalonsResponseModel> searchSalons({
     required double latitude,

@@ -8,7 +8,7 @@ class CategoryState extends Equatable {
   final CategoryStatus status;
   final List<CategoryEntity> categories;
   final String? errorMessage;
-  
+
   // Category Salons with pagination
   final bool isSalonsLoading;
   final List<SalonEntity> salons; // Using shared SalonEntity

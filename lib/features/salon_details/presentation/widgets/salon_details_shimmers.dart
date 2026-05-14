@@ -151,7 +151,8 @@ class SalonDetailsShimmers {
   }
 
   /// Build shimmer effect for opening hours section
-  static Widget buildOpeningHoursShimmer(BuildContext context, bool isDarkMode) {
+  static Widget buildOpeningHoursShimmer(
+      BuildContext context, bool isDarkMode) {
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,

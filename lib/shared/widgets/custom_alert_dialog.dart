@@ -40,26 +40,26 @@ class CustomAlertDialog extends StatelessWidget {
             Text(
               title,
               style: context.textTheme.titleLarge?.copyWith(
-                color: isDarkMode 
-                  ? AppColors.textPrimaryDark 
-                  : AppColors.textPrimary,
+                color: isDarkMode
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             AppSizes.heightM,
-            
+
             // Description
             Text(
               description,
               style: context.textTheme.bodyMedium?.copyWith(
-                color: isDarkMode 
-                  ? AppColors.textSecondaryDark 
-                  : AppColors.textSecondary,
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
                 height: 1.5,
               ),
             ),
             AppSizes.heightXL,
-            
+
             // Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -79,14 +79,14 @@ class CustomAlertDialog extends StatelessWidget {
                   child: Text(
                     cancelText,
                     style: context.textTheme.labelLarge?.copyWith(
-                      color: isDarkMode 
-                        ? AppColors.textSecondaryDark 
-                        : AppColors.textSecondary,
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ),
                 AppSizes.widthM,
-                
+
                 // Submit Button
                 ElevatedButton(
                   onPressed: () {

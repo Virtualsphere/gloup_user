@@ -33,7 +33,8 @@ class AppLogger {
   }
 
   /// Log error message
-  static void error(String message, {Object? error, StackTrace? stackTrace, String? tag}) {
+  static void error(String message,
+      {Object? error, StackTrace? stackTrace, String? tag}) {
     developer.log(
       message,
       name: tag ?? _tag,

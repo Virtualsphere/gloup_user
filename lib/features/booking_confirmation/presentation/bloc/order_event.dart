@@ -33,5 +33,6 @@ class VerifyPaymentEvent extends OrderEvent {
   });
 
   @override
-  List<Object?> get props => [razorpayOrderId, razorpayPaymentId, razorpaySignature];
+  List<Object?> get props =>
+      [razorpayOrderId, razorpayPaymentId, razorpaySignature];
 }

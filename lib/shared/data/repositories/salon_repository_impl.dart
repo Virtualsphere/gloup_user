@@ -33,8 +33,9 @@ class SalonRepositoryImpl implements SalonRepository {
       );
 
       // Convert models to entities
-      final entities = response.salons.map((model) => model.toEntity()).toList();
-      
+      final entities =
+          response.salons.map((model) => model.toEntity()).toList();
+
       return Right(entities);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

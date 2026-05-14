@@ -219,8 +219,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       if (priceValue is num) {
         price = priceValue.toDouble();
       } else if (priceValue is String) {
-        price =
-            double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
+        price = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
       }
 
       final discount = originalPrice - price;
@@ -295,12 +294,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  title: Text(
-                    'Review & Confirm',
-                    style: context.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    )
-                  ),
+                  title: Text('Review & Confirm',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      )),
                   centerTitle: false,
                   titleSpacing: 0,
                 ),
@@ -828,10 +825,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                   context,
                                                   couponCode:
                                                       displayCoupon.couponCode,
-                                                  discountAmount: _resolveDiscount(
-                                                      displayCoupon,
-                                                      discountedAmount)
-                                                      .round(),
+                                                  discountAmount:
+                                                      _resolveDiscount(
+                                                              displayCoupon,
+                                                              discountedAmount)
+                                                          .round(),
                                                 );
                                               }
                                             },
@@ -877,9 +875,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     couponCode: selectedCoupon
                                                         .couponCode,
                                                     discountAmount: _resolveDiscount(
-                                                        selectedCoupon,
-                                                        _totalServiceAmount -
-                                                            _totalServiceDiscount)
+                                                            selectedCoupon,
+                                                            _totalServiceAmount -
+                                                                _totalServiceDiscount)
                                                         .round(),
                                                   );
                                                 }
@@ -931,7 +929,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     ? _resolveDiscount(
                                         availableCoupons.firstWhere((c) =>
                                             c.couponCode == selectedCouponCode),
-                                        _totalServiceAmount - _totalServiceDiscount)
+                                        _totalServiceAmount -
+                                            _totalServiceDiscount)
                                     : null,
                                 appliedCouponCode: selectedCouponCode,
                                 serviceDiscount: _totalServiceDiscount,
@@ -1451,8 +1450,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             fontWeight: FontWeight.w500,
                             color: selectedBookingFor == 'someone_else'
                                 ? (isDarkMode
-                              ? AppColors.textPrimary
-                              : AppColors.textPrimaryDark)
+                                    ? AppColors.textPrimary
+                                    : AppColors.textPrimaryDark)
                                 : (isDarkMode
                                     ? AppColors.textPrimaryDark
                                     : AppColors.textPrimary),

@@ -180,7 +180,8 @@ class ClusterModel {
       count: json['count'] as int,
       avgRating: (json['avgRating'] as num).toDouble(),
       hasPremium: json['hasPremium'] as bool,
-      bounds: ClusterBoundsModel.fromJson(json['bounds'] as Map<String, dynamic>),
+      bounds:
+          ClusterBoundsModel.fromJson(json['bounds'] as Map<String, dynamic>),
     );
   }
 
@@ -208,8 +209,10 @@ class ClusterBoundsModel {
 
   factory ClusterBoundsModel.fromJson(Map<String, dynamic> json) {
     return ClusterBoundsModel(
-      northEast: LatLngModel.fromJson(json['northEast'] as Map<String, dynamic>),
-      southWest: LatLngModel.fromJson(json['southWest'] as Map<String, dynamic>),
+      northEast:
+          LatLngModel.fromJson(json['northEast'] as Map<String, dynamic>),
+      southWest:
+          LatLngModel.fromJson(json['southWest'] as Map<String, dynamic>),
     );
   }
 

@@ -37,5 +37,14 @@ class LoadCategorySalonsEvent extends CategoryEvent {
   });
 
   @override
-  List<Object?> get props => [latitude, longitude, categoryId, limit, page, gender, search, isLoadMore];
+  List<Object?> get props => [
+        latitude,
+        longitude,
+        categoryId,
+        limit,
+        page,
+        gender,
+        search,
+        isLoadMore
+      ];
 }

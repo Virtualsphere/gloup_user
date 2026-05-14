@@ -24,16 +24,14 @@ class CustomIndicator extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         itemCount,
-            (index) => AnimatedContainer(
+        (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           height: borderHeight,
           width: currentIndex == index ? activeWidth : inactiveWidth,
           margin: const EdgeInsets.only(right: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: currentIndex == index
-                ? activeColor
-                : inActiveColor,
+            color: currentIndex == index ? activeColor : inActiveColor,
           ),
         ),
       ),

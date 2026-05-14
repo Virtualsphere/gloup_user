@@ -25,7 +25,7 @@ class CouponRemoteDataSourceImpl implements CouponRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['success'] == true && data['data'] != null) {
           final List<dynamic> couponsJson = data['data'] as List<dynamic>;
           return couponsJson

@@ -58,8 +58,8 @@ class _FaqState extends State<Faq> {
       body: isLoading
           ? const CustomLoadingIndicator()
           : SafeArea(
-        child: WebViewWidget(controller: controller),
-      ),
+              child: WebViewWidget(controller: controller),
+            ),
     );
   }
 }

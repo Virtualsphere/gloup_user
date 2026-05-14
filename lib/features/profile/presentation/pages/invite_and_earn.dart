@@ -173,7 +173,9 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                                     onPressed: () async {
                                       await Clipboard.setData(
                                         ClipboardData(
-                                          text: shareCode.isNotEmpty ? shareCode : '',
+                                          text: shareCode.isNotEmpty
+                                              ? shareCode
+                                              : '',
                                         ),
                                       );
                                     },

@@ -70,22 +70,22 @@ class ProfileEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    firstname,
-    lastname,
-    phone,
-    age,
-    email,
-    dateOfBirth,
-    city,
-    invitedCode,
-    wallet,
-    profilePic,
-    fullProfilePicUrl,
-    gender,
-    country,
-    status,
-  ];
+        id,
+        firstname,
+        lastname,
+        phone,
+        age,
+        email,
+        dateOfBirth,
+        city,
+        invitedCode,
+        wallet,
+        profilePic,
+        fullProfilePicUrl,
+        gender,
+        country,
+        status,
+      ];
 }
 
 class DeleteProfileEntity extends Equatable {

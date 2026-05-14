@@ -448,8 +448,9 @@ class _SalonCardState extends State<SalonCard> {
                     widget.salonName,
                     style: context.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color:
-                          isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                      color: isDarkMode
+                          ? AppColors.primaryDark
+                          : AppColors.primary,
                       height: 1.3,
                     ),
                     maxLines: 2,
@@ -526,11 +527,18 @@ class _SalonCardState extends State<SalonCard> {
               ),
               const SizedBox(width: 4),
               Container(
-                constraints: const BoxConstraints(maxWidth:  180),
+                constraints: const BoxConstraints(maxWidth: 180),
                 child: Text(
                   () {
-                    final parts = (widget.address ?? '').split(',').map((e) => e.trim()).where((e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e)).toList();
-                    return parts.length > 2 ? parts.sublist(parts.length - 2).join(', ') : parts.join(', ');
+                    final parts = (widget.address ?? '')
+                        .split(',')
+                        .map((e) => e.trim())
+                        .where((e) =>
+                            e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
+                        .toList();
+                    return parts.length > 2
+                        ? parts.sublist(parts.length - 2).join(', ')
+                        : parts.join(', ');
                   }(),
                   style: context.textTheme.bodyMedium?.copyWith(
                     overflow: TextOverflow.ellipsis,
@@ -607,7 +615,9 @@ class _SalonCardState extends State<SalonCard> {
                   width: 14,
                   height: 14,
                   colorFilter: ColorFilter.mode(
-                    isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    isDarkMode
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                     BlendMode.srcIn,
                   ),
                 )

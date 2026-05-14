@@ -288,7 +288,8 @@ class _CategorySectionState extends State<CategorySection> {
                               child: Icon(
                                 Icons.content_cut,
                                 color: isDarkMode
-                                    ? AppColors.primaryDark.withValues(alpha: 0.3)
+                                    ? AppColors.primaryDark
+                                        .withValues(alpha: 0.3)
                                     : AppColors.primary.withValues(alpha: 0.3),
                                 size: AppSizes.iconM,
                               ),

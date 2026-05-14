@@ -26,7 +26,8 @@ class SearchShimmer extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
           child: Shimmer.fromColors(
             baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
-            highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
+            highlightColor:
+                isDarkMode ? AppColors.borderDark : AppColors.background,
             child: Container(
               height: 120,
               decoration: BoxDecoration(
@@ -40,7 +41,8 @@ class SearchShimmer extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                      color:
+                          isDarkMode ? AppColors.borderDark : AppColors.divider,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(AppSizes.radiusM),
                         bottomLeft: Radius.circular(AppSizes.radiusM),
@@ -59,7 +61,9 @@ class SearchShimmer extends StatelessWidget {
                           width: double.infinity,
                           height: 16,
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            color: isDarkMode
+                                ? AppColors.borderDark
+                                : AppColors.divider,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -69,7 +73,9 @@ class SearchShimmer extends StatelessWidget {
                           width: 120,
                           height: 12,
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            color: isDarkMode
+                                ? AppColors.borderDark
+                                : AppColors.divider,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -79,7 +85,9 @@ class SearchShimmer extends StatelessWidget {
                           width: 80,
                           height: 12,
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            color: isDarkMode
+                                ? AppColors.borderDark
+                                : AppColors.divider,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -89,7 +97,9 @@ class SearchShimmer extends StatelessWidget {
                           width: 60,
                           height: 14,
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.borderDark : AppColors.divider,
+                            color: isDarkMode
+                                ? AppColors.borderDark
+                                : AppColors.divider,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),

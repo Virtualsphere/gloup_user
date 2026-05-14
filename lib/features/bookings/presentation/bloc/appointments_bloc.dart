@@ -18,7 +18,8 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
     emit(state.copyWith(isLoading: true));
     final result = await getAllAppointmentsUseCase();
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
       (data) => emit(state.copyWith(
         isLoading: false,
         upcoming: data['upcoming'] ?? [],

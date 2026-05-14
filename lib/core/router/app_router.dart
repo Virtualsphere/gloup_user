@@ -173,7 +173,7 @@ class AppRouter {
         ),
       ],
     ),
-    
+
     // Category route
     GoRoute(
       path: RouteNames.category,
@@ -190,10 +190,9 @@ class AppRouter {
 
     // Salon Search route
     GoRoute(
-      path: RouteNames.salonSearch,
-      name: RouteNames.salonSearch,
-      builder: (context, state) => SalonSearchPage()
-    ),
+        path: RouteNames.salonSearch,
+        name: RouteNames.salonSearch,
+        builder: (context, state) => SalonSearchPage()),
 
     //profile
     GoRoute(

@@ -112,19 +112,24 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
                   vertical: AppSizes.paddingS,
                 ),
                 itemCount: widget.coupons.length,
-                separatorBuilder: (context, index) => const SizedBox(height: AppSizes.spaceM),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: AppSizes.spaceM),
                 itemBuilder: (context, index) {
                   final coupon = widget.coupons[index];
                   final isSelected = _selectedCoupon == coupon.couponCode;
 
                   // Check if coupon can be applied
                   final minAmountRequired = coupon.discountAmount.toDouble();
-                  final isCouponValid = widget.serviceAmount >= (minAmountRequired + 30);
-                  final amountNeeded = (minAmountRequired + 30 - widget.serviceAmount).clamp(0, double.infinity);
-                  
+                  final isCouponValid =
+                      widget.serviceAmount >= (minAmountRequired + 30);
+                  final amountNeeded =
+                      (minAmountRequired + 30 - widget.serviceAmount)
+                          .clamp(0, double.infinity);
+
                   String? disabledReason;
                   if (!isCouponValid) {
-                    disabledReason = 'Add services worth ₹${amountNeeded.toStringAsFixed(0)} more to avail this coupon';
+                    disabledReason =
+                        'Add services worth ₹${amountNeeded.toStringAsFixed(0)} more to avail this coupon';
                   }
 
                   return CouponCard(

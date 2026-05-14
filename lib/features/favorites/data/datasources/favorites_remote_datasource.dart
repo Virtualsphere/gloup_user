@@ -62,7 +62,7 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
           },
         ),
       );
-      
+
       if (response.statusCode == 200) {
         return FavoritesListModel.fromJson(
           response.data,

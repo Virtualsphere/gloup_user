@@ -1,3 +1,3 @@
 enum ServiceStatus { free, booked }
 
-enum ImageType { images, profilepic, documents ,notype}
+enum ImageType { images, profilepic, documents, notype }

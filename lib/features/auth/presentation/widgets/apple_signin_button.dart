@@ -28,13 +28,12 @@ class AppleSignInButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: isDisabled ? null : onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: isDarkMode 
-            ? AppColors.textPrimaryDark 
-            : AppColors.textPrimary,
+          foregroundColor:
+              isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
           side: BorderSide(
             color: isDisabled
-              ? (isDarkMode ? AppColors.borderDark : AppColors.border)
-              : (isDarkMode ? AppColors.borderDark : AppColors.border),
+                ? (isDarkMode ? AppColors.borderDark : AppColors.border)
+                : (isDarkMode ? AppColors.borderDark : AppColors.border),
             width: 1,
           ),
           padding: const EdgeInsets.symmetric(
@@ -44,9 +43,8 @@ class AppleSignInButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
           ),
-          backgroundColor: isDarkMode 
-            ? AppColors.surfaceDark 
-            : AppColors.surface,
+          backgroundColor:
+              isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         ),
         child: isLoading
             ? SizedBox(
@@ -55,9 +53,9 @@ class AppleSignInButton extends StatelessWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isDarkMode 
-                      ? AppColors.textPrimaryDark 
-                      : AppColors.textPrimary,
+                    isDarkMode
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
                   ),
                 ),
               )
@@ -79,9 +77,9 @@ class AppleSignInButton extends StatelessWidget {
                     child: Text(
                       text,
                       style: context.textTheme.labelLarge?.copyWith(
-                        color: isDarkMode 
-                          ? AppColors.textPrimaryDark 
-                          : AppColors.textPrimary,
+                        color: isDarkMode
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,

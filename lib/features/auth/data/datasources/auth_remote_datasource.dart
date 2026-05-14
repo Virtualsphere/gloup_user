@@ -48,16 +48,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthEntity> verifyOtp(String phone, String otp) async {
     try {
-      debugPrint('🔍 AuthDataSource - verifyOtp called with phone: "$phone", otp: "$otp"');
-      debugPrint('🔍 Phone type: ${phone.runtimeType}, length: ${phone.length}');
+      debugPrint(
+          '🔍 AuthDataSource - verifyOtp called with phone: "$phone", otp: "$otp"');
+      debugPrint(
+          '🔍 Phone type: ${phone.runtimeType}, length: ${phone.length}');
       debugPrint('🔍 OTP type: ${otp.runtimeType}, length: ${otp.length}');
-      
+
       final requestData = {
         'phone': phone,
         'otp': otp,
       };
       debugPrint('🔍 Request data: $requestData');
-      
+
       final response = await dioClient.post(
         ApiRoutes.verifyOtp,
         data: requestData,

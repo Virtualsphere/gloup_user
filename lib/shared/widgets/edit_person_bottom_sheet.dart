@@ -74,7 +74,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
     _nameCtrl = TextEditingController(text: widget.initialName);
     _ageCtrl = TextEditingController(text: widget.initialAge.toString());
     _gender = widget.initialGender;
-    
+
     // Remove +91 prefix if present for editing
     String phoneNumber = widget.initialPhone ?? '';
     if (phoneNumber.startsWith('+91')) {
@@ -143,9 +143,8 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.borderDark
-                          : AppColors.border,
+                      color:
+                          isDarkMode ? AppColors.borderDark : AppColors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -262,7 +261,8 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             color: isDarkMode
                                 ? AppColors.surfaceDark
                                 : AppColors.surface,
-                            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusM),
                             border: Border.all(
                               color: isDarkMode
                                   ? AppColors.borderDark
@@ -305,7 +305,8 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                                     focusedBorder: InputBorder.none,
                                     errorBorder: InputBorder.none,
                                     focusedErrorBorder: InputBorder.none,
-                                    errorStyle: TextStyle(height: 0, fontSize: 0),
+                                    errorStyle:
+                                        TextStyle(height: 0, fontSize: 0),
                                     contentPadding: EdgeInsets.zero,
                                   ),
                                   keyboardType: TextInputType.number,
@@ -442,7 +443,8 @@ class _LabeledTextField extends StatelessWidget {
               final error = validator?.call(value.text);
               if (error != null && error.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: AppSizes.spaceXS, left: AppSizes.paddingS),
+                  padding: const EdgeInsets.only(
+                      top: AppSizes.spaceXS, left: AppSizes.paddingS),
                   child: Text(
                     error,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -477,7 +479,8 @@ class _GenderChip extends StatelessWidget {
     final borderColor = selected
         ? (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary)
         : (isDarkMode ? AppColors.borderDark : AppColors.border);
-    final borderWidth = selected ? AppSizes.borderWidthThick : AppSizes.borderWidth;
+    final borderWidth =
+        selected ? AppSizes.borderWidthThick : AppSizes.borderWidth;
     final textColor = selected
         ? (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary)
         : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary);

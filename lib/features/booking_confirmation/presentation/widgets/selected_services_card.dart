@@ -46,7 +46,8 @@ class SelectedServicesCard extends StatelessWidget {
           ),
           // Divider before "Add more service"
           Padding(
-            padding: const EdgeInsets.only(top: AppSizes.paddingM ,bottom: AppSizes.paddingM),
+            padding: const EdgeInsets.only(
+                top: AppSizes.paddingM, bottom: AppSizes.paddingM),
             child: Divider(
               color: (isDarkMode ? AppColors.borderDark : AppColors.border)
                   .withValues(alpha: 0.3),
@@ -65,7 +66,6 @@ class SelectedServicesCard extends StatelessWidget {
     Map<String, dynamic> service,
     bool isDarkMode,
   ) {
-
     print('service: $service');
     final name = service['name'] as String? ?? 'N/A';
     final duration = service['duration'] as String? ?? 'N/A';
@@ -75,10 +75,10 @@ class SelectedServicesCard extends StatelessWidget {
     final isPopular = service['isPopular'] as bool? ?? false;
 
     // Calculate discounted price if discount exists
-    final hasDiscount = discountPercentage.isNotEmpty && 
-        discountPercentage != '0%' && 
+    final hasDiscount = discountPercentage.isNotEmpty &&
+        discountPercentage != '0%' &&
         discountPercentage != '0';
-    
+
     // double? discountedPrice;
     // if (hasDiscount) {
     //   final discountValue = int.tryParse(

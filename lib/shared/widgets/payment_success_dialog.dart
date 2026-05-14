@@ -128,10 +128,11 @@ class PaymentSuccessDialog extends StatelessWidget {
                     children: [
                       Text(
                         'Booking Confirmed',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.success,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.success,
+                                ),
                       ),
                       const SizedBox(height: AppSizes.spaceXS),
                       Text(

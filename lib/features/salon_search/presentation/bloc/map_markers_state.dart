@@ -29,7 +29,8 @@ class MapMarkersLoaded extends MapMarkersState {
   });
 
   @override
-  List<Object?> get props => [zoom, clusteringEnabled, clusters, markers, totalCount];
+  List<Object?> get props =>
+      [zoom, clusteringEnabled, clusters, markers, totalCount];
 }
 
 class MapMarkersEmpty extends MapMarkersState {

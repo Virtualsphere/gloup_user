@@ -5,7 +5,7 @@ class CustomSafeArea extends StatelessWidget {
   const CustomSafeArea({
     super.key,
     required this.child,
-    this.backGroundColor= AppColors.background,
+    this.backGroundColor = AppColors.background,
   });
 
   final Widget child;

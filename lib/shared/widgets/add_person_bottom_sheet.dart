@@ -128,7 +128,8 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                     width: 48,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                      color:
+                          isDarkMode ? AppColors.borderDark : AppColors.border,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -240,10 +241,14 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                     const SizedBox(height: AppSizes.spaceS),
                     Container(
                       decoration: BoxDecoration(
-                        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                        color: isDarkMode
+                            ? AppColors.surfaceDark
+                            : AppColors.surface,
                         borderRadius: BorderRadius.circular(AppSizes.radiusM),
                         border: Border.all(
-                          color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                          color: isDarkMode
+                              ? AppColors.borderDark
+                              : AppColors.border,
                           width: 1,
                         ),
                       ),
@@ -260,11 +265,15 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusS),
                             ),
                             child: Text(
                               '+91',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
                                     color: isDarkMode
                                         ? AppColors.textPrimaryDark
                                         : AppColors.textPrimary,
@@ -288,15 +297,20 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                                     focusedErrorBorder: InputBorder.none,
                                     contentPadding: EdgeInsets.zero,
                                     isDense: true,
-                                    errorStyle: TextStyle(height: 0, fontSize: 0), // Hide error inside
+                                    errorStyle: TextStyle(
+                                        height: 0,
+                                        fontSize: 0), // Hide error inside
                                   ),
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.done,
                                   validator: (v) {
                                     final t = (v ?? '').trim();
                                     if (t.isEmpty) return null; // optional
-                                    final isNumeric = RegExp(r'^[0-9]+$').hasMatch(t);
-                                    if (!isNumeric || t.length < 6 || t.length > 15) {
+                                    final isNumeric =
+                                        RegExp(r'^[0-9]+$').hasMatch(t);
+                                    if (!isNumeric ||
+                                        t.length < 6 ||
+                                        t.length > 15) {
                                       return 'Enter a valid phone';
                                     }
                                     return null;
@@ -318,10 +332,15 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             final isNumeric = RegExp(r'^[0-9]+$').hasMatch(t);
                             if (!isNumeric || t.length < 6 || t.length > 15) {
                               return Padding(
-                                padding: const EdgeInsets.only(top: AppSizes.spaceXS, left: AppSizes.paddingS),
+                                padding: const EdgeInsets.only(
+                                    top: AppSizes.spaceXS,
+                                    left: AppSizes.paddingS),
                                 child: Text(
                                   'Enter a valid phone',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
                                         color: AppColors.error,
                                         fontSize: 12,
                                       ),
@@ -410,7 +429,8 @@ class _LabeledTextField extends StatelessWidget {
               focusedErrorBorder: InputBorder.none,
               contentPadding: EdgeInsets.zero,
               isDense: true,
-              errorStyle: const TextStyle(height: 0, fontSize: 0), // Hide error inside
+              errorStyle:
+                  const TextStyle(height: 0, fontSize: 0), // Hide error inside
             ),
             keyboardType: keyboardType,
             textInputAction: textInputAction,
@@ -425,7 +445,8 @@ class _LabeledTextField extends StatelessWidget {
               final error = validator?.call(value.text);
               if (error != null && error.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: AppSizes.spaceXS, left: AppSizes.paddingS),
+                  padding: const EdgeInsets.only(
+                      top: AppSizes.spaceXS, left: AppSizes.paddingS),
                   child: Text(
                     error,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -460,10 +481,12 @@ class _GenderChip extends StatelessWidget {
 
     final Color activeColor =
         isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary;
-    final Color textColor =
-        selected ? activeColor : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary);
-    final Color borderColor =
-        selected ? activeColor : (isDarkMode ? AppColors.borderDark : AppColors.border);
+    final Color textColor = selected
+        ? activeColor
+        : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary);
+    final Color borderColor = selected
+        ? activeColor
+        : (isDarkMode ? AppColors.borderDark : AppColors.border);
     final double borderWidth =
         selected ? AppSizes.borderWidthThick : AppSizes.borderWidth;
 

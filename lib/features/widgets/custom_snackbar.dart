@@ -10,10 +10,10 @@ import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomToast {
   static show(
-      BuildContext context, {
-        required String title,
-        bool isError = false,
-      }) {
+    BuildContext context, {
+    required String title,
+    bool isError = false,
+  }) {
     FToast fToast = FToast();
     fToast.init(context);
 
@@ -101,9 +101,7 @@ class NoDataText extends StatelessWidget {
       child: Text(
         title,
         style: context.textTheme.bodyLarge?.copyWith(
-          color: isDarkMode
-              ? AppColors.white
-              : AppColors.black,
+          color: isDarkMode ? AppColors.white : AppColors.black,
           fontSize: 24,
           fontWeight: FontWeight.w500,
         ),

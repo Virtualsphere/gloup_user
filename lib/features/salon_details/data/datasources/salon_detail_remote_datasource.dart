@@ -53,7 +53,8 @@ class SalonDetailRemoteDataSourceImpl implements SalonDetailRemoteDataSource {
     } on DioException catch (e) {
       if (e.response != null) {
         throw ApiException(
-          message: e.response?.data['message'] ?? 'Failed to load salon details',
+          message:
+              e.response?.data['message'] ?? 'Failed to load salon details',
           statusCode: e.response?.statusCode,
           error: e,
         );

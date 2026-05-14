@@ -9,7 +9,7 @@ class SlotShimmers {
   /// Shimmer for time slot grid
   static Widget slotGridShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -48,7 +48,7 @@ class SlotShimmers {
   /// Shimmer for calendar section
   static Widget calendarShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -78,7 +78,7 @@ class SlotShimmers {
   /// Shimmer for section header
   static Widget sectionHeaderShimmer(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
@@ -120,14 +120,14 @@ class SlotShimmers {
       children: [
         // Calendar shimmer
         calendarShimmer(context),
-        
+
         const SizedBox(height: AppSizes.spaceL),
-        
+
         // Section header shimmer
         sectionHeaderShimmer(context),
-        
+
         const SizedBox(height: AppSizes.spaceM),
-        
+
         // Slot grid shimmer
         Expanded(
           child: slotGridShimmer(context),

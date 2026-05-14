@@ -11,8 +11,8 @@ class DioClient {
               sendTimeout: const Duration(seconds: 60),
               receiveTimeout: const Duration(seconds: 60)),
         )..interceptors.addAll([
-          LoggerInterceptor(),    // Logger interceptor for debugging
-        ]);
+            LoggerInterceptor(), // Logger interceptor for debugging
+          ]);
 
   //! GET METHOD
   Future<Response> get(

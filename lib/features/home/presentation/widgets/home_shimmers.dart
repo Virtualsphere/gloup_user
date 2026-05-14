@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -308,5 +306,4 @@ class HomeShimmers {
       ),
     );
   }
-
 }

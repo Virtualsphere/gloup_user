@@ -57,8 +57,7 @@ Future<void> showLocalNotification(RemoteMessage message) async {
 
 /// Initializes Flutter Local Notifications (call before [FirebaseNotificationService.initialize])
 Future<void> initializeLocalNotifications() async {
-  const androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const darwinSettings = DarwinInitializationSettings(
     requestAlertPermission: false,

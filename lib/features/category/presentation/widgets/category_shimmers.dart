@@ -102,7 +102,8 @@ class CategoryShimmers {
   }
 
   /// Build shimmer for sliver list (for use in CustomScrollView)
-  static Widget buildSliverSalonListShimmer(BuildContext context, {int count = 5}) {
+  static Widget buildSliverSalonListShimmer(BuildContext context,
+      {int count = 5}) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       sliver: SliverList(

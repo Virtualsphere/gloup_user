@@ -120,8 +120,7 @@ class ProfileListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -136,7 +135,7 @@ class ProfileListTile extends StatelessWidget {
           BlendMode.srcIn,
         ),
       ),
-      title:  Text(
+      title: Text(
         title.capitalize(),
         style: context.textTheme.bodySmall?.copyWith(
           color: isDarkMode ? AppColors.white : AppColors.black,

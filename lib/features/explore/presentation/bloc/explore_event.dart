@@ -28,7 +28,8 @@ class LoadExploreSalonsEvent extends ExploreEvent {
   });
 
   @override
-  List<Object?> get props => [latitude, longitude, limit, page, gender, search, isLoadMore];
+  List<Object?> get props =>
+      [latitude, longitude, limit, page, gender, search, isLoadMore];
 }
 
 /// Event to refresh salons

@@ -65,9 +65,8 @@ class TeamMemberCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDarkMode
-                ? AppColors.textPrimaryDark
-                : AppColors.textPrimary,
+            color:
+                isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
             fontSize: 14,
           ),
         ),

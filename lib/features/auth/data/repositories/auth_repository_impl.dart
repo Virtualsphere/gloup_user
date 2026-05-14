@@ -27,7 +27,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthEntity>> verifyOtp(String phone, String otp) async {
+  Future<Either<Failure, AuthEntity>> verifyOtp(
+      String phone, String otp) async {
     try {
       final result = await remoteDataSource.verifyOtp(phone, otp);
       return Right(result);

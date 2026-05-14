@@ -131,7 +131,12 @@ class AddRatingDialogue {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Divider(color: isDarkMode ? AppColors.white : AppColors.borderColor,thickness: 1.0,),
+                        child: Divider(
+                          color: isDarkMode
+                              ? AppColors.white
+                              : AppColors.borderColor,
+                          thickness: 1.0,
+                        ),
                       ),
                       Text(
                         'How’s our Service?',
@@ -172,14 +177,20 @@ class AddRatingDialogue {
                                 height: 56,
                                 width: size.width / 2.6,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                    color: isDarkMode ? AppColors.borderColor : AppColors.white,
-                                  border: Border.all(color: isDarkMode ? AppColors.borderColor : AppColors.borderColor, width: 1.0)
-                                ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: isDarkMode
+                                        ? AppColors.borderColor
+                                        : AppColors.white,
+                                    border: Border.all(
+                                        color: isDarkMode
+                                            ? AppColors.borderColor
+                                            : AppColors.borderColor,
+                                        width: 1.0)),
                                 child: Center(
                                   child: Text(
                                     'Not Now',
-                                    style: context.textTheme.displaySmall?.copyWith(
+                                    style: context.textTheme.displaySmall
+                                        ?.copyWith(
                                       color: AppColors.black,
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w400,
@@ -194,7 +205,7 @@ class AddRatingDialogue {
                             child: PrimaryButton(
                               text: 'Submit',
                               isLoading: false,
-                              onPressed: (){},
+                              onPressed: () {},
                             ),
                           ),
                         ],

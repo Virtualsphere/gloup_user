@@ -19,8 +19,7 @@ class BookingsShimmer {
   }
 
   static Widget _bookingCardShimmer(bool isDarkMode) {
-    final base =
-        isDarkMode ? const Color(0xFF2A2A2A) : AppColors.divider;
+    final base = isDarkMode ? const Color(0xFF2A2A2A) : AppColors.divider;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

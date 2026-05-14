@@ -8,7 +8,7 @@ import 'package:tressy/features/booking_confirmation/data/models/guest_model.dar
 abstract class GuestRemoteDataSource {
   /// Get all guests for the current user
   Future<List<GuestModel>> getAllGuests();
-  
+
   /// Add a new guest
   Future<void> addGuest({
     required String name,
@@ -16,7 +16,7 @@ abstract class GuestRemoteDataSource {
     required int age,
     required String phone,
   });
-  
+
   /// Update an existing guest
   Future<void> updateGuest({
     required int guestId,
@@ -115,7 +115,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
       final requestData = <String, dynamic>{
         'guestId': guestId,
       };
-      
+
       // Add optional fields
       if (name != null) requestData['name'] = name;
       if (gender != null) requestData['gender'] = gender;

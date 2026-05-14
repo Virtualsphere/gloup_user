@@ -49,7 +49,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   ///update profile date:-
   @override
-  Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile) async {
+  Future<Either<Failure, ProfileEntity>> updateProfile(
+      ProfileEntity profile) async {
     try {
       final result = await dataSource.updateProfile(profile);
       return Right(result);

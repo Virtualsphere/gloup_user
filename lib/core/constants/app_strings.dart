@@ -29,9 +29,11 @@ class AppStrings {
 
   // Error Messages
   static const String errorGeneric = 'Something went wrong. Please try again.';
-  static const String errorNetwork = 'Network error. Please check your connection.';
+  static const String errorNetwork =
+      'Network error. Please check your connection.';
   static const String errorTimeout = 'Request timeout. Please try again.';
-  static const String errorUnauthorized = 'Unauthorized access. Please login again.';
+  static const String errorUnauthorized =
+      'Unauthorized access. Please login again.';
   static const String errorNotFound = 'Resource not found.';
   static const String errorServer = 'Server error. Please try again later.';
 
@@ -39,6 +41,7 @@ class AppStrings {
   static const String validationRequired = 'This field is required';
   static const String validationEmail = 'Please enter a valid email';
   static const String validationPhone = 'Please enter a valid phone number';
-  static const String validationPassword = 'Password must be at least 6 characters';
+  static const String validationPassword =
+      'Password must be at least 6 characters';
   static const String validationPasswordMatch = 'Passwords do not match';
 }

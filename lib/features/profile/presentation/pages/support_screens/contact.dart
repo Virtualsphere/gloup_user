@@ -28,7 +28,7 @@ class _ContactState extends State<Contact> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Scaffold(
-      appBar:  ProfileAppBar(
+      appBar: ProfileAppBar(
         title: "Contact",
         centerTitle: true,
         onBack: () {

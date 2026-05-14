@@ -74,9 +74,9 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: prefixWidget == null
             ? null
             : Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: prefixWidget,
-        ),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: prefixWidget,
+              ),
         errorStyle: GoogleFonts.inter(
           fontSize: 13,
           fontWeight: FontWeight.w400,
@@ -90,17 +90,17 @@ class CustomTextField extends StatelessWidget {
           padding: const EdgeInsets.only(right: 20),
           child: icon != null
               ? GestureDetector(
-            onTap: suffixOnTap,
-            child: SvgPicture.asset(
-              icon!,
-              height: iconHeight,
-              width: iconHeight,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondaryColor,
-                BlendMode.srcIn,
-              ),
-            ),
-          )
+                  onTap: suffixOnTap,
+                  child: SvgPicture.asset(
+                    icon!,
+                    height: iconHeight,
+                    width: iconHeight,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.secondaryColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                )
               : null,
         ),
       ),
@@ -112,9 +112,9 @@ class CustomTextField extends StatelessWidget {
 class ExpiryDateFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (text.length > 4) text = text.substring(0, 4);
     if (text.length >= 3) {
@@ -154,9 +154,9 @@ class DecoratedInputBorder extends InputBorder {
   @override
   InputBorder copyWith(
       {BorderSide? borderSide,
-        InputBorder? child,
-        BoxShadow? shadow,
-        bool? isOutline}) {
+      InputBorder? child,
+      BoxShadow? shadow,
+      bool? isOutline}) {
     return DecoratedInputBorder(
       child: (child ?? this.child).copyWith(borderSide: borderSide),
       shadow: shadow ?? this.shadow,
@@ -175,9 +175,9 @@ class DecoratedInputBorder extends InputBorder {
   @override
   void paint(Canvas canvas, Rect rect,
       {double? gapStart,
-        double gapExtent = 0.0,
-        double gapPercentage = 0.0,
-        TextDirection? textDirection}) {
+      double gapExtent = 0.0,
+      double gapPercentage = 0.0,
+      TextDirection? textDirection}) {
     final clipPath = Path()
       ..addRect(const Rect.fromLTWH(-5000, -5000, 10000, 10000))
       ..addPath(getInnerPath(rect), Offset.zero)

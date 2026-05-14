@@ -50,11 +50,11 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       )),
       (salons) {
         // For load more, append to existing list; otherwise replace
-        final updatedSalons = event.isLoadMore
-            ? [...state.salons, ...salons]
-            : salons;
+        final updatedSalons =
+            event.isLoadMore ? [...state.salons, ...salons] : salons;
 
-        final currentPage = event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1);
+        final currentPage =
+            event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1);
         final hasMore = salons.length >= (event.limit ?? 20);
 
         emit(state.copyWith(

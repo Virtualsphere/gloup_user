@@ -70,7 +70,6 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
             : null,
       );
 
-
       if (response.data['success'] != true) {
         throw ApiException(
           message: response.data['message'] ?? 'Payment verification failed',
