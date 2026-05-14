@@ -1,2 +1,2 @@
 json_key_file("fastlane/play-store-credentials.json") # Path to the json secret file
-package_name("com.gloup.user") # Update this if your package name is different
+package_name("com.gloup.userapp") # Update this if your package name is different

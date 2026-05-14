@@ -25,6 +25,7 @@ jobs:
         with:
           ruby-version: '3.3'
           bundler-cache: true
+          working-directory: android
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
