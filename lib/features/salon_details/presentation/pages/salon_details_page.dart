@@ -1076,7 +1076,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                                 .toList()
                           };
 
-                          print('salonData: $salonData');
+                          // print('salonData: $salonData');
 
                           context.pushNamed(
                             RouteNames.slotBooking,

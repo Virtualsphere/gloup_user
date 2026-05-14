@@ -23,7 +23,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async {
     emit(state.copyWithLoading());
 
-    print('Create Order Request: ${event.request.toJson()}');
+    // print('Create Order Request: ${event.request.toJson()}');
 
     final result = await createOrderUseCase(event.request);
 

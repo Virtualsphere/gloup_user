@@ -523,8 +523,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                             index));
                                                   },
                                                   onEdit: () {
-                                                    if (guest.guestId == null)
+                                                    if (guest.guestId == null) {
                                                       return;
+                                                    }
 
                                                     showEditPersonBottomSheet(
                                                       context,
@@ -869,6 +870,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     (c) =>
                                                         c.couponCode == result,
                                                   );
+                                                  if (!context.mounted) return;
                                                   await CouponAppliedDialog
                                                       .show(
                                                     context,
@@ -1052,6 +1054,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     return null;
   }
 
+  // ignore: unused_element
   Widget _buildGloupCashCheckbox(BuildContext context, bool isDarkMode) {
     return Container(
       width: double.infinity,

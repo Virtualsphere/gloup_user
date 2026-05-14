@@ -97,8 +97,9 @@ class SocialAuthService {
         userIdentifier: userIdentifier,
       );
     } on SignInWithAppleAuthorizationException catch (e) {
-      if (e.code == AuthorizationErrorCode.canceled)
+      if (e.code == AuthorizationErrorCode.canceled) {
         return SocialAuthCancelled();
+      }
       debugPrint('SocialAuthService: Apple sign-in error: ${e.message}');
       return SocialAuthError(e.message);
     } catch (e) {

@@ -66,7 +66,7 @@ class SelectedServicesCard extends StatelessWidget {
     Map<String, dynamic> service,
     bool isDarkMode,
   ) {
-    print('service: $service');
+    // print('service: $service');
     final name = service['name'] as String? ?? 'N/A';
     final duration = service['duration'] as String? ?? 'N/A';
     final originalPrice = service['originalPrice'] as double? ?? 0.0;

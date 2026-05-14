@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                 false;
         if (!dialogShown) {
           bool userAllowed = false;
+          if (!mounted) return;
           await LocationPermissionDialog.show(
             context,
             onAllow: () => userAllowed = true,

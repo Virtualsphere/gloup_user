@@ -130,6 +130,7 @@ class _CategorySectionState extends State<CategorySection> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildPremiumCategory(BuildContext context, {required bool isActive}) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(

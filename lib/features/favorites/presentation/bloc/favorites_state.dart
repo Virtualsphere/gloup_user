@@ -70,13 +70,13 @@ class FavoritesState extends Equatable {
       // If optimistic value matches server value, the server has been updated
       // We can trust the server value now
       if (optimisticValue == serverValue) {
-        print('🔍 Optimistic matches server for $storeId - using server value');
+        // print('🔍 Optimistic matches server for $storeId - using server value');
         return serverValue;
       }
 
       // Otherwise, still waiting for server to update, use optimistic
-      print(
-          '🔍 Using optimistic for $storeId: $optimisticValue (server: $serverValue)');
+      // print(
+      //     '🔍 Using optimistic for $storeId: $optimisticValue (server: $serverValue)');
       return optimisticValue;
     }
 
