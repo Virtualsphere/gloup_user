@@ -28,6 +28,7 @@ class SalonCard extends StatefulWidget {
   final List<String>? categories;
   final List<String>? languageCodes;
   final bool isFullWidth;
+  final bool isOfferCard;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteToggle;
 
@@ -48,6 +49,7 @@ class SalonCard extends StatefulWidget {
     this.categories,
     this.languageCodes,
     this.isFullWidth = false,
+    this.isOfferCard = false,
     this.onTap,
     this.onFavoriteToggle,
   });
@@ -343,7 +345,7 @@ class _SalonCardState extends State<SalonCard> {
                 vertical: AppSizes.paddingXS,
               ),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: widget.isOfferCard ? const Color(0xFF1ECB5D) : AppColors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
                 boxShadow: [
                   BoxShadow(
@@ -365,7 +367,7 @@ class _SalonCardState extends State<SalonCard> {
                       style: context.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 11,
-                        color: AppColors.textPrimary,
+                        color: widget.isOfferCard ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -374,8 +376,8 @@ class _SalonCardState extends State<SalonCard> {
                     child: Container(
                       width: 3,
                       height: 3,
-                      decoration: const BoxDecoration(
-                        color: AppColors.textSecondary,
+                      decoration: BoxDecoration(
+                        color: widget.isOfferCard ? Colors.white : AppColors.textSecondary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -385,7 +387,7 @@ class _SalonCardState extends State<SalonCard> {
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       fontSize: 11,
-                      color: AppColors.primary,
+                      color: widget.isOfferCard ? Colors.white : AppColors.primary,
                     ),
                   ),
                 ],

@@ -18,6 +18,7 @@ import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
+import 'package:tressy/features/home/presentation/widgets/services_at_49_section.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -661,6 +662,12 @@ class _HomePageState extends State<HomePage> {
 
                   SliverToBoxAdapter(child: AppSizes.heightM),
 
+                  const SliverToBoxAdapter(
+                    child: ServicesAt49Section(),
+                  ),
+
+                  SliverToBoxAdapter(child: AppSizes.heightM),
+
                   // Popular Services Nearby Section Header
                   SliverToBoxAdapter(
                     child: SectionHeader(
@@ -678,7 +685,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Popular Services
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: context.screenHeight * 0.33,
+                      height: 340,
                       child: state.isPopularServicesLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.popularServices.isEmpty
@@ -740,7 +747,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Top Salons
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: context.screenHeight * 0.33,
+                      height: 340,
                       child: state.isTopSalonsLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.topSalons.isEmpty
