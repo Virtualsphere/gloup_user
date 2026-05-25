@@ -10,14 +10,26 @@ plugins {
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("key.properties")
+def setKeystorePropertyIfPresent = { key, value ->
+    if (value != null && !value.trim().isEmpty()) {
+        keystoreProperties[key] = value
+    }
+}
+
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 } else {
-    keystoreProperties['keyAlias'] = System.getenv("KEY_ALIAS")
-    keystoreProperties['keyPassword'] = System.getenv("KEY_PASSWORD")
-    keystoreProperties['storeFile'] = System.getenv("KEYSTORE_PATH")
-    keystoreProperties['storePassword'] = System.getenv("STORE_PASSWORD")
+    setKeystorePropertyIfPresent("keyAlias", System.getenv("KEY_ALIAS"))
+    setKeystorePropertyIfPresent("keyPassword", System.getenv("KEY_PASSWORD"))
+    setKeystorePropertyIfPresent("storeFile", System.getenv("KEYSTORE_PATH"))
+    setKeystorePropertyIfPresent("storePassword", System.getenv("STORE_PASSWORD"))
 }
+
+def hasReleaseSigning =
+        keystoreProperties['keyAlias'] &&
+        keystoreProperties['keyPassword'] &&
+        keystoreProperties['storeFile'] &&
+        keystoreProperties['storePassword']
 
 android {
     namespace = "com.gloup.userapp"
@@ -47,13 +59,15 @@ android {
     }
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            def storeFilePath = keystoreProperties['storeFile']
-            if (storeFilePath != null && !storeFilePath.isEmpty()) {
-                storeFile file(storeFilePath)
+            if (hasReleaseSigning) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                def storeFilePath = keystoreProperties['storeFile']
+                if (storeFilePath != null && !storeFilePath.isEmpty()) {
+                    storeFile file(storeFilePath)
+                }
+                storePassword keystoreProperties['storePassword']
             }
-            storePassword keystoreProperties['storePassword']
         }
     }
 
@@ -62,9 +76,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.release
+            // Fall back to the debug keystore when release credentials are not configured.
+            signingConfig = hasReleaseSigning ? signingConfigs.release : signingConfigs.debug
         }
     }
 }
