@@ -1,3 +1,4 @@
+import 'package:tressy/core/utils/image_url_resolver.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -25,20 +26,10 @@ class ProfileModel extends ProfileEntity {
     Map<String, dynamic> json, {
     String? imageBaseUrl,
   }) {
-    final imagePath = json['profilePic']?.toString() ?? '';
-
-    String fullProfilePicUrl = '';
-
-    if (imagePath.isNotEmpty) {
-      if (imagePath.startsWith('http')) {
-        fullProfilePicUrl = imagePath;
-      } else if (imageBaseUrl != null && imageBaseUrl.isNotEmpty) {
-        final cleanBase = imageBaseUrl.endsWith('/')
-            ? imageBaseUrl.substring(0, imageBaseUrl.length - 1)
-            : imageBaseUrl;
-        fullProfilePicUrl = '$cleanBase/$imagePath';
-      }
-    }
+    final fullProfilePicUrl = ImageUrlResolver.resolveProfileImage(
+      path: json['profilePic']?.toString(),
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return ProfileModel(
       id: json['id'] as int? ?? 0,
@@ -51,7 +42,7 @@ class ProfileModel extends ProfileEntity {
       city: (json['city'] as String?)?.trim() ?? '',
       invitedCode: json['invited_code'] as String? ?? '',
       wallet: json['wallet']?.toString() ?? '0.0000',
-      profilePic: imagePath,
+      profilePic: json['profilePic']?.toString() ?? '',
       fullProfilePicUrl: fullProfilePicUrl,
       gender: json['gender'] as String? ?? '',
       country: json['country'] as String? ?? '',

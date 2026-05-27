@@ -370,7 +370,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                                     isFavorite: salon.isFavorite,
                                     serviceName: salon.serviceName,
                                     servicePrice: salon.servicePrice,
-                                    address: salon.address,
+                                    address: salon.displayAddress,
                                     categories: salon.categories,
                                     languageCodes: salon.languageCodes,
                                     onTap: () {

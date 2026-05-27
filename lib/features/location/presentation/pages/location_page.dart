@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/utils/app_logger.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class LocationPage extends StatefulWidget {
@@ -35,6 +37,12 @@ class _LocationPageState extends State<LocationPage> {
   // Google Places API Key
   static const String _googlePlacesApiKey =
       'AIzaSyBACvmG9-ekKRhJYRhSTVa7Et10IArFzUs';
+
+  static String _logSafeUri(Uri uri) {
+    final params = Map<String, String>.from(uri.queryParameters);
+    if (params.containsKey('key')) params['key'] = '***';
+    return uri.replace(queryParameters: params).toString();
+  }
 
   @override
   void initState() {
@@ -152,14 +160,23 @@ class _LocationPageState extends State<LocationPage> {
   Future<void> _loadNearbyLocations(double lat, double lng) async {
     try {
       final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+        '${ApiRoutes.externalEndpoints['googlePlacesNearbySearch']}'
         '?location=$lat,$lng'
         '&radius=5000'
         '&type=locality'
         '&key=$_googlePlacesApiKey',
       );
 
+      AppLogger.info(
+        '→ GET ${_logSafeUri(url)} [googlePlacesNearbySearch]',
+        tag: 'API',
+      );
+      final stopwatch = Stopwatch()..start();
       final response = await http.get(url);
+      AppLogger.info(
+        '← ${response.statusCode} googlePlacesNearbySearch (${stopwatch.elapsedMilliseconds}ms)',
+        tag: 'API',
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -208,7 +225,7 @@ class _LocationPageState extends State<LocationPage> {
         _loadFallbackNearbyLocations(lat, lng);
       }
     } catch (e) {
-      debugPrint('Error loading nearby locations: $e');
+      AppLogger.error('googlePlacesNearbySearch failed', error: e, tag: 'API');
       _loadFallbackNearbyLocations(lat, lng);
     }
   }
@@ -290,14 +307,23 @@ class _LocationPageState extends State<LocationPage> {
       }
 
       final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+        '${ApiRoutes.externalEndpoints['googlePlacesAutocomplete']}'
         '?input=${Uri.encodeComponent(query)}'
         '&components=country:in'
         '&key=$_googlePlacesApiKey'
         '$locationBias',
       );
 
+      AppLogger.info(
+        '→ GET ${_logSafeUri(url)} [googlePlacesAutocomplete]',
+        tag: 'API',
+      );
+      final stopwatch = Stopwatch()..start();
       final response = await http.get(url);
+      AppLogger.info(
+        '← ${response.statusCode} googlePlacesAutocomplete (${stopwatch.elapsedMilliseconds}ms)',
+        tag: 'API',
+      );
       if (response.statusCode == 200 && mounted) {
         final data = json.decode(response.body);
         if (data['status'] == 'OK' && data['predictions'] != null) {
@@ -311,7 +337,7 @@ class _LocationPageState extends State<LocationPage> {
         }
       }
     } catch (e) {
-      debugPrint('Error searching places: $e');
+      AppLogger.error('googlePlacesAutocomplete failed', error: e, tag: 'API');
     }
   }
 
@@ -321,13 +347,22 @@ class _LocationPageState extends State<LocationPage> {
 
     try {
       final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/details/json'
+        '${ApiRoutes.externalEndpoints['googlePlacesDetails']}'
         '?place_id=$placeId'
         '&fields=geometry,name,formatted_address'
         '&key=$_googlePlacesApiKey',
       );
 
+      AppLogger.info(
+        '→ GET ${_logSafeUri(url)} [googlePlacesDetails]',
+        tag: 'API',
+      );
+      final stopwatch = Stopwatch()..start();
       final response = await http.get(url);
+      AppLogger.info(
+        '← ${response.statusCode} googlePlacesDetails (${stopwatch.elapsedMilliseconds}ms)',
+        tag: 'API',
+      );
       if (response.statusCode == 200 && mounted) {
         final data = json.decode(response.body);
         if (data['status'] == 'OK') {
@@ -348,7 +383,7 @@ class _LocationPageState extends State<LocationPage> {
         }
       }
     } catch (e) {
-      debugPrint('Error getting place details: $e');
+      AppLogger.error('googlePlacesDetails failed', error: e, tag: 'API');
     }
   }
 

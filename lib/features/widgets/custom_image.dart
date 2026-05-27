@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/core/utils/image_url_resolver.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/enums.dart';
@@ -90,6 +91,9 @@ class CustomNetworkImage extends StatelessWidget {
     required ImageType imageType,
     required String imageUrl,
   }) {
+    if (ImageUrlResolver.isAbsoluteUrl(imageUrl)) {
+      return imageUrl.trim();
+    }
     switch (imageType) {
       case ImageType.images:
         return '${ApiRoutes.baseUrl}/${Keys.images}/$imageUrl';

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/interceptor.dart';
 
 class DioClient {
@@ -11,8 +12,10 @@ class DioClient {
               sendTimeout: const Duration(seconds: 60),
               receiveTimeout: const Duration(seconds: 60)),
         )..interceptors.addAll([
-            LoggerInterceptor(), // Logger interceptor for debugging
-          ]);
+            LoggerInterceptor(),
+          ]) {
+    ApiRoutes.logRegisteredEndpoints();
+  }
 
   //! GET METHOD
   Future<Response> get(

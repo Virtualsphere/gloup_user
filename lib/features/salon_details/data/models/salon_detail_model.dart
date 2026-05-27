@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:tressy/core/utils/image_url_resolver.dart';
 
 class SalonDetailModel {
   final int id;
@@ -53,17 +53,13 @@ class SalonDetailModel {
     final data = json['data'] ?? json;
     final salonID = data['id']?.toString() ?? '';
 
-    // Process images with base URL
-    final imagesList = (data['images'] as List<dynamic>?)?.map((image) {
-          final imagePath = image?.toString() ?? '';
-          return (imageBaseUrl != null && imagePath.isNotEmpty)
-              ? '$imageBaseUrl/$salonID/images/$imagePath'
-              : imagePath;
-        }).toList() ??
-        [];
-
-    debugPrint('[SalonDetailModel] salonID: $salonID');
-    debugPrint('[SalonDetailModel] imagesList: $imagesList');
+    final imagesList = ImageUrlResolver.resolveStoreGallery(
+      images: data['images'] as List<dynamic>?,
+      primaryImage: data['salonImage']?.toString() ?? data['image']?.toString(),
+      logo: data['logo']?.toString(),
+      storeId: salonID,
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return SalonDetailModel(
       id: data['id'] ?? 0,
@@ -238,10 +234,10 @@ class TeamMemberModel {
     Map<String, dynamic> json, {
     String? imageBaseUrl,
   }) {
-    final imagePath = json['imageUrl'] ?? '';
-    final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
-        ? '$imageBaseUrl/$imagePath'
-        : imagePath;
+    final fullImageUrl = ImageUrlResolver.resolveTeamMemberImage(
+      path: json['imageUrl']?.toString(),
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return TeamMemberModel(
       id: json['id'] ?? '',
@@ -282,12 +278,10 @@ class ReviewModel {
     Map<String, dynamic> json, {
     String? imageBaseUrl,
   }) {
-    final userImagePath = json['userImage'];
-    final fullUserImageUrl = userImagePath != null &&
-            imageBaseUrl != null &&
-            userImagePath.toString().isNotEmpty
-        ? '$imageBaseUrl/$userImagePath'
-        : userImagePath;
+    final fullUserImageUrl = ImageUrlResolver.resolveProfileImage(
+      path: json['userImage']?.toString(),
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return ReviewModel(
       id: json['id'] ?? '',

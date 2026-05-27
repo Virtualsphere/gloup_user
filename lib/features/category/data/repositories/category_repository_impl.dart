@@ -56,24 +56,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       );
 
       // Extract salons from the response model
-      final entities = response.salons
-          .map((model) => SalonEntity(
-                id: model.id,
-                salonName: model.salonName,
-                salonImage: model.salonImage,
-                images: model.images,
-                rating: model.rating,
-                reviewCount: model.reviewCount,
-                distance: model.distance,
-                isPremium: model.isPremium,
-                isFavorite: model.isFavorite,
-                serviceName: model.serviceName,
-                servicePrice: model.servicePrice,
-                address: model.address,
-                categories: model.categories,
-                languageCodes: model.languageCodes,
-              ))
-          .toList();
+      final entities = response.salons.map((model) => model.toEntity()).toList();
       return Right(entities);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

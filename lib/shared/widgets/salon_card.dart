@@ -11,6 +11,9 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
+import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
+import 'package:tressy/shared/widgets/salon_location_row.dart';
+import 'package:tressy/shared/widgets/salon_network_image.dart';
 
 class SalonCard extends StatefulWidget {
   final int storeId; // Added store ID for API
@@ -60,6 +63,15 @@ class SalonCard extends StatefulWidget {
 
 class _SalonCardState extends State<SalonCard> {
   int _currentImageIndex = 0;
+
+  List<String> get _displayImages {
+    final fromList =
+        widget.images.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    if (fromList.isNotEmpty) return fromList;
+    final primary = widget.salonImage.trim();
+    if (primary.isNotEmpty) return [primary];
+    return [];
+  }
 
   // Language icon paths map
   static const Map<String, String> languageIcons = {
@@ -158,6 +170,8 @@ class _SalonCardState extends State<SalonCard> {
   }
 
   Widget _buildImageCarousel(bool isFavorite, bool isLoading, bool isDarkmode) {
+    final images = _displayImages;
+
     return Stack(
       children: [
         // Carousel images
@@ -166,61 +180,44 @@ class _SalonCardState extends State<SalonCard> {
             topLeft: Radius.circular(AppSizes.radiusM),
             topRight: Radius.circular(AppSizes.radiusM),
           ),
-          child: CarouselSlider(
-            options: CarouselOptions(
-              height: 150,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: widget.images.length > 1,
-              autoPlay: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentImageIndex = index;
-                });
-              },
-            ),
-            items: widget.images.map((imageUrl) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: isDarkmode
-                          ? AppColors.primaryDark.withValues(alpha: 0.1)
-                          : AppColors.primary.withValues(alpha: 0.1),
-                    ),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.content_cut,
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                size: 48,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Image not available',
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color:
-                                      AppColors.primary.withValues(alpha: 0.4),
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
+          child: images.isEmpty
+              ? SizedBox(
+                  height: 150,
+                  width: double.infinity,
+                  child: SalonNetworkImage(
+                    imageUrl: '',
+                    height: 150,
+                    logTag: 'SalonCard',
+                  ),
+                )
+              : CarouselSlider(
+                  options: CarouselOptions(
+                    height: 150,
+                    viewportFraction: 1.0,
+                    enableInfiniteScroll: images.length > 1,
+                    autoPlay: false,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentImageIndex = index;
+                      });
+                    },
+                  ),
+                  items: images.map((imageUrl) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 150,
+                          child: SalonNetworkImage(
+                            imageUrl: imageUrl,
+                            height: 150,
+                            logTag: 'SalonCard',
                           ),
                         );
                       },
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ),
+                    );
+                  }).toList(),
+                ),
         ),
         // Premium crown badge (top left)
         if (widget.isPremium)
@@ -313,13 +310,13 @@ class _SalonCardState extends State<SalonCard> {
           ),
         ),
         // Carousel indicators (left side)
-        if (widget.images.length > 1)
+        if (images.length > 1)
           Positioned(
             bottom: AppSizes.paddingS,
             left: AppSizes.paddingS,
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: widget.images.asMap().entries.map((entry) {
+              children: images.asMap().entries.map((entry) {
                 return Container(
                   width: _currentImageIndex == entry.key ? 20 : 6,
                   height: 6,
@@ -418,67 +415,32 @@ class _SalonCardState extends State<SalonCard> {
               ),
             ),
             child: ClipOval(
-              child: Image.network(
-                widget.salonImage,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    padding: EdgeInsets.all(3.0),
-                    child: SvgPicture.asset(AppIcons.icStore,
-                        width: AppSizes.iconXS,
-                        height: AppSizes.iconXS,
-                        colorFilter: ColorFilter.mode(
-                          isDarkMode
-                              ? AppColors.primaryDark.withValues(alpha: 0.7)
-                              : AppColors.primary.withValues(alpha: 0.7),
-                          BlendMode.srcIn,
-                        )),
-                  );
-                },
+              child: SalonNetworkImage(
+                imageUrl: widget.salonImage,
+                width: AppSizes.iconM,
+                height: AppSizes.iconM,
+                placeholderIconSize: 20,
+                showErrorLabel: false,
+                logTag: 'SalonCardAvatar',
               ),
             ),
           ),
           const SizedBox(width: AppSizes.spaceS),
           // Salon name and rating
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.isFullWidth)
-                  Text(
-                    widget.salonName,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
-                      height: 1.3,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                else
-                  SizedBox(
-                    height: 40,
-                    child: Text(
-                      widget.salonName,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode
-                            ? AppColors.primaryDark
-                            : AppColors.primary,
-                        height: 1.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
+            child: ResponsiveEllipsisText(
+              text: widget.salonName,
+              maxLines: 2,
+              style: context.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color:
+                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                height: 1.3,
+              ),
             ),
           ),
           const SizedBox(width: AppSizes.spaceS),
-          // Rating
+          // Rating — fixed width so the name keeps remaining space
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -519,62 +481,10 @@ class _SalonCardState extends State<SalonCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Location row
-          Row(
-            children: [
-              SvgPicture.asset(
-                AppIcons.icLocation,
-                width: AppSizes.iconXS,
-                height: AppSizes.iconXS,
-              ),
-              const SizedBox(width: 4),
-              Container(
-                constraints: const BoxConstraints(maxWidth: 180),
-                child: Text(
-                  () {
-                    final parts = (widget.address ?? '')
-                        .split(',')
-                        .map((e) => e.trim())
-                        .where((e) =>
-                            e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
-                        .toList();
-                    return parts.length > 2
-                        ? parts.sublist(parts.length - 2).join(', ')
-                        : parts.join(', ');
-                  }(),
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    overflow: TextOverflow.ellipsis,
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    fontSize: AppSizes.fontS,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-              // Distance
-              Text(
-                '${widget.distance.toStringAsFixed(1)} KM',
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontSize: AppSizes.fontS,
-                ),
-              ),
-            ],
+          SalonLocationRow(
+            locationLabel: widget.address,
+            distanceKm: widget.distance,
+            isDarkMode: isDarkMode,
           ),
           const SizedBox(height: AppSizes.spaceS),
           // Language and Category badges row (separate)

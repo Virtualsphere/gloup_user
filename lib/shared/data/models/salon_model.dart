@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:tressy/core/utils/image_url_resolver.dart';
+import 'package:tressy/core/utils/salon_address_formatter.dart';
 import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 /// Shared Pagination Model
@@ -44,6 +45,7 @@ class SalonModel {
   final int reviewCount;
   final double distance;
   final String address;
+  final String displayAddress;
   final bool isPremium;
   final bool isFavorite;
   final String? serviceName;
@@ -60,6 +62,7 @@ class SalonModel {
     required this.reviewCount,
     required this.distance,
     required this.address,
+    required this.displayAddress,
     this.isPremium = false,
     this.isFavorite = false,
     this.serviceName,
@@ -72,42 +75,69 @@ class SalonModel {
     Map<String, dynamic> json, {
     String? imageBaseUrl,
   }) {
-    final salonImagePath = json['salonImage'] ?? '';
-    final salonID = json['id']?.toString() ?? '';
-    final fullSalonImageUrl =
-        (imageBaseUrl != null && salonImagePath.isNotEmpty)
-            ? '$imageBaseUrl/$salonID/images/$salonImagePath'
-            : salonImagePath;
+    final salonId = json['id']?.toString() ?? '';
 
-    final imagesList = (json['images'] as List<dynamic>?)?.map((image) {
-          final imagePath = image?.toString() ?? '';
-          return (imageBaseUrl != null && imagePath.isNotEmpty)
-              ? '$imageBaseUrl/$salonID/images/$imagePath'
-              : imagePath;
-        }).toList() ??
-        [];
+    final gallery = ImageUrlResolver.resolveStoreGallery(
+      images: json['images'] as List<dynamic>?,
+      primaryImage: json['salonImage']?.toString(),
+      logo: json['logo']?.toString(),
+      storeId: salonId,
+      imageBaseUrl: imageBaseUrl,
+    );
 
-    debugPrint('[SalonModel] salonID: $salonID');
-    debugPrint('[SalonModel] salonImagePath: $salonImagePath');
-    debugPrint('[SalonModel] fullSalonImageUrl: $fullSalonImageUrl');
-    debugPrint('[SalonModel] imagesList: $imagesList');
+    final salonImage = gallery.isNotEmpty
+        ? gallery.first
+        : ImageUrlResolver.resolveStoreImage(
+            path: json['salonImage']?.toString(),
+            storeId: salonId,
+            imageBaseUrl: imageBaseUrl,
+          );
+
+    final rawAddress = json['address']?.toString() ?? '';
+    final area = json['area']?.toString();
+    final city = json['city']?.toString();
+    final displayAddress = _resolveDisplayAddress(
+      rawAddress: rawAddress,
+      area: area,
+      city: city,
+    );
 
     return SalonModel(
-      id: json['id']?.toString() ?? '',
+      id: salonId,
       salonName: json['salonName'] ?? '',
-      salonImage: fullSalonImageUrl,
-      images: imagesList,
-      rating: (json['rating'] ?? 0).toDouble(),
+      salonImage: salonImage,
+      images: gallery.isNotEmpty ? gallery : (salonImage.isNotEmpty ? [salonImage] : []),
+      rating: (json['rating'] as num?)?.toDouble() ?? 0,
       reviewCount: json['reviewCount'] ?? 0,
-      distance: (json['distance'] ?? 0).toDouble(),
+      distance: (json['distance'] as num?)?.toDouble() ?? 0,
       isPremium: json['isPremium'] ?? false,
       isFavorite: json['isFavorite'] ?? false,
       serviceName: json['serviceName'],
-      servicePrice: json['servicePrice']?.toDouble(),
-      address: json['address'] ?? 'Not available',
+      servicePrice: (json['servicePrice'] as num?)?.toDouble(),
+      address: rawAddress.isNotEmpty ? rawAddress : 'Not available',
+      displayAddress: displayAddress,
       categories: List<String>.from(json['categories'] ?? []),
       languageCodes: List<String>.from(json['languageCodes'] ?? []),
     );
+  }
+
+  static String _resolveDisplayAddress({
+    required String rawAddress,
+    String? area,
+    String? city,
+  }) {
+    final trimmedArea = area?.trim() ?? '';
+    final trimmedCity = city?.trim() ?? '';
+
+    if (trimmedArea.isNotEmpty && trimmedCity.isNotEmpty) {
+      if (trimmedArea.toLowerCase() == trimmedCity.toLowerCase()) {
+        return trimmedCity;
+      }
+      return '$trimmedArea, $trimmedCity';
+    }
+    if (trimmedCity.isNotEmpty) return trimmedCity;
+    if (trimmedArea.isNotEmpty) return trimmedArea;
+    return SalonAddressFormatter.areaAndCity(rawAddress);
   }
 
   /// Convert model to entity
@@ -121,6 +151,7 @@ class SalonModel {
       reviewCount: reviewCount,
       distance: distance,
       address: address,
+      displayAddress: displayAddress,
       isPremium: isPremium,
       isFavorite: isFavorite,
       serviceName: serviceName,
@@ -144,6 +175,7 @@ class SalonModel {
       'serviceName': serviceName,
       'servicePrice': servicePrice,
       'address': address,
+      'displayAddress': displayAddress,
       'categories': categories,
       'languageCodes': languageCodes,
     };

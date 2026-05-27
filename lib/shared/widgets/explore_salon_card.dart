@@ -10,6 +10,8 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart'
 import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
+import 'package:tressy/shared/widgets/salon_location_row.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 
 class ExploreSalonCard extends StatefulWidget {
@@ -370,8 +372,9 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(
-            widget.salonName,
+          child: ResponsiveEllipsisText(
+            text: widget.salonName,
+            maxLines: 2,
             style: context.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: isDarkMode
@@ -379,8 +382,6 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   : AppColors.textPrimary,
               height: 1.3,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(width: AppSizes.spaceS),
@@ -462,65 +463,11 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
           ],
         ),
         const SizedBox(height: AppSizes.spaceXS),
-        // Location and distance
-        Row(
-          children: [
-            SvgPicture.asset(
-              AppIcons.icLocation,
-              width: AppSizes.iconXS,
-              height: AppSizes.iconXS,
-            ),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                () {
-                  final parts = (widget.address ?? '')
-                      .split(',')
-                      .map((e) => e.trim())
-                      .where(
-                          (e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
-                      .toList();
-                  return parts.length > 2
-                      ? parts.sublist(parts.length - 2).join(', ')
-                      : parts.join(', ');
-                }(),
-                maxLines: 1,
-                style: context.textTheme.bodySmall?.copyWith(
-                  overflow: TextOverflow.ellipsis,
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontSize: AppSizes.fontS,
-                ),
-              ),
-            ),
-            // Only show distance if showDistance is true
-            if (widget.showDistance) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-              // Distance
-              Text(
-                '${widget.distance.toStringAsFixed(1)} KM',
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontSize: AppSizes.fontS,
-                ),
-              ),
-            ],
-          ],
+        SalonLocationRow(
+          locationLabel: widget.address,
+          distanceKm: widget.distance,
+          showDistance: showDistance,
+          isDarkMode: isDarkMode,
         ),
         const SizedBox(height: AppSizes.spaceS),
         // Language and Category badges row

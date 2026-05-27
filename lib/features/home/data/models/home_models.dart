@@ -1,3 +1,4 @@
+import 'package:tressy/core/utils/image_url_resolver.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 
 /// Carousel Banner Model
@@ -12,10 +13,10 @@ class CarouselBannerModel {
 
   factory CarouselBannerModel.fromJson(Map<String, dynamic> json,
       {String? imageBaseUrl}) {
-    final imagePath = json['imageUrl'] ?? '';
-    final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
-        ? '$imageBaseUrl/$imagePath'
-        : imagePath;
+    final fullImageUrl = ImageUrlResolver.resolveCdnAsset(
+      path: json['imageUrl']?.toString(),
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return CarouselBannerModel(
       id: json['id']?.toString() ?? '',

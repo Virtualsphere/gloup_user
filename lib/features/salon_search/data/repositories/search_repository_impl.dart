@@ -30,24 +30,7 @@ class SearchRepositoryImpl implements SearchRepository {
       );
 
       // Convert models to entities
-      final entities = response.salons
-          .map((model) => SalonEntity(
-                id: model.id,
-                salonName: model.salonName,
-                salonImage: model.salonImage,
-                images: model.images,
-                rating: model.rating,
-                reviewCount: model.reviewCount,
-                distance: model.distance,
-                address: model.address,
-                isPremium: model.isPremium,
-                isFavorite: model.isFavorite,
-                serviceName: model.serviceName,
-                servicePrice: model.servicePrice,
-                categories: model.categories,
-                languageCodes: model.languageCodes,
-              ))
-          .toList();
+      final entities = response.salons.map((model) => model.toEntity()).toList();
 
       return Right(entities);
     } on NetworkException catch (e) {
@@ -84,24 +67,7 @@ class SearchRepositoryImpl implements SearchRepository {
       );
 
       // Convert models to entities
-      final entities = response.salons
-          .map((model) => SalonEntity(
-                id: model.id,
-                salonName: model.salonName,
-                salonImage: model.salonImage,
-                images: model.images,
-                rating: model.rating,
-                reviewCount: model.reviewCount,
-                distance: model.distance,
-                address: model.address,
-                isPremium: model.isPremium,
-                isFavorite: model.isFavorite,
-                serviceName: model.serviceName,
-                servicePrice: model.servicePrice,
-                categories: model.categories,
-                languageCodes: model.languageCodes,
-              ))
-          .toList();
+      final entities = response.salons.map((model) => model.toEntity()).toList();
 
       return Right(entities);
     } on NetworkException catch (e) {

@@ -1,3 +1,4 @@
+import 'package:tressy/core/utils/image_url_resolver.dart';
 import 'package:tressy/features/category/domain/entities/category_entity.dart';
 
 class CategoryModel extends CategoryEntity {
@@ -9,10 +10,10 @@ class CategoryModel extends CategoryEntity {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json,
       {String? imageBaseUrl}) {
-    final imagePath = json['imageUrl'] ?? '';
-    final fullImageUrl = imageBaseUrl != null && imagePath.isNotEmpty
-        ? '$imageBaseUrl/$imagePath'
-        : imagePath;
+    final fullImageUrl = ImageUrlResolver.resolveCdnAsset(
+      path: json['imageUrl']?.toString(),
+      imageBaseUrl: imageBaseUrl,
+    );
 
     return CategoryModel(
       id: json['id']?.toString() ?? '',

@@ -1,5 +1,10 @@
+import 'package:flutter/foundation.dart';
+import 'package:tressy/core/utils/app_logger.dart';
+
 class ApiRoutes {
   ApiRoutes._();
+
+  static const String _logTag = 'API';
 
   // Base URL - Update this with your actual API base URL
   static const String baseUrl = 'https://api.v1.gloup.in';
@@ -66,6 +71,86 @@ class ApiRoutes {
   // Map Markers (Clustered)
   static const String mapMarkersClustered =
       '$baseUrl/user/app/v2/salons/map-markers-clustered';
+
+  /// Human-readable name → full URL for every Gloup backend endpoint.
+  static const Map<String, String> registeredEndpoints = {
+    // Auth
+    'sendOtp': sendOtp,
+    'verifyOtp': verifyOtp,
+    'deviceId': deviceId,
+    'googleLogin': googleLogin,
+    'appleLogin': appleLogin,
+    'logout': logout,
+    // Home & discovery
+    'getBanners': getBanners,
+    'getCategories': getCategories,
+    'getNearbyStores': getNearbyStores,
+    'getAllStores': getAllStores,
+    'getTopSalons': getTopSalons,
+    // Favorites
+    'toggleFavorite': toggleFavorite,
+    'getFavorites': getFavorites,
+    // Salon
+    'getStoreDetails': getStoreDetails,
+    'mapMarkersClustered': mapMarkersClustered,
+    // Booking
+    'getSlotStatus': getSlotStatus,
+    'getAllGuests': getAllGuests,
+    'addGuest': addGuest,
+    'updateGuest': updateGuest,
+    'createOrder': createOrder,
+    'paymentSuccess': paymentSuccess,
+    // Profile
+    'getUserProfile': getUserProfile,
+    'deleteProfile': deleteProfile,
+    // Appointments & coupons
+    'getAllAppointments': getAllAppointments,
+    'getActiveCoupons': getActiveCoupons,
+  };
+
+  /// External APIs used outside Dio (e.g. Google Places).
+  static const Map<String, String> externalEndpoints = {
+    'googlePlacesNearbySearch':
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
+    'googlePlacesAutocomplete':
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+    'googlePlacesDetails':
+        'https://maps.googleapis.com/maps/api/place/details/json',
+  };
+
+  /// Resolves a friendly endpoint name from a request URL (ignores query string).
+  static String? nameForUrl(String url) {
+    final pathOnly = url.split('?').first;
+    for (final entry in registeredEndpoints.entries) {
+      if (pathOnly == entry.value) return entry.key;
+    }
+    for (final entry in externalEndpoints.entries) {
+      if (pathOnly.startsWith(entry.value)) return entry.key;
+    }
+    return null;
+  }
+
+  /// Prints the full API catalog once at startup (debug builds only).
+  static void logRegisteredEndpoints() {
+    if (!kDebugMode) return;
+
+    AppLogger.info(
+      '══════════ Gloup API catalog (${registeredEndpoints.length} backend) ══════════',
+      tag: _logTag,
+    );
+    registeredEndpoints.forEach((name, url) {
+      AppLogger.info('  $name → $url', tag: _logTag);
+    });
+
+    AppLogger.info(
+      '────────── External APIs (${externalEndpoints.length}) ──────────',
+      tag: _logTag,
+    );
+    externalEndpoints.forEach((name, url) {
+      AppLogger.info('  $name → $url', tag: _logTag);
+    });
+    AppLogger.info('══════════════════════════════════════════════════════', tag: _logTag);
+  }
 
   // Helper method to build URLs with query parameters
   static String withQueryParams(String endpoint, Map<String, dynamic> params) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/core/utils/image_url_resolver.dart';
+import 'package:tressy/shared/widgets/salon_network_image.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
@@ -295,8 +297,14 @@ class _BookingsPageState extends State<BookingsPage>
     }
 
     final imageUrl = appointment.images.isNotEmpty
-        ? '${ApiRoutes.imageBaseUrl}/${appointment.images.first}'
+        ? ImageUrlResolver.resolveStoreImage(
+            path: appointment.images.first,
+            storeId: appointment.storeId.toString(),
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          )
         : null;
+    final hasImage =
+        imageUrl != null && imageUrl.isNotEmpty && ImageUrlResolver.isAbsoluteUrl(imageUrl);
 
     final address = [appointment.addressLine1, appointment.city]
         .where((s) => s.isNotEmpty)
@@ -331,12 +339,11 @@ class _BookingsPageState extends State<BookingsPage>
                 SizedBox(
                   height: 130,
                   width: double.infinity,
-                  child: imageUrl != null
-                      ? Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              _bannerPlaceholder(isDarkMode),
+                  child: hasImage
+                      ? SalonNetworkImage(
+                          imageUrl: imageUrl,
+                          height: 130,
+                          logTag: 'BookingsPage',
                         )
                       : _bannerPlaceholder(isDarkMode),
                 ),

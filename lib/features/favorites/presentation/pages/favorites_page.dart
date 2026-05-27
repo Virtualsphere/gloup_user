@@ -272,7 +272,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                     isFavorite: salon.isFavorite,
                                     serviceName: salon.serviceName,
                                     servicePrice: salon.servicePrice,
-                                    address: salon.address,
+                                    address: salon.displayAddress,
                                     categories: salon.categories,
                                     languageCodes: salon.languageCodes,
                                     showDistance: false,
