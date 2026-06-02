@@ -9,6 +9,7 @@ import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
 import 'package:tressy/features/category/presentation/bloc/category_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/category_image.dart';
 
 class CategorySection extends StatefulWidget {
   final Function(String categoryName, int categoryIndex, String categoryId)?
@@ -125,6 +126,7 @@ class _CategorySectionState extends State<CategorySection> {
                                 category.imageUrl,
                                 id: category.id,
                                 index: index,
+                                apiCategories: categories,
                               );
                             },
                           ),
@@ -223,6 +225,7 @@ class _CategorySectionState extends State<CategorySection> {
     String imageUrl, {
     required String id,
     required int index,
+    required List<CategoryEntity> apiCategories,
   }) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     final bool isActive = _selectedIndex == index;
@@ -267,54 +270,28 @@ class _CategorySectionState extends State<CategorySection> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  child: imageUrl.isNotEmpty
-                      ? Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: isDarkMode
-                                  ? AppColors.primaryDark.withValues(alpha: 0.1)
-                                  : AppColors.primary.withValues(alpha: 0.1),
-                              child: Icon(
-                                Icons.content_cut,
-                                color: isDarkMode
-                                    ? AppColors.primaryDark
-                                        .withValues(alpha: 0.3)
-                                    : AppColors.primary.withValues(alpha: 0.3),
-                                size: AppSizes.iconM,
-                              ),
-                            );
-                          },
-                        )
-                      : Container(
-                          color: title == 'All' 
-                              ? (isDarkMode ? AppColors.surfaceDark : const Color(0xFFF5F5F5))
-                              : AppColors.primary.withValues(alpha: 0.1),
-                          child: title == 'All'
-                              ? null
-                              : const Icon(
-                                  Icons.category,
-                                  color: AppColors.primary,
-                                  size: 30,
-                                ),
-                        ),
+                  child: SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: ColoredBox(
+                      color: title == 'All'
+                          ? (isDarkMode
+                              ? AppColors.surfaceDark
+                              : const Color(0xFFF5F5F5))
+                          : (isDarkMode
+                              ? AppColors.primaryDark.withValues(alpha: 0.08)
+                              : const Color(0xFFF3F4F6)),
+                      child: CategoryImage(
+                        categoryName: title,
+                        imageUrl: imageUrl,
+                        apiCategories: apiCategories,
+                        width: 64,
+                        height: 64,
+                        fit: title == 'All' ? BoxFit.contain : BoxFit.cover,
+                        isDarkMode: isDarkMode,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: AppSizes.spaceXS),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
-import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/utils/salon_address_formatter.dart';
 import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
 
@@ -14,7 +14,7 @@ class SalonLocationRow extends StatelessWidget {
     this.distanceKm,
     this.showDistance = true,
     this.isDarkMode = false,
-    this.useTwoLines = true,
+    this.useTwoLines = false,
   });
 
   /// Pre-formatted `displayAddress` or raw address (parsed internally).
@@ -28,96 +28,57 @@ class SalonLocationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final parts = SalonAddressFormatter.parse(locationLabel);
     final secondaryColor =
-        isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary;
-    final locationStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: secondaryColor,
-          fontSize: AppSizes.fontS,
-          height: 1.25,
-        );
-    final cityStyle = locationStyle?.copyWith(fontWeight: FontWeight.w600);
-
-    final showTwoLines = useTwoLines && parts.hasArea && parts.hasCity;
+        isDarkMode ? AppColors.textSecondaryDark : const Color(0xFF737373);
+    
+    final locationStyle = GoogleFonts.inter(
+      color: secondaryColor,
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 17 / 14,
+    );
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: SvgPicture.asset(
-            AppIcons.icLocation,
-            width: AppSizes.iconXS,
-            height: AppSizes.iconXS,
+        SvgPicture.asset(
+          AppIcons.icLocation,
+          width: 14,
+          height: 16,
+          colorFilter: ColorFilter.mode(
+            secondaryColor,
+            BlendMode.srcIn,
           ),
         ),
-        const SizedBox(width: 4),
-        Expanded(
-          child: showTwoLines
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ResponsiveEllipsisText(
-                      text: parts.area,
-                      style: locationStyle,
-                      maxLines: 1,
-                    ),
-                    ResponsiveEllipsisText(
-                      text: parts.city,
-                      style: cityStyle,
-                      maxLines: 1,
-                    ),
-                  ],
-                )
-              : ResponsiveEllipsisText(
-                  text: parts.singleLine,
-                  style: locationStyle,
-                  maxLines: 2,
-                ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: ResponsiveEllipsisText(
+            text: parts.singleLine,
+            style: locationStyle,
+            maxLines: 1,
+          ),
         ),
         if (showDistance && distanceKm != null) ...[
-          const SizedBox(width: 6),
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: _DistanceChip(
-              distanceKm: distanceKm!,
-              isDarkMode: isDarkMode,
+          const SizedBox(width: 8),
+          Container(
+            width: 4,
+            height: 4,
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${distanceKm!.toStringAsFixed(1)} km',
+            style: GoogleFonts.inter(
+              color: secondaryColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              height: 17 / 14,
             ),
           ),
         ],
       ],
-    );
-  }
-}
-
-class _DistanceChip extends StatelessWidget {
-  const _DistanceChip({
-    required this.distanceKm,
-    required this.isDarkMode,
-  });
-
-  final double distanceKm;
-  final bool isDarkMode;
-
-  @override
-  Widget build(BuildContext context) {
-    final color =
-        isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? AppColors.primaryDark.withValues(alpha: 0.12)
-            : AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        '${distanceKm.toStringAsFixed(1)} KM',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
     );
   }
 }

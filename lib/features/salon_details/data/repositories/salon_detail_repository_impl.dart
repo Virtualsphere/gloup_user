@@ -43,6 +43,7 @@ class SalonDetailRepositoryImpl implements SalonDetailRepository {
                   discountPercentage: s.discountPercentage,
                   isPopular: s.isPopular,
                   category: s.category,
+                  serviceFor: s.serviceFor,
                 ))
             .toList(),
         ambients: model.ambients

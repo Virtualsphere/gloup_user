@@ -94,6 +94,27 @@ class AppColors {
   static const Color scaffoldBackground = Color(0XFFFFFFFF);
   static const Color greyColor = Color(0xFF808080);
 
+  // Gender selector tabs — Figma Frame 1912054785
+  static const Color genderTabMenAccent = Color(0xFF0C8CE9);
+  static const Color genderTabMenSelectedBackground = Color(0xFFEAF2F8);
+  static const Color genderTabMenBorderOpaque = Color(0x170C8CE9);
+  static const Color genderTabWomenAccent = Color(0xFF685DDC);
+  static const Color genderTabWomenSelectedBackground = Color(0xFFF0EDFA);
+  static const Color genderTabWomenBorderOpaque = Color(0x17685DDC);
+  static const Color genderTabUnselectedText = Color(0xFF6B7280);
+
+  // Services @49 section — Figma Frame 4844
+  static const Color servicesAt49CardBase = Color(0xFFF7FBFC);
+  static const Color servicesAt49CardOverlay = Color(0x1700BBFF);
+  static const Color servicesAt49WomenCardBase = Color(0xFFE4D8F9);
+  static const Color servicesAt49WomenCardOverlay = Color(0x17783EFF);
+  static const Color servicesAt49Subtitle = Color(0xFF727272);
+  static const Color servicesAt49MenBrushFill =
+      Color.fromRGBO(12, 140, 233, 0.21);
+  static const Color servicesAt49WomenBrushFill =
+      Color.fromRGBO(104, 93, 220, 0.19);
+  static const Color serviceItemPriceGreen = Color(0xFF22C55E);
+
   // Gradient Colors - Light Theme
   static const List<Color> primaryGradient = [
     primary,

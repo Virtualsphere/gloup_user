@@ -139,6 +139,22 @@ class SalonDetailModel {
   }
 }
 
+String? _parseServiceFor(Map<String, dynamic> json) {
+  final raw = json['serviceFor'] ??
+      json['service_for'] ??
+      json['gender'] ??
+      json['sex'] ??
+      json['for'];
+  if (raw == null) return null;
+  final value = raw.toString().toLowerCase().trim();
+  if (value.contains('female') || value.contains('women')) return 'female';
+  if (value.contains('male') || value == 'men' || value == 'm') {
+    return 'male';
+  }
+  if (value == 'f') return 'female';
+  return value;
+}
+
 class ServiceModel {
   final int id;
   final String name;
@@ -174,7 +190,7 @@ class ServiceModel {
       discountPercentage: json['discountPercentage'],
       isPopular: json['isPopular'] ?? false,
       category: json['category'] ?? 'Featured',
-      serviceFor: json['serviceFor'],
+      serviceFor: _parseServiceFor(json),
     );
   }
 

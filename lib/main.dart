@@ -15,6 +15,9 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart'
 import 'package:tressy/firebase_options.dart';
 import 'package:upgrader/upgrader.dart';
 
+import 'package:app_links/app_links.dart';
+import 'package:tressy/core/router/route_names.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,6 +35,15 @@ void main() async {
 
   // Initialize Firebase Cloud Messaging (non-blocking token fetch runs in bg)
   await FirebaseNotificationService.initialize();
+
+  // Initialize App Links listener
+  final appLinks = AppLinks();
+  appLinks.uriLinkStream.listen((uri) {
+    debugPrint('App Link Received: $uri');
+    if (uri.path == "/open" || uri.path == "/open/") {
+      AppRouter.router.go(RouteNames.home);
+    }
+  });
 
   runApp(const MyApp());
 }

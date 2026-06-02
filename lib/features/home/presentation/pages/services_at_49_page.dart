@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -9,6 +10,8 @@ import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/core/utils/category_image_resolver.dart';
+import 'package:tressy/shared/widgets/category_image.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 
 /// Data model for a service category fetched from the API
@@ -17,12 +20,14 @@ class _ServiceCategory {
   final String name;
   final String searchCategory;
   final int discountedAmount;
+  final String? imageUrl;
 
   const _ServiceCategory({
     required this.id,
     required this.name,
     required this.searchCategory,
     required this.discountedAmount,
+    this.imageUrl,
   });
 
   factory _ServiceCategory.fromJson(Map<String, dynamic> json) {
@@ -31,6 +36,7 @@ class _ServiceCategory {
       name: json['category_name']?.toString() ?? '',
       searchCategory: json['search_category']?.toString() ?? '',
       discountedAmount: (json['discounted_amount'] as num?)?.toInt() ?? 0,
+      imageUrl: CategoryImageResolver.apiImageFromJson(json),
     );
   }
 }
@@ -224,27 +230,6 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
     return match.first.discountedAmount.toDouble();
   }
 
-  /// Get a local asset image path based on category name
-  String _getCategoryImage(String categoryName) {
-    final lowerName = categoryName.toLowerCase();
-    if (lowerName == 'all') {
-      return 'assets/images/png/parlour.png';
-    } else if (lowerName.contains('hair') || lowerName.contains('cut')) {
-      return 'assets/images/png/hair_style_c.png';
-    } else if (lowerName.contains('shave')) {
-      return 'assets/images/png/scissor_1.png';
-    } else if (lowerName.contains('trim')) {
-      return 'assets/images/png/dryer_1.png';
-    } else if (lowerName.contains('massage')) {
-      return 'assets/images/png/massage_c.png';
-    } else if (lowerName.contains('makeup') || lowerName.contains('facial')) {
-      return 'assets/images/png/makeup_c.png';
-    } else if (lowerName.contains('nail')) {
-      return 'assets/images/png/nail_c.png';
-    }
-    return 'assets/images/png/saloon.png';
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
@@ -411,9 +396,11 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
 
     return Text(
       '${_salons.length} Salon${_salons.length != 1 ? 's' : ''} Available',
-      style: context.textTheme.bodyMedium?.copyWith(
-        color: isDarkMode ? const Color(0xFF66BB6A) : const Color(0xFF2E7D32),
-        fontWeight: FontWeight.w600,
+      style: GoogleFonts.inter(
+        color: const Color(0xFF6E7287),
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        height: 17 / 14,
       ),
     );
   }
@@ -522,20 +509,27 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // ── Category image ──
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : const Color(0xFFF3F4F6),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      _getCategoryImage(category.name),
-                      fit: BoxFit.contain,
+                  // ── Category image (fills card) ──
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: 52,
+                      height: 52,
+                      child: ColoredBox(
+                        color: isDarkMode
+                            ? AppColors.surfaceDark
+                            : const Color(0xFFF3F4F6),
+                        child: CategoryImage(
+                          categoryName: category.name,
+                          imageUrl: category.imageUrl,
+                          width: 52,
+                          height: 52,
+                          fit: category.name.toLowerCase() == 'all'
+                              ? BoxFit.contain
+                              : BoxFit.cover,
+                          isDarkMode: isDarkMode,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),

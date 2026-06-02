@@ -11,7 +11,7 @@ class CategoryModel extends CategoryEntity {
   factory CategoryModel.fromJson(Map<String, dynamic> json,
       {String? imageBaseUrl}) {
     final fullImageUrl = ImageUrlResolver.resolveCdnAsset(
-      path: json['imageUrl']?.toString(),
+      path: json['image']?.toString() ?? json['imageUrl']?.toString(),
       imageBaseUrl: imageBaseUrl,
     );
 

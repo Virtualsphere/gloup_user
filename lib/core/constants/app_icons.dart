@@ -18,6 +18,11 @@ class AppIcons {
   static const icStore = 'assets/icons/ic_store.svg';
 
   // UI icons
+  /// Brush stroke behind @₹49 (Figma 2548:2797)
+  static const icVector47Brush = 'assets/icons/ic_vector_47.svg';
+  static const icMale = 'assets/icons/male.svg';
+  static const icFemale = 'assets/icons/female.svg';
+  static const icClock = 'assets/icons/ic_clock.svg';
   static const icCrown = 'assets/icons/ic_crown.svg';
   static const icSettings = 'assets/icons/ic_settings.svg';
   static const icMoon = 'assets/icons/ic_moon.svg';

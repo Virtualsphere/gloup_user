@@ -264,8 +264,9 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.35; // 35% for carousel
+    final screenWidth = context.screenWidth;
+    // Base height on screen width to maintain a consistent aspect ratio across all devices
+    final carouselHeight = screenWidth * 0.85;
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocProvider(
       create: (context) {
@@ -368,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                                                     right: 0,
                                                     child: Image.network(
                                                       banner.imageUrl,
-                                                      fit: BoxFit.cover,
+                                                      fit: BoxFit.fill,
                                                       errorBuilder: (context,
                                                           error, stackTrace) {
                                                         return Container(
@@ -635,14 +636,20 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: AppSizes.paddingM),
-                      child: ServicesAt49Section(),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                      child: const Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: AppSizes.paddingM),
+                            child: ServicesAt49Section(),
+                          ),
+                          AppSizes.heightM,
+                        ],
+                      ),
                     ),
                   ),
-
-                  SliverToBoxAdapter(child: AppSizes.heightM),
 
                   // Sticky Category Section
                   SliverPersistentHeader(
@@ -669,7 +676,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  SliverToBoxAdapter(child: AppSizes.heightM),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                      child: AppSizes.heightM,
+                    ),
+                  ),
 
                   // Popular Services Nearby Section Header
                   SliverToBoxAdapter(
