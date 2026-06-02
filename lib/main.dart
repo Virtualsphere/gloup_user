@@ -13,6 +13,7 @@ import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/firebase_options.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +68,15 @@ class MyApp extends StatelessWidget {
               darkTheme: AppTheme.darkTheme,
               themeMode: themeProvider.themeMode,
               routerConfig: AppRouter.router,
+              builder: (context, child) {
+                return UpgradeAlert(
+                  showIgnore: false,
+                  showLater: false,
+                  dialogStyle: UpgradeDialogStyle.cupertino,
+                  upgrader: Upgrader(),
+                  child: child ?? const SizedBox.shrink(),
+                );
+              },
             );
           },
         ),

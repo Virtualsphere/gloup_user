@@ -258,34 +258,31 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     bottom: AppSizes.paddingM),
-                                child: SizedBox(
-                                  height: 150,
-                                  child: ExploreSalonCard(
-                                    storeId: int.tryParse(salon.id) ?? 0,
-                                    salonName: salon.salonName,
-                                    salonImage: salon.salonImage,
-                                    images: salon.images,
-                                    rating: salon.rating,
-                                    reviewCount: salon.reviewCount,
-                                    distance: salon.distance,
-                                    isPremium: salon.isPremium,
-                                    isFavorite: salon.isFavorite,
-                                    serviceName: salon.serviceName,
-                                    servicePrice: salon.servicePrice,
-                                    address: salon.displayAddress,
-                                    categories: salon.categories,
-                                    languageCodes: salon.languageCodes,
-                                    showDistance: false,
-                                    onTap: () {
-                                      GoRouter.of(context).push(
-                                        RouteNames.salonDetails,
-                                        extra: {
-                                          'salonId': salon.id,
-                                          'salonName': salon.salonName,
-                                        },
-                                      );
-                                    },
-                                  ),
+                                child: ExploreSalonCard(
+                                  storeId: int.tryParse(salon.id) ?? 0,
+                                  salonName: salon.salonName,
+                                  salonImage: salon.salonImage,
+                                  images: salon.images,
+                                  rating: salon.rating,
+                                  reviewCount: salon.reviewCount,
+                                  distance: salon.distance,
+                                  isPremium: salon.isPremium,
+                                  isFavorite: salon.isFavorite,
+                                  serviceName: salon.serviceName,
+                                  servicePrice: salon.servicePrice,
+                                  address: salon.displayAddress,
+                                  categories: salon.categories,
+                                  languageCodes: salon.languageCodes,
+                                  showDistance: false,
+                                  onTap: () {
+                                    GoRouter.of(context).push(
+                                      RouteNames.salonDetails,
+                                      extra: {
+                                        'salonId': salon.id,
+                                        'salonName': salon.salonName,
+                                      },
+                                    );
+                                  },
                                 ),
                               );
                             },

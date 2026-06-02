@@ -34,6 +34,8 @@ class ApiRoutes {
   static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
   static const String getAllStores = '$baseUrl/user/app/v2/get-all-stores';
   static const String getTopSalons = '$baseUrl/user/app/v2/salons/top';
+  static const String getTopCategories = '$baseUrl/user/app/v2/services/top-categories';
+  static const String getStoresByCategory = '$baseUrl/user/app/v2/stores/by-category';
 
   // Favorites Endpoints
   static const String toggleFavorite = '$baseUrl/user/app/v2/favourites';
@@ -87,6 +89,8 @@ class ApiRoutes {
     'getNearbyStores': getNearbyStores,
     'getAllStores': getAllStores,
     'getTopSalons': getTopSalons,
+    'getTopCategories': getTopCategories,
+    'getStoresByCategory': getStoresByCategory,
     // Favorites
     'toggleFavorite': toggleFavorite,
     'getFavorites': getFavorites,

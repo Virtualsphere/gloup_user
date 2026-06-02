@@ -635,6 +635,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: AppSizes.paddingM),
+                      child: ServicesAt49Section(),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: AppSizes.heightM),
+
                   // Sticky Category Section
                   SliverPersistentHeader(
                     pinned: true,
@@ -658,12 +667,6 @@ class _HomePageState extends State<HomePage> {
                       initialGender: _selectedGender,
                       onGenderSelected: _onGenderChanged,
                     ),
-                  ),
-
-                  SliverToBoxAdapter(child: AppSizes.heightM),
-
-                  const SliverToBoxAdapter(
-                    child: ServicesAt49Section(),
                   ),
 
                   SliverToBoxAdapter(child: AppSizes.heightM),

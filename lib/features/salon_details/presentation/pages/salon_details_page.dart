@@ -106,7 +106,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   final List<String> _tabs = [
     'Services',
     'About',
-    'Ambients',
+    'Amenities',
     'Team',
     'Reviews',
     'Opening Hours',
@@ -117,7 +117,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   final Map<String, GlobalKey> _sectionKeys = {
     'Services': GlobalKey(),
     'About': GlobalKey(),
-    'Ambients': GlobalKey(),
+    'Amenities': GlobalKey(),
     'Team': GlobalKey(),
     'Reviews': GlobalKey(),
     'Opening Hours': GlobalKey(),
@@ -1130,7 +1130,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             SalonDetailsShimmers.buildServicesShimmer(context, isDarkMode)
           else if (title == 'About')
             SalonDetailsShimmers.buildAboutShimmer(context, isDarkMode)
-          else if (title == 'Ambients')
+          else if (title == 'Amenities')
             SalonDetailsShimmers.buildAmbientsShimmer(context, isDarkMode)
           else if (title == 'Team')
             SalonDetailsShimmers.buildTeamShimmer(context, isDarkMode)
@@ -1193,7 +1193,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
             _buildServicesSection(isDarkMode, salonDetail)
           else if (title == 'About')
             _buildAboutSection(isDarkMode, salonDetail)
-          else if (title == 'Ambients')
+          else if (title == 'Amenities')
             _buildAmbientsSection(isDarkMode, salonDetail)
           else if (title == 'Team')
             _buildTeamSection(isDarkMode, salonDetail)
@@ -1745,20 +1745,25 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       );
     }
 
-    // Extract unique categories from services
+    // Build tabs: Featured + unique categories from services
     final serviceCategories = _getUniqueCategories(salonDetail.services);
+    final categoriesWithAll = ['Featured', ...serviceCategories];
 
-    // Add "All" at the beginning
-    final categoriesWithAll = ['All', ...serviceCategories];
-
-    final currentCategory = categoriesWithAll[_activeServiceCategoryIndex];
+    final currentCategory = categoriesWithAll[
+        _activeServiceCategoryIndex.clamp(0, categoriesWithAll.length - 1)];
 
     // Filter services based on selected category
-    final filteredServices = currentCategory == 'All'
-        ? salonDetail.services
-        : salonDetail.services
-            .where((service) => service.category == currentCategory)
-            .toList();
+    List<ServiceEntity> filteredServices;
+    if (currentCategory == 'Featured') {
+      // Show popular services first, then all
+      final popular =
+          salonDetail.services.where((s) => s.isPopular).toList();
+      filteredServices = popular.isNotEmpty ? popular : salonDetail.services;
+    } else {
+      filteredServices = salonDetail.services
+          .where((service) => service.category == currentCategory)
+          .toList();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1780,7 +1785,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   });
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  margin: const EdgeInsets.only(right: AppSizes.paddingS),
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSizes.paddingM,
                   ),
@@ -1790,8 +1795,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                             ? AppColors.primaryDark
                             : AppColors.primary)
                         : (isDarkMode
-                            ? AppColors.textSecondary.withValues(alpha: 0.2)
-                            : AppColors.textSecondary.withValues(alpha: 0.15)),
+                            ? AppColors.textSecondary
+                                .withValues(alpha: 0.15)
+                            : AppColors.textSecondary
+                                .withValues(alpha: 0.1)),
                     borderRadius:
                         BorderRadius.circular(AppSizes.radiusCircular),
                   ),
@@ -1802,12 +1809,13 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                         color: isActive
                             ? (isDarkMode
                                 ? AppColors.primary
-                                : AppColors.primaryDark)
+                                : AppColors.onPrimary)
                             : (isDarkMode
                                 ? AppColors.textSecondaryDark
                                 : AppColors.textSecondary),
                         fontSize: AppSizes.fontS,
-                        fontWeight: FontWeight.w500,
+                        fontWeight:
+                            isActive ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1848,15 +1856,39 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           border: Border.all(
-            color: isDarkMode
-                ? AppColors.textSecondary.withValues(alpha: 0.2)
-                : AppColors.textSecondary.withValues(alpha: 0.1),
+            color: isSelected
+                ? (isDarkMode
+                    ? AppColors.primaryDark.withValues(alpha: 0.5)
+                    : AppColors.primary.withValues(alpha: 0.3))
+                : (isDarkMode
+                    ? AppColors.textSecondary.withValues(alpha: 0.2)
+                    : AppColors.textSecondary.withValues(alpha: 0.1)),
           ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left side - Expanded
+            // Left side - Gender icon or fallback
+            if (service.serviceFor == 'male' || service.serviceFor == 'female')
+              Padding(
+                padding: const EdgeInsets.only(top: 2.0),
+                child: SvgPicture.asset(
+                  'assets/icons/${service.serviceFor}.svg',
+                  width: 14,
+                  height: 18,
+                ),
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Icon(
+                  Icons.content_cut,
+                  color: Color(0xFF1ECB5D),
+                  size: 16,
+                ),
+              ),
+            const SizedBox(width: 12),
+            // Middle - Service info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1864,12 +1896,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   // Row 1: Service title + Popular badge
                   Row(
                     children: [
-                      // Service title
                       Flexible(
                         child: Text(
                           service.name,
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: isDarkMode
                                 ? AppColors.textPrimaryDark
                                 : AppColors.textPrimary,
@@ -1878,39 +1909,39 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      // Popular badge (optional)
                       if (service.isPopular) ...[
-                        const SizedBox(width: AppSizes.spaceS),
+                        const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingS,
+                            horizontal: 6,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.info.withValues(alpha: 0.15),
+                            color: const Color(0xFF0C8CE9).withValues(alpha: 0.12),
                             borderRadius:
-                                BorderRadius.circular(AppSizes.radiusS),
+                                BorderRadius.circular(4),
                           ),
-                          child: Text(
-                            'Popular',
+                          child: const Text(
+                            'POPULAR',
                             style: TextStyle(
-                              color: AppColors.info,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0C8CE9),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ),
                       ],
                     ],
                   ),
-                  AppSizes.heightS,
+                  const SizedBox(height: 4),
                   // Row 2: Clock icon + duration
                   Row(
                     children: [
                       SvgPicture.asset(
                         'assets/icons/ic_clock.svg',
-                        width: 14,
-                        height: 14,
+                        width: 13,
+                        height: 13,
                         colorFilter: ColorFilter.mode(
                           isDarkMode
                               ? AppColors.textSecondaryDark
@@ -1918,23 +1949,22 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           BlendMode.srcIn,
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceXS),
+                      const SizedBox(width: 4),
                       Text(
                         service.duration,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: isDarkMode
                               ? AppColors.textSecondaryDark
                               : AppColors.textSecondary,
-                          fontSize: 12,
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ),
-                  AppSizes.heightS,
-                  // Row 3: Price + Discount badge
+                  const SizedBox(height: 6),
+                  // Row 3: Price + Original price + Discount badge
                   Row(
                     children: [
-                      // Current price
                       Text(
                         '₹${service.price.toStringAsFixed(0)}',
                         style: context.textTheme.bodyLarge?.copyWith(
@@ -1942,50 +1972,51 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           color: isDarkMode
                               ? AppColors.textPrimaryDark
                               : AppColors.textPrimary,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
-                      // Original price (strikethrough)
                       if (service.originalPrice != null) ...[
-                        const SizedBox(width: AppSizes.spaceS),
+                        const SizedBox(width: 6),
                         Text(
                           '₹${service.originalPrice!.toStringAsFixed(0)}',
                           style: context.textTheme.bodySmall?.copyWith(
                             color: isDarkMode
                                 ? AppColors.textSecondaryDark
                                 : AppColors.textSecondary,
-                            fontSize: 12,
+                            fontSize: 11,
                             decoration: TextDecoration.lineThrough,
+                            decorationColor: isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ],
-                      // Discount badge
                       if (service.discountPercentage != null) ...[
-                        const SizedBox(width: AppSizes.spaceS),
+                        const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingS,
+                            horizontal: 6,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.success.withValues(alpha: 0.15),
+                            color: const Color(0xFF1ECB5D).withValues(alpha: 0.12),
                             borderRadius:
-                                BorderRadius.circular(AppSizes.radiusS),
+                                BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.local_offer,
-                                color: AppColors.success,
-                                size: 10,
+                                color: Color(0xFF1ECB5D),
+                                size: 9,
                               ),
                               const SizedBox(width: 2),
                               Text(
                                 '${service.discountPercentage} Off',
-                                style: TextStyle(
-                                  color: AppColors.success,
-                                  fontSize: 10,
+                                style: const TextStyle(
+                                  color: Color(0xFF1ECB5D),
+                                  fontSize: 9,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1998,43 +2029,58 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 ],
               ),
             ),
-            const SizedBox(width: AppSizes.paddingM),
-            // Right side - Add/Selected button
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingM,
-                vertical: AppSizes.paddingS,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? (isDarkMode
-                        ? AppColors.borderDark
-                        : AppColors.border.withValues(alpha: 0.3))
-                    : (isDarkMode ? AppColors.primaryDark : AppColors.primary),
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isSelected ? Icons.check : Icons.add,
-                    color: isSelected
-                        ? (isDarkMode ? AppColors.white : AppColors.black)
-                        : (isDarkMode ? AppColors.black : AppColors.white),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    isSelected ? 'Selected' : 'Add',
-                    style: TextStyle(
-                      color: isSelected
-                          ? (isDarkMode ? AppColors.white : AppColors.black)
-                          : (isDarkMode ? AppColors.black : AppColors.white),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+            const SizedBox(width: 8),
+            // Right side - Add / Added button
+            GestureDetector(
+              onTap: () => _toggleService(service),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? (isDarkMode
+                          ? AppColors.borderDark.withValues(alpha: 0.6)
+                          : const Color(0xFFF3F4F6))
+                      : (isDarkMode
+                          ? AppColors.primaryDark
+                          : AppColors.primary),
+                  borderRadius: BorderRadius.circular(8),
+                  border: isSelected
+                      ? Border.all(
+                          color: isDarkMode
+                              ? AppColors.borderDark
+                              : const Color(0xFFE5E7EB),
+                          width: 1,
+                        )
+                      : null,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!isSelected)
+                      const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                    if (!isSelected)
+                      const SizedBox(width: 2),
+                    Text(
+                      isSelected ? 'Added ✓' : 'Add',
+                      style: TextStyle(
+                        color: isSelected
+                            ? (isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : const Color(0xFF4B5563))
+                            : Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

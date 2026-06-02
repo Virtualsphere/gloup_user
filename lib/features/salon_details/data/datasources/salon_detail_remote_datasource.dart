@@ -9,6 +9,7 @@ abstract class SalonDetailRemoteDataSource {
   /// Get detailed information about a specific salon
   Future<SalonDetailModel> getSalonDetails({
     required String salonId,
+    String sex = 'unisex',
   });
 }
 
@@ -20,11 +21,13 @@ class SalonDetailRemoteDataSourceImpl implements SalonDetailRemoteDataSource {
   @override
   Future<SalonDetailModel> getSalonDetails({
     required String salonId,
+    String sex = 'unisex',
   }) async {
     try {
       // Prepare request data
       final requestData = {
         'store_id': int.tryParse(salonId) ?? salonId,
+        'sex': sex,
       };
 
       // Get auth token if available

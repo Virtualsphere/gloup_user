@@ -148,6 +148,7 @@ class ServiceModel {
   final String? discountPercentage;
   final bool isPopular;
   final String category;
+  final String? serviceFor;
 
   ServiceModel({
     required this.id,
@@ -158,6 +159,7 @@ class ServiceModel {
     this.discountPercentage,
     this.isPopular = false,
     required this.category,
+    this.serviceFor,
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
@@ -172,6 +174,7 @@ class ServiceModel {
       discountPercentage: json['discountPercentage'],
       isPopular: json['isPopular'] ?? false,
       category: json['category'] ?? 'Featured',
+      serviceFor: json['serviceFor'],
     );
   }
 
@@ -185,6 +188,7 @@ class ServiceModel {
       'discountPercentage': discountPercentage,
       'isPopular': isPopular,
       'category': category,
+      'serviceFor': serviceFor,
     };
   }
 }

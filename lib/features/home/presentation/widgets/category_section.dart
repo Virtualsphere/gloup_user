@@ -40,7 +40,7 @@ class _CategorySectionState extends State<CategorySection> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.selectedCategoryIndex ?? -1;
+    _selectedIndex = widget.selectedCategoryIndex ?? 0;
 
     // Load categories if not passed directly
     if (widget.categories == null) {
@@ -100,9 +100,13 @@ class _CategorySectionState extends State<CategorySection> {
           ? _buildCategoryShimmer()
           : error != null
               ? _buildErrorWidget(error)
-              : categories.isEmpty
-                  ? _buildEmptyWidget()
-                  : Row(
+              : Builder(
+                  builder: (context) {
+                    final displayCategories = [
+                      const CategoryEntity(id: 'all', label: 'All', imageUrl: ''),
+                      ...categories,
+                    ];
+                    return Row(
                       children: [
                         // Sticky Premium Category
                         // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
@@ -112,9 +116,9 @@ class _CategorySectionState extends State<CategorySection> {
                             scrollDirection: Axis.horizontal,
                             padding:
                                 const EdgeInsets.only(right: AppSizes.paddingS),
-                            itemCount: categories.length,
+                            itemCount: displayCategories.length,
                             itemBuilder: (context, index) {
-                              final category = categories[index];
+                              final category = displayCategories[index];
                               return _buildCategory(
                                 context,
                                 category.label,
@@ -126,7 +130,9 @@ class _CategorySectionState extends State<CategorySection> {
                           ),
                         ),
                       ],
-                    ),
+                    );
+                  }
+                ),
     );
   }
 
@@ -298,12 +304,16 @@ class _CategorySectionState extends State<CategorySection> {
                           },
                         )
                       : Container(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          child: const Icon(
-                            Icons.category,
-                            color: AppColors.primary,
-                            size: 30,
-                          ),
+                          color: title == 'All' 
+                              ? (isDarkMode ? AppColors.surfaceDark : const Color(0xFFF5F5F5))
+                              : AppColors.primary.withValues(alpha: 0.1),
+                          child: title == 'All'
+                              ? null
+                              : const Icon(
+                                  Icons.category,
+                                  color: AppColors.primary,
+                                  size: 30,
+                                ),
                         ),
                 ),
               ),
@@ -356,21 +366,6 @@ class _CategorySectionState extends State<CategorySection> {
               textAlign: TextAlign.center,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  /// Build empty widget when no categories available
-  Widget _buildEmptyWidget() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
-        child: Text(
-          'No categories available',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
         ),
       ),
     );

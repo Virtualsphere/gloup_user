@@ -3,7 +3,9 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/home/presentation/pages/services_at_49_page.dart';
-import 'dart:math' as math;
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/constants/api_routes.dart';
 
 class ServicesAt49Section extends StatefulWidget {
   const ServicesAt49Section({super.key});
@@ -14,6 +16,65 @@ class ServicesAt49Section extends StatefulWidget {
 
 class _ServicesAt49SectionState extends State<ServicesAt49Section> {
   bool _isMenSelected = true;
+
+  bool _isLoading = true;
+  List<Map<String, String>> _menItems = [];
+  List<Map<String, String>> _womenItems = [];
+
+  final Map<String, String> _fallbackImages = {
+    'Hair cut': 'https://images.unsplash.com/photo-1593085512500-5d55148d6f0d?w=500&q=80',
+    'Shave': 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500&q=80',
+    'Trim': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&q=80',
+    'De-Tan': 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=500&q=80',
+    'Eyebrow': 'https://images.unsplash.com/photo-1516975080661-460d3fc3a3b2?w=500&q=80',
+    'Nails': 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=500&q=80',
+    'Facial': 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80',
+    'Bleach': 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=500&q=80',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final dio = sl<DioClient>();
+      
+      // Fetch men
+      final menRes = await dio.post(ApiRoutes.getTopCategories, data: {'sex': 'male'});
+      if (menRes.statusCode == 200 && menRes.data['success'] == true) {
+        final List data = menRes.data['data'];
+        _menItems = data.map((e) => <String, String>{
+          'id': e['category_id'].toString(),
+          'title': e['category_name'].toString(),
+          'price': '₹${e['discounted_amount']}',
+          'img': _fallbackImages[e['category_name'].toString()] ?? 'https://images.unsplash.com/photo-1593085512500-5d55148d6f0d?w=500&q=80',
+        }).toList();
+      }
+
+      // Fetch women
+      final womenRes = await dio.post(ApiRoutes.getTopCategories, data: {'sex': 'female'});
+      if (womenRes.statusCode == 200 && womenRes.data['success'] == true) {
+        final List data = womenRes.data['data'];
+        _womenItems = data.map((e) => <String, String>{
+          'id': e['category_id'].toString(),
+          'title': e['category_name'].toString(),
+          'price': '₹${e['discounted_amount']}',
+          'img': _fallbackImages[e['category_name'].toString()] ?? 'https://images.unsplash.com/photo-1516975080661-460d3fc3a3b2?w=500&q=80',
+        }).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching top categories: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,29 +96,24 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
     final title = _isMenSelected ? 'Basics for Men' : 'Basics for Women';
     final priceTag = _isMenSelected ? '@₹49' : '@₹9';
 
-    final menItems = [
-      {'title': 'Haircut', 'price': '₹49', 'img': 'https://images.unsplash.com/photo-1593085512500-5d55148d6f0d?w=500&q=80'},
-      {'title': 'Shave', 'price': '₹19', 'img': 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500&q=80'},
-      {'title': 'Trim', 'price': '₹19', 'img': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&q=80'},
-      {'title': 'De-Tan', 'price': '₹19', 'img': 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=500&q=80'},
-    ];
-
-    final womenItems = [
-      {'title': 'Eyebrow', 'price': '₹49', 'img': 'https://images.unsplash.com/photo-1516975080661-460d3fc3a3b2?w=500&q=80'},
-      {'title': 'Nails', 'price': '₹49', 'img': 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=500&q=80'},
-      {'title': 'Facial', 'price': '₹49', 'img': 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'},
-      {'title': 'Bleach', 'price': '₹49', 'img': 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=500&q=80'},
-    ];
-
-    final currentItems = _isMenSelected ? menItems : womenItems;
+    final currentItems = _isMenSelected ? _menItems : _womenItems;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM, vertical: AppSizes.paddingS),
+      margin: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM, vertical: AppSizes.paddingM),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.transparent : Colors.white,
+        color: isDarkMode ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
+        boxShadow: isDarkMode
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
         border: Border.all(
-          color: isDarkMode ? Colors.white10 : const Color(0xFFE0E0E0),
+          color: isDarkMode ? Colors.white10 : Colors.black.withValues(alpha: 0.03),
           width: 1,
         ),
       ),
@@ -73,7 +129,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _isMenSelected ? menBgColor : Colors.transparent,
+                      color: _isMenSelected ? currentBgColor : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(AppSizes.radiusL - 1),
                         topRight: Radius.circular(AppSizes.radiusL - 1),
@@ -83,8 +139,9 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                       child: Text(
                         'MEN',
                         style: context.textTheme.titleSmall?.copyWith(
-                          color: _isMenSelected ? menTextColor : Colors.grey,
+                          color: _isMenSelected ? menTextColor : (isDarkMode ? Colors.white54 : Colors.grey[600]),
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -97,7 +154,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      color: !_isMenSelected ? womenBgColor : Colors.transparent,
+                      color: !_isMenSelected ? currentBgColor : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(AppSizes.radiusL - 1),
                         topRight: Radius.circular(AppSizes.radiusL - 1),
@@ -107,8 +164,9 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                       child: Text(
                         'WOMEN',
                         style: context.textTheme.titleSmall?.copyWith(
-                          color: !_isMenSelected ? womenTextColor : Colors.grey,
+                          color: !_isMenSelected ? womenTextColor : (isDarkMode ? Colors.white54 : Colors.grey[600]),
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -119,6 +177,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
           ),
           // Content Card
           Container(
+            padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
             decoration: BoxDecoration(
               color: currentBgColor,
               borderRadius: BorderRadius.only(
@@ -235,24 +294,29 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 SizedBox(
-                  height: 125,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    clipBehavior: Clip.none,
-                    padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                    itemCount: currentItems.length,
-                    itemBuilder: (context, index) {
-                      final item = currentItems[index];
-                      return _buildServiceCard(
-                        context,
-                        title: item['title']!,
-                        price: item['price']!,
-                        imageUrl: item['img']!,
-                      );
-                    },
-                  ),
+                  height: 110,
+                  child: _isLoading 
+                      ? const Center(child: CircularProgressIndicator())
+                      : currentItems.isEmpty 
+                          ? const Center(child: Text('No services found'))
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              clipBehavior: Clip.none,
+                              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                              itemCount: currentItems.length,
+                              itemBuilder: (context, index) {
+                                final item = currentItems[index];
+                                return _buildServiceCard(
+                                  context,
+                                  title: item['title']!,
+                                  price: item['price']!,
+                                  imageUrl: item['img']!,
+                                  id: item['id'] ?? '',
+                                );
+                              },
+                            ),
                 ),
                 const SizedBox(height: 12),
               ],
@@ -268,6 +332,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
     required String title,
     required String price,
     required String imageUrl,
+    required String id,
   }) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     
@@ -276,24 +341,28 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ServicesAt49Page(initialCategory: title == 'Haircut' || title == 'Nails' || title == 'Massage' || title == 'Facial' ? title : 'All'),
+            builder: (context) => ServicesAt49Page(
+              initialCategory: title,
+              categoryId: id,
+              sex: _isMenSelected ? 'male' : 'female',
+            ),
           ),
         );
       },
       child: Container(
-        width: 90,
+        width: 76,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 90,
-              width: 90,
+              height: 76,
+              width: 76,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -311,7 +380,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDarkMode ? Colors.white : Colors.black87,
-                  fontSize: 12,
+                  fontSize: 11,
                 ),
                 children: [
                   TextSpan(text: '$title '),

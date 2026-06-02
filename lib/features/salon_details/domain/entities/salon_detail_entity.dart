@@ -81,6 +81,7 @@ class ServiceEntity extends Equatable {
   final String? discountPercentage;
   final bool isPopular;
   final String category;
+  final String? serviceFor;
 
   const ServiceEntity({
     required this.id,
@@ -91,6 +92,7 @@ class ServiceEntity extends Equatable {
     this.discountPercentage,
     required this.isPopular,
     required this.category,
+    this.serviceFor,
   });
 
   @override
@@ -103,6 +105,7 @@ class ServiceEntity extends Equatable {
         discountPercentage,
         isPopular,
         category,
+        serviceFor,
       ];
 }
 
