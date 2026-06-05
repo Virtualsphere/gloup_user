@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -116,12 +117,14 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
           // Main image
           ClipRRect(
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            child: Image.network(
-              widget.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.imageUrl,
               width: 100,
               height: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
+              memCacheWidth: 200,
+              memCacheHeight: 200,
+              errorWidget: (context, url, error) {
                 return Container(
                   width: 100,
                   height: 100,

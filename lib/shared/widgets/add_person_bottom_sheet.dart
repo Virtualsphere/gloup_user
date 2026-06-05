@@ -490,28 +490,31 @@ class _GenderChip extends StatelessWidget {
     final double borderWidth =
         selected ? AppSizes.borderWidthThick : AppSizes.borderWidth;
 
+    final unselectedAlpha = selected ? 1.0 : 0.5;
+
     return GestureDetector(
       onTap: onTap,
-      child: Opacity(
-        opacity: selected ? 1.0 : 0.5,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingL,
-            vertical: AppSizes.paddingM,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingL,
+          vertical: AppSizes.paddingM,
+        ),
+        decoration: BoxDecoration(
+          color: (isDarkMode ? AppColors.surfaceDark : AppColors.surface)
+              .withValues(alpha: unselectedAlpha),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(
+            color: borderColor.withValues(alpha: unselectedAlpha),
+            width: borderWidth,
           ),
-          decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            border: Border.all(color: borderColor, width: borderWidth),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: textColor.withValues(alpha: unselectedAlpha),
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ),

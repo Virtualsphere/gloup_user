@@ -485,28 +485,31 @@ class _GenderChip extends StatelessWidget {
         ? (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary)
         : (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary);
 
-    return Opacity(
-      opacity: selected ? 1.0 : 0.5,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingL,
-            vertical: AppSizes.paddingM,
+    final surfaceColor = isDarkMode ? AppColors.surfaceDark : AppColors.surface;
+    final unselectedAlpha = selected ? 1.0 : 0.5;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingL,
+          vertical: AppSizes.paddingM,
+        ),
+        decoration: BoxDecoration(
+          color: surfaceColor.withValues(alpha: unselectedAlpha),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(
+            color: borderColor.withValues(alpha: unselectedAlpha),
+            width: borderWidth,
           ),
-          decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            border: Border.all(color: borderColor, width: borderWidth),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: textColor.withValues(alpha: unselectedAlpha),
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ),

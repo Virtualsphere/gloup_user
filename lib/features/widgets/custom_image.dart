@@ -33,6 +33,8 @@ class CustomNetworkImage extends StatelessWidget {
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
+      memCacheWidth: 400,
+      memCacheHeight: 400,
       placeholder: (context, child) {
         final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Container(

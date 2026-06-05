@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -344,10 +345,14 @@ class ProfileDeleteCard extends StatelessWidget {
                           size: 28,
                         )
                       : ClipOval(
-                          child: Image.network(
-                            imageUrl ?? '',
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl ?? '',
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            width: 65,
+                            height: 65,
+                            memCacheWidth: 130,
+                            memCacheHeight: 130,
+                            errorWidget: (context, url, error) {
                               return const Icon(
                                 Icons.image_outlined,
                                 color: AppColors.border,

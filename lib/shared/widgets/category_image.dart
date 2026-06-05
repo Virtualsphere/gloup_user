@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -59,16 +60,15 @@ class CategoryImage extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: Image.network(
-        resolved,
+      child: CachedNetworkImage(
+        imageUrl: resolved,
         width: width,
         height: height,
         fit: fit,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return _placeholder();
-      },
-        errorBuilder: (_, __, ___) => _fallbackAsset(),
+        memCacheWidth: width != null ? (width! * 2).toInt() : 200,
+        memCacheHeight: height != null ? (height! * 2).toInt() : 200,
+        placeholder: (_, __) => _placeholder(),
+        errorWidget: (_, __, ___) => _fallbackAsset(),
       ),
     );
   }

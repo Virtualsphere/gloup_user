@@ -129,6 +129,7 @@ dependencies:
   sign_in_with_apple: ^8.0.0
   upgrader: ^13.4.0
   app_links: ^7.1.1
+  facebook_app_events: ^0.19.2
 
 dependency_overrides:
   google_maps_flutter_android: 2.14.1

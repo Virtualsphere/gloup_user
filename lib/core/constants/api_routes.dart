@@ -12,13 +12,13 @@ class ApiRoutes {
 
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl =
-      'https://cdn.gloup.in/uploads/common/store';
+      'https://storage.googleapis.com/gloup-images';
   static const String bannerImageBaseUrl =
-      'https://cdn.gloup.in/uploads/common/banner';
+      'https://storage.googleapis.com/gloup-images';
   static const String categoryImageBaseUrl =
-      'https://cdn.gloup.in/uploads/common/category';
+      'https://storage.googleapis.com/gloup-images';
   static const String imageProfileUrl =
-      'https://cdn.gloup.in/uploads/common/profile-pictures';
+      'https://storage.googleapis.com/gloup-images';
 
   // Auth Endpoints
   static const String sendOtp = '$baseUrl/user/auth/sendOTP';
@@ -34,8 +34,10 @@ class ApiRoutes {
   static const String getNearbyStores = '$baseUrl/user/app/v2/store/nearby';
   static const String getAllStores = '$baseUrl/user/app/v2/get-all-stores';
   static const String getTopSalons = '$baseUrl/user/app/v2/salons/top';
-  static const String getTopCategories = '$baseUrl/user/app/v2/services/top-categories';
-  static const String getStoresByCategory = '$baseUrl/user/app/v2/stores/by-category';
+  static const String getTopCategories =
+      '$baseUrl/user/app/v2/services/top-categories';
+  static const String getStoresByCategory =
+      '$baseUrl/user/app/v2/stores/by-category';
 
   // Favorites Endpoints
   static const String toggleFavorite = '$baseUrl/user/app/v2/favourites';
@@ -153,7 +155,8 @@ class ApiRoutes {
     externalEndpoints.forEach((name, url) {
       AppLogger.info('  $name → $url', tag: _logTag);
     });
-    AppLogger.info('══════════════════════════════════════════════════════', tag: _logTag);
+    AppLogger.info('══════════════════════════════════════════════════════',
+        tag: _logTag);
   }
 
   // Helper method to build URLs with query parameters

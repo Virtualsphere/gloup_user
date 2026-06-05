@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
@@ -50,12 +51,14 @@ class SalonInfoCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     child: salonImage != null
-                        ? Image.network(
-                            salonImage!,
+                        ? CachedNetworkImage(
+                            imageUrl: salonImage!,
                             width: 120,
                             height: 80,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            memCacheWidth: 240,
+                            memCacheHeight: 160,
+                            errorWidget: (context, url, error) {
                               return Container(
                                 width: 120,
                                 height: 80,

@@ -71,6 +71,7 @@ class _LocationWidgetState extends State<LocationWidget> {
                 zoom: 15,
               ),
               markers: _markers,
+              liteModeEnabled: true,
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,
               myLocationButtonEnabled: false,

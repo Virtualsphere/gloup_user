@@ -35,11 +35,19 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>com.googleusercontent.apps.719761552533-g5sj28vuolgnlt5nna3jbd5ijcphcujv</string>
+					<string>fb1639261883701896</string>
 				</array>
 			</dict>
 		</array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<!-- Facebook / Meta -->
+		<key>FacebookAppID</key>
+		<string>1639261883701896</string>
+		<key>FacebookClientToken</key>
+		<string>3b0d945344b314d36ff1df08f1c8bee0</string>
+		<key>FacebookDisplayName</key>
+		<string>GloUp</string>
 		<!-- Firebase -->
 		<key>FirebaseMessagingAutoInitEnabled</key>
 		<false/>
@@ -48,6 +56,8 @@
 			<string>sms</string>
 			<string>tel</string>
 			<string>mailto</string>
+			<string>fbapi</string>
+			<string>fb-messenger-share-api</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>

@@ -1,9 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
+
+/// Top-level function for compute() — must not be a closure or instance method.
+SalonsResponseModel _parseSalonsResponse(Map<String, dynamic> args) {
+  return SalonsResponseModel.fromJson(
+    args['data'] as Map<String, dynamic>,
+    imageBaseUrl: args['imageBaseUrl'] as String?,
+  );
+}
 
 /// Shared Salon Remote Data Source
 /// Handles API calls for salon data across multiple features
@@ -63,10 +72,10 @@ class SalonRemoteDataSourceImpl implements SalonRemoteDataSource {
         final data = response.data;
 
         if (data['success'] == true) {
-          return SalonsResponseModel.fromJson(
-            data,
-            imageBaseUrl: ApiRoutes.imageBaseUrl,
-          );
+          return await compute(_parseSalonsResponse, {
+            'data': data,
+            'imageBaseUrl': ApiRoutes.imageBaseUrl,
+          });
         } else {
           throw ServerException(
             message: data['message'] ?? 'Failed to fetch salons',

@@ -45,6 +45,8 @@ class SalonNetworkImage extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
+      memCacheWidth: width != null ? (width! * 2).toInt() : 400,
+      memCacheHeight: height != null ? (height! * 2).toInt() : 400,
       placeholder: (_, __) => _loadingPlaceholder(context),
       errorWidget: (_, url, error) {
         AppLogger.warning(

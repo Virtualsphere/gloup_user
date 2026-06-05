@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -118,10 +119,14 @@ class ReviewCard extends StatelessWidget {
           ),
         ),
         child: ClipOval(
-          child: Image.network(
-            userImage!,
+          child: CachedNetworkImage(
+            imageUrl: userImage!,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
+            width: 40,
+            height: 40,
+            memCacheWidth: 80,
+            memCacheHeight: 80,
+            errorWidget: (context, url, error) {
               return _buildInitialAvatar();
             },
           ),

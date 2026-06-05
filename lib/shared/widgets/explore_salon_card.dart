@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -201,10 +202,14 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                             ? AppColors.primaryDark.withValues(alpha: 0.1)
                             : AppColors.primary.withValues(alpha: 0.1),
                       ),
-                      child: Image.network(
-                        imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
+                        width: double.infinity,
+                        height: double.infinity,
+                        memCacheWidth: 260,
+                        memCacheHeight: 300,
+                        errorWidget: (context, url, error) {
                           return Container(
                             color: AppColors.primary.withValues(alpha: 0.1),
                             child: Column(

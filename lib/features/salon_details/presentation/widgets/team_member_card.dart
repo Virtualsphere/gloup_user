@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -36,10 +37,14 @@ class TeamMemberCard extends StatelessWidget {
             ),
           ),
           child: ClipOval(
-            child: Image.network(
-              imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
+              width: 70,
+              height: 70,
+              memCacheWidth: 140,
+              memCacheHeight: 140,
+              errorWidget: (context, url, error) {
                 return Container(
                   color: isDarkMode
                       ? AppColors.textSecondary.withValues(alpha: 0.2)
