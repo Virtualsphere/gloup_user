@@ -70,39 +70,39 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     }
   }
 
-  // Format time range (start time + service duration)
-  String _formatTimeRange(String time24) {
+  /// Compute the slot interval in minutes from the loaded slots list.
+  /// Falls back to 30 minutes when fewer than 2 slots are available.
+  int _slotIntervalMinutes(List<dynamic> slots) {
+    if (slots.length < 2) return 30;
+
     try {
-      // Calculate total duration from selected services
-      int totalMinutes = 0;
-      final selectedServices = widget.bookingData?['selectedServices'] as List?;
+      final t0 = slots[0].time.toString().split(':');
+      final t1 = slots[1].time.toString().split(':');
+      final m0 = int.parse(t0[0]) * 60 + int.parse(t0[1]);
+      final m1 = int.parse(t1[0]) * 60 + int.parse(t1[1]);
+      final diff = m1 - m0;
+      return diff > 0 ? diff : 30;
+    } catch (_) {
+      return 30;
+    }
+  }
 
-      if (selectedServices != null && selectedServices.isNotEmpty) {
-        for (var service in selectedServices) {
-          final duration = service['duration'] as String?;
-          if (duration != null) {
-            // Parse duration format "HH:MM:SS" or "HH:MM"
-            final durationParts = duration.split(':');
-            final hours = int.tryParse(durationParts[0]) ?? 0;
-            final minutes = int.tryParse(durationParts[1]) ?? 0;
-            totalMinutes += (hours * 60) + minutes;
-          }
-        }
-      }
-
-      // If no duration, default to 30 minutes
-      if (totalMinutes == 0) {
-        totalMinutes = 30;
-      }
+  // Format time range using the slot interval (not total service duration).
+  // Each slot chip shows: start_time – start_time + slot_interval.
+  String _formatTimeRange(String time24, {int? intervalOverride}) {
+    try {
+      // Use the slot interval from the bloc state, default 30 min
+      final slotInterval = intervalOverride ?? _cachedSlotInterval;
 
       // Parse start time
       final parts = time24.split(':');
       final startHour = int.parse(parts[0]);
       final startMinute = int.parse(parts[1]);
 
-      // Calculate end time
+      // Calculate end time using the slot interval
       final startDateTime = DateTime(2000, 1, 1, startHour, startMinute);
-      final endDateTime = startDateTime.add(Duration(minutes: totalMinutes));
+      final endDateTime =
+          startDateTime.add(Duration(minutes: slotInterval));
 
       // Format start time
       final startPeriod = startHour >= 12 ? 'PM' : 'AM';
@@ -125,6 +125,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       return _formatTime(time24);
     }
   }
+
+  /// Cached slot interval so we don't recalculate on every chip.
+  int _cachedSlotInterval = 30;
 
   // Check if a time slot is in the past
   bool _isSlotPast(String time24) {
@@ -297,6 +300,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
   Widget _buildSlotsGrid(
       BuildContext context, SlotState state, bool isDarkMode) {
+    // Cache the slot interval from the actual slot data
+    _cachedSlotInterval = _slotIntervalMinutes(state.slots);
+
     return Padding(
       padding: const EdgeInsets.only(
         left: AppSizes.paddingM,
