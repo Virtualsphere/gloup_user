@@ -36,11 +36,11 @@ class LocationPermissionDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        padding: EdgeInsets.all(AppSizes.paddingXL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: AppSizes.spaceS),
+            SizedBox(height: AppSizes.spaceS),
 
             // Icon section
             Stack(
@@ -70,7 +70,7 @@ class LocationPermissionDialog extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: AppSizes.spaceL),
+            SizedBox(height: AppSizes.spaceL),
 
             // Title
             Text(
@@ -81,7 +81,7 @@ class LocationPermissionDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: AppSizes.spaceS),
+            SizedBox(height: AppSizes.spaceS),
 
             // Body
             Text(
@@ -94,7 +94,7 @@ class LocationPermissionDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: AppSizes.spaceL),
+            SizedBox(height: AppSizes.spaceL),
 
             // Allow button
             SizedBox(
@@ -123,7 +123,7 @@ class LocationPermissionDialog extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
 
             // Not Now button
             SizedBox(
@@ -144,7 +144,7 @@ class LocationPermissionDialog extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
           ],
         ),
       ),

@@ -127,7 +127,7 @@ class _LocationWidgetState extends State<LocationWidget> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusL),
             ),
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSizes.paddingL,
               vertical: AppSizes.paddingM,
             ),
@@ -146,7 +146,7 @@ class _LocationWidgetState extends State<LocationWidget> {
                   BlendMode.srcIn,
                 ),
               ),
-              const SizedBox(width: AppSizes.spaceS),
+              SizedBox(width: AppSizes.spaceS),
               Text(
                 'Get Direction',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -156,7 +156,7 @@ class _LocationWidgetState extends State<LocationWidget> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(width: AppSizes.spaceS),
+              SizedBox(width: AppSizes.spaceS),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,

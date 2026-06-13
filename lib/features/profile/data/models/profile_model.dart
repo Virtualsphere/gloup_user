@@ -73,19 +73,13 @@ class ProfileModel extends ProfileEntity {
     final formData = FormData();
 
     formData.fields.addAll([
-      MapEntry("id", id.toString()),
       MapEntry("firstname", firstname),
       MapEntry("lastname", lastname),
-      MapEntry("phone", phone.toString()),
-      MapEntry('age', age.toString()),
       MapEntry("email", email),
+      MapEntry("gender", gender),
       MapEntry("dob", dateOfBirth),
       MapEntry("city", city),
-      MapEntry("invited_code", invitedCode),
-      MapEntry("wallet", wallet.toString()),
-      MapEntry("gender", gender),
       MapEntry("country", country),
-      MapEntry("status", status),
     ]);
 
     if (profilePic.isNotEmpty && File(profilePic).existsSync()) {

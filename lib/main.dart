@@ -14,6 +14,7 @@ import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/firebase_options.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:app_links/app_links.dart';
 import 'package:tressy/core/router/route_names.dart';
@@ -73,20 +74,32 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<ThemeProvider>(
           builder: (context, themeProvider, _) {
-            return MaterialApp.router(
-              title: AppStrings.appName,
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: themeProvider.themeMode,
-              routerConfig: AppRouter.router,
+            return ScreenUtilInit(
+              designSize: const Size(390, 844),
+              minTextAdapt: true,
+              splitScreenMode: true,
               builder: (context, child) {
-                return UpgradeAlert(
-                  showIgnore: false,
-                  showLater: false,
-                  dialogStyle: UpgradeDialogStyle.cupertino,
-                  upgrader: Upgrader(),
-                  child: child ?? const SizedBox.shrink(),
+                return MaterialApp.router(
+                  title: AppStrings.appName,
+                  debugShowCheckedModeBanner: false,
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: themeProvider.themeMode,
+                  routerConfig: AppRouter.router,
+                  builder: (context, child) {
+                    return UpgradeAlert(
+                      showIgnore: false,
+                      showLater: false,
+                      barrierDismissible: false,
+                      shouldPopScope: () => false,
+                      dialogStyle: UpgradeDialogStyle.cupertino,
+                      upgrader: Upgrader(
+                        debugLogging: true, // Enables logs to debug why it might not be showing
+                        durationUntilAlertAgain: Duration.zero, // Ignores the default 3-day wait period
+                      ),
+                      child: child ?? const SizedBox.shrink(),
+                    );
+                  },
                 );
               },
             );

@@ -76,7 +76,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             ),
             title: Container(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 vertical: AppSizes.paddingS,
               ),
               child: Row(
@@ -92,7 +92,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       BlendMode.srcIn,
                     ),
                   ),
-                  const SizedBox(width: AppSizes.spaceS),
+                  SizedBox(width: AppSizes.spaceS),
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
@@ -127,13 +127,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 },
                 child: CustomScrollView(
                   slivers: [
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceL)),
 
                     // Section Title
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingL),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ),
 
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceL)),
 
                     // Loading state - Show shimmer
@@ -171,7 +171,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       SliverFillRemaining(
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            padding: EdgeInsets.all(AppSizes.paddingL),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -180,14 +180,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   size: 64,
                                   color: context.colorScheme.error,
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 Text(
                                   state.listErrorMessage ??
                                       'Failed to load favorites',
                                   textAlign: TextAlign.center,
                                   style: context.textTheme.bodyLarge,
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 ElevatedButton(
                                   onPressed: () {
                                     context
@@ -208,7 +208,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       SliverFillRemaining(
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            padding: EdgeInsets.all(AppSizes.paddingL),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -218,12 +218,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   color: context.colorScheme.onSurface
                                       .withValues(alpha: 0.3),
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 Text(
                                   'No favorites yet',
                                   style: context.textTheme.titleMedium,
                                 ),
-                                const SizedBox(height: AppSizes.spaceS),
+                                SizedBox(height: AppSizes.spaceS),
                                 Text(
                                   'Start adding salons to your favorites to see them here',
                                   textAlign: TextAlign.center,
@@ -232,7 +232,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                         .withValues(alpha: 0.6),
                                   ),
                                 ),
-                                const SizedBox(height: AppSizes.spaceL),
+                                SizedBox(height: AppSizes.spaceL),
                                 ElevatedButton(
                                   onPressed: () {
                                     context.go(RouteNames.home);
@@ -249,14 +249,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     if (state.listStatus == FavoritesListStatus.loaded &&
                         state.favoritesList.isNotEmpty)
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingL),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               final salon = state.favoritesList[index];
                               return Padding(
-                                padding: const EdgeInsets.only(
+                                padding: EdgeInsets.only(
                                     bottom: AppSizes.paddingM),
                                 child: ExploreSalonCard(
                                   storeId: int.tryParse(salon.id) ?? 0,
@@ -292,7 +292,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ),
 
                     // Bottom spacing
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceXXL)),
                   ],
                 ),

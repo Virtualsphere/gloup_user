@@ -269,7 +269,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
           SliverToBoxAdapter(
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                  EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
               child: _buildStatusText(isDarkMode),
             ),
           ),
@@ -311,7 +311,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
         ),
         child: IconButton(
           padding: EdgeInsets.zero,
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new,
             size: 18,
             color: Colors.white,
@@ -413,7 +413,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       height: 36,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         itemCount: _filters.length,
         itemBuilder: (context, index) {
           final isActive = _selectedFilterIndex == index;
@@ -494,7 +494,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       height: 95,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingS, vertical: 8),
         itemCount: _categories.length,
         itemBuilder: (context, index) {
@@ -532,7 +532,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
 
                   // ── Category name ──
                   Text(
@@ -551,7 +551,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
 
                   // ── Underline indicator for selected category ──
                   AnimatedContainer(
@@ -578,7 +578,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       height: 105,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingS, vertical: 8),
         itemCount: 6,
         itemBuilder: (context, index) {
@@ -598,7 +598,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Container(
                   width: 42,
                   height: 10,
@@ -622,7 +622,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
   // ─────────────────────────────────────────────
   Widget _buildSalonList(bool isDarkMode) {
     if (_isCategoriesLoading || _isSalonsLoading) {
-      return const SliverToBoxAdapter(
+      return SliverToBoxAdapter(
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(AppSizes.paddingXL),
@@ -636,7 +636,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       return SliverToBoxAdapter(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingXL),
+            padding: EdgeInsets.all(AppSizes.paddingXL),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -647,7 +647,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondary,
                 ),
-                const SizedBox(height: AppSizes.spaceM),
+                SizedBox(height: AppSizes.spaceM),
                 Text(
                   _salonsError!,
                   textAlign: TextAlign.center,
@@ -657,7 +657,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                         : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
                 OutlinedButton(
                   onPressed: () {
                     if (_selectedCategoryId != null) {
@@ -677,7 +677,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       return SliverToBoxAdapter(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingXL),
+            padding: EdgeInsets.all(AppSizes.paddingXL),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -688,7 +688,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondary,
                 ),
-                const SizedBox(height: AppSizes.spaceM),
+                SizedBox(height: AppSizes.spaceM),
                 Text(
                   'No salons found for $_selectedCategoryName',
                   textAlign: TextAlign.center,
@@ -708,13 +708,13 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
     final categoryPrice = _getSelectedCategoryPrice();
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             final salon = _salons[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: AppSizes.paddingL),
+              padding: EdgeInsets.only(bottom: AppSizes.paddingL),
               child: SalonCard(
                 storeId: int.tryParse(salon.id) ?? index + 1000,
                 salonName: salon.salonName,

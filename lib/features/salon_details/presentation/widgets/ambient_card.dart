@@ -19,7 +19,7 @@ class AmbientCard extends StatelessWidget {
 
     return Container(
       height: 90,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingS,
         vertical: AppSizes.paddingM,
       ),

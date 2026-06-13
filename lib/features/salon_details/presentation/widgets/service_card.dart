@@ -28,8 +28,8 @@ class ServiceCard extends StatelessWidget {
     final hasDiscount = originalPrice != null && discountPercentage != null;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      margin: EdgeInsets.only(bottom: AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode
             ? AppColors.surfaceDark.withValues(alpha: 0.5)
@@ -68,9 +68,9 @@ class ServiceCard extends StatelessWidget {
                     ),
                     // Popular badge (optional)
                     if (isPopular) ...[
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingS,
                           vertical: 2,
                         ),
@@ -105,7 +105,7 @@ class ServiceCard extends StatelessWidget {
                         BlendMode.srcIn,
                       ),
                     ),
-                    const SizedBox(width: AppSizes.spaceXS),
+                    SizedBox(width: AppSizes.spaceXS),
                     Text(
                       duration,
                       style: context.textTheme.bodySmall?.copyWith(
@@ -134,7 +134,7 @@ class ServiceCard extends StatelessWidget {
                     ),
                     // Original price (strikethrough)
                     if (hasDiscount) ...[
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Text(
                         '₹$originalPrice',
                         style: context.textTheme.bodySmall?.copyWith(
@@ -148,9 +148,9 @@ class ServiceCard extends StatelessWidget {
                     ],
                     // Discount badge
                     if (hasDiscount) ...[
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingS,
                           vertical: 2,
                         ),
@@ -184,7 +184,7 @@ class ServiceCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSizes.paddingM),
+          SizedBox(width: AppSizes.paddingM),
           // Right side - Add button with text
           InkWell(
             onTap: () {
@@ -192,7 +192,7 @@ class ServiceCard extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
             child: Container(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingM,
                 vertical: AppSizes.paddingS,
               ),

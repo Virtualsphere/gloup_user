@@ -114,8 +114,8 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      margin: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -123,7 +123,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSizes.paddingM,
               vertical: AppSizes.paddingS,
             ),
@@ -186,7 +186,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                             : AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: AppSizes.spaceS),
+                    SizedBox(width: AppSizes.spaceS),
                     SvgPicture.asset(
                       'assets/icons/ic_calendar.svg',
                       width: AppSizes.iconS,
@@ -218,14 +218,14 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
               ],
             ),
           ),
-          const SizedBox(height: AppSizes.spaceS),
+          SizedBox(height: AppSizes.spaceS),
           SizedBox(
             height: 70,
             child: ListView.builder(
               controller: scrollController,
               scrollDirection: Axis.horizontal,
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                  EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
               itemCount: dates.length,
               itemBuilder: (context, index) {
                 final date = dates[index];
@@ -243,7 +243,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                   onTap: isPastDate ? null : () => _selectDate(date),
                   child: Container(
                     width: 55,
-                    margin: const EdgeInsets.only(right: AppSizes.spaceS),
+                    margin: EdgeInsets.only(right: AppSizes.spaceS),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? (isDarkMode
@@ -291,7 +291,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                                         : AppColors.textSecondary),
                           ),
                         ),
-                        const SizedBox(height: AppSizes.spaceS),
+                        SizedBox(height: AppSizes.spaceS),
                         // Date number
                         Text(
                           date.day.toString(),
@@ -320,7 +320,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
               },
             ),
           ),
-          const SizedBox(height: AppSizes.paddingM),
+          SizedBox(height: AppSizes.paddingM),
         ],
       ),
     );

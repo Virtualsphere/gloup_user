@@ -36,7 +36,7 @@ class AppleSignInButton extends StatelessWidget {
                 : (isDarkMode ? AppColors.borderDark : AppColors.border),
             width: 1,
           ),
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingL,
             vertical: AppSizes.paddingM,
           ),
@@ -72,7 +72,7 @@ class AppleSignInButton extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  const SizedBox(width: AppSizes.spaceM),
+                  SizedBox(width: AppSizes.spaceM),
                   Flexible(
                     child: Text(
                       text,

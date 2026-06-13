@@ -198,7 +198,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(AppSizes.radiusXL),
                     topRight: Radius.circular(AppSizes.radiusXL),
                   ),
@@ -213,7 +213,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
                   ],
                 ),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
+                  padding: EdgeInsets.all(AppSizes.paddingL),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -349,7 +349,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
                               ? null
                               : _handleResendOtp,
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingL,
                               vertical: AppSizes.paddingM,
                             ),

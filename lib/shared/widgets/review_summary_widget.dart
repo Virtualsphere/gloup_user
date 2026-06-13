@@ -70,7 +70,7 @@ class ReviewSummaryWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: AppSizes.paddingL),
+        SizedBox(width: AppSizes.paddingL),
         // Right side - Star breakdown
         Expanded(
           flex: 3,
@@ -121,7 +121,7 @@ class ReviewSummaryWidget extends StatelessWidget {
           size: 14,
           color: Colors.amber,
         ),
-        const SizedBox(width: AppSizes.paddingS),
+        SizedBox(width: AppSizes.paddingS),
         // Progress bar
         Expanded(
           child: ClipRRect(
@@ -136,7 +136,7 @@ class ReviewSummaryWidget extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: AppSizes.paddingS),
+        SizedBox(width: AppSizes.paddingS),
         // Count
         SizedBox(
           width: 30,

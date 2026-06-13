@@ -122,7 +122,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
             child: Container(
               decoration: BoxDecoration(
                 color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusXL),
                   topRight: Radius.circular(AppSizes.radiusXL),
                 ),
@@ -137,11 +137,11 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
                 ],
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSizes.paddingXL),
+                padding: EdgeInsets.all(AppSizes.paddingXL),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: AppSizes.spaceXL),
+                    SizedBox(height: AppSizes.spaceXL),
 
                     // Icon - Salon Chair Image
                     SizedBox(
@@ -156,7 +156,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
                       ),
                     ),
 
-                    const SizedBox(height: AppSizes.spaceXL),
+                    SizedBox(height: AppSizes.spaceXL),
 
                     // Title
                     Text(
@@ -168,7 +168,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: AppSizes.spaceM),
+                    SizedBox(height: AppSizes.spaceM),
 
                     // Message
                     Text(
@@ -182,7 +182,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: AppSizes.spaceXXL),
+                    SizedBox(height: AppSizes.spaceXXL),
 
                     // Login Button
                     SizedBox(
@@ -225,7 +225,7 @@ class _LoginRequiredWidgetState extends State<LoginRequiredWidget>
                       ),
                     ),
 
-                    const SizedBox(height: AppSizes.spaceL),
+                    SizedBox(height: AppSizes.spaceL),
 
                     // Skip/Browse as guest option (only show if enabled and can pop)
                     if (widget.showBrowseAsGuest &&

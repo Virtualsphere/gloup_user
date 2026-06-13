@@ -36,7 +36,7 @@ class GoogleSignInButton extends StatelessWidget {
                 : (isDarkMode ? AppColors.borderDark : AppColors.border),
             width: 1,
           ),
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingL,
             vertical: AppSizes.paddingM,
           ),
@@ -68,7 +68,7 @@ class GoogleSignInButton extends StatelessWidget {
                     width: 24,
                     height: 24,
                   ),
-                  const SizedBox(width: AppSizes.spaceM),
+                  SizedBox(width: AppSizes.spaceM),
                   Flexible(
                     child: Text(
                       text,

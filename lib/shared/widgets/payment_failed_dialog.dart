@@ -42,11 +42,11 @@ class PaymentFailedDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusL),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingL),
+          padding: EdgeInsets.all(AppSizes.paddingL),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: AppSizes.spaceXL),
+              SizedBox(height: AppSizes.spaceXL),
 
               // Icon
               Stack(
@@ -76,7 +76,7 @@ class PaymentFailedDialog extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: AppSizes.spaceL),
+              SizedBox(height: AppSizes.spaceL),
 
               // Title
               Text(
@@ -86,7 +86,7 @@ class PaymentFailedDialog extends StatelessWidget {
                     ),
               ),
 
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
 
               // Error message
               Text(
@@ -99,12 +99,12 @@ class PaymentFailedDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: AppSizes.spaceL),
+              SizedBox(height: AppSizes.spaceL),
 
               // Error info card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(AppSizes.paddingL),
+                padding: EdgeInsets.all(AppSizes.paddingL),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -118,7 +118,7 @@ class PaymentFailedDialog extends StatelessWidget {
                             color: AppColors.error,
                           ),
                     ),
-                    const SizedBox(height: AppSizes.spaceXS),
+                    SizedBox(height: AppSizes.spaceXS),
                     Text(
                       'No amount has been deducted from your account',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -132,7 +132,7 @@ class PaymentFailedDialog extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppSizes.spaceL),
+              SizedBox(height: AppSizes.spaceL),
 
               // Try Again button
               SizedBox(
@@ -161,7 +161,7 @@ class PaymentFailedDialog extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
 
               // Tap to dismiss hint
               Text(
@@ -173,7 +173,7 @@ class PaymentFailedDialog extends StatelessWidget {
                     ),
               ),
 
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
             ],
           ),
         ),

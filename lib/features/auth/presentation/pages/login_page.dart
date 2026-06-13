@@ -139,7 +139,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(AppSizes.radiusXL),
                     topRight: Radius.circular(AppSizes.radiusXL),
                   ),
@@ -154,7 +154,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                   ],
                 ),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
+                  padding: EdgeInsets.all(AppSizes.paddingL),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -227,7 +227,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: AppSizes.paddingM,
                               ),
                               child: Text(
@@ -301,7 +301,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         borderRadius:
                             BorderRadius.circular(AppSizes.radiusCircular),
                       ),
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: AppSizes.paddingL,
                         vertical: AppSizes.paddingM,
                       ),

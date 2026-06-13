@@ -16,8 +16,8 @@ class SlotShimmers {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(AppSizes.paddingM),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        padding: EdgeInsets.all(AppSizes.paddingM),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: AppSizes.spaceM,
           mainAxisSpacing: AppSizes.spaceM,
@@ -54,7 +54,7 @@ class SlotShimmers {
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
       child: Container(
         height: 80,
-        margin: const EdgeInsets.symmetric(
+        margin: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingS,
         ),
@@ -83,7 +83,7 @@ class SlotShimmers {
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingS,
         ),
@@ -98,7 +98,7 @@ class SlotShimmers {
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
             Container(
               width: 100,
               height: 14,
@@ -121,12 +121,12 @@ class SlotShimmers {
         // Calendar shimmer
         calendarShimmer(context),
 
-        const SizedBox(height: AppSizes.spaceL),
+        SizedBox(height: AppSizes.spaceL),
 
         // Section header shimmer
         sectionHeaderShimmer(context),
 
-        const SizedBox(height: AppSizes.spaceM),
+        SizedBox(height: AppSizes.spaceM),
 
         // Slot grid shimmer
         Expanded(

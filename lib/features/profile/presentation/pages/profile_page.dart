@@ -74,7 +74,7 @@ class ProfilePage extends StatelessWidget {
                   body: SafeArea(
                     child: SingleChildScrollView(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingL,
                           vertical: AppSizes.paddingL,
                         ),
@@ -137,7 +137,7 @@ class ProfilePage extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: AppSizes.paddingM),
+                                  SizedBox(width: AppSizes.paddingM),
                                   // Profile Avatar
                                   Container(
                                     height: 50,
@@ -155,7 +155,7 @@ class ProfilePage extends StatelessWidget {
                                               color: Colors.grey.shade200,
                                               shape: BoxShape.circle,
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.person_outline,
                                               color: Colors.grey,
                                               size: 28,
@@ -166,7 +166,7 @@ class ProfilePage extends StatelessWidget {
                               ),
                             ),
 
-                            const SizedBox(height: AppSizes.paddingL),
+                            SizedBox(height: AppSizes.paddingL),
 
                             // ── Wallet Balance Card ────────────────────────────────
                             WalletBalanceContainer(
@@ -176,7 +176,7 @@ class ProfilePage extends StatelessWidget {
                                 context.pushNamed(RouteNames.wallet);
                               },
                             ),
-                            const SizedBox(height: AppSizes.paddingL),
+                            SizedBox(height: AppSizes.paddingL),
                             // ── Main Menu Card ─────────────────────────────────────
                             _MenuCard(
                               items: [
@@ -217,7 +217,7 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: AppSizes.paddingM),
+                            SizedBox(height: AppSizes.paddingM),
 
                             // ── Support & Logout Card ──────────────────────────────
                             _MenuCard(
@@ -248,7 +248,7 @@ class ProfilePage extends StatelessWidget {
                               ],
                             ),
 
-                            const SizedBox(height: AppSizes.paddingL),
+                            SizedBox(height: AppSizes.paddingL),
                           ],
                         ),
                       ),
@@ -259,7 +259,7 @@ class ProfilePage extends StatelessWidget {
                 if (isLoggingOut)
                   Container(
                     color: Colors.black.withValues(alpha: 0.45),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -454,7 +454,7 @@ class _MenuTile extends StatelessWidget {
       onTap: item.onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: 18,
         ),
@@ -466,7 +466,7 @@ class _MenuTile extends StatelessWidget {
                 size: 24,
                 color: isDarkMode ? AppColors.white : AppColors.textPrimary,
               ),
-              const SizedBox(width: AppSizes.paddingM),
+              SizedBox(width: AppSizes.paddingM),
             ],
             Expanded(
               child: Text(
@@ -511,7 +511,7 @@ class _ProfilePageShimmer extends StatelessWidget {
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingL,
             vertical: AppSizes.paddingL,
           ),
@@ -545,7 +545,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Container(
                               width: 100,
                               height: 14,
@@ -573,7 +573,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.paddingL),
+                SizedBox(height: AppSizes.paddingL),
 
                 // Wallet shimmer
                 Container(
@@ -585,7 +585,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.paddingL),
+                SizedBox(height: AppSizes.paddingL),
 
                 // Menu items shimmer
                 Container(
@@ -598,7 +598,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                       return Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingL,
                               vertical: 18,
                             ),
@@ -614,7 +614,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                                const SizedBox(width: AppSizes.paddingM),
+                                SizedBox(width: AppSizes.paddingM),
                                 Container(
                                   width: 120,
                                   height: 16,
@@ -641,7 +641,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.paddingL),
+                SizedBox(height: AppSizes.paddingL),
 
                 // Support & Logout shimmer
                 Container(
@@ -654,7 +654,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                       return Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingL,
                               vertical: 18,
                             ),
@@ -670,7 +670,7 @@ class _ProfilePageShimmer extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                                const SizedBox(width: AppSizes.paddingM),
+                                SizedBox(width: AppSizes.paddingM),
                                 Container(
                                   width: 100,
                                   height: 16,

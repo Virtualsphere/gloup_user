@@ -169,14 +169,14 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
             return Container(
               decoration: BoxDecoration(
                 color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusXL),
                   topRight: Radius.circular(AppSizes.radiusXL),
                 ),
               ),
               child: SingleChildScrollView(
                 controller: scrollController,
-                padding: const EdgeInsets.all(AppSizes.paddingXL),
+                padding: EdgeInsets.all(AppSizes.paddingXL),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -189,7 +189,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           width: 40,
                           height: 4,
                           margin:
-                              const EdgeInsets.only(bottom: AppSizes.spaceL),
+                              EdgeInsets.only(bottom: AppSizes.spaceL),
                           decoration: BoxDecoration(
                             color: isDarkMode
                                 ? AppColors.borderDark
@@ -210,7 +210,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           ),
                         ),
 
-                      const SizedBox(height: AppSizes.spaceXL),
+                      SizedBox(height: AppSizes.spaceXL),
 
                       // Title
                       Text(
@@ -226,7 +226,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                               ),
                       ),
 
-                      const SizedBox(height: AppSizes.spaceS),
+                      SizedBox(height: AppSizes.spaceS),
 
                       // Subtitle
                       Text(
@@ -242,7 +242,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                             _showOtpInput ? TextAlign.center : TextAlign.start,
                       ),
 
-                      const SizedBox(height: AppSizes.spaceXXL),
+                      SizedBox(height: AppSizes.spaceXXL),
 
                       // Conditional Input: Phone or OTP
                       if (_showOtpInput) ...[
@@ -309,7 +309,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           },
                         ),
 
-                        const SizedBox(height: AppSizes.spaceS),
+                        SizedBox(height: AppSizes.spaceS),
 
                         // Resend OTP Section (matches otp_page.dart exactly)
                         _resendCountdown > 0
@@ -360,7 +360,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                                 ),
                               ),
 
-                        const SizedBox(height: AppSizes.spaceXXL),
+                        SizedBox(height: AppSizes.spaceXXL),
 
                         // Verify OTP Button
                         PrimaryButton(
@@ -382,7 +382,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                               initialSelection: 'IN',
                             ),
 
-                            const SizedBox(width: AppSizes.spaceM),
+                            SizedBox(width: AppSizes.spaceM),
 
                             // Phone Input Field
                             Expanded(
@@ -393,7 +393,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           ],
                         ),
 
-                        const SizedBox(height: AppSizes.spaceXXL),
+                        SizedBox(height: AppSizes.spaceXXL),
 
                         // Login Button
                         PrimaryButton(
@@ -405,7 +405,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
 
                       // Only show social sign-in on phone input screen
                       if (!_showOtpInput) ...[
-                        const SizedBox(height: AppSizes.spaceXL),
+                        SizedBox(height: AppSizes.spaceXL),
 
                         // Or Divider
                         Row(
@@ -419,7 +419,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: AppSizes.paddingM,
                               ),
                               child: Text(
@@ -442,7 +442,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           ],
                         ),
 
-                        const SizedBox(height: AppSizes.spaceL),
+                        SizedBox(height: AppSizes.spaceL),
 
                         // Platform-specific Social Sign-In
                         if (Platform.isIOS || Platform.isMacOS) ...[
@@ -465,7 +465,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                           ),
                         ],
 
-                        const SizedBox(height: AppSizes.spaceXL),
+                        SizedBox(height: AppSizes.spaceXL),
                       ],
                     ],
                   ),

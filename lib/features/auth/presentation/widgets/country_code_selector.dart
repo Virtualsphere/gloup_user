@@ -27,7 +27,7 @@ class CountryCodeSelector extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
       ),
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         vertical: AppSizes.paddingXS,
       ),
       child: CountryCodePicker(
@@ -80,11 +80,11 @@ class CountryCodeSelector extends StatelessWidget {
         barrierColor: isDarkMode
             ? AppColors.black.withValues(alpha: 0.5)
             : AppColors.black.withValues(alpha: 0.3),
-        dialogItemPadding: const EdgeInsets.symmetric(
+        dialogItemPadding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingM,
         ),
-        searchPadding: const EdgeInsets.symmetric(
+        searchPadding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingM,
         ),

@@ -50,6 +50,38 @@
       },
       "oauth_client": [
         {
+          "client_id": "719761552533-0f8a64dhd0d6vhh214fjq4evf8uahn13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.partnerapp",
+            "certificate_hash": "1e19823337a1cb96d5526ac6fef6843a5427674f"
+          }
+        },
+        {
+          "client_id": "719761552533-8gram064a6fjj7fmi414vs07bpiumlrh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.partnerapp",
+            "certificate_hash": "5cbe0d2b82bd7cf49657fb30f7409137b40f64d3"
+          }
+        },
+        {
+          "client_id": "719761552533-b9npjd20kt5brq5bjiao3fopj5budnh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.partnerapp",
+            "certificate_hash": "f1c791387597a8330505a33ab3609eeef12b01f4"
+          }
+        },
+        {
+          "client_id": "719761552533-th8j1hco7d7uocnfppn2lpt7d2jnk2mj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.partnerapp",
+            "certificate_hash": "078cb42193e2122132ea0d7026bb31c8533c2c22"
+          }
+        },
+        {
           "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -85,6 +117,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "719761552533-91cu8j0ee08n056tje1re4l49tuldlhh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.user",
+            "certificate_hash": "6d7f93bbab7f43de99176aa9dd61432a863b8a8b"
+          }
+        },
+        {
+          "client_id": "719761552533-m71muv0jaojdr41qj6mkb3nso0inehbo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.user",
+            "certificate_hash": "ea29296e4bd2619b4696b76f4633d0434c3c7feb"
+          }
+        },
         {
           "client_id": "719761552533-562bp3n5kgrnvlk0a80k3s2p18eteg49.apps.googleusercontent.com",
           "client_type": 3
@@ -130,6 +178,22 @@
           }
         },
         {
+          "client_id": "719761552533-g07c2qt37ak1o8ljdbbum228qgf5phd4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "ffbffec39603a2e6cfae4d1843cec346c9bfb844"
+          }
+        },
+        {
+          "client_id": "719761552533-ilo48g3grktd90n2ug2rvqs8j8ghg08b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "14db8537d8e0fbd6d19c4a9bf3a00e484a59ae98"
+          }
+        },
+        {
           "client_id": "719761552533-mc2pfjm5igsudjl3oou0q325llr76dr6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -143,6 +207,22 @@
           "android_info": {
             "package_name": "com.gloup.userapp",
             "certificate_hash": "1cff35f60f8a71a4748c378c72fe4ab48f448c43"
+          }
+        },
+        {
+          "client_id": "719761552533-pit98emsj3f9m4e7roe11g0d8lko6pmr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "078cb42193e2122132ea0d7026bb31c8533c2c22"
+          }
+        },
+        {
+          "client_id": "719761552533-qbfi9op2hodj7oq6571klhg6krbmds4r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gloup.userapp",
+            "certificate_hash": "6d7f93bbab7f43de99176aa9dd61432a863b8a8b"
           }
         },
         {

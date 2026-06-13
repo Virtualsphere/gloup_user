@@ -401,7 +401,7 @@ class _LocationPageState extends State<LocationPage> {
             _extractMainName(description);
 
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -413,7 +413,7 @@ class _LocationPageState extends State<LocationPage> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppSizes.paddingS),
+            padding: EdgeInsets.all(AppSizes.paddingS),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? AppColors.surfaceDark.withValues(alpha: 0.5)
@@ -431,7 +431,7 @@ class _LocationPageState extends State<LocationPage> {
               size: 20,
             ),
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,7 +506,7 @@ class _LocationPageState extends State<LocationPage> {
         children: [
           // Search Field
           Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingL),
+            padding: EdgeInsets.all(AppSizes.paddingL),
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
@@ -561,7 +561,7 @@ class _LocationPageState extends State<LocationPage> {
                     width: 2,
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
+                contentPadding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingM,
                   vertical: AppSizes.paddingM,
                 ),
@@ -574,10 +574,10 @@ class _LocationPageState extends State<LocationPage> {
             Expanded(
               child: ListView.separated(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                    EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 itemCount: _predictions.length + 1,
                 separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                 itemBuilder: (context, index) {
                   // First item: "Use current location"
                   if (index == 0) {
@@ -614,7 +614,7 @@ class _LocationPageState extends State<LocationPage> {
             // Current Location Card
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                  EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
               child: InkWell(
                 onTap: _isLoadingLocation
                     ? null
@@ -634,13 +634,13 @@ class _LocationPageState extends State<LocationPage> {
               ),
             ),
 
-            const SizedBox(height: AppSizes.spaceL),
+            SizedBox(height: AppSizes.spaceL),
 
             // Nearby Locations
             if (_nearbyLocations.isNotEmpty) ...[
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                    EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 child: Text(
                   'Nearby Locations',
                   style: context.textTheme.titleMedium?.copyWith(
@@ -648,11 +648,11 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Expanded(
                 child: ListView.builder(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                      EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                   itemCount: _nearbyLocations.length,
                   itemBuilder: (context, index) {
                     final location = _nearbyLocations[index];
@@ -669,7 +669,7 @@ class _LocationPageState extends State<LocationPage> {
 
   Widget _buildCurrentLocationCard(BuildContext context, bool isDarkMode) {
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingL),
+      padding: EdgeInsets.all(AppSizes.paddingL),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -677,7 +677,7 @@ class _LocationPageState extends State<LocationPage> {
       child: Row(
         children: [
           const Icon(Icons.my_location, color: Colors.white, size: 24),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -721,7 +721,7 @@ class _LocationPageState extends State<LocationPage> {
     VoidCallback? onTap,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
+      padding: EdgeInsets.only(bottom: AppSizes.spaceM),
       child: InkWell(
         onTap: onTap ??
             () {
@@ -734,7 +734,7 @@ class _LocationPageState extends State<LocationPage> {
             },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Container(
-          padding: const EdgeInsets.all(AppSizes.paddingM),
+          padding: EdgeInsets.all(AppSizes.paddingM),
           decoration: BoxDecoration(
             color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -746,7 +746,7 @@ class _LocationPageState extends State<LocationPage> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(AppSizes.paddingS),
+                padding: EdgeInsets.all(AppSizes.paddingS),
                 decoration: BoxDecoration(
                   color: isDarkMode
                       ? AppColors.surfaceDark.withValues(alpha: 0.5)
@@ -762,7 +762,7 @@ class _LocationPageState extends State<LocationPage> {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppSizes.spaceM),
+              SizedBox(width: AppSizes.spaceM),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

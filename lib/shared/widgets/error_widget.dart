@@ -20,7 +20,7 @@ class ErrorDisplayWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               color: AppColors.error,
               size: AppSizes.iconXXL,
@@ -35,7 +35,7 @@ class ErrorDisplayWidget extends StatelessWidget {
               AppSizes.heightXL,
               ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
+                icon: Icon(Icons.refresh),
                 label: const Text('Retry'),
               ),
             ],

@@ -116,7 +116,7 @@ class _CategorySectionState extends State<CategorySection> {
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             padding:
-                                const EdgeInsets.only(right: AppSizes.paddingS),
+                                EdgeInsets.only(right: AppSizes.paddingS),
                             itemCount: displayCategories.length,
                             itemBuilder: (context, index) {
                               final category = displayCategories[index];
@@ -143,7 +143,7 @@ class _CategorySectionState extends State<CategorySection> {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       width: 75,
-      margin: const EdgeInsets.only(
+      margin: EdgeInsets.only(
         left: AppSizes.paddingM,
         top: AppSizes.paddingS,
         bottom: 0,
@@ -166,7 +166,7 @@ class _CategorySectionState extends State<CategorySection> {
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.paddingXS),
+          padding: EdgeInsets.only(bottom: AppSizes.paddingXS),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -198,7 +198,7 @@ class _CategorySectionState extends State<CategorySection> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSizes.spaceXS),
+              SizedBox(height: AppSizes.spaceXS),
               Text(
                 'Premium',
                 style: context.textTheme.bodySmall?.copyWith(
@@ -232,7 +232,7 @@ class _CategorySectionState extends State<CategorySection> {
 
     return Container(
       width: 70,
-      margin: const EdgeInsets.only(
+      margin: EdgeInsets.only(
         left: AppSizes.paddingS,
         top: AppSizes.paddingS,
         bottom: 0,
@@ -258,7 +258,7 @@ class _CategorySectionState extends State<CategorySection> {
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         child: Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+          padding: EdgeInsets.only(bottom: AppSizes.paddingM),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -294,7 +294,7 @@ class _CategorySectionState extends State<CategorySection> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSizes.spaceXS),
+              SizedBox(height: AppSizes.spaceXS),
               Text(
                 title,
                 style: context.textTheme.bodySmall?.copyWith(
@@ -317,7 +317,7 @@ class _CategorySectionState extends State<CategorySection> {
   Widget _buildErrorWidget(String error) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -326,7 +326,7 @@ class _CategorySectionState extends State<CategorySection> {
               color: AppColors.borderDark,
               size: 32,
             ),
-            const SizedBox(height: AppSizes.spaceS),
+            SizedBox(height: AppSizes.spaceS),
             Text(
               'Failed to load categories',
               style: context.textTheme.bodyMedium?.copyWith(
@@ -334,7 +334,7 @@ class _CategorySectionState extends State<CategorySection> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
             Text(
               error,
               style: context.textTheme.bodySmall?.copyWith(
@@ -363,7 +363,7 @@ class _CategorySectionState extends State<CategorySection> {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: AppSizes.paddingS),
+              padding: EdgeInsets.only(right: AppSizes.paddingS),
               itemCount: 6,
               itemBuilder: (context, index) {
                 return _buildCategoryItemShimmer();
@@ -385,7 +385,7 @@ class _CategorySectionState extends State<CategorySection> {
         bottom: 0,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
+        padding: EdgeInsets.only(bottom: AppSizes.paddingS),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -398,7 +398,7 @@ class _CategorySectionState extends State<CategorySection> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
               ),
             ),
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
             // Text placeholder
             Container(
               width: isPremium ? 50 : 60,

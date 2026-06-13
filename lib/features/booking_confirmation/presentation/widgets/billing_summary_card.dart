@@ -48,8 +48,8 @@ class BillingSummaryCard extends StatelessWidget {
     final finalTotal = totalBeforeGloupCash - gloupCash;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      margin: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -65,7 +65,7 @@ class BillingSummaryCard extends StatelessWidget {
             valueBold: true,
             isDarkMode: isDarkMode,
           ),
-          const SizedBox(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
 
           // Coupon discount (conditional)
           if (couponDiscount != null && appliedCouponCode != null) ...[
@@ -78,9 +78,9 @@ class BillingSummaryCard extends StatelessWidget {
               valueColor: AppColors.success,
               isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: AppSizes.spaceM),
-            const Divider(height: AppSizes.spaceM),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
+            Divider(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
           ],
 
           // Service Discount (if any)
@@ -93,7 +93,7 @@ class BillingSummaryCard extends StatelessWidget {
               valueBold: true,
               isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
           ],
 
           // Subtotal
@@ -105,7 +105,7 @@ class BillingSummaryCard extends StatelessWidget {
             valueBold: true,
             isDarkMode: isDarkMode,
           ),
-          const SizedBox(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
 
           // GST
           _buildRow(
@@ -116,7 +116,7 @@ class BillingSummaryCard extends StatelessWidget {
             valueBold: true,
             isDarkMode: isDarkMode,
           ),
-          const SizedBox(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
 
           // Platform Fee (strikethrough if waived)
           _buildRow(
@@ -131,7 +131,7 @@ class BillingSummaryCard extends StatelessWidget {
             strikethrough: isPlatformFeeWaived ? platformFee : null,
             isDarkMode: isDarkMode,
           ),
-          const SizedBox(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
 
           // Gloup Cash (conditional)
           if (gloupCash > 0) ...[
@@ -144,11 +144,11 @@ class BillingSummaryCard extends StatelessWidget {
               valueColor: AppColors.success,
               isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
           ],
 
-          const Divider(height: AppSizes.spaceM),
-          const SizedBox(height: AppSizes.spaceM),
+          Divider(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
 
           // Total (with strikethrough original total if different)
           _buildRow(
@@ -203,7 +203,7 @@ class BillingSummaryCard extends StatelessWidget {
                       decorationColor: secondaryColor,
                     ),
               ),
-              const SizedBox(width: AppSizes.spaceS),
+              SizedBox(width: AppSizes.spaceS),
             ],
             Text(
               value,

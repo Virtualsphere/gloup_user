@@ -25,8 +25,8 @@ class ReviewCard extends StatelessWidget {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      margin: EdgeInsets.only(bottom: AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode
             ? AppColors.textSecondary.withValues(alpha: 0.1)
@@ -42,7 +42,7 @@ class ReviewCard extends StatelessWidget {
             children: [
               // Profile image or initial
               _buildProfileAvatar(),
-              const SizedBox(width: AppSizes.paddingM),
+              SizedBox(width: AppSizes.paddingM),
               // Name and time
               Expanded(
                 child: Column(

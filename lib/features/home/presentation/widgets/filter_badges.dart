@@ -53,14 +53,14 @@ class _FilterBadgesState extends State<FilterBadges> {
     return Container(
       height: 50,
       color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingS),
+      padding: EdgeInsets.symmetric(vertical: AppSizes.paddingS),
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         children: [
           // Primary Filter Button (Settings + Filter + Arrow)
           _buildPrimaryFilterButton(context),
-          const SizedBox(width: AppSizes.spaceS),
+          SizedBox(width: AppSizes.spaceS),
           // Filter chips
           ..._filters.map((filter) => _buildFilterChip(
                 context,
@@ -80,7 +80,7 @@ class _FilterBadgesState extends State<FilterBadges> {
       },
       borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
       child: Container(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingXS,
         ),
@@ -109,7 +109,7 @@ class _FilterBadgesState extends State<FilterBadges> {
                 BlendMode.srcIn,
               ),
             ),
-            const SizedBox(width: AppSizes.spaceXS),
+            SizedBox(width: AppSizes.spaceXS),
             Text(
               'Gender',
               style: context.textTheme.bodyMedium?.copyWith(
@@ -118,7 +118,7 @@ class _FilterBadgesState extends State<FilterBadges> {
                 fontSize: AppSizes.fontS,
               ),
             ),
-            const SizedBox(width: AppSizes.spaceXS),
+            SizedBox(width: AppSizes.spaceXS),
             // Icon(
             //   Icons.keyboard_arrow_down,
             //   color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
@@ -135,7 +135,7 @@ class _FilterBadgesState extends State<FilterBadges> {
     final bool isSelected = _selectedFilter == label;
 
     return Padding(
-      padding: const EdgeInsets.only(right: AppSizes.spaceS),
+      padding: EdgeInsets.only(right: AppSizes.spaceS),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -148,7 +148,7 @@ class _FilterBadgesState extends State<FilterBadges> {
         },
         borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
         child: Container(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingL,
             vertical: AppSizes.paddingS,
           ),

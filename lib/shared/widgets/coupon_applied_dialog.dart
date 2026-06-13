@@ -55,16 +55,16 @@ class CouponAppliedDialog extends StatelessWidget {
 
             // Main content
             Padding(
-              padding: const EdgeInsets.all(AppSizes.paddingL),
+              padding: EdgeInsets.all(AppSizes.paddingL),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: AppSizes.spaceXL),
+                  SizedBox(height: AppSizes.spaceXL),
 
                   // Check icon with layered circles
                   _buildCheckIcon(),
 
-                  const SizedBox(height: AppSizes.spaceL),
+                  SizedBox(height: AppSizes.spaceL),
 
                   // Title
                   Text(
@@ -74,7 +74,7 @@ class CouponAppliedDialog extends StatelessWidget {
                         ),
                   ),
 
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
 
                   // Coupon code with success message
                   Text.rich(
@@ -94,12 +94,12 @@ class CouponAppliedDialog extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: AppSizes.spaceL),
+                  SizedBox(height: AppSizes.spaceL),
 
                   // Savings card
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(AppSizes.paddingL),
+                    padding: EdgeInsets.all(AppSizes.paddingL),
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -116,7 +116,7 @@ class CouponAppliedDialog extends StatelessWidget {
                                 color: AppColors.success,
                               ),
                         ),
-                        const SizedBox(height: AppSizes.spaceXS),
+                        SizedBox(height: AppSizes.spaceXS),
                         Text(
                           'Saved on this booking',
                           style:
@@ -130,7 +130,7 @@ class CouponAppliedDialog extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: AppSizes.spaceL),
+                  SizedBox(height: AppSizes.spaceL),
 
                   // Tap to continue hint
                   Text(
@@ -142,7 +142,7 @@ class CouponAppliedDialog extends StatelessWidget {
                         ),
                   ),
 
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
                 ],
               ),
             ),

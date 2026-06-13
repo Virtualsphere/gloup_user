@@ -23,7 +23,7 @@ class SalonDetailsShimmers {
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -160,8 +160,8 @@ class SalonDetailsShimmers {
         children: List.generate(
           7,
           (index) => Container(
-            margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
-            padding: const EdgeInsets.all(AppSizes.paddingM),
+            margin: EdgeInsets.only(bottom: AppSizes.paddingS),
+            padding: EdgeInsets.all(AppSizes.paddingM),
             child: Row(
               children: [
                 // Dot shimmer
@@ -173,7 +173,7 @@ class SalonDetailsShimmers {
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: AppSizes.paddingM),
+                SizedBox(width: AppSizes.paddingM),
                 // Day shimmer
                 Expanded(
                   child: Container(
@@ -239,7 +239,7 @@ class SalonDetailsShimmers {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSizes.paddingL),
+              SizedBox(width: AppSizes.paddingL),
               // Right side - progress bars
               Expanded(
                 flex: 3,
@@ -247,7 +247,7 @@ class SalonDetailsShimmers {
                   children: List.generate(
                     5,
                     (index) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSizes.spaceS),
+                      padding: EdgeInsets.only(bottom: AppSizes.spaceS),
                       child: Row(
                         children: [
                           Container(
@@ -258,7 +258,7 @@ class SalonDetailsShimmers {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                          const SizedBox(width: AppSizes.paddingS),
+                          SizedBox(width: AppSizes.paddingS),
                           Expanded(
                             child: Container(
                               height: 8,
@@ -268,7 +268,7 @@ class SalonDetailsShimmers {
                               ),
                             ),
                           ),
-                          const SizedBox(width: AppSizes.paddingS),
+                          SizedBox(width: AppSizes.paddingS),
                           Container(
                             width: 30,
                             height: 12,
@@ -294,7 +294,7 @@ class SalonDetailsShimmers {
               itemCount: 5,
               itemBuilder: (context, index) {
                 return Container(
-                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  margin: EdgeInsets.only(right: AppSizes.paddingM),
                   width: 80,
                   height: 40,
                   decoration: BoxDecoration(
@@ -311,8 +311,8 @@ class SalonDetailsShimmers {
           ...List.generate(
             3,
             (index) => Container(
-              margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
-              padding: const EdgeInsets.all(AppSizes.paddingM),
+              margin: EdgeInsets.only(bottom: AppSizes.paddingM),
+              padding: EdgeInsets.all(AppSizes.paddingM),
               decoration: BoxDecoration(
                 color: isDarkMode
                     ? AppColors.textSecondary.withValues(alpha: 0.2)
@@ -333,7 +333,7 @@ class SalonDetailsShimmers {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: AppSizes.paddingM),
+                      SizedBox(width: AppSizes.paddingM),
                       // Name and time
                       Expanded(
                         child: Column(
@@ -514,7 +514,7 @@ class SalonDetailsShimmers {
               itemCount: 5,
               itemBuilder: (context, index) {
                 return Container(
-                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
+                  margin: EdgeInsets.only(right: AppSizes.paddingM),
                   width: 100,
                   height: 40,
                   decoration: BoxDecoration(
@@ -531,8 +531,8 @@ class SalonDetailsShimmers {
           ...List.generate(
             3,
             (index) => Container(
-              margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
-              padding: const EdgeInsets.all(AppSizes.paddingM),
+              margin: EdgeInsets.only(bottom: AppSizes.paddingM),
+              padding: EdgeInsets.all(AppSizes.paddingM),
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppSizes.radiusL),

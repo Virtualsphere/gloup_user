@@ -36,6 +36,7 @@ class _MyProfileState extends State<MyProfile> {
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
 
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
 
@@ -49,7 +50,17 @@ class _MyProfileState extends State<MyProfile> {
   String _initialMobile = '';
   String _initialDob = '';
   String _initialCountry = '';
+  String _initialCity = '';
   String _initialGender = 'Not Selected';
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<ProfileBloc>().state;
+    if (state is ProfileLoaded) {
+      _fillFields(state.profile);
+    }
+  }
 
   @override
   void dispose() {
@@ -59,6 +70,7 @@ class _MyProfileState extends State<MyProfile> {
     mobileController.dispose();
     dateOfBirthController.dispose();
     countryController.dispose();
+    cityController.dispose();
     profileImageNotifier.dispose();
     super.dispose();
   }
@@ -83,6 +95,7 @@ class _MyProfileState extends State<MyProfile> {
     }
 
     countryController.text = profile.country.isNotEmpty ? profile.country : '';
+    cityController.text = profile.city.isNotEmpty ? profile.city : '';
 
     if (profile.gender.isNotEmpty) {
       final capitalised = profile.gender[0].toUpperCase() +
@@ -103,6 +116,7 @@ class _MyProfileState extends State<MyProfile> {
     _initialMobile = mobileController.text;
     _initialDob = dateOfBirthController.text;
     _initialCountry = countryController.text;
+    _initialCity = cityController.text;
     _initialGender = _selectedGender;
   }
 
@@ -116,6 +130,7 @@ class _MyProfileState extends State<MyProfile> {
         mobileController.text != _initialMobile ||
         dateOfBirthController.text != _initialDob ||
         countryController.text != _initialCountry ||
+        cityController.text != _initialCity ||
         _selectedGender != _initialGender;
   }
 
@@ -447,6 +462,23 @@ class _MyProfileState extends State<MyProfile> {
                                 },
                               ),
                               const SizedBox(height: 20.0),
+
+                              // City
+                              ProfileTextField(
+                                labelText: "City",
+                                controller: cityController,
+                                inputType: TextInputType.text,
+                                inputAction: TextInputAction.done,
+                                showClear: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter city';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) => setState(() {}),
+                              ),
+                              const SizedBox(height: 20.0),
                             ],
                           ),
                         ),
@@ -572,6 +604,7 @@ class _MyProfileState extends State<MyProfile> {
         age: calculatedAge,
         dateOfBirth: dateOfBirthController.text.trim(),
         country: countryController.text.trim(),
+        city: cityController.text.trim(),
         gender: _selectedGender,
         profilePic:
             profileImageNotifier.value?.path ?? currentProfile.profilePic,

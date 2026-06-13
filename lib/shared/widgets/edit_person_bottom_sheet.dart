@@ -123,13 +123,13 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
       padding: EdgeInsets.only(bottom: bottomPadding),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: const BorderRadius.vertical(
+        borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppSizes.radiusXL),
         ),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSizes.paddingL),
+          padding: EdgeInsets.all(AppSizes.paddingL),
           child: Form(
             key: _formKey,
             child: Column(
@@ -141,7 +141,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                   child: Container(
                     width: 40,
                     height: 4,
-                    margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                    margin: EdgeInsets.only(bottom: AppSizes.paddingM),
                     decoration: BoxDecoration(
                       color:
                           isDarkMode ? AppColors.borderDark : AppColors.border,
@@ -155,7 +155,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // Form fields
                 Column(
@@ -174,7 +174,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: AppSizes.spaceM),
+                    SizedBox(height: AppSizes.spaceM),
                     _LabeledTextField(
                       label: 'Age',
                       controller: _ageCtrl,
@@ -194,7 +194,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: AppSizes.spaceM),
+                    SizedBox(height: AppSizes.spaceM),
 
                     // Gender selector
                     Text(
@@ -206,7 +206,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                     Row(
                       children: [
                         Expanded(
@@ -216,7 +216,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             onTap: () => setState(() => _gender = 'Male'),
                           ),
                         ),
-                        const SizedBox(width: AppSizes.spaceS),
+                        SizedBox(width: AppSizes.spaceS),
                         Expanded(
                           child: _GenderChip(
                             label: 'Female',
@@ -224,7 +224,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             onTap: () => setState(() => _gender = 'Female'),
                           ),
                         ),
-                        const SizedBox(width: AppSizes.spaceS),
+                        SizedBox(width: AppSizes.spaceS),
                         Expanded(
                           child: _GenderChip(
                             label: 'Other',
@@ -235,7 +235,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                       ],
                     ),
 
-                    const SizedBox(height: AppSizes.spaceM),
+                    SizedBox(height: AppSizes.spaceM),
 
                     // Phone number
                     Column(
@@ -251,9 +251,9 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
-                        const SizedBox(height: AppSizes.spaceS),
+                        SizedBox(height: AppSizes.spaceS),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingM,
                             vertical: 0,
                           ),
@@ -272,7 +272,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: AppSizes.paddingS,
                                   vertical: AppSizes.paddingXS,
                                 ),
@@ -294,7 +294,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                                       ),
                                 ),
                               ),
-                              const SizedBox(width: AppSizes.spaceS),
+                              SizedBox(width: AppSizes.spaceS),
                               Expanded(
                                 child: TextFormField(
                                   controller: _phoneCtrl,
@@ -332,7 +332,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                               if (t.isEmpty) return const SizedBox.shrink();
                               if (t.length < 10 || t.length > 15) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
+                                  padding: EdgeInsets.only(
                                       top: AppSizes.spaceXS,
                                       left: AppSizes.paddingS),
                                   child: Text(
@@ -355,7 +355,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                   ],
                 ),
 
-                const SizedBox(height: AppSizes.spaceXL),
+                SizedBox(height: AppSizes.spaceXL),
 
                 PrimaryButton(
                   text: 'Save changes',
@@ -405,9 +405,9 @@ class _LabeledTextField extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
         ),
-        const SizedBox(height: AppSizes.spaceS),
+        SizedBox(height: AppSizes.spaceS),
         Container(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingM,
             vertical: AppSizes.paddingXS,
           ),
@@ -443,7 +443,7 @@ class _LabeledTextField extends StatelessWidget {
               final error = validator?.call(value.text);
               if (error != null && error.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                       top: AppSizes.spaceXS, left: AppSizes.paddingS),
                   child: Text(
                     error,
@@ -491,7 +491,7 @@ class _GenderChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingM,
         ),

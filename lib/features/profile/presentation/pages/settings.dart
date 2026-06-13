@@ -112,7 +112,7 @@ class _SettingsViewState extends State<SettingsView> {
         body: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: AppSizes.paddingM),
+              SizedBox(height: AppSizes.paddingM),
               ProfileDeleteCard(
                 name: widget.profile.fullName,
                 gender: widget.profile.gender,
@@ -153,7 +153,7 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
+                padding: EdgeInsets.only(
                     left: 16.0, right: 16.0, top: AppSizes.paddingL),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +171,7 @@ class _SettingsViewState extends State<SettingsView> {
                       },
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingM,
                           vertical: AppSizes.paddingS,
                         ),
@@ -207,7 +207,7 @@ class _SettingsViewState extends State<SettingsView> {
                   ],
                 ),
               ),
-              const SizedBox(height: AppSizes.padding),
+              SizedBox(height: AppSizes.padding),
               Expanded(
                 child: BlocBuilder<GuestBloc, GuestState>(
                   builder: (context, state) {

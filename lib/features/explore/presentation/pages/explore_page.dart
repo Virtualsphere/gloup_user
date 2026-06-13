@@ -162,7 +162,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
               ),
             ),
             title: Container(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 vertical: AppSizes.paddingS,
               ),
               child: Row(
@@ -178,7 +178,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       BlendMode.srcIn,
                     ),
                   ),
-                  const SizedBox(width: AppSizes.spaceS),
+                  SizedBox(width: AppSizes.spaceS),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
@@ -241,13 +241,13 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                 child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceL)),
 
                     // Section Title
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingL),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +270,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       ),
                     ),
 
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceL)),
 
                     // Loading state (initial load) - Show shimmer
@@ -282,7 +282,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       SliverFillRemaining(
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            padding: EdgeInsets.all(AppSizes.paddingL),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -291,13 +291,13 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                                   size: 64,
                                   color: context.colorScheme.error,
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 Text(
                                   state.error!,
                                   textAlign: TextAlign.center,
                                   style: context.textTheme.bodyLarge,
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 ElevatedButton(
                                   onPressed: _onRefresh,
                                   child: const Text('Retry'),
@@ -315,7 +315,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       SliverFillRemaining(
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppSizes.paddingL),
+                            padding: EdgeInsets.all(AppSizes.paddingL),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -325,12 +325,12 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                                   color: context.colorScheme.onSurface
                                       .withValues(alpha: 0.3),
                                 ),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                                 Text(
                                   'No salons found',
                                   style: context.textTheme.titleMedium,
                                 ),
-                                const SizedBox(height: AppSizes.spaceS),
+                                SizedBox(height: AppSizes.spaceS),
                                 Text(
                                   'Try adjusting your search or location',
                                   style: context.textTheme.bodyMedium?.copyWith(
@@ -347,14 +347,14 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                     // Salon List
                     if (state.salons.isNotEmpty)
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingL),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               final salon = state.salons[index];
                               return Padding(
-                                padding: const EdgeInsets.only(
+                                padding: EdgeInsets.only(
                                     bottom: AppSizes.paddingM),
                                 child: ExploreSalonCard(
                                   storeId: int.tryParse(salon.id) ?? 0,
@@ -392,10 +392,10 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                     if (state.isLoadingMore)
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.all(AppSizes.paddingL),
+                          padding: EdgeInsets.all(AppSizes.paddingL),
                           child: Center(
                             child: Container(
-                              padding: const EdgeInsets.all(AppSizes.paddingM),
+                              padding: EdgeInsets.all(AppSizes.paddingM),
                               decoration: BoxDecoration(
                                 color: isDarkMode
                                     ? AppColors.surfaceDark
@@ -426,7 +426,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                     if (!state.hasMore && state.salons.isNotEmpty)
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.all(AppSizes.paddingL),
+                          padding: EdgeInsets.all(AppSizes.paddingL),
                           child: Center(
                             child: Text(
                               'No more salons to load',
@@ -440,7 +440,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       ),
 
                     // Bottom spacing
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                         child: SizedBox(height: AppSizes.spaceXXL)),
                   ],
                 ),

@@ -50,11 +50,11 @@ class PaymentSuccessDialog extends StatelessWidget {
 
           // Main content
           Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingL),
+            padding: EdgeInsets.all(AppSizes.paddingL),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: AppSizes.spaceXL),
+                SizedBox(height: AppSizes.spaceXL),
 
                 // Icon
                 Stack(
@@ -84,7 +84,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // Title
                 Text(
@@ -94,7 +94,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                       ),
                 ),
 
-                const SizedBox(height: AppSizes.spaceS),
+                SizedBox(height: AppSizes.spaceS),
 
                 // Subtitle
                 Text.rich(
@@ -114,12 +114,12 @@ class PaymentSuccessDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // Booking confirmed card
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
+                  padding: EdgeInsets.all(AppSizes.paddingL),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -134,7 +134,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                                   color: AppColors.success,
                                 ),
                       ),
-                      const SizedBox(height: AppSizes.spaceXS),
+                      SizedBox(height: AppSizes.spaceXS),
                       Text(
                         'Your appointment is all set',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -147,7 +147,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // View My Booking button
                 SizedBox(
@@ -176,7 +176,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.spaceS),
+                SizedBox(height: AppSizes.spaceS),
               ],
             ),
           ),

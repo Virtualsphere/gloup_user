@@ -27,7 +27,7 @@ class SearchBarWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
       child: Container(
         padding: padding ??
-            const EdgeInsets.symmetric(
+            EdgeInsets.symmetric(
               horizontal: AppSizes.paddingM,
               vertical: AppSizes.paddingS,
             ),
@@ -54,7 +54,7 @@ class SearchBarWidget extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
-            const SizedBox(width: AppSizes.spaceM),
+            SizedBox(width: AppSizes.spaceM),
             Expanded(
               child: Text(
                 'Search for salons, parlors, or massages...',

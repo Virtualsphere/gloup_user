@@ -37,7 +37,7 @@ class HomeShimmers {
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary,
               ),
-              const SizedBox(height: AppSizes.paddingM),
+              SizedBox(height: AppSizes.paddingM),
               Container(
                 width: 150,
                 height: 16,
@@ -46,7 +46,7 @@ class HomeShimmers {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              const SizedBox(height: AppSizes.paddingS),
+              SizedBox(height: AppSizes.paddingS),
               Container(
                 width: 100,
                 height: 12,
@@ -71,7 +71,7 @@ class HomeShimmers {
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         itemCount: 3,
         itemBuilder: (context, index) {
           return _buildSalonCardShimmerItem();
@@ -84,7 +84,7 @@ class HomeShimmers {
   static Widget _buildSalonCardShimmerItem() {
     return Container(
       width: 280,
-      margin: const EdgeInsets.only(right: AppSizes.paddingM),
+      margin: EdgeInsets.only(right: AppSizes.paddingM),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
@@ -101,14 +101,14 @@ class HomeShimmers {
             height: 160,
             decoration: BoxDecoration(
               color: AppColors.border,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppSizes.radiusL),
                 topRight: Radius.circular(AppSizes.radiusL),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingM),
+            padding: EdgeInsets.all(AppSizes.paddingM),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,7 +121,7 @@ class HomeShimmers {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                const SizedBox(height: AppSizes.spaceS),
+                SizedBox(height: AppSizes.spaceS),
                 // Rating and distance placeholder
                 Row(
                   children: [
@@ -133,7 +133,7 @@ class HomeShimmers {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    const SizedBox(width: AppSizes.spaceS),
+                    SizedBox(width: AppSizes.spaceS),
                     Container(
                       width: 50,
                       height: 12,
@@ -144,7 +144,7 @@ class HomeShimmers {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSizes.spaceS),
+                SizedBox(height: AppSizes.spaceS),
                 // Service info placeholder
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,14 +200,14 @@ class HomeShimmers {
               height: 200,
               decoration: BoxDecoration(
                 color: AppColors.border,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.radiusL),
                   topRight: Radius.circular(AppSizes.radiusL),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(AppSizes.paddingM),
+              padding: EdgeInsets.all(AppSizes.paddingM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -220,7 +220,7 @@ class HomeShimmers {
                       borderRadius: BorderRadius.circular(9),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceM),
+                  SizedBox(height: AppSizes.spaceM),
                   // Rating and distance placeholder
                   Row(
                     children: [
@@ -232,7 +232,7 @@ class HomeShimmers {
                           borderRadius: BorderRadius.circular(7),
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceM),
+                      SizedBox(width: AppSizes.spaceM),
                       Container(
                         width: 60,
                         height: 14,
@@ -243,7 +243,7 @@ class HomeShimmers {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSizes.spaceM),
+                  SizedBox(height: AppSizes.spaceM),
                   // Service info placeholder
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,7 +266,7 @@ class HomeShimmers {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSizes.spaceM),
+                  SizedBox(height: AppSizes.spaceM),
                   // Categories placeholder
                   Row(
                     children: [
@@ -278,7 +278,7 @@ class HomeShimmers {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Container(
                         width: 70,
                         height: 24,
@@ -287,7 +287,7 @@ class HomeShimmers {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Container(
                         width: 50,
                         height: 24,

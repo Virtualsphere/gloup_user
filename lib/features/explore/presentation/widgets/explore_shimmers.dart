@@ -16,11 +16,11 @@ class ExploreShimmers {
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
         itemCount: 5,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+            padding: EdgeInsets.only(bottom: AppSizes.paddingM),
             child: _exploreSalonCardShimmer(isDarkMode),
           );
         },
@@ -44,19 +44,19 @@ class ExploreShimmers {
             height: 140,
             decoration: BoxDecoration(
               color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppSizes.radiusM),
                 bottomLeft: Radius.circular(AppSizes.radiusM),
               ),
             ),
           ),
 
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
 
           // Content shimmer
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
+              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -72,7 +72,7 @@ class ExploreShimmers {
                     ),
                   ),
 
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
 
                   // Rating row
                   Row(
@@ -87,7 +87,7 @@ class ExploreShimmers {
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceS),
+                      SizedBox(width: AppSizes.spaceS),
                       Container(
                         width: 40,
                         height: 12,
@@ -101,7 +101,7 @@ class ExploreShimmers {
                     ],
                   ),
 
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
 
                   // Address
                   Container(
@@ -148,7 +148,7 @@ class ExploreShimmers {
             ),
           ),
 
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
         ],
       ),
     );
@@ -162,7 +162,7 @@ class ExploreShimmers {
       baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
       highlightColor: isDarkMode ? AppColors.borderDark : AppColors.background,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -174,7 +174,7 @@ class ExploreShimmers {
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            const SizedBox(height: AppSizes.spaceXS),
+            SizedBox(height: AppSizes.spaceXS),
             Container(
               width: 250,
               height: 14,
@@ -192,14 +192,14 @@ class ExploreShimmers {
   /// Full explore page shimmer (for use in SliverList)
   static List<Widget> explorePageShimmerSlivers(BuildContext context) {
     return [
-      const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
+      SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
 
       // Section header shimmer
       SliverToBoxAdapter(
         child: sectionHeaderShimmer(context),
       ),
 
-      const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
+      SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceL)),
 
       // Salon cards shimmer
       SliverToBoxAdapter(

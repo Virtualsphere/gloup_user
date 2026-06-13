@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/features/home/presentation/widgets/service_item_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Visual tokens for men / women service card variants.
 class ServiceCardTheme {
@@ -85,11 +86,11 @@ class ServiceCardWidget extends StatelessWidget {
     this.isDarkMode = false,
   });
 
-  static const cardHeight = 230.0;
-  static const headerPadding = EdgeInsets.only(left: 20, right: 20, top: 20);
-  static const contentHorizontalPadding = 20.0;
-  static const headerListGap = 16.0;
-  static const itemGap = 12.0;
+  static double get cardHeight => 230.0.h;
+  static EdgeInsets get headerPadding => EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h);
+  static double get contentHorizontalPadding => 20.0.w;
+  static double get headerListGap => 16.0.h;
+  static double get itemGap => 12.0.w;
 
   final bool isMenSelected;
   final ServiceCardTheme theme;
@@ -144,10 +145,10 @@ class ServiceCardWidget extends StatelessWidget {
                           _ServicesTitle(
                             gradient: theme.titleGradient,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.w),
                           SizedBox(
-                            width: 92,
-                            height: 40,
+                            width: 92.w,
+                            height: 40.h,
                             child: _PriceSticker(
                               priceTag: priceTag,
                               gradient: theme.titleGradient,
@@ -162,11 +163,11 @@ class ServiceCardWidget extends StatelessWidget {
                         ],
                       ),
                       // Row 2: Subtitle
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         subtitle,
                         style: GoogleFonts.inter(
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           height: 15 / 12,
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w400,
@@ -180,7 +181,7 @@ class ServiceCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: headerListGap),
+                SizedBox(height: headerListGap),
                 Expanded(child: _buildServiceList()),
               ],
             ),
@@ -200,20 +201,20 @@ class ServiceCardWidget extends StatelessWidget {
           'No services found',
           style: GoogleFonts.inter(
             color: AppColors.servicesAt49Subtitle,
-            fontSize: 14,
+            fontSize: 14.sp,
           ),
         ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: contentHorizontalPadding),
+      padding: EdgeInsets.only(left: contentHorizontalPadding),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(right: contentHorizontalPadding),
+        padding: EdgeInsets.only(right: contentHorizontalPadding),
         clipBehavior: Clip.hardEdge,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: itemGap),
+        separatorBuilder: (_, __) => SizedBox(width: itemGap),
         itemBuilder: (context, index) {
           final item = items[index];
           return ServiceItemWidget(
@@ -244,14 +245,14 @@ class _ServicesTitle extends StatelessWidget {
         text: TextSpan(
           style: GoogleFonts.rowdies(
             fontWeight: FontWeight.w400,
-            fontSize: 32,
+            fontSize: 32.sp,
             height: 28 / 32,
           ),
-          children: const [
-            TextSpan(text: 'S'),
+          children: [
+            const TextSpan(text: 'S'),
             TextSpan(
               text: 'ERVICES',
-              style: TextStyle(fontSize: 20, letterSpacing: 0.5, height: 1),
+              style: TextStyle(fontSize: 20.sp, letterSpacing: 0.5, height: 1),
             ),
           ],
         ),
@@ -272,9 +273,9 @@ class _PriceSticker extends StatelessWidget {
   final LinearGradient gradient;
   final Color brushFill;
 
-  static const frameWidth = 92.0;
-  static const frameHeight = 40.0;
-  static const brushHeight = 43.79;
+  static double get frameWidth => 92.0.w;
+  static double get frameHeight => 40.0.h;
+  static double get brushHeight => 43.79.h;
   static const stickerRotation = -0.05; // ~-3° counter-clockwise per Figma
 
   @override
@@ -306,7 +307,7 @@ class _PriceSticker extends StatelessWidget {
                 textHeightBehavior: ServiceCardWidget._titleTextHeight,
                 style: GoogleFonts.rowdies(
                   fontWeight: FontWeight.w700,
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   height: 25 / 20,
                 ),
               ),
@@ -339,14 +340,14 @@ class _SeeAllButton extends StatelessWidget {
           Text(
             'See All',
             style: GoogleFonts.inter(
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
               height: 17 / 14,
               color: color,
             ),
           ),
-          const SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 16, color: color),
+          SizedBox(width: 4.w),
+          Icon(Icons.chevron_right, size: 16.w, color: color),
         ],
       ),
     );

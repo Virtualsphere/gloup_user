@@ -16,11 +16,11 @@ class GuestShimmers {
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         itemCount: 5,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+            padding: EdgeInsets.only(bottom: AppSizes.paddingM),
             child: _guestCardShimmer(isDarkMode),
           );
         },
@@ -31,7 +31,7 @@ class GuestShimmers {
   /// Shimmer for a single guest card
   static Widget _guestCardShimmer(bool isDarkMode) {
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -52,7 +52,7 @@ class GuestShimmers {
             ),
           ),
 
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
 
           // Content shimmer
           Expanded(
@@ -70,7 +70,7 @@ class GuestShimmers {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.spaceS),
+                SizedBox(height: AppSizes.spaceS),
 
                 // Details row
                 Row(
@@ -85,7 +85,7 @@ class GuestShimmers {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    const SizedBox(width: AppSizes.spaceS),
+                    SizedBox(width: AppSizes.spaceS),
                     Container(
                       width: 40,
                       height: 12,

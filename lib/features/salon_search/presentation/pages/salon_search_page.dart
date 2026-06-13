@@ -377,7 +377,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSizes.spaceM),
+                      SizedBox(width: AppSizes.spaceM),
                       Expanded(child: _buildSearchInput(context))
                       // _buildSearchInput(context)
                     ],
@@ -408,7 +408,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
         return Container(
           decoration: BoxDecoration(
             color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(AppSizes.radiusL),
               topRight: Radius.circular(AppSizes.radiusL),
             ),
@@ -427,7 +427,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
                 child: Container(
                   width: 40,
                   height: 4,
-                  margin: const EdgeInsets.only(
+                  margin: EdgeInsets.only(
                       top: AppSizes.paddingM, bottom: AppSizes.paddingS),
                   decoration: BoxDecoration(
                     color: isDarkMode
@@ -478,7 +478,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
 
                     if (state is SearchLoaded) {
                       countWidget = Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: AppSizes.paddingL,
                           vertical: AppSizes.paddingM,
                         ),
@@ -523,7 +523,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
     } else if (state is SearchLoaded) {
       return ListView.builder(
         controller: scrollController,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingS),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingS),
         itemCount: state.salons.length,
         itemBuilder: (context, index) {
           final salon = state.salons[index];
@@ -561,7 +561,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
     } else if (state is SearchEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingL),
+          padding: EdgeInsets.all(AppSizes.paddingL),
           child: Text(
             state.message,
             style: context.textTheme.bodyLarge?.copyWith(
@@ -576,7 +576,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
     } else if (state is SearchFailure) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingL),
+          padding: EdgeInsets.all(AppSizes.paddingL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -587,7 +587,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary,
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 state.message,
                 style: context.textTheme.bodyLarge?.copyWith(
@@ -609,7 +609,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
   Widget _buildSearchInput(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingM,
         vertical: AppSizes.paddingM,
       ),
@@ -635,7 +635,7 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
               BlendMode.srcIn,
             ),
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           Expanded(
             child: TextField(
               controller: _searchController,

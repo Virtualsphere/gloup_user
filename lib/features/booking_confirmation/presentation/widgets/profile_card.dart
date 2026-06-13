@@ -27,7 +27,7 @@ class ProfileCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -91,7 +91,7 @@ class ProfileCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: AppSizes.spaceM),
+            SizedBox(width: AppSizes.spaceM),
             // Right side - Edit icon and selected check
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -108,7 +108,7 @@ class ProfileCard extends StatelessWidget {
                           : AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(width: AppSizes.spaceM),
+                  SizedBox(width: AppSizes.spaceM),
                 ],
                 // Selected check icon
                 if (isSelected)

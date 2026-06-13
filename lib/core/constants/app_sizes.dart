@@ -1,142 +1,143 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppSizes {
   AppSizes._();
 
   // Padding & Margins
-  static const double paddingXS = 4.0;
-  static const double paddingS = 8.0;
-  static const double paddingM = 12.0;
-  static const double padding = 16.0;
-  static const double paddingL = 20.0;
-  static const double paddingXL = 24.0;
-  static const double paddingXXL = 32.0;
-  static const double paddingXXXL = 48.0;
+  static double get paddingXS => 4.0.w;
+  static double get paddingS => 8.0.w;
+  static double get paddingM => 12.0.w;
+  static double get padding => 16.0.w;
+  static double get paddingL => 20.0.w;
+  static double get paddingXL => 24.0.w;
+  static double get paddingXXL => 32.0.w;
+  static double get paddingXXXL => 48.0.w;
 
-  static const double marginXS = 4.0;
-  static const double marginS = 8.0;
-  static const double marginM = 12.0;
-  static const double margin = 16.0;
-  static const double marginL = 20.0;
-  static const double marginXL = 24.0;
-  static const double marginXXL = 32.0;
-  static const double marginXXXL = 48.0;
+  static double get marginXS => 4.0.w;
+  static double get marginS => 8.0.w;
+  static double get marginM => 12.0.w;
+  static double get margin => 16.0.w;
+  static double get marginL => 20.0.w;
+  static double get marginXL => 24.0.w;
+  static double get marginXXL => 32.0.w;
+  static double get marginXXXL => 48.0.w;
 
   // Border Radius
-  static const double radiusXS = 4.0;
-  static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radius = 16.0;
-  static const double radiusL = 20.0;
-  static const double radiusXL = 24.0;
-  static const double radiusXXL = 32.0;
-  static const double radiusCircular = 999.0;
+  static double get radiusXS => 4.0.r;
+  static double get radiusS => 8.0.r;
+  static double get radiusM => 12.0.r;
+  static double get radius => 16.0.r;
+  static double get radiusL => 20.0.r;
+  static double get radiusXL => 24.0.r;
+  static double get radiusXXL => 32.0.r;
+  static double get radiusCircular => 999.0.r;
 
   // Icon Sizes
-  static const double iconXS = 16.0;
-  static const double iconS = 20.0;
-  static const double iconM = 24.0;
-  static const double icon = 28.0;
-  static const double iconL = 32.0;
-  static const double iconXL = 40.0;
-  static const double iconXXL = 48.0;
+  static double get iconXS => 16.0.w;
+  static double get iconS => 20.0.w;
+  static double get iconM => 24.0.w;
+  static double get icon => 28.0.w;
+  static double get iconL => 32.0.w;
+  static double get iconXL => 40.0.w;
+  static double get iconXXL => 48.0.w;
 
   // Font Sizes
-  static const double fontXS = 10.0;
-  static const double fontS = 12.0;
-  static const double fontM = 14.0;
-  static const double font = 16.0;
-  static const double fontL = 18.0;
-  static const double fontXL = 20.0;
-  static const double fontXXL = 24.0;
-  static const double fontXXXL = 32.0;
-  static const double fontDisplay = 48.0;
+  static double get fontXS => 10.0.sp;
+  static double get fontS => 12.0.sp;
+  static double get fontM => 14.0.sp;
+  static double get font => 16.0.sp;
+  static double get fontL => 18.0.sp;
+  static double get fontXL => 20.0.sp;
+  static double get fontXXL => 24.0.sp;
+  static double get fontXXXL => 32.0.sp;
+  static double get fontDisplay => 48.0.sp;
 
   // Button Sizes
-  static const double buttonHeightS = 36.0;
-  static const double buttonHeight = 48.0;
-  static const double buttonHeightL = 56.0;
+  static double get buttonHeightS => 36.0.h;
+  static double get buttonHeight => 48.0.h;
+  static double get buttonHeightL => 56.0.h;
 
   // AppBar
-  static const double appBarHeight = 64.0;
-  static const double appBarElevation = 0.0;
+  static double get appBarHeight => 64.0.h;
+  static double get appBarElevation => 0.0;
 
   // Bottom Navigation Bar
-  static const double bottomNavHeight = 80.0;
+  static double get bottomNavHeight => 80.0.h;
 
   // Card
-  static const double cardElevation = 2.0;
-  static const double cardRadius = radius;
+  static double get cardElevation => 2.0;
+  static double get cardRadius => radius;
 
   // Spacing
-  static const double spaceXS = 4.0;
-  static const double spaceS = 8.0;
-  static const double spaceM = 12.0;
-  static const double space = 16.0;
-  static const double spaceL = 20.0;
-  static const double spaceXL = 24.0;
-  static const double spaceXXL = 32.0;
-  static const double spaceXXXL = 48.0;
+  static double get spaceXS => 4.0.w;
+  static double get spaceS => 8.0.w;
+  static double get spaceM => 12.0.w;
+  static double get space => 16.0.w;
+  static double get spaceL => 20.0.w;
+  static double get spaceXL => 24.0.w;
+  static double get spaceXXL => 32.0.w;
+  static double get spaceXXXL => 48.0.w;
 
   // Divider
-  static const double dividerThickness = 1.0;
-  static const double dividerIndent = padding;
+  static double get dividerThickness => 1.0;
+  static double get dividerIndent => padding;
 
   // Border Width
-  static const double borderWidthThin = 0.5;
-  static const double borderWidth = 1.0;
-  static const double borderWidthThick = 2.0;
-  static const double borderWidthSmall = 1.5;
+  static double get borderWidthThin => 0.5;
+  static double get borderWidth => 1.0;
+  static double get borderWidthThick => 2.0;
+  static double get borderWidthSmall => 1.5;
 
   // Image Sizes
-  static const double imageThumbS = 40.0;
-  static const double imageThumb = 60.0;
-  static const double imageThumbL = 80.0;
-  static const double imageS = 100.0;
-  static const double imageM = 150.0;
-  static const double image = 200.0;
-  static const double imageL = 250.0;
-  static const double imageXL = 300.0;
+  static double get imageThumbS => 40.0.w;
+  static double get imageThumb => 60.0.w;
+  static double get imageThumbL => 80.0.w;
+  static double get imageS => 100.0.w;
+  static double get imageM => 150.0.w;
+  static double get image => 200.0.w;
+  static double get imageL => 250.0.w;
+  static double get imageXL => 300.0.w;
 
   // Screen Breakpoints
-  static const double mobileBreakpoint = 600.0;
-  static const double tabletBreakpoint = 900.0;
-  static const double desktopBreakpoint = 1200.0;
+  static double get mobileBreakpoint => 600.0;
+  static double get tabletBreakpoint => 900.0;
+  static double get desktopBreakpoint => 1200.0;
 
   // EdgeInsets helpers
-  static const EdgeInsets paddingAllXS = EdgeInsets.all(paddingXS);
-  static const EdgeInsets paddingAllS = EdgeInsets.all(paddingS);
-  static const EdgeInsets paddingAllM = EdgeInsets.all(paddingM);
-  static const EdgeInsets paddingAll = EdgeInsets.all(padding);
-  static const EdgeInsets paddingAllL = EdgeInsets.all(paddingL);
-  static const EdgeInsets paddingAllXL = EdgeInsets.all(paddingXL);
-  static const EdgeInsets paddingAllXXL = EdgeInsets.all(paddingXXL);
+  static EdgeInsets get paddingAllXS => EdgeInsets.all(paddingXS);
+  static EdgeInsets get paddingAllS => EdgeInsets.all(paddingS);
+  static EdgeInsets get paddingAllM => EdgeInsets.all(paddingM);
+  static EdgeInsets get paddingAll => EdgeInsets.all(padding);
+  static EdgeInsets get paddingAllL => EdgeInsets.all(paddingL);
+  static EdgeInsets get paddingAllXL => EdgeInsets.all(paddingXL);
+  static EdgeInsets get paddingAllXXL => EdgeInsets.all(paddingXXL);
 
-  static const EdgeInsets paddingHorizontal =
+  static EdgeInsets get paddingHorizontal =>
       EdgeInsets.symmetric(horizontal: padding);
-  static const EdgeInsets paddingVertical =
+  static EdgeInsets get paddingVertical =>
       EdgeInsets.symmetric(vertical: padding);
 
-  static const EdgeInsets marginAll = EdgeInsets.all(margin);
-  static const EdgeInsets marginHorizontal =
+  static EdgeInsets get marginAll => EdgeInsets.all(margin);
+  static EdgeInsets get marginHorizontal =>
       EdgeInsets.symmetric(horizontal: margin);
-  static const EdgeInsets marginVertical =
+  static EdgeInsets get marginVertical =>
       EdgeInsets.symmetric(vertical: margin);
 
   // SizedBox helpers
-  static const SizedBox heightXS = SizedBox(height: spaceXS);
-  static const SizedBox heightS = SizedBox(height: spaceS);
-  static const SizedBox heightM = SizedBox(height: spaceM);
-  static const SizedBox height = SizedBox(height: space);
-  static const SizedBox heightL = SizedBox(height: spaceL);
-  static const SizedBox heightXL = SizedBox(height: spaceXL);
-  static const SizedBox heightXXL = SizedBox(height: spaceXXL);
+  static SizedBox get heightXS => SizedBox(height: spaceXS);
+  static SizedBox get heightS => SizedBox(height: spaceS);
+  static SizedBox get heightM => SizedBox(height: spaceM);
+  static SizedBox get height => SizedBox(height: space);
+  static SizedBox get heightL => SizedBox(height: spaceL);
+  static SizedBox get heightXL => SizedBox(height: spaceXL);
+  static SizedBox get heightXXL => SizedBox(height: spaceXXL);
 
-  static const SizedBox widthXS = SizedBox(width: spaceXS);
-  static const SizedBox widthS = SizedBox(width: spaceS);
-  static const SizedBox widthM = SizedBox(width: spaceM);
-  static const SizedBox width = SizedBox(width: space);
-  static const SizedBox widthL = SizedBox(width: spaceL);
-  static const SizedBox widthXL = SizedBox(width: spaceXL);
-  static const SizedBox widthXXL = SizedBox(width: spaceXXL);
+  static SizedBox get widthXS => SizedBox(width: spaceXS);
+  static SizedBox get widthS => SizedBox(width: spaceS);
+  static SizedBox get widthM => SizedBox(width: spaceM);
+  static SizedBox get width => SizedBox(width: space);
+  static SizedBox get widthL => SizedBox(width: spaceL);
+  static SizedBox get widthXL => SizedBox(width: spaceXL);
+  static SizedBox get widthXXL => SizedBox(width: spaceXXL);
 }

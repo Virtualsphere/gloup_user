@@ -34,8 +34,8 @@ class SalonInfoCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
-      padding: const EdgeInsets.symmetric(
+      margin: EdgeInsets.symmetric(vertical: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM, vertical: AppSizes.paddingL),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
@@ -132,7 +132,7 @@ class SalonInfoCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(width: AppSizes.spaceM),
+              SizedBox(width: AppSizes.spaceM),
               // Right side - Column with salon info
               Expanded(
                 child: Column(
@@ -151,7 +151,7 @@ class SalonInfoCard extends StatelessWidget {
                         fontSize: AppSizes.fontL,
                       ),
                     ),
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                     // Row: Rating and Gender
                     Row(
                       children: [
@@ -175,7 +175,7 @@ class SalonInfoCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(width: AppSizes.spaceM),
+                        SizedBox(width: AppSizes.spaceM),
                         // Right side - Gender
                         Row(
                           children: [
@@ -198,7 +198,7 @@ class SalonInfoCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                     // Location
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +238,7 @@ class SalonInfoCard extends StatelessWidget {
           ),
           // Date and Time section (left-aligned column)
           if (selectedDate != null || selectedTimeSlot != null) ...[
-            const SizedBox(height: AppSizes.spaceL),
+            SizedBox(height: AppSizes.spaceL),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -268,7 +268,7 @@ class SalonInfoCard extends StatelessWidget {
                 // Time slot row
                 if (selectedTimeSlot != null) ...[
                   if (selectedDate != null)
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                   AppSizes.widthL,
                   Row(
                     children: [

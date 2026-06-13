@@ -208,7 +208,7 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget _buildSearchInput(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingM,
         vertical: AppSizes.paddingM,
       ),
@@ -231,7 +231,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 ? AppColors.textSecondaryDark
                 : AppColors.textSecondary,
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           Expanded(
             child: TextField(
               controller: _searchController,
@@ -326,25 +326,25 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
 
             // Search Input
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingM,
                 ),
                 child: _buildSearchInput(context),
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
 
             // Section Title
             SliverToBoxAdapter(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                    EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -354,7 +354,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: AppSizes.spaceXS),
+                    SizedBox(height: AppSizes.spaceXS),
                     Text(
                       'Browse through our curated list of salons',
                       style: context.textTheme.bodyMedium?.copyWith(
@@ -367,7 +367,7 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
+            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
 
             // Salon List with BlocBuilder
             BlocBuilder<CategoryBloc, CategoryState>(
@@ -382,7 +382,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 if (state.salonsError != null && state.salons.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSizes.paddingXL),
+                      padding: EdgeInsets.all(AppSizes.paddingXL),
                       child: Center(
                         child: Text(
                           state.salonsError!,
@@ -400,7 +400,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 if (state.salons.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSizes.paddingXL),
+                      padding: EdgeInsets.all(AppSizes.paddingXL),
                       child: Center(
                         child: Text(
                           'Select a category to view salons',
@@ -417,14 +417,14 @@ class _CategoryPageState extends State<CategoryPage> {
                 // Display salons
                 return SliverPadding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                      EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final salon = state.salons[index];
                         return Padding(
                           padding:
-                              const EdgeInsets.only(bottom: AppSizes.spaceM),
+                              EdgeInsets.only(bottom: AppSizes.spaceM),
                           child: SalonSearchCard(
                             salonName: salon.salonName,
                             salonImage: salon.salonImage,
@@ -464,10 +464,10 @@ class _CategoryPageState extends State<CategoryPage> {
                 if (state.isLoadingMoreSalons) {
                   return SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSizes.paddingL),
+                      padding: EdgeInsets.all(AppSizes.paddingL),
                       child: Center(
                         child: Container(
-                          padding: const EdgeInsets.all(AppSizes.paddingM),
+                          padding: EdgeInsets.all(AppSizes.paddingM),
                           decoration: BoxDecoration(
                             color: isDarkMode
                                 ? AppColors.surfaceDark
@@ -504,7 +504,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 if (!state.hasMoreSalons && state.salons.isNotEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSizes.paddingL),
+                      padding: EdgeInsets.all(AppSizes.paddingL),
                       child: Center(
                         child: Text(
                           'No more salons to load',
@@ -522,7 +522,7 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
 
             // Bottom spacing
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
                 child: SizedBox(height: AppSizes.spaceXXL)),
           ],
         ),

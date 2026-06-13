@@ -110,7 +110,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       right: 0,
                       bottom: 160,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingXL),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -151,7 +151,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             bottom: AppSizes.paddingXL,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                  EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
               child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -174,7 +174,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         TextButton(
                           onPressed: _navigateToLogin,
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingL,
                               vertical: AppSizes.paddingM,
                             ),
@@ -193,7 +193,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.onPrimary,
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingXL,
                               vertical: AppSizes.paddingM,
                             ),

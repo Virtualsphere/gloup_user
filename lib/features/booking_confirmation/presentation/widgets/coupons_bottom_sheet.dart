@@ -66,7 +66,7 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: const BorderRadius.vertical(
+        borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppSizes.radiusXL),
         ),
       ),
@@ -76,7 +76,7 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
           children: [
             // Top handle
             Padding(
-              padding: const EdgeInsets.all(AppSizes.paddingL),
+              padding: EdgeInsets.all(AppSizes.paddingL),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,7 +84,7 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
                     child: Container(
                       width: 40,
                       height: 4,
-                      margin: const EdgeInsets.only(bottom: AppSizes.paddingM),
+                      margin: EdgeInsets.only(bottom: AppSizes.paddingM),
                       decoration: BoxDecoration(
                         color: isDarkMode
                             ? AppColors.borderDark
@@ -107,13 +107,13 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingL,
                   vertical: AppSizes.paddingS,
                 ),
                 itemCount: widget.coupons.length,
                 separatorBuilder: (context, index) =>
-                    const SizedBox(height: AppSizes.spaceM),
+                    SizedBox(height: AppSizes.spaceM),
                 itemBuilder: (context, index) {
                   final coupon = widget.coupons[index];
                   final isSelected = _selectedCoupon == coupon.couponCode;
@@ -156,7 +156,7 @@ class _CouponsBottomSheetState extends State<_CouponsBottomSheet> {
               ),
             ),
 
-            const SizedBox(height: AppSizes.paddingL),
+            SizedBox(height: AppSizes.paddingL),
           ],
         ),
       ),

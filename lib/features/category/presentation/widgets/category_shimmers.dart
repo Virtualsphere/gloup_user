@@ -14,7 +14,7 @@ class CategoryShimmers {
       highlightColor: highlightColor,
       child: Container(
         height: 140,
-        padding: const EdgeInsets.all(AppSizes.paddingS),
+        padding: EdgeInsets.all(AppSizes.paddingS),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -30,7 +30,7 @@ class CategoryShimmers {
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
             ),
-            const SizedBox(width: AppSizes.spaceM),
+            SizedBox(width: AppSizes.spaceM),
             // Content shimmer
             Expanded(
               child: Column(
@@ -46,7 +46,7 @@ class CategoryShimmers {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
                   // Rating
                   Container(
                     height: 12,
@@ -56,7 +56,7 @@ class CategoryShimmers {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
                   // Distance
                   Container(
                     height: 12,
@@ -66,7 +66,7 @@ class CategoryShimmers {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  const SizedBox(height: AppSizes.spaceS),
+                  SizedBox(height: AppSizes.spaceS),
                   // Service
                   Container(
                     height: 14,
@@ -90,11 +90,11 @@ class CategoryShimmers {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       itemCount: count,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
+          padding: EdgeInsets.only(bottom: AppSizes.spaceM),
           child: buildVerticalSalonCardShimmer(context),
         );
       },
@@ -105,12 +105,12 @@ class CategoryShimmers {
   static Widget buildSliverSalonListShimmer(BuildContext context,
       {int count = 5}) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: AppSizes.spaceM),
+              padding: EdgeInsets.only(bottom: AppSizes.spaceM),
               child: buildVerticalSalonCardShimmer(context),
             );
           },

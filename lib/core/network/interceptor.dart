@@ -55,9 +55,12 @@ class LoggerInterceptor extends Interceptor {
         );
       }
 
-      final headers = _sanitizeHeaders(Map<String, dynamic>.from(options.headers));
+      final headers =
+          _sanitizeHeaders(Map<String, dynamic>.from(options.headers));
       if (headers.isNotEmpty) {
-        AppLogger.debug('  headers: $headers', tag: _tag,
+        AppLogger.debug(
+          '  headers: $headers',
+          tag: _tag,
         );
       }
     }

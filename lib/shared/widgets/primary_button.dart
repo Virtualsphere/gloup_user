@@ -70,7 +70,7 @@ class PrimaryButton extends StatelessWidget {
           disabledBackgroundColor: bgColor,
           disabledForegroundColor: txtColor,
           padding: padding ??
-              const EdgeInsets.symmetric(
+              EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingXL,
                 vertical: AppSizes.paddingM,
               ),
@@ -96,7 +96,7 @@ class PrimaryButton extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     icon!,
-                    const SizedBox(width: AppSizes.spaceM),
+                    SizedBox(width: AppSizes.spaceM),
                   ],
                   Flexible(
                     child: Text(

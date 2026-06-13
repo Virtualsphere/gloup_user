@@ -77,13 +77,13 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
         InkWell(
           onTap: widget.onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingS),
+            padding: EdgeInsets.symmetric(vertical: AppSizes.paddingS),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Left side - Image with rounded corners and margin
                 _buildImage(isDarkMode),
-                const SizedBox(width: AppSizes.spaceM),
+                SizedBox(width: AppSizes.spaceM),
                 // Right side - Content
                 Expanded(
                   child: _buildContent(isDarkMode),
@@ -108,7 +108,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
     return Container(
       width: 100,
       height: 100,
-      margin: const EdgeInsets.only(left: AppSizes.paddingS),
+      margin: EdgeInsets.only(left: AppSizes.paddingS),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
       ),
@@ -141,7 +141,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                             : AppColors.primary.withValues(alpha: 0.3),
                         size: 32,
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         'No image',
                         style: context.textTheme.bodySmall?.copyWith(
@@ -202,7 +202,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
               bottom: AppSizes.paddingXS,
               right: AppSizes.paddingXS,
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingXS,
                   vertical: 2,
                 ),
@@ -255,17 +255,17 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: AppSizes.spaceS),
+            SizedBox(width: AppSizes.spaceS),
             // Rating with review count
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.star,
                   color: Color(0xFFFFA500),
                   size: AppSizes.iconXS,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Text(
                   widget.rating.toStringAsFixed(1),
                   style: context.textTheme.bodyMedium?.copyWith(
@@ -275,7 +275,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
                         : AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(width: 2),
+                SizedBox(width: 2),
                 Text(
                   '(${widget.reviewCount})',
                   style: context.textTheme.bodySmall?.copyWith(
@@ -289,11 +289,11 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
             ),
           ],
         ),
-        const SizedBox(height: AppSizes.spaceM),
+        SizedBox(height: AppSizes.spaceM),
         // Address
         if (widget.address != null) ...[
           _buildRatingAndDistance(isDarkMode),
-          const SizedBox(height: AppSizes.spaceM),
+          SizedBox(height: AppSizes.spaceM),
         ],
         // Languages and Categories
         Row(
@@ -387,7 +387,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
           width: AppSizes.iconXS,
           height: AppSizes.iconXS,
         ),
-        const SizedBox(width: 4),
+        SizedBox(width: 4),
         Container(
           constraints: const BoxConstraints(maxWidth: 130),
           child: Text(
@@ -448,7 +448,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
         // Category badges (up to 2)
         ...displayCategories.map((category) => Container(
               constraints: const BoxConstraints(maxWidth: 70),
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingS,
                 vertical: 2,
               ),
@@ -472,7 +472,7 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
             )),
         if (hasMoreCategories)
           Container(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSizes.paddingS,
               vertical: 2,
             ),

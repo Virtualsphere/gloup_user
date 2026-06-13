@@ -245,11 +245,11 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         },
                       ),
 
-                      const SizedBox(height: AppSizes.spaceM),
+                      SizedBox(height: AppSizes.spaceM),
 
                       // Section title
                       Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.paddingM),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -266,7 +266,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         ),
                       ),
 
-                      const SizedBox(height: AppSizes.spaceM),
+                      SizedBox(height: AppSizes.spaceM),
 
                       // Slots grid or loading/error states
                       if (state.isLoading)
@@ -278,7 +278,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                       else
                         _buildSlotsGrid(context, state, isDarkMode),
 
-                      const SizedBox(height: AppSizes.spaceXXL),
+                      SizedBox(height: AppSizes.spaceXXL),
                     ],
                   ),
                 );
@@ -304,7 +304,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     _cachedSlotInterval = _slotIntervalMinutes(state.slots);
 
     return Padding(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         left: AppSizes.paddingM,
         right: AppSizes.paddingM,
         bottom: AppSizes.paddingXL,
@@ -312,7 +312,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: AppSizes.spaceM,
           mainAxisSpacing: AppSizes.spaceM,
@@ -386,7 +386,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
   Widget _buildEmptyState(bool isDarkMode) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        padding: EdgeInsets.all(AppSizes.paddingXL),
         child: Column(
           children: [
             Icon(
@@ -396,12 +396,12 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                   ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                   : AppColors.textSecondary.withValues(alpha: 0.5),
             ),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
             Text(
               'No slots available',
               style: context.textTheme.titleMedium,
             ),
-            const SizedBox(height: AppSizes.spaceS),
+            SizedBox(height: AppSizes.spaceS),
             Text(
               'Please select another date',
               textAlign: TextAlign.center,
@@ -421,7 +421,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
   Widget _buildErrorState(bool isDarkMode, String message) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        padding: EdgeInsets.all(AppSizes.paddingXL),
         child: Column(
           children: [
             Icon(
@@ -429,12 +429,12 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
               size: 64,
               color: AppColors.error,
             ),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
             Text(
               'Error loading slots',
               style: context.textTheme.titleMedium,
             ),
-            const SizedBox(height: AppSizes.spaceS),
+            SizedBox(height: AppSizes.spaceS),
             Text(
               message,
               textAlign: TextAlign.center,
@@ -444,7 +444,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                     : AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: AppSizes.spaceM),
+            SizedBox(height: AppSizes.spaceM),
             ElevatedButton(
               onPressed: _loadSlots,
               child: const Text('Retry'),
@@ -489,7 +489,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         : AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   DateFormat('MMM dd, yyyy').format(selectedDate),
                   style: context.textTheme.bodyMedium?.copyWith(
@@ -499,7 +499,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         : AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   _formatTimeRange(selectedTime),
                   style: context.textTheme.bodyLarge?.copyWith(
@@ -511,7 +511,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
               ],
             ),
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           PrimaryButton(
             text: 'Continue',
             onPressed: () {

@@ -129,7 +129,7 @@ class _BookingsPageState extends State<BookingsPage>
         children: [
           // Tab Bar
           Container(
-            margin: const EdgeInsets.symmetric(
+            margin: EdgeInsets.symmetric(
               horizontal: AppSizes.paddingL,
               vertical: AppSizes.paddingM,
             ),
@@ -191,7 +191,7 @@ class _BookingsPageState extends State<BookingsPage>
                               ? AppColors.textSecondaryDark
                               : AppColors.textSecondary,
                         ),
-                        const SizedBox(height: AppSizes.spaceM),
+                        SizedBox(height: AppSizes.spaceM),
                         Text(
                           state.errorMessage!,
                           style: context.textTheme.bodyMedium?.copyWith(
@@ -201,7 +201,7 @@ class _BookingsPageState extends State<BookingsPage>
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: AppSizes.spaceL),
+                        SizedBox(height: AppSizes.spaceL),
                         ElevatedButton(
                           onPressed: () => _appointmentsBloc
                               .add(const LoadAppointmentsEvent()),
@@ -251,7 +251,7 @@ class _BookingsPageState extends State<BookingsPage>
                   ? AppColors.textSecondaryDark.withValues(alpha: 0.3)
                   : AppColors.textSecondary.withValues(alpha: 0.3),
             ),
-            const SizedBox(height: AppSizes.spaceL),
+            SizedBox(height: AppSizes.spaceL),
             Text(
               'No $label bookings',
               style: context.textTheme.titleMedium?.copyWith(
@@ -266,7 +266,7 @@ class _BookingsPageState extends State<BookingsPage>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(AppSizes.paddingL),
+      padding: EdgeInsets.all(AppSizes.paddingL),
       itemCount: appointments.length,
       itemBuilder: (context, index) =>
           _buildBookingCard(appointments[index], tabStatus, isDarkMode),

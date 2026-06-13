@@ -34,8 +34,8 @@ class RecommendedServiceCard extends StatelessWidget {
 
     return Container(
       width: 150,
-      margin: const EdgeInsets.only(right: AppSizes.spaceM),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      margin: EdgeInsets.only(right: AppSizes.spaceM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -56,7 +56,7 @@ class RecommendedServiceCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: AppSizes.spaceS),
+          SizedBox(height: AppSizes.spaceS),
 
           // Duration with clock icon
           Row(

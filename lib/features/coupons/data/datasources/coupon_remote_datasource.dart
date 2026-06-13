@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/coupons/data/models/coupon_model.dart';
 
@@ -32,20 +33,10 @@ class CouponRemoteDataSourceImpl implements CouponRemoteDataSource {
               .map((json) => CouponModel.fromJson(json as Map<String, dynamic>))
               .toList();
         } else {
-          throw DioException(
-            requestOptions: response.requestOptions,
-            response: response,
-            type: DioExceptionType.badResponse,
-            error: 'Invalid response format',
-          );
+          throw ServerException(message: 'Invalid response format');
         }
       } else {
-        throw DioException(
-          requestOptions: response.requestOptions,
-          response: response,
-          type: DioExceptionType.badResponse,
-          error: 'Failed to fetch coupons',
-        );
+        throw ServerException(message: 'Failed to fetch coupons');
       }
     } catch (e) {
       rethrow;

@@ -16,10 +16,10 @@ class SelectedServicesCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(
+      margin: EdgeInsets.symmetric(
         horizontal: AppSizes.marginM,
       ),
-      padding: const EdgeInsets.all(AppSizes.paddingL),
+      padding: EdgeInsets.all(AppSizes.paddingL),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -32,7 +32,7 @@ class SelectedServicesCard extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: services.length,
             separatorBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
+              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingM),
               child: Divider(
                 color: (isDarkMode ? AppColors.borderDark : AppColors.border)
                     .withValues(alpha: 0.3),
@@ -46,7 +46,7 @@ class SelectedServicesCard extends StatelessWidget {
           ),
           // Divider before "Add more service"
           Padding(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
                 top: AppSizes.paddingM, bottom: AppSizes.paddingM),
             child: Divider(
               color: (isDarkMode ? AppColors.borderDark : AppColors.border)
@@ -111,7 +111,7 @@ class SelectedServicesCard extends StatelessWidget {
                     ),
                   ),
                   if (isPopular) ...[
-                    const SizedBox(width: AppSizes.spaceS),
+                    SizedBox(width: AppSizes.spaceS),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -133,7 +133,7 @@ class SelectedServicesCard extends StatelessWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
               // Duration with clock icon
               Row(
                 children: [
@@ -159,7 +159,7 @@ class SelectedServicesCard extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: AppSizes.spaceM),
+        SizedBox(width: AppSizes.spaceM),
         // Right side - Price info
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -203,7 +203,7 @@ class SelectedServicesCard extends StatelessWidget {
                 ),
               ),
             if (hasDiscount) ...[
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
               // Discount badge
               Container(
                 padding: const EdgeInsets.symmetric(

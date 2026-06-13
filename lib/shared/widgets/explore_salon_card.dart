@@ -14,6 +14,7 @@ import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
 import 'package:tressy/shared/widgets/salon_location_row.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExploreSalonCard extends StatefulWidget {
   final int storeId;
@@ -139,11 +140,11 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               children: [
                 // Left side - Image carousel
                 _buildImageCarousel(isDarkMode),
-                const SizedBox(width: AppSizes.spaceM),
+                SizedBox(width: AppSizes.spaceM),
                 // Right side - Content
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: AppSizes.paddingM,
                       right: AppSizes.paddingM,
                       bottom: AppSizes.paddingM,
@@ -153,7 +154,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildSalonInfo(isDarkMode, isFavorite, isLoading),
-                        const SizedBox(height: AppSizes.spaceS),
+                        SizedBox(height: AppSizes.spaceS),
                         _buildRatingAndDistance(
                             isDarkMode, widget.showDistance),
                       ],
@@ -170,13 +171,13 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
 
   Widget _buildImageCarousel(bool isDarkMode) {
     return SizedBox(
-      width: 130,
-      height: 150, // Add fixed height to prevent infinite height error
+      width: 130.w,
+      height: 150.h, // Add fixed height to prevent infinite height error
       child: Stack(
         children: [
           // Carousel images
           ClipRRect(
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(AppSizes.radiusS),
               bottomLeft: Radius.circular(AppSizes.radiusS),
             ),
@@ -219,7 +220,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                                   Icons.content_cut,
                                   color:
                                       AppColors.primary.withValues(alpha: 0.3),
-                                  size: 32,
+                                  size: 32.w,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
@@ -227,7 +228,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                                   style: context.textTheme.bodySmall?.copyWith(
                                     color: AppColors.primary
                                         .withValues(alpha: 0.4),
-                                    fontSize: 9,
+                                    fontSize: 9.sp,
                                   ),
                                 ),
                               ],
@@ -247,8 +248,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               top: AppSizes.paddingXS,
               left: AppSizes.paddingXS,
               child: Container(
-                width: 28,
-                height: 28,
+                width: 28.w,
+                height: 28.h,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
@@ -270,8 +271,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 child: Center(
                   child: SvgPicture.asset(
                     AppIcons.icCrown,
-                    width: 14,
-                    height: 14,
+                    width: 14.w,
+                    height: 14.h,
                     colorFilter: const ColorFilter.mode(
                       AppColors.white,
                       BlendMode.srcIn,
@@ -291,8 +292,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 mainAxisSize: MainAxisSize.min,
                 children: widget.images.asMap().entries.map((entry) {
                   return Container(
-                    width: _currentImageIndex == entry.key ? 14 : 4,
-                    height: 4,
+                    width: _currentImageIndex == entry.key ? 14.w : 4.w,
+                    height: 4.h,
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(2),
@@ -310,11 +311,11 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               bottom: AppSizes.paddingXS,
               right: AppSizes.paddingXS,
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingS,
                   vertical: AppSizes.paddingXS,
                 ),
-                constraints: BoxConstraints(maxWidth: 130),
+                constraints: BoxConstraints(maxWidth: 130.w),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -330,14 +331,14 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      constraints: BoxConstraints(maxWidth: 70),
+                      constraints: BoxConstraints(maxWidth: 70.w),
                       child: Text(
                         widget.serviceName!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontSize: 10,
+                          fontSize: 10.sp,
                           color: AppColors.textPrimary,
                         ),
                       ),
@@ -345,8 +346,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 3),
                       child: Container(
-                        width: 2.5,
-                        height: 2.5,
+                        width: 2.5.w,
+                        height: 2.5.h,
                         decoration: const BoxDecoration(
                           color: AppColors.textSecondary,
                           shape: BoxShape.circle,
@@ -359,7 +360,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w700,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         color: AppColors.primary,
                       ),
                     ),
@@ -389,7 +390,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             ),
           ),
         ),
-        const SizedBox(width: AppSizes.spaceS),
+        SizedBox(width: AppSizes.spaceS),
         // Favorite heart button
         InkWell(
           onTap: isLoading ? null : _handleFavoriteToggle,
@@ -406,8 +407,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
             ),
             child: isLoading
                 ? SizedBox(
-                    width: 16,
-                    height: 16,
+                    width: 16.w,
+                    height: 16.h,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
@@ -419,8 +420,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     isFavorite
                         ? 'assets/icons/ic_heart_fill.svg'
                         : 'assets/icons/ic_heart.svg',
-                    width: 16,
-                    height: 16,
+                    width: 16.w,
+                    height: 16.h,
                     colorFilter: ColorFilter.mode(
                       isFavorite ? Colors.red : AppColors.textSecondary,
                       BlendMode.srcIn,
@@ -439,17 +440,17 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         // Rating and review count
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.star,
-              color: Color(0xFFFFA500),
-              size: 16,
+              color: const Color(0xFFFFA500),
+              size: 16.w,
             ),
             const SizedBox(width: 4),
             Text(
               widget.rating.toStringAsFixed(1),
               style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: isDarkMode
                     ? AppColors.textPrimaryDark
                     : AppColors.textPrimary,
@@ -462,19 +463,19 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary,
-                fontSize: 12,
+                fontSize: 12.sp,
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppSizes.spaceXS),
+        SizedBox(height: AppSizes.spaceXS),
         SalonLocationRow(
           locationLabel: widget.address,
           distanceKm: widget.distance,
           showDistance: showDistance,
           isDarkMode: isDarkMode,
         ),
-        const SizedBox(height: AppSizes.spaceS),
+        SizedBox(height: AppSizes.spaceS),
         // Language and Category badges row
         Row(
           children: [
@@ -513,8 +514,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
           final icon = iconPath != null
               ? SvgPicture.asset(
                   iconPath,
-                  width: 11,
-                  height: 11,
+                  width: 11.w,
+                  height: 11.h,
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                   colorFilter: ColorFilter.mode(
@@ -525,8 +526,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   ),
                 )
               : Container(
-                  width: 11,
-                  height: 11,
+                  width: 11.w,
+                  height: 11.h,
                   decoration: BoxDecoration(
                     color: isDarkMode
                         ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
@@ -542,7 +543,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                         color: isDarkMode
                             ? AppColors.textSecondaryDark
                             : AppColors.textSecondary,
-                        fontSize: 9,
+                        fontSize: 9.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -555,8 +556,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Container(
-                  width: 4,
-                  height: 4,
+                  width: 4.w,
+                  height: 4.h,
                   decoration: BoxDecoration(
                     color: isDarkMode
                         ? AppColors.textSecondaryDark
@@ -584,9 +585,9 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         // Category badges
         ...displayCategories.map((category) => Flexible(
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 80),
+                constraints: BoxConstraints(maxWidth: 80.w),
                 margin: const EdgeInsets.only(left: 4),
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingS,
                   vertical: 4,
                 ),
@@ -600,7 +601,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF8F89CA),
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -609,7 +610,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
         if (hasMoreCategories)
           Container(
             margin: const EdgeInsets.only(left: 6),
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSizes.paddingM,
               vertical: 6,
             ),
@@ -625,7 +626,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary,
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),

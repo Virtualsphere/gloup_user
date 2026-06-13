@@ -64,7 +64,7 @@ class _MyReviewsState extends State<MyReviews> {
           }),
       body: SafeArea(
           child: ListView.builder(
-        padding: const EdgeInsets.only(
+        padding: EdgeInsets.only(
           top: AppSizes.paddingL,
         ),
         itemCount: dummyReviews.length,

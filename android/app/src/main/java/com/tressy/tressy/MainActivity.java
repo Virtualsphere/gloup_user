@@ -14,11 +14,11 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Enable edge-to-edge and allow Flutter to control system bars
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-            getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+            // setStatusBarColor and setNavigationBarColor are deprecated in API 35
+            // getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+            // getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
         }
     }
 

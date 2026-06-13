@@ -94,10 +94,23 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
         return NetworkException(message: 'No internet connection');
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
-        final message = e.response?.data['message'] ?? e.message;
-        if (statusCode == 401) {
+        final responseData = e.response?.data;
+        
+        String? message = e.message;
+        String? errorType;
+        
+        if (responseData is Map<String, dynamic>) {
+          if (responseData.containsKey('error') && responseData['error'] is Map<String, dynamic>) {
+            message = responseData['error']['message'] ?? message;
+            errorType = responseData['error']['type'];
+          } else {
+            message = responseData['message'] ?? message;
+          }
+        }
+
+        if (statusCode == 401 || errorType == 'UnauthorizedException') {
           return UnauthorizedException(message: message);
-        } else if (statusCode == 404) {
+        } else if (statusCode == 404 || errorType == 'NotFoundException') {
           return NotFoundException(message: message);
         } else if (statusCode != null && statusCode >= 500) {
           return ServerException(message: message);

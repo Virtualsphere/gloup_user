@@ -19,7 +19,7 @@ class OfferBanner extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingM,
         vertical: AppSizes.paddingS,
       ),

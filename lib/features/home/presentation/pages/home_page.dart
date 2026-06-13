@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             onSettingsTap: () {},
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               vertical: AppSizes.paddingS,
                             ),
                             showBorder: _isCollapsed ? false : true,
@@ -437,20 +437,20 @@ class _HomePageState extends State<HomePage> {
                           // Location and Profile on top of carousel
                           SafeArea(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: AppSizes.paddingM,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: AppSizes.spaceS),
+                                  SizedBox(height: AppSizes.spaceS),
                                   // Location and profile row
                                   Row(
                                     children: [
                                       _isLoadingLocation
                                           ? Container(
                                               padding:
-                                                  const EdgeInsets.symmetric(
+                                                  EdgeInsets.symmetric(
                                                 horizontal: AppSizes.paddingM,
                                                 vertical: AppSizes.paddingS,
                                               ),
@@ -482,7 +482,7 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 8),
+                                                  SizedBox(width: 8),
                                                   Text(
                                                     'Getting location...',
                                                     style: context
@@ -644,7 +644,7 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: Container(
                       color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                      child: const Column(
+                      child: Column(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(top: AppSizes.paddingM),
@@ -713,7 +713,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Text('No popular services found'))
                               : ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                       horizontal: AppSizes.paddingM),
                                   itemCount: state.popularServices.length,
                                   itemBuilder: (context, index) {
@@ -774,7 +774,7 @@ class _HomePageState extends State<HomePage> {
                               ? const Center(child: Text('No top salons found'))
                               : ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                       horizontal: AppSizes.paddingM),
                                   itemCount: state.topSalons.length,
                                   itemBuilder: (context, index) {
@@ -830,12 +830,12 @@ class _HomePageState extends State<HomePage> {
                   state.isRecommendedSalonsLoading &&
                           state.recommendedSalons.isEmpty
                       ? SliverPadding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingM),
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => Padding(
-                                padding: const EdgeInsets.only(
+                                padding: EdgeInsets.only(
                                     bottom: AppSizes.paddingM),
                                 child:
                                     HomeShimmers.buildVerticalSalonCardShimmer(
@@ -851,7 +851,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Text('No recommendations found')),
                             )
                           : SliverPadding(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                   horizontal: AppSizes.paddingM),
                               sliver: SliverList(
                                 delegate: SliverChildBuilderDelegate(
@@ -859,7 +859,7 @@ class _HomePageState extends State<HomePage> {
                                     final salon =
                                         state.recommendedSalons[index];
                                     return Padding(
-                                      padding: const EdgeInsets.only(
+                                      padding: EdgeInsets.only(
                                           bottom: AppSizes.paddingM),
                                       child: SalonCard(
                                         storeId: int.tryParse(salon.id) ?? 0,
@@ -898,7 +898,7 @@ class _HomePageState extends State<HomePage> {
                   if (state.isLoadingMoreRecommended)
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSizes.paddingM),
+                        padding: EdgeInsets.all(AppSizes.paddingM),
                         child: Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(

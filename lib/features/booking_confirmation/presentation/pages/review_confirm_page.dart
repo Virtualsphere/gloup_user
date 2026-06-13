@@ -351,15 +351,15 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                   ...addedServices,
                                 ],
                               ),
-                              const SizedBox(height: AppSizes.spaceM),
+                              SizedBox(height: AppSizes.spaceM),
                               // Who is this booking for section - Only show if logged in
                               if (isLoggedIn) ...[
                                 _buildSectionTitle(context,
                                     'Who is this booking for?', isDarkMode),
-                                const SizedBox(height: AppSizes.spaceS),
+                                SizedBox(height: AppSizes.spaceS),
                                 // Booking for selector (Myself / Someone else)
                                 _buildBookingForSelector(context, isDarkMode),
-                                const SizedBox(height: AppSizes.spaceM),
+                                SizedBox(height: AppSizes.spaceM),
                               ],
                               // Profile card (shown when "Myself" is selected and logged in)
                               if (isLoggedIn && selectedBookingFor == 'myself')
@@ -367,7 +367,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                   builder: (context, profileState) {
                                     // Show loading shimmer
                                     if (profileState is ProfileLoading) {
-                                      return const Padding(
+                                      return Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
                                         child: Center(
@@ -379,7 +379,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     // Show error state
                                     if (profileState is ProfileFailure) {
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
                                         child: Center(
                                           child: Text(
@@ -413,7 +413,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     }
 
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           horizontal: AppSizes.paddingM),
                                       child: ProfileCard(
                                         name: userName,
@@ -456,7 +456,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     // Show error state
                                     if (guestState.errorMessage != null) {
                                       return Padding(
-                                        padding: const EdgeInsets.all(
+                                        padding: EdgeInsets.all(
                                             AppSizes.paddingXL),
                                         child: Center(
                                           child: Column(
@@ -466,7 +466,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                 size: 48,
                                                 color: AppColors.error,
                                               ),
-                                              const SizedBox(
+                                              SizedBox(
                                                   height: AppSizes.spaceM),
                                               Text(
                                                 guestState.errorMessage!,
@@ -475,7 +475,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     .textTheme
                                                     .bodyMedium,
                                               ),
-                                              const SizedBox(
+                                              SizedBox(
                                                   height: AppSizes.spaceM),
                                               ElevatedButton(
                                                 onPressed: () {
@@ -492,7 +492,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
 
                                     // Show guest list
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           horizontal: AppSizes.paddingM),
                                       child: Column(
                                         children: [
@@ -503,7 +503,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                               final guest =
                                                   guestState.guests[index];
                                               return Padding(
-                                                padding: const EdgeInsets.only(
+                                                padding: EdgeInsets.only(
                                                     bottom: AppSizes.spaceM),
                                                 child: ProfileCard(
                                                   name: guest.name,
@@ -563,7 +563,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                               );
                                             },
                                           ),
-                                          const SizedBox(
+                                          SizedBox(
                                               height: AppSizes.spaceM),
                                           // Add a New Person card-styled button
                                           GestureDetector(
@@ -574,7 +574,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                               constraints: const BoxConstraints(
                                                   minHeight: 72.0),
                                               padding:
-                                                  const EdgeInsets.symmetric(
+                                                  EdgeInsets.symmetric(
                                                       horizontal:
                                                           AppSizes.paddingL),
                                               decoration: BoxDecoration(
@@ -613,7 +613,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(
+                                                  SizedBox(
                                                       width: AppSizes.spaceM),
                                                   Expanded(
                                                     child: Text(
@@ -641,11 +641,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     );
                                   },
                                 ),
-                              const SizedBox(height: AppSizes.spaceL),
+                              SizedBox(height: AppSizes.spaceL),
                               // Coupons & Offers section
                               _buildSectionTitle(
                                   context, 'Coupons & Offers', isDarkMode),
-                              const SizedBox(height: AppSizes.spaceS),
+                              SizedBox(height: AppSizes.spaceS),
                               // Show login message if not logged in, otherwise show coupons
                               if (!isLoggedIn)
                                 Text(
@@ -666,7 +666,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                   builder: (context, couponState) {
                                     // Show loading state
                                     if (couponState is CouponLoading) {
-                                      return const Padding(
+                                      return Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
                                         child: Center(
@@ -678,7 +678,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     // Show error state
                                     if (couponState is CouponFailure) {
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
                                         child: Center(
                                           child: Text(
@@ -715,7 +715,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
 
                                     if (availableCoupons.isEmpty) {
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
                                         child: Center(
                                           child: Text(
@@ -784,7 +784,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                       children: [
                                         // Show first coupon or selected coupon
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                               horizontal: AppSizes.paddingM),
                                           child: CouponCard(
                                             discountAmount:
@@ -836,11 +836,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                             },
                                           ),
                                         ),
-                                        const SizedBox(height: AppSizes.spaceM),
+                                        SizedBox(height: AppSizes.spaceM),
                                         // View all coupons link
                                         if (availableCoupons.length > 1)
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
+                                            padding: EdgeInsets.symmetric(
                                               horizontal: AppSizes.paddingM,
                                               vertical: AppSizes.paddingS,
                                             ),
@@ -920,11 +920,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     );
                                   },
                                 ),
-                              const SizedBox(height: AppSizes.spaceL),
+                              SizedBox(height: AppSizes.spaceL),
                               // Billing Summary section
                               _buildSectionTitle(
                                   context, 'Billing Summary', isDarkMode),
-                              const SizedBox(height: AppSizes.spaceS),
+                              SizedBox(height: AppSizes.spaceS),
                               BillingSummaryCard(
                                 serviceAmount: _totalServiceAmount,
                                 couponDiscount: selectedCouponCode != null
@@ -941,11 +941,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                 isPlatformFeeWaived: true,
                                 gloupCash: useGloupCash ? 70.0 : 0.0,
                               ),
-                              const SizedBox(height: AppSizes.spaceL),
+                              SizedBox(height: AppSizes.spaceL),
                               // You might also like section
                               _buildSectionTitle(
                                   context, 'You might also like', isDarkMode),
-                              const SizedBox(height: AppSizes.spaceS),
+                              SizedBox(height: AppSizes.spaceS),
                               // Recommended services horizontal scroll
                               _buildRecommendedServices(context, isDarkMode),
                             ],
@@ -1058,13 +1058,13 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   Widget _buildGloupCashCheckbox(BuildContext context, bool isDarkMode) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingM,
         vertical: AppSizes.paddingXS,
       ),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.radiusM),
           topRight: Radius.circular(AppSizes.radiusM),
         ),
@@ -1097,7 +1097,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-          const SizedBox(width: AppSizes.spaceS),
+          SizedBox(width: AppSizes.spaceS),
           Expanded(
             child: Text.rich(
               TextSpan(
@@ -1129,7 +1129,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     // If not logged in, show "Login to Continue" button
     if (!isLoggedIn) {
       return Container(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         ),
@@ -1193,7 +1193,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final finalTotal = totalBeforeGloupCash - gloupCash;
 
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
       ),
@@ -1208,7 +1208,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                   height: 32,
                   width: 32,
                 ),
-                const SizedBox(width: AppSizes.spaceS),
+                SizedBox(width: AppSizes.spaceS),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1235,7 +1235,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 ),
               ],
             ),
-            const SizedBox(width: AppSizes.spaceXL),
+            SizedBox(width: AppSizes.spaceXL),
             // Right side - Pay button with amount
             Expanded(
               child: BlocBuilder<OrderBloc, OrderState>(
@@ -1311,7 +1311,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   Widget _buildSectionTitle(
       BuildContext context, String title, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingM,
         vertical: AppSizes.paddingS,
       ),
@@ -1333,7 +1333,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   // Booking for selector (Myself / Someone else)
   Widget _buildBookingForSelector(BuildContext context, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
       child: Row(
         children: [
           // Myself button
@@ -1347,7 +1347,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   vertical: AppSizes.paddingM,
                   horizontal: AppSizes.paddingS,
                 ),
@@ -1381,7 +1381,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               ? AppColors.textPrimaryDark
                               : AppColors.textPrimary),
                     ),
-                    const SizedBox(width: AppSizes.spaceXS),
+                    SizedBox(width: AppSizes.spaceXS),
                     Text(
                       'Myself',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -1400,7 +1400,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               ),
             ),
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           // Someone else button
           Expanded(
             child: GestureDetector(
@@ -1412,7 +1412,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   vertical: AppSizes.paddingM,
                   horizontal: AppSizes.paddingS,
                 ),
@@ -1446,7 +1446,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               ? AppColors.textPrimaryDark
                               : AppColors.textPrimary),
                     ),
-                    const SizedBox(width: AppSizes.spaceXS),
+                    SizedBox(width: AppSizes.spaceXS),
                     Text(
                       'Someone else',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -1501,7 +1501,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         itemCount: recommendedServices.length,
         itemBuilder: (context, index) {
           final service = recommendedServices[index];

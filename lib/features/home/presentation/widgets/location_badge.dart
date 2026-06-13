@@ -21,7 +21,7 @@ class LocationBadge extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
       child: Container(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingS,
         ),
@@ -32,12 +32,12 @@ class LocationBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
+            Icon(
               Icons.location_on,
               color: AppColors.primary,
               size: AppSizes.iconM,
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -51,8 +51,8 @@ class LocationBadge extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(
+                    SizedBox(width: 4),
+                    Icon(
                       Icons.keyboard_arrow_down,
                       color: AppColors.primary,
                       size: AppSizes.iconS,

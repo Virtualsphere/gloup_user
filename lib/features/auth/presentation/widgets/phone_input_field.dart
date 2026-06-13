@@ -105,7 +105,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
           backgroundColor:
               isDarkMode ? AppColors.surfaceDark : AppColors.surface,
           insetPadding:
-              const EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
           ),
@@ -120,7 +120,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                   borderRadius: BorderRadius.circular(AppSizes.radiusL),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(vertical: AppSizes.paddingL),
+                    EdgeInsets.symmetric(vertical: AppSizes.paddingL),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -223,7 +223,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               ? AppColors.textSecondaryDark
               : AppColors.textSecondary,
         ),
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingXS + AppSizes.paddingM,
         ),

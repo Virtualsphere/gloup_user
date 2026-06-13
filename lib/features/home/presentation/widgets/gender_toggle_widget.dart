@@ -79,7 +79,7 @@ class _GenderToggleWidgetState extends State<GenderToggleWidget> {
               isLeft: true,
               height: widget.height,
               selectedBackground: const Color(0xFFEEF3F6),
-              borderColor: const Color(0xFFBFDFF5).withOpacity(0.35),
+              borderColor: Color(0xFFBFDFF5).withValues(alpha: 0.35),
               accentColor: const Color(0xFF1485E0),
               glowColor: const Color(0xFF1485E0).withValues(alpha: 0.12),
               onTap: () => _select(GenderTab.men),

@@ -16,19 +16,20 @@ class SectionHeader extends StatelessWidget {
     this.subtitle,
     this.onSeeAllTap,
     this.seeAllText = 'See All',
-    this.padding = const EdgeInsets.only(
-      left: AppSizes.paddingM,
-      right: AppSizes.paddingXS,
-      top: AppSizes.paddingS,
-      bottom: AppSizes.paddingS,
-    ),
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
+    final resolvedPadding = padding ?? EdgeInsets.only(
+      left: AppSizes.paddingM,
+      right: AppSizes.paddingXS,
+      top: AppSizes.paddingS,
+      bottom: AppSizes.paddingS,
+    );
     return Padding(
-      padding: padding!,
+      padding: resolvedPadding,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,7 +50,7 @@ class SectionHeader extends StatelessWidget {
                   ),
                 ),
                 if (subtitle != null && subtitle!.isNotEmpty) ...[
-                  const SizedBox(height: AppSizes.spaceXS),
+                  SizedBox(height: AppSizes.spaceXS),
                   Text(
                     subtitle!,
                     style: context.textTheme.titleSmall?.copyWith(
@@ -63,12 +64,12 @@ class SectionHeader extends StatelessWidget {
           ),
           // See All button (if callback provided)
           if (onSeeAllTap != null) ...[
-            const SizedBox(width: AppSizes.spaceM),
+            SizedBox(width: AppSizes.spaceM),
             InkWell(
               onTap: onSeeAllTap,
               borderRadius: BorderRadius.circular(AppSizes.radiusS),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingS,
                   vertical: AppSizes.paddingXS,
                 ),
@@ -85,7 +86,7 @@ class SectionHeader extends StatelessWidget {
                         fontSize: AppSizes.fontM,
                       ),
                     ),
-                    const SizedBox(width: AppSizes.spaceXS),
+                    SizedBox(width: AppSizes.spaceXS),
                     Icon(
                       Icons.arrow_forward_ios,
                       color: isDarkMode

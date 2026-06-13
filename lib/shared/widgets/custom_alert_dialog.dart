@@ -31,7 +31,7 @@ class CustomAlertDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.paddingXL),
+        padding: EdgeInsets.all(AppSizes.paddingXL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +71,7 @@ class CustomAlertDialog extends StatelessWidget {
                     onCancel?.call();
                   },
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                       horizontal: AppSizes.paddingL,
                       vertical: AppSizes.paddingM,
                     ),
@@ -96,7 +96,7 @@ class CustomAlertDialog extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.onPrimary,
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                       horizontal: AppSizes.paddingXL,
                       vertical: AppSizes.paddingM,
                     ),

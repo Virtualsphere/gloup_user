@@ -31,7 +31,7 @@ class CouponCard extends StatelessWidget {
     return GestureDetector(
       onTap: isEnabled ? onTap : null,
       child: Container(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
+        padding: EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isEnabled ? surface : surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -63,7 +63,7 @@ class CouponCard extends StatelessWidget {
                     size: 22,
                   ),
                 ),
-                const SizedBox(width: AppSizes.spaceM),
+                SizedBox(width: AppSizes.spaceM),
 
                 // Middle text
                 Expanded(
@@ -95,7 +95,7 @@ class CouponCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: AppSizes.spaceXS),
+                      SizedBox(height: AppSizes.spaceXS),
                       Text(
                         '"$couponCode"',
                         style: Theme.of(context)
@@ -121,9 +121,9 @@ class CouponCard extends StatelessWidget {
             ),
             // Show disabled reason if provided
             if (!isEnabled && disabledReason != null) ...[
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
               Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingS,
                   vertical: AppSizes.paddingXS,
                 ),
@@ -138,7 +138,7 @@ class CouponCard extends StatelessWidget {
                       size: 14,
                       color: AppColors.warning,
                     ),
-                    const SizedBox(width: AppSizes.spaceXS),
+                    SizedBox(width: AppSizes.spaceXS),
                     Expanded(
                       child: Text(
                         disabledReason!,
@@ -177,7 +177,7 @@ class _ApplyToggle extends StatelessWidget {
       onTap: isEnabled ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM,
           vertical: AppSizes.paddingS,
         ),
@@ -198,7 +198,7 @@ class _ApplyToggle extends StatelessWidget {
                 size: 16,
                 color: AppColors.success,
               ),
-              const SizedBox(width: AppSizes.spaceXS),
+              SizedBox(width: AppSizes.spaceXS),
             ],
             Text(
               isSelected ? 'Applied' : 'Apply',

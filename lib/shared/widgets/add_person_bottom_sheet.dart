@@ -103,7 +103,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.radiusXL),
           topRight: Radius.circular(AppSizes.radiusXL),
         ),
@@ -111,7 +111,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
       child: SafeArea(
         top: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
+          padding: EdgeInsets.fromLTRB(
             AppSizes.paddingL,
             AppSizes.paddingL,
             AppSizes.paddingL,
@@ -134,7 +134,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // title
                 Text(
@@ -146,7 +146,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             : AppColors.textPrimary,
                       ),
                 ),
-                const SizedBox(height: AppSizes.spaceL),
+                SizedBox(height: AppSizes.spaceL),
 
                 // card-style inputs
                 Column(
@@ -165,7 +165,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: AppSizes.space),
+                    SizedBox(height: AppSizes.space),
 
                     _LabeledTextField(
                       label: 'Age',
@@ -186,7 +186,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: AppSizes.space),
+                    SizedBox(height: AppSizes.space),
 
                     // gender selector
                     Text(
@@ -198,7 +198,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                     Row(
                       children: [
                         Expanded(
@@ -208,7 +208,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             onTap: () => setState(() => _gender = 'Male'),
                           ),
                         ),
-                        const SizedBox(width: AppSizes.spaceM),
+                        SizedBox(width: AppSizes.spaceM),
                         Expanded(
                           child: _GenderChip(
                             label: 'Female',
@@ -216,7 +216,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             onTap: () => setState(() => _gender = 'Female'),
                           ),
                         ),
-                        const SizedBox(width: AppSizes.spaceM),
+                        SizedBox(width: AppSizes.spaceM),
                         Expanded(
                           child: _GenderChip(
                             label: 'Other',
@@ -226,7 +226,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSizes.space),
+                    SizedBox(height: AppSizes.space),
 
                     // phone with +91 prefix (optional)
                     Text(
@@ -238,7 +238,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    const SizedBox(height: AppSizes.spaceS),
+                    SizedBox(height: AppSizes.spaceS),
                     Container(
                       decoration: BoxDecoration(
                         color: isDarkMode
@@ -252,14 +252,14 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                           width: 1,
                         ),
                       ),
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: AppSizes.paddingM,
                         vertical: AppSizes.paddingM,
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: AppSizes.paddingS,
                               vertical: AppSizes.paddingS,
                             ),
@@ -281,7 +281,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                                   ),
                             ),
                           ),
-                          const SizedBox(width: AppSizes.spaceS),
+                          SizedBox(width: AppSizes.spaceS),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +332,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             final isNumeric = RegExp(r'^[0-9]+$').hasMatch(t);
                             if (!isNumeric || t.length < 6 || t.length > 15) {
                               return Padding(
-                                padding: const EdgeInsets.only(
+                                padding: EdgeInsets.only(
                                     top: AppSizes.spaceXS,
                                     left: AppSizes.paddingS),
                                 child: Text(
@@ -354,7 +354,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                   ],
                 ),
 
-                const SizedBox(height: AppSizes.spaceXL),
+                SizedBox(height: AppSizes.spaceXL),
 
                 PrimaryButton(
                   text: 'Add a person',
@@ -404,7 +404,7 @@ class _LabeledTextField extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
         ),
-        const SizedBox(height: AppSizes.spaceS),
+        SizedBox(height: AppSizes.spaceS),
         Container(
           decoration: BoxDecoration(
             color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
@@ -414,7 +414,7 @@ class _LabeledTextField extends StatelessWidget {
               width: 1,
             ),
           ),
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: AppSizes.paddingM,
             vertical: AppSizes.paddingM,
           ),
@@ -445,7 +445,7 @@ class _LabeledTextField extends StatelessWidget {
               final error = validator?.call(value.text);
               if (error != null && error.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                       top: AppSizes.spaceXS, left: AppSizes.paddingS),
                   child: Text(
                     error,
@@ -495,7 +495,7 @@ class _GenderChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingM,
         ),

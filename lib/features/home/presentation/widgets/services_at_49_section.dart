@@ -105,7 +105,7 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
 
     return Container(
       color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.paddingM),
+      padding: EdgeInsets.symmetric(vertical: AppSizes.paddingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

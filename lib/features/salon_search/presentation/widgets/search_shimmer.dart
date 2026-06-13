@@ -14,7 +14,7 @@ class SearchShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: 16,
         left: AppSizes.paddingM,
         right: AppSizes.paddingM,
@@ -23,7 +23,7 @@ class SearchShimmer extends StatelessWidget {
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
+          padding: EdgeInsets.only(bottom: AppSizes.paddingS),
           child: Shimmer.fromColors(
             baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
             highlightColor:
@@ -43,13 +43,13 @@ class SearchShimmer extends StatelessWidget {
                     decoration: BoxDecoration(
                       color:
                           isDarkMode ? AppColors.borderDark : AppColors.divider,
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(AppSizes.radiusM),
                         bottomLeft: Radius.circular(AppSizes.radiusM),
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSizes.paddingM),
+                  SizedBox(width: AppSizes.paddingM),
                   // Content placeholder
                   Expanded(
                     child: Column(
@@ -106,7 +106,7 @@ class SearchShimmer extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: AppSizes.paddingM),
+                  SizedBox(width: AppSizes.paddingM),
                 ],
               ),
             ),

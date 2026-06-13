@@ -18,9 +18,9 @@ class BookingDateTimeCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(
+      margin: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingM, vertical: AppSizes.paddingS),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
+      padding: EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
@@ -36,7 +36,7 @@ class BookingDateTimeCard extends StatelessWidget {
                   size: 18,
                   color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 ),
-                const SizedBox(width: AppSizes.spaceS),
+                SizedBox(width: AppSizes.spaceS),
                 Expanded(
                   child: Text(
                     selectedDate,
@@ -52,7 +52,7 @@ class BookingDateTimeCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSizes.spaceM),
+          SizedBox(width: AppSizes.spaceM),
           // Right column - Time slot
           Expanded(
             child: Row(
@@ -62,7 +62,7 @@ class BookingDateTimeCard extends StatelessWidget {
                   size: 18,
                   color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
                 ),
-                const SizedBox(width: AppSizes.spaceS),
+                SizedBox(width: AppSizes.spaceS),
                 Expanded(
                   child: Text(
                     selectedTimeSlot,

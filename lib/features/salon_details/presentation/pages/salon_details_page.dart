@@ -301,7 +301,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                             ? Center(
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.all(AppSizes.paddingXL),
+                                      EdgeInsets.all(AppSizes.paddingXL),
                                   child: custom.ErrorDisplayWidget(
                                     message: state.errorMessage!,
                                     onRetry: () {
@@ -333,7 +333,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 right: 0,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                      EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -346,7 +346,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          padding: const EdgeInsets.all(AppSizes.paddingXS),
+                          padding: EdgeInsets.all(AppSizes.paddingXS),
                           constraints: const BoxConstraints(),
                           icon: Icon(
                             Icons.arrow_back_ios_new,
@@ -372,7 +372,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
-                              padding: const EdgeInsets.all(AppSizes.paddingXS),
+                              padding: EdgeInsets.all(AppSizes.paddingXS),
                               constraints: const BoxConstraints(),
                               icon: Icon(
                                 Icons.share,
@@ -388,7 +388,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                               },
                             ),
                           ),
-                          const SizedBox(width: AppSizes.spaceS),
+                          SizedBox(width: AppSizes.spaceS),
                           // Favorite button
                           // Container(
                           //   decoration: BoxDecoration(
@@ -402,7 +402,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           //     builder: (context, state) {
                           //       return IconButton(
                           //         padding:
-                          //             const EdgeInsets.all(AppSizes.paddingXS),
+                          //             EdgeInsets.all(AppSizes.paddingXS),
                           //         constraints: const BoxConstraints(),
                           //         icon: SvgPicture.asset(
                           //           state.isFavorite
@@ -600,7 +600,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 alignment: Alignment.topCenter,
                 child: state.isLoading || state.salonDetail == null
                     ? Padding(
-                        padding: const EdgeInsets.fromLTRB(
+                        padding: EdgeInsets.fromLTRB(
                           AppSizes.padding,
                           AppSizes.paddingS,
                           AppSizes.padding,
@@ -612,7 +612,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                         ),
                       )
                     : Padding(
-                        padding: const EdgeInsets.fromLTRB(
+                        padding: EdgeInsets.fromLTRB(
                           AppSizes.padding,
                           AppSizes.paddingS,
                           AppSizes.padding,
@@ -1171,7 +1171,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
   Widget _buildSectionShimmer(String title, bool isDarkMode) {
     return Container(
       key: _sectionKeys[title],
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: AppSizes.paddingL,
         vertical: AppSizes.paddingM,
       ),
@@ -1310,7 +1310,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     if (salonDetail.about.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: EdgeInsets.all(AppSizes.paddingXL),
           child: Column(
             children: [
               Icon(
@@ -1320,7 +1320,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                     : AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 'About information not available',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -1353,7 +1353,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     if (salonDetail.ambients.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: EdgeInsets.all(AppSizes.paddingXL),
           child: Column(
             children: [
               Icon(
@@ -1363,7 +1363,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                     : AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 'No amenities available',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -1426,7 +1426,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     if (salonDetail.teamMembers.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: EdgeInsets.all(AppSizes.paddingXL),
           child: Column(
             children: [
               Icon(
@@ -1436,7 +1436,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                     : AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 'No team members added',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -1510,8 +1510,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
         final hours = salonDetail.openingHours[day] ?? 'Closed';
 
         return Container(
-          margin: const EdgeInsets.only(bottom: AppSizes.paddingS),
-          padding: const EdgeInsets.all(AppSizes.paddingM),
+          margin: EdgeInsets.only(bottom: AppSizes.paddingS),
+          padding: EdgeInsets.all(AppSizes.paddingM),
           decoration: BoxDecoration(
             color: isToday
                 ? AppColors.info.withValues(alpha: 0.1)
@@ -1529,7 +1529,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: AppSizes.paddingM),
+              SizedBox(width: AppSizes.paddingM),
               // Day name with Today text
               Expanded(
                 child: isToday
@@ -1589,7 +1589,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     if (salonDetail.reviews.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: EdgeInsets.all(AppSizes.paddingXL),
           child: Column(
             children: [
               Icon(
@@ -1599,7 +1599,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                     : AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 'No reviews yet',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -1609,7 +1609,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              const SizedBox(height: AppSizes.spaceS),
+              SizedBox(height: AppSizes.spaceS),
               Text(
                 'Be the first to review this salon',
                 style: context.textTheme.bodySmall?.copyWith(
@@ -1665,8 +1665,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   });
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(right: AppSizes.paddingM),
-                  padding: const EdgeInsets.symmetric(
+                  margin: EdgeInsets.only(right: AppSizes.paddingM),
+                  padding: EdgeInsets.symmetric(
                     horizontal: AppSizes.paddingL,
                     vertical: 6,
                   ),
@@ -1752,7 +1752,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                 ),
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingL,
                   vertical: AppSizes.paddingM,
                 ),
@@ -1768,7 +1768,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                           : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: AppSizes.spaceS),
+                  SizedBox(width: AppSizes.spaceS),
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 14,
@@ -1790,7 +1790,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
     if (salonDetail.services.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingXL),
+          padding: EdgeInsets.all(AppSizes.paddingXL),
           child: Column(
             children: [
               Icon(
@@ -1800,7 +1800,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                     ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
                     : AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-              const SizedBox(height: AppSizes.spaceM),
+              SizedBox(height: AppSizes.spaceM),
               Text(
                 'No services available',
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -1857,8 +1857,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                   });
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(right: AppSizes.paddingS),
-                  padding: const EdgeInsets.symmetric(
+                  margin: EdgeInsets.only(right: AppSizes.paddingS),
+                  padding: EdgeInsets.symmetric(
                     horizontal: AppSizes.paddingM,
                   ),
                   decoration: BoxDecoration(
@@ -2244,7 +2244,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         child: Row(
           children: _tabs.asMap().entries.map((entry) {
             final index = entry.key;
@@ -2256,7 +2256,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 setState(() => _activeTabIndex = index);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingL,
                   vertical: 6,
                 ),

@@ -28,7 +28,7 @@ class Support extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: AppSizes.paddingL),
+              SizedBox(height: AppSizes.paddingL),
               Container(
                 padding: EdgeInsets.only(left: 16.0, top: 10.0, bottom: 10.0),
                 decoration: BoxDecoration(
