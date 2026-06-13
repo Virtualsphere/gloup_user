@@ -52,20 +52,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     UpdateProfileEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileUpdating());
+    final currentProfile = event.profile;
+    emit(ProfileUpdating(currentProfile));
 
     final result = await updateProfileUseCase(event.profile);
 
     await result.fold(
       (failure) async {
-        emit(ProfileFailure(failure.message));
+        emit(ProfileUpdateFailure(failure.message, currentProfile));
       },
       (_) async {
         final refresh = await getProfileUseCase();
 
         refresh.fold(
-          (failure) => emit(ProfileFailure(failure.message)),
-          (profile) => emit(ProfileLoaded(profile)),
+          (failure) => emit(ProfileUpdateFailure(failure.message, currentProfile)),
+          (profile) {
+            emit(ProfileUpdateSuccess(profile));
+            emit(ProfileLoaded(profile));
+          },
         );
       },
     );

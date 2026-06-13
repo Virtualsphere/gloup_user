@@ -25,7 +25,33 @@ class ProfileLoaded extends ProfileState {
   List<Object?> get props => [profile];
 }
 
-class ProfileUpdating extends ProfileState {}
+class ProfileUpdating extends ProfileState {
+  final ProfileEntity profile;
+
+  const ProfileUpdating(this.profile);
+
+  @override
+  List<Object?> get props => [profile];
+}
+
+class ProfileUpdateSuccess extends ProfileState {
+  final ProfileEntity profile;
+
+  const ProfileUpdateSuccess(this.profile);
+
+  @override
+  List<Object?> get props => [profile];
+}
+
+class ProfileUpdateFailure extends ProfileState {
+  final String message;
+  final ProfileEntity profile;
+
+  const ProfileUpdateFailure(this.message, this.profile);
+
+  @override
+  List<Object?> get props => [message, profile];
+}
 
 class ProfileLoggingOut extends ProfileState {
   const ProfileLoggingOut();

@@ -118,6 +118,7 @@ class _MyProfileState extends State<MyProfile> {
     _initialCountry = countryController.text;
     _initialCity = cityController.text;
     _initialGender = _selectedGender;
+    profileImageNotifier.value = null;
   }
 
   bool get _hasChanges {
@@ -150,6 +151,21 @@ class _MyProfileState extends State<MyProfile> {
       listener: (context, state) {
         if (state is ProfileLoaded) {
           _fillFields(state.profile);
+        } else if (state is ProfileUpdateSuccess) {
+          _fillFields(state.profile);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is ProfileUpdateFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       },
       builder: (context, state) {
@@ -207,8 +223,12 @@ class _MyProfileState extends State<MyProfile> {
           );
         }
 
-        // Get profile from loaded state
-        final profile = state is ProfileLoaded ? state.profile : null;
+        // Get profile from state
+        ProfileEntity? profile;
+        if (state is ProfileLoaded) profile = state.profile;
+        if (state is ProfileUpdating) profile = state.profile;
+        if (state is ProfileUpdateSuccess) profile = state.profile;
+        if (state is ProfileUpdateFailure) profile = state.profile;
         return Scaffold(
           backgroundColor:
               isDarkMode ? AppColors.backgroundDark : AppColors.background,
@@ -575,7 +595,7 @@ class _MyProfileState extends State<MyProfile> {
                     horizontal: 15.0, vertical: 15.0),
                 child: PrimaryButton(
                   text: 'Update Profile',
-                  isLoading: state is ProfileLoading,
+                  isLoading: state is ProfileUpdating,
                   onPressed: (_isFormValid && _hasChanges)
                       ? () {
                           _onUpdateProfile();
@@ -593,9 +613,12 @@ class _MyProfileState extends State<MyProfile> {
   void _onUpdateProfile() {
     final currentState = context.read<ProfileBloc>().state;
 
-    if (currentState is ProfileLoaded) {
-      final currentProfile = currentState.profile;
+    ProfileEntity? currentProfile;
+    if (currentState is ProfileLoaded) currentProfile = currentState.profile;
+    else if (currentState is ProfileUpdateSuccess) currentProfile = currentState.profile;
+    else if (currentState is ProfileUpdateFailure) currentProfile = currentState.profile;
 
+    if (currentProfile != null) {
       final updatedProfile = currentProfile.copyWith(
         firstname: firstNameController.text.trim(),
         lastname: lastNameController.text.trim(),

@@ -183,8 +183,11 @@ class ProfilePage extends StatelessWidget {
                                 _MenuItem(
                                   icon: Icons.person_outline,
                                   label: 'Profile',
-                                  onTap: () {
-                                    context.pushNamed(RouteNames.profile);
+                                  onTap: () async {
+                                    await context.pushNamed(RouteNames.profile);
+                                    if (context.mounted) {
+                                      context.read<ProfileBloc>().add(const RefreshProfileEvent());
+                                    }
                                   },
                                 ),
                                 /* _MenuItem(
