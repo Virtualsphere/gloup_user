@@ -65,6 +65,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       []; // Track added recommended services
   List<CouponData> availableCoupons = []; // Coupons from API
   String? _lastPaymentId;
+  String? _pendingOrderFingerprint;
+  String? _lastCreateOrderFingerprint;
   late Razorpay _razorpay;
   late OrderBloc _orderBloc;
 
@@ -115,16 +117,73 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    _orderBloc.add(const ResetOrderEvent());
+    _orderBloc.add(const PaymentFailedEvent());
     if (mounted) {
       PaymentFailedDialog.show(
         context,
-        message: response.message ?? 'Something went wrong. Please try again.',
-        onRetry: () {
-          // User can re-tap the Pay button to try again
-        },
+        message: _paymentFailureMessage(response),
+        onRetry: _retryPendingPayment,
       );
     }
+  }
+
+  String _paymentFailureMessage(PaymentFailureResponse response) {
+    final razorpayMessage = response.message?.trim();
+    if (razorpayMessage != null && razorpayMessage.isNotEmpty) {
+      return razorpayMessage;
+    }
+    return 'Payment was not completed. Your slot is still reserved — try again.';
+  }
+
+  String _orderFingerprint(CreateOrderRequest request) {
+    final serviceIds = request.services
+        .map((service) => service['service_id'])
+        .join(',');
+    return '${request.slotId}|$serviceIds|${request.finalAmount}|'
+        '${request.couponCode ?? ''}|${request.walletAmountUsed}|'
+        '${request.bookingFor}|${request.guestId ?? ''}';
+  }
+
+  void _retryPendingPayment() {
+    final order = _orderBloc.state.order;
+    if (order == null) return;
+
+    final salonName =
+        widget.bookingData?['salonName'] as String? ?? 'Salon';
+    _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+  }
+
+  void _initiateOrResumePayment(
+    BuildContext context,
+    CreateOrderRequest request,
+  ) {
+    final orderState = context.read<OrderBloc>().state;
+    final fingerprint = _orderFingerprint(request);
+    final salonName =
+        widget.bookingData?['salonName'] as String? ?? 'Salon';
+
+    final canReusePendingOrder = orderState.order != null &&
+        !orderState.isPaymentVerified &&
+        _pendingOrderFingerprint == fingerprint;
+
+    if (canReusePendingOrder) {
+      final order = orderState.order!;
+      _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+      return;
+    }
+
+    if (orderState.order != null &&
+        !orderState.isPaymentVerified &&
+        _pendingOrderFingerprint != null &&
+        _pendingOrderFingerprint != fingerprint) {
+      CustomToast.showInfo(
+        context,
+        'Booking details changed. Starting a new payment.',
+      );
+    }
+
+    _lastCreateOrderFingerprint = fingerprint;
+    context.read<OrderBloc>().add(CreateOrderEvent(request));
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -250,8 +309,12 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
             final order = orderState.order!;
             final salonName =
                 widget.bookingData?['salonName'] as String? ?? 'Salon';
+            _pendingOrderFingerprint = _lastCreateOrderFingerprint;
             _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+            _orderBloc.add(const RazorpayOpenedEvent());
           } else if (orderState.isPaymentVerified) {
+            _pendingOrderFingerprint = null;
+            _lastCreateOrderFingerprint = null;
             PaymentSuccessDialog.show(
               context,
               paymentId: _lastPaymentId ?? '',
@@ -267,7 +330,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               PaymentFailedDialog.show(
                 context,
                 message: orderState.errorMessage!,
-                onRetry: () {},
+                onRetry: _retryPendingPayment,
               );
             } else {
               CustomToast.showError(context, orderState.errorMessage!);
@@ -1291,9 +1354,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             finalAmount: finalTotal,
                           );
 
-                          context
-                              .read<OrderBloc>()
-                              .add(CreateOrderEvent(request));
+                          _initiateOrResumePayment(context, request);
                         },
                   backgroundColor: AppColors.success,
                   textColor: AppColors.white,

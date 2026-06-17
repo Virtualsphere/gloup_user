@@ -21,6 +21,17 @@ class ResetOrderEvent extends OrderEvent {
   const ResetOrderEvent();
 }
 
+/// Clears [OrderState.isSuccess] after Razorpay checkout opens so the listener
+/// does not reopen checkout on rebuild.
+class RazorpayOpenedEvent extends OrderEvent {
+  const RazorpayOpenedEvent();
+}
+
+/// Keeps the pending order in state after Razorpay reports failure or dismiss.
+class PaymentFailedEvent extends OrderEvent {
+  const PaymentFailedEvent();
+}
+
 class VerifyPaymentEvent extends OrderEvent {
   final String razorpayOrderId;
   final String razorpayPaymentId;

@@ -2028,8 +2028,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildServiceGenderIcon(gender),
-                    const SizedBox(width: 8),
+                    if (salonGender.toLowerCase() == 'unisex') ...[
+                      _buildServiceGenderIcon(gender),
+                      const SizedBox(width: 8),
+                    ],
                     Flexible(
                       child: Text(
                         service.name,

@@ -120,7 +120,9 @@ class PaymentFailedDialog extends StatelessWidget {
                     ),
                     SizedBox(height: AppSizes.spaceXS),
                     Text(
-                      'No amount has been deducted from your account',
+                      'No amount has been deducted from your account. '
+                      'Your time slot is still reserved — tap Try Again to '
+                      'complete payment with the same order.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: isDarkMode
                                 ? AppColors.textSecondaryDark

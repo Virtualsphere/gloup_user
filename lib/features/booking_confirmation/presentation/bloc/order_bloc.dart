@@ -15,6 +15,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<CreateOrderEvent>(_onCreateOrder);
     on<ResetOrderEvent>(_onReset);
     on<VerifyPaymentEvent>(_onVerifyPayment);
+    on<RazorpayOpenedEvent>(_onRazorpayOpened);
+    on<PaymentFailedEvent>(_onPaymentFailed);
   }
 
   Future<void> _onCreateOrder(
@@ -53,5 +55,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   void _onReset(ResetOrderEvent event, Emitter<OrderState> emit) {
     emit(state.copyWithReset());
+  }
+
+  void _onRazorpayOpened(
+    RazorpayOpenedEvent event,
+    Emitter<OrderState> emit,
+  ) {
+    emit(state.copyWith(isSuccess: false));
+  }
+
+  void _onPaymentFailed(
+    PaymentFailedEvent event,
+    Emitter<OrderState> emit,
+  ) {
+    emit(state.copyWith(isSuccess: false, errorMessage: null));
   }
 }
