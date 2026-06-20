@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/salon_location_row.dart';
 
 class SalonSearchCard extends StatefulWidget {
   final String salonName;
@@ -380,58 +381,10 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
   }
 
   Widget _buildRatingAndDistance(bool isDarkMode) {
-    return Row(
-      children: [
-        SvgPicture.asset(
-          AppIcons.icLocation,
-          width: AppSizes.iconXS,
-          height: AppSizes.iconXS,
-        ),
-        SizedBox(width: 4),
-        Container(
-          constraints: const BoxConstraints(maxWidth: 130),
-          child: Text(
-            () {
-              final parts = (widget.address ?? '')
-                  .split(',')
-                  .map((e) => e.trim())
-                  .where((e) => e.isNotEmpty && !RegExp(r'^\d+$').hasMatch(e))
-                  .toList();
-              return parts.length > 2
-                  ? parts.sublist(parts.length - 2).join(', ')
-                  : parts.join(', ');
-            }(),
-            style: context.textTheme.bodyMedium?.copyWith(
-              overflow: TextOverflow.ellipsis,
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Container(
-            width: 4,
-            height: 4,
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        // Distance
-        Text(
-          '${widget.distance.toStringAsFixed(1)} KM',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: isDarkMode
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
-          ),
-        ),
-      ],
+    return SalonLocationRow(
+      locationLabel: widget.address,
+      distanceKm: widget.distance,
+      isDarkMode: isDarkMode,
     );
   }
 
