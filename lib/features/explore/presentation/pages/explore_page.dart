@@ -48,23 +48,41 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
 
   double? _lastLatitude;
   double? _lastLongitude;
+  LocationProvider? _locationProvider;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+  }
 
-    // Store initial location
-    final locationProvider = context.read<LocationProvider>();
-    _lastLatitude = locationProvider.latitude;
-    _lastLongitude = locationProvider.longitude;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = context.read<LocationProvider>();
+    if (_locationProvider != provider) {
+      _locationProvider?.removeListener(_onLocationProviderChanged);
+      _locationProvider = provider;
+      _lastLatitude = provider.latitude;
+      _lastLongitude = provider.longitude;
+      provider.addListener(_onLocationProviderChanged);
+    }
   }
 
   @override
   void dispose() {
+    _locationProvider?.removeListener(_onLocationProviderChanged);
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onLocationProviderChanged() {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _checkLocationChange();
+    });
   }
 
   void _checkLocationChange() {
@@ -140,12 +158,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-    return Consumer<LocationProvider>(
-      builder: (context, locationProvider, child) {
-        // Check for location changes whenever LocationProvider notifies
-        _checkLocationChange();
-
-        return Scaffold(
+    return Scaffold(
           backgroundColor:
               isDarkMode ? AppColors.backgroundDark : AppColors.background,
           appBar: AppBar(
@@ -448,7 +461,5 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
             },
           ),
         );
-      },
-    );
   }
 }

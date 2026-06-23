@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tressy/core/constants/app_colors.dart';
 
 extension ContextExtensions on BuildContext {
   /// Get theme data
   ThemeData get theme => Theme.of(this);
+
+  /// Whether the active [ThemeData] is dark (matches [ThemeMode], not OS alone).
+  bool get isDarkMode => theme.brightness == Brightness.dark;
+
+  /// App surface color aligned with [ThemeData] brightness.
+  Color get appSurface =>
+      isDarkMode ? AppColors.surfaceDark : AppColors.surface;
+
+  /// Muted body text on [appSurface].
+  Color get mutedOnSurface =>
+      isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondary;
+
+  /// Fill for primary pills/chips/buttons — [ColorScheme.primary].
+  Color get primaryFill => colorScheme.primary;
+
+  /// Text/icons on [primaryFill] — [ColorScheme.onPrimary].
+  Color get onPrimaryFill => colorScheme.onPrimary;
+
+  /// Icons and emphasis on surface backgrounds.
+  Color get onSurfaceEmphasis => colorScheme.onSurface;
 
   /// Get text theme
   TextTheme get textTheme => theme.textTheme;

@@ -7,8 +7,8 @@ class ApiRoutes {
   static const String _logTag = 'API';
 
   // Base URL - Update this with your actual API base URL
-  // static const String baseUrl = 'https://api.v1.gloup.in';
-  static const String baseUrl = 'http://10.118.63.79:5678';
+  static const String baseUrl = 'https://api.v1.gloup.in';
+  // static const String baseUrl = 'http://10.118.63.79:5678';
 
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl =

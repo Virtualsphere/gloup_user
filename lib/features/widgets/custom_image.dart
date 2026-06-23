@@ -10,6 +10,7 @@ import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class CustomNetworkImage extends StatelessWidget {
   const CustomNetworkImage({
@@ -36,7 +37,6 @@ class CustomNetworkImage extends StatelessWidget {
       memCacheWidth: 400,
       memCacheHeight: 400,
       placeholder: (context, child) {
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -52,7 +52,7 @@ class CustomNetworkImage extends StatelessWidget {
               width: placeHolderHeight,
               height: placeHolderHeight,
               colorFilter: ColorFilter.mode(
-                  isDarkMode ? AppColors.primaryDark : AppColors.primaryDark,
+                  context.onSurfaceEmphasis,
                   BlendMode.modulate),
             ),
           ),
@@ -78,9 +78,7 @@ class CustomNetworkImage extends StatelessWidget {
               width: placeHolderHeight,
               height: placeHolderHeight,
               colorFilter: ColorFilter.mode(
-                  isDarkMode
-                      ? AppColors.primary.withValues(alpha: 0.3)
-                      : AppColors.primaryDark.withValues(alpha: 0.9),
+                  context.onSurfaceEmphasis.withValues(alpha: 0.5),
                   BlendMode.modulate),
             ),
           ),

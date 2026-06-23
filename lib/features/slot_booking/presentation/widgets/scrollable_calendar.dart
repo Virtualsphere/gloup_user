@@ -165,9 +165,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                               ? AppColors.textDisabledDark
                               : AppColors.textDisabled;
                         }
-                        return isDarkMode
-                            ? AppColors.primaryDark
-                            : AppColors.primary;
+                        return context.onSurfaceEmphasis;
                       }(),
                     ),
                   ),
@@ -192,7 +190,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                       width: AppSizes.iconS,
                       height: AppSizes.iconS,
                       colorFilter: ColorFilter.mode(
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                        context.onSurfaceEmphasis,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -209,9 +207,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                     child: Icon(
                       Icons.arrow_forward_ios,
                       size: AppSizes.iconS,
-                      color: isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
+                      color: context.onSurfaceEmphasis,
                     ),
                   ),
                 ),
@@ -246,9 +242,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                     margin: EdgeInsets.only(right: AppSizes.spaceS),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? (isDarkMode
-                              ? AppColors.primaryDark
-                              : AppColors.primary)
+                          ? context.primaryFill
                           : isPastDate
                               ? isDarkMode
                                   ? AppColors.textSecondaryDark
@@ -279,9 +273,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                             fontSize: AppSizes.fontS,
                             fontWeight: FontWeight.w400,
                             color: isSelected
-                                ? (isDarkMode
-                                    ? AppColors.black
-                                    : AppColors.white)
+                                ? context.onPrimaryFill
                                 : isPastDate
                                     ? (isDarkMode
                                         ? AppColors.textSecondaryDark
@@ -299,9 +291,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                             fontSize: AppSizes.fontL,
                             fontWeight: FontWeight.w600,
                             color: isSelected
-                                ? (isDarkMode
-                                    ? AppColors.black
-                                    : AppColors.white)
+                                ? context.onPrimaryFill
                                 : isPastDate
                                     ? (isDarkMode
                                         ? AppColors.textPrimaryDark

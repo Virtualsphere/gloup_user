@@ -72,6 +72,11 @@ class HomeRepositoryImpl implements HomeRepository {
     int? limit,
     int? page,
     String? gender,
+    String? minRating,
+    int? minPrice,
+    int? maxPrice,
+    String? search,
+    String? sort,
   }) async {
     try {
       final response = await dataSource.getTopSalons(
@@ -80,6 +85,11 @@ class HomeRepositoryImpl implements HomeRepository {
         limit: limit,
         page: page,
         gender: gender,
+        minRating: minRating,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        search: search,
+        sort: sort,
       );
 
       final entities = response.salons.map((model) => model.toEntity()).toList();

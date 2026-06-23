@@ -1212,7 +1212,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
             },
             backgroundColor:
                 isDarkMode ? AppColors.background : AppColors.backgroundDark,
-            textColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
+            textColor: context.onPrimaryFill,
             height: 52,
           ),
         ),
@@ -1414,7 +1414,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 ),
                 decoration: BoxDecoration(
                   color: selectedBookingFor == 'myself'
-                      ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                      ? context.primaryFill
                       : (isDarkMode
                           ? AppColors.surfaceDark
                           : AppColors.surface),
@@ -1479,7 +1479,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 ),
                 decoration: BoxDecoration(
                   color: selectedBookingFor == 'someone_else'
-                      ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                      ? context.primaryFill
                       : (isDarkMode
                           ? AppColors.surfaceDark
                           : AppColors.surface),

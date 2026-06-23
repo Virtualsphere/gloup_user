@@ -34,7 +34,7 @@ class BookingDateTimeCard extends StatelessWidget {
                 Icon(
                   Icons.calendar_today,
                   size: 18,
-                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                  color: context.onSurfaceEmphasis,
                 ),
                 SizedBox(width: AppSizes.spaceS),
                 Expanded(
@@ -60,7 +60,7 @@ class BookingDateTimeCard extends StatelessWidget {
                 Icon(
                   Icons.access_time,
                   size: 18,
-                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                  color: context.onSurfaceEmphasis,
                 ),
                 SizedBox(width: AppSizes.spaceS),
                 Expanded(

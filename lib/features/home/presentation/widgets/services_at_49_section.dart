@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
-import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/core/utils/category_image_resolver.dart';
+import 'package:tressy/features/home/data/datasources/service_discovery_datasource.dart';
+import 'package:tressy/features/home/data/models/service_category_model.dart';
 import 'package:tressy/features/home/presentation/pages/services_at_49_page.dart';
 import 'package:tressy/features/home/presentation/widgets/gender_toggle_widget.dart';
 import 'package:tressy/features/home/presentation/widgets/service_card_widget.dart';
@@ -19,6 +19,9 @@ class ServicesAt49Section extends StatefulWidget {
 }
 
 class _ServicesAt49SectionState extends State<ServicesAt49Section> {
+  final ServiceDiscoveryDataSource _serviceDiscovery =
+      sl<ServiceDiscoveryDataSource>();
+
   GenderTab _selectedGender = GenderTab.men;
 
   bool get _isMenSelected => _selectedGender == GenderTab.men;
@@ -35,19 +38,13 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
 
   Future<void> _fetchCategories() async {
     try {
-      final dio = sl<DioClient>();
+      final menCategories =
+          await _serviceDiscovery.getTopCategories(sex: 'male');
+      _menItems = _mapItems(menCategories);
 
-      final menRes =
-          await dio.post(ApiRoutes.getTopCategories, data: {'sex': 'male'});
-      if (menRes.statusCode == 200 && menRes.data['success'] == true) {
-        _menItems = _mapItems(menRes.data['data'] as List);
-      }
-
-      final womenRes =
-          await dio.post(ApiRoutes.getTopCategories, data: {'sex': 'female'});
-      if (womenRes.statusCode == 200 && womenRes.data['success'] == true) {
-        _womenItems = _mapItems(womenRes.data['data'] as List);
-      }
+      final womenCategories =
+          await _serviceDiscovery.getTopCategories(sex: 'female');
+      _womenItems = _mapItems(womenCategories);
     } catch (e) {
       debugPrint('Error fetching top categories: $e');
     } finally {
@@ -55,18 +52,16 @@ class _ServicesAt49SectionState extends State<ServicesAt49Section> {
     }
   }
 
-  List<ServiceItemData> _mapItems(List data) {
-    return data.map((e) {
-      final name = e['category_name'].toString();
+  List<ServiceItemData> _mapItems(List<ServiceCategoryModel> categories) {
+    return categories.map((category) {
+      final name = category.name;
       return ServiceItemData(
-        id: e['category_id'].toString(),
+        id: category.id,
         title: name,
-        price: '₹${e['discounted_amount']}',
+        price: '₹${category.discountedAmount}',
         imageUrl: CategoryImageResolver.resolveImagePath(
           categoryName: name,
-          imageUrl: CategoryImageResolver.apiImageFromJson(
-            Map<String, dynamic>.from(e as Map),
-          ),
+          imageUrl: category.imageUrl,
         ),
       );
     }).toList();

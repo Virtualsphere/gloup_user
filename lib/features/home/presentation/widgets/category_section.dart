@@ -140,7 +140,6 @@ class _CategorySectionState extends State<CategorySection> {
 
   // ignore: unused_element
   Widget _buildPremiumCategory(BuildContext context, {required bool isActive}) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Container(
       width: 75,
       margin: EdgeInsets.only(
@@ -152,7 +151,7 @@ class _CategorySectionState extends State<CategorySection> {
         border: Border(
           bottom: BorderSide(
             color: isActive
-                ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                ? context.primaryFill
                 : Colors.transparent,
             width: 2.5,
           ),
@@ -205,9 +204,7 @@ class _CategorySectionState extends State<CategorySection> {
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontS,
                   color: isActive
-                      ? isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary
+                      ? context.onSurfaceEmphasis
                       : null,
                 ),
                 textAlign: TextAlign.center,
@@ -242,7 +239,7 @@ class _CategorySectionState extends State<CategorySection> {
             ? Border(
                 bottom: BorderSide(
                   color: isActive
-                      ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                      ? context.primaryFill
                       : Colors.transparent,
                   width: 2.5,
                 ),
@@ -279,7 +276,7 @@ class _CategorySectionState extends State<CategorySection> {
                               ? AppColors.surfaceDark
                               : const Color(0xFFF5F5F5))
                           : (isDarkMode
-                              ? AppColors.primaryDark.withValues(alpha: 0.08)
+                              ? context.primaryFill.withValues(alpha: 0.08)
                               : const Color(0xFFF3F4F6)),
                       child: CategoryImage(
                         categoryName: title,
@@ -300,7 +297,7 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   fontSize: AppSizes.fontS,
-                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                  color: context.onSurfaceEmphasis,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

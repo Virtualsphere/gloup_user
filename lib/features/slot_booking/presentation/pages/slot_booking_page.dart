@@ -342,7 +342,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
             child: Container(
               decoration: BoxDecoration(
                 color: isSelected
-                    ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
+                    ? context.primaryFill
                     : (isBooked || isPast)
                         ? (isDarkMode
                             ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
@@ -505,7 +505,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                        context.onSurfaceEmphasis,
                   ),
                 ),
               ],
@@ -529,7 +529,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                 extra: updatedBookingData,
               );
             },
-            textColor: isDarkMode ? AppColors.primary : AppColors.primaryDark,
+            textColor: context.onPrimaryFill,
             width: 120,
           ),
         ],

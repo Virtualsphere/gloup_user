@@ -46,6 +46,7 @@ class _CategoryPageState extends State<CategoryPage> {
   // Track location changes
   double? _lastLatitude;
   double? _lastLongitude;
+  LocationProvider? _locationProvider;
 
   @override
   void initState() {
@@ -56,18 +57,35 @@ class _CategoryPageState extends State<CategoryPage> {
     _scrollController.addListener(_onScroll);
     _searchController.addListener(_onSearchChanged);
 
-    // Store initial location
-    final locationProvider = context.read<LocationProvider>();
-    _lastLatitude = locationProvider.latitude;
-    _lastLongitude = locationProvider.longitude;
-
     // Load initial category salons with existing location
     // Don't fetch GPS location - use LocationProvider's current location
     _loadInitialCategorySalons();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = context.read<LocationProvider>();
+    if (_locationProvider != provider) {
+      _locationProvider?.removeListener(_onLocationProviderChanged);
+      _locationProvider = provider;
+      _lastLatitude = provider.latitude;
+      _lastLongitude = provider.longitude;
+      provider.addListener(_onLocationProviderChanged);
+    }
+  }
+
+  void _onLocationProviderChanged() {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _checkLocationChange();
+    });
+  }
+
+  @override
   void dispose() {
+    _locationProvider?.removeListener(_onLocationProviderChanged);
     _searchController.dispose();
     _scrollController.dispose();
     _debounceTimer?.cancel();
@@ -263,13 +281,7 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
 
-    return Consumer<LocationProvider>(
-      builder: (context, locationProvider, child) {
-        // Check for location changes whenever LocationProvider notifies
-        _checkLocationChange();
-        return _buildContent(context, isDarkMode);
-      },
-    );
+    return _buildContent(context, isDarkMode);
   }
 
   Widget _buildContent(BuildContext context, bool isDarkMode) {

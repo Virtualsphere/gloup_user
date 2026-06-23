@@ -12,6 +12,7 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
+import 'package:tressy/shared/widgets/salon_badges_row.dart';
 import 'package:tressy/shared/widgets/salon_location_row.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,22 +82,6 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
 
     // Call optional callback
     widget.onFavoriteToggle?.call();
-  }
-
-  // Language icon paths map
-  static const Map<String, String> languageIcons = {
-    'ta': AppIcons.icTamil,
-    'ml': AppIcons.icMalayalam,
-    'hi': AppIcons.icHindi,
-    'te': AppIcons.icTelugu,
-    'kn': AppIcons.icKannada,
-    'bn': AppIcons.icBengali,
-    'gu': AppIcons.icGujarati,
-    'en': AppIcons.icEnglish,
-  };
-
-  String? getLanguageIcon(String languageCode) {
-    return languageIcons[languageCode];
   }
 
   @override
@@ -412,7 +397,7 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                        context.onSurfaceEmphasis,
                       ),
                     ),
                   )
@@ -476,161 +461,13 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
           isDarkMode: isDarkMode,
         ),
         SizedBox(height: AppSizes.spaceS),
-        // Language and Category badges row
-        Row(
-          children: [
-            _buildLanguageBadges(isDarkMode),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: _buildCategoryBadges(isDarkMode),
-              ),
-            ),
-          ],
+        SalonBadgesRow(
+          languageCodes: widget.languageCodes,
+          categories: widget.categories,
+          maxCategories: 1,
+          languageIconSize: 11,
+          languageFontSize: 9,
         ),
-      ],
-    );
-  }
-
-  Widget _buildLanguageBadges(bool isDarkMode) {
-    final languageCodes = widget.languageCodes ?? [];
-
-    // If no languages found, show default 'en' and 'ta'
-    final displayLanguages =
-        languageCodes.isEmpty ? ['en', 'ta'] : languageCodes.take(3).toList();
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Language badges (max 2 for grid layout)
-        ...displayLanguages.asMap().entries.expand((entry) {
-          final languageCode = entry.value;
-          final index = entry.key;
-          final iconPath = getLanguageIcon(languageCode);
-          final isLast = index == displayLanguages.length - 1;
-
-          final icon = iconPath != null
-              ? SvgPicture.asset(
-                  iconPath,
-                  width: 11.w,
-                  height: 11.h,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                  colorFilter: ColorFilter.mode(
-                    isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    BlendMode.srcIn,
-                  ),
-                )
-              : Container(
-                  width: 11.w,
-                  height: 11.h,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
-                        : AppColors.textSecondary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      languageCode.length >= 2
-                          ? languageCode.substring(0, 2).toUpperCase()
-                          : languageCode.toUpperCase(),
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
-
-          return [
-            icon,
-            if (!isLast)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Container(
-                  width: 4.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-          ];
-        }),
-      ],
-    );
-  }
-
-  Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = (widget.categories == null || widget.categories!.isEmpty)
-        ? ['Haircut', 'Facial']
-        : widget.categories!;
-    final displayCategories = categories.take(1).toList();
-    final hasMoreCategories = categories.length > 2;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Category badges
-        ...displayCategories.map((category) => Flexible(
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 80.w),
-                margin: const EdgeInsets.only(left: 4),
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingS,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF6F1FE),
-                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-                ),
-                child: Text(
-                  category,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF8F89CA),
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            )),
-        if (hasMoreCategories)
-          Container(
-            margin: const EdgeInsets.only(left: 6),
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingM,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                  : AppColors.textSecondary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-            ),
-            child: Text(
-              '+${categories.length - 2}',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
       ],
     );
   }

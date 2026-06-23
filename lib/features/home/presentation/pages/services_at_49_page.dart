@@ -2,44 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
-import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/di/injection_container.dart';
-import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/home/data/datasources/service_discovery_datasource.dart';
+import 'package:tressy/features/home/data/models/service_category_model.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
-import 'package:tressy/core/utils/category_image_resolver.dart';
 import 'package:tressy/shared/widgets/category_image.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
-
-/// Data model for a service category fetched from the API
-class _ServiceCategory {
-  final String id;
-  final String name;
-  final String searchCategory;
-  final int discountedAmount;
-  final String? imageUrl;
-
-  const _ServiceCategory({
-    required this.id,
-    required this.name,
-    required this.searchCategory,
-    required this.discountedAmount,
-    this.imageUrl,
-  });
-
-  factory _ServiceCategory.fromJson(Map<String, dynamic> json) {
-    return _ServiceCategory(
-      id: json['category_id'].toString(),
-      name: json['category_name']?.toString() ?? '',
-      searchCategory: json['search_category']?.toString() ?? '',
-      discountedAmount: (json['discounted_amount'] as num?)?.toInt() ?? 0,
-      imageUrl: CategoryImageResolver.apiImageFromJson(json),
-    );
-  }
-}
 
 class ServicesAt49Page extends StatefulWidget {
   final String initialCategory;
@@ -58,9 +32,12 @@ class ServicesAt49Page extends StatefulWidget {
 }
 
 class _ServicesAt49PageState extends State<ServicesAt49Page> {
+  final ServiceDiscoveryDataSource _serviceDiscovery =
+      sl<ServiceDiscoveryDataSource>();
+
   // --- Categories state ---
   bool _isCategoriesLoading = true;
-  List<_ServiceCategory> _categories = [];
+  List<ServiceCategoryModel> _categories = [];
   String? _selectedCategoryId;
   String _selectedCategoryName = 'All';
 
@@ -107,29 +84,11 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
   /// Fetch service categories from the top-categories API
   Future<void> _fetchCategories() async {
     try {
-      final dio = sl<DioClient>();
-      final Map<String, dynamic> payload = {};
-      if (widget.sex != null && widget.sex!.isNotEmpty) {
-        payload['sex'] = widget.sex;
-      }
-
-      final response = await dio.post(
-        ApiRoutes.getTopCategories,
-        data: payload.isEmpty ? null : payload,
+      final fetchedCategories = await _serviceDiscovery.getTopCategories(
+        sex: _resolveSex(),
       );
 
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        final List data = response.data['data'];
-        final List<_ServiceCategory> fetchedCategories =
-            data.map((e) => _ServiceCategory.fromJson(e)).toList();
-
-        // Prepend an "All" category
-        _categories = [
-          const _ServiceCategory(
-              id: 'all', name: 'All', searchCategory: '', discountedAmount: 0),
-          ...fetchedCategories
-        ];
-      }
+      _categories = [ServiceCategoryModel.all, ...fetchedCategories];
     } catch (e) {
       debugPrint('Error fetching service categories: $e');
     } finally {
@@ -151,6 +110,12 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
     }
   }
 
+  String _resolveSex({String? override}) {
+    if (override != null && override.isNotEmpty) return override;
+    if (widget.sex != null && widget.sex!.isNotEmpty) return widget.sex!;
+    return 'male';
+  }
+
   /// Fetch salons for a given category_id
   Future<void> _fetchSalons(String categoryId) async {
     setState(() {
@@ -160,44 +125,44 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
     });
 
     try {
-      final dio = sl<DioClient>();
+      final location = context.read<LocationProvider>();
 
-      String budget = "";
-      String rating = "";
-      String sex = widget.sex ?? "";
+      String budget = '';
+      String rating = '';
+      String sex = _resolveSex();
+      var filterWithin5Km = false;
 
       if (_selectedFilterIndex != null) {
-        if (_selectedFilterIndex == 0) {
-          budget = "49-99";
-        } else if (_selectedFilterIndex == 2) {
-          rating = "5";
-        } else if (_selectedFilterIndex == 3) {
-          sex = "male";
+        switch (_selectedFilterIndex) {
+          case 0:
+            budget = '49-149';
+            break;
+          case 1:
+            filterWithin5Km = true;
+            break;
+          case 2:
+            rating = '4';
+            break;
+          case 3:
+            sex = 'male';
+            break;
         }
       }
 
-      final Map<String, dynamic> payload = {
-        "category_id": categoryId == 'all' ? "" : categoryId,
-        "budget": budget,
-        "sex": sex,
-        "rating": rating,
-      };
-
-      final response = await dio.post(
-        ApiRoutes.getStoresByCategory,
-        data: payload,
+      var salons = await _serviceDiscovery.getStoresByCategory(
+        categoryId: categoryId,
+        sex: sex,
+        lat: location.latitude,
+        lng: location.longitude,
+        budget: budget,
+        rating: rating,
       );
 
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        final List data = response.data['data'];
-        _salons = data
-            .map((e) =>
-                SalonModel.fromJson(e, imageBaseUrl: ApiRoutes.imageBaseUrl))
-            .toList();
-      } else {
-        _salonsError =
-            response.data['message']?.toString() ?? 'Failed to load salons';
+      if (filterWithin5Km) {
+        salons = salons.where((salon) => salon.distance <= 5).toList();
       }
+
+      _salons = salons;
     } catch (e) {
       _salonsError = 'Something went wrong. Please try again.';
       debugPrint('Error fetching salons by category: $e');
@@ -210,7 +175,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
     }
   }
 
-  void _onCategoryTap(_ServiceCategory category) {
+  void _onCategoryTap(ServiceCategoryModel category) {
     if (_selectedCategoryId == category.id) return;
 
     setState(() {

@@ -32,7 +32,6 @@ class _FilterBadgesState extends State<FilterBadges> {
   @override
   void initState() {
     super.initState();
-    // Set initial gender if provided (only if not null)
     if (widget.initialGender != null && widget.initialGender!.isNotEmpty) {
       final filter = _filters.firstWhere(
         (f) => f['value'] == widget.initialGender,
@@ -42,140 +41,118 @@ class _FilterBadgesState extends State<FilterBadges> {
         _selectedFilter = filter['label'];
       }
     } else {
-      // Default selection is "All"
       _selectedFilter = 'All';
     }
   }
 
+  TextStyle _labelStyle({
+    required Color color,
+    FontWeight fontWeight = FontWeight.w600,
+  }) {
+    return TextStyle(
+      color: color,
+      fontWeight: fontWeight,
+      fontSize: AppSizes.fontS,
+      height: 1.2,
+    );
+  }
+
+  /// Shared pill used by Gender and every filter chip so sizing/styling match.
+  Widget _buildPill({
+    required BuildContext context,
+    required String label,
+    VoidCallback? onTap,
+    required bool filled,
+    Widget? leading,
+  }) {
+    final fill = filled ? context.primaryFill : context.appSurface;
+    final labelColor = filled ? context.onPrimaryFill : context.mutedOnSurface;
+    final borderColor = filled
+        ? context.primaryFill
+        : (context.isDarkMode ? AppColors.borderDark : AppColors.border);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+            border: Border.all(color: borderColor, width: 1),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingM,
+            vertical: AppSizes.paddingXS,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (leading != null) ...[
+                leading,
+                SizedBox(width: AppSizes.spaceXS),
+              ],
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: _labelStyle(color: labelColor),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
+    final onFill = context.onPrimaryFill;
+
     return Container(
-      height: 50,
-      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+      color: context.appSurface,
       padding: EdgeInsets.symmetric(vertical: AppSizes.paddingS),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-        children: [
-          // Primary Filter Button (Settings + Filter + Arrow)
-          _buildPrimaryFilterButton(context),
-          SizedBox(width: AppSizes.spaceS),
-          // Filter chips
-          ..._filters.map((filter) => _buildFilterChip(
-                context,
-                filter['label']!,
-                filter['value']!,
-              )),
-        ],
-      ),
-    );
-  }
+      child: SizedBox(
+        height: 40,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+          itemCount: _filters.length + 1,
+          separatorBuilder: (_, __) => SizedBox(width: AppSizes.spaceS),
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return _buildPill(
+                context: context,
+                label: 'Gender',
+                filled: true,
+                onTap: () {},
+                leading: SvgPicture.asset(
+                  AppIcons.icSettings,
+                  width: 16,
+                  height: 16,
+                  colorFilter: ColorFilter.mode(onFill, BlendMode.srcIn),
+                ),
+              );
+            }
 
-  Widget _buildPrimaryFilterButton(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-    return InkWell(
-      onTap: () {
-        // Show filter bottom sheet or dialog
-      },
-      borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingM,
-          vertical: AppSizes.paddingXS,
-        ),
-        decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
-          borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-          boxShadow: [
-            BoxShadow(
-              color: isDarkMode
-                  ? AppColors.primaryDark.withValues(alpha: 0.1)
-                  : AppColors.primary.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              AppIcons.icSettings,
-              width: 16,
-              height: 16,
-              colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primary : AppColors.primaryDark,
-                BlendMode.srcIn,
-              ),
-            ),
-            SizedBox(width: AppSizes.spaceXS),
-            Text(
-              'Gender',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
-                fontWeight: FontWeight.w600,
-                fontSize: AppSizes.fontS,
-              ),
-            ),
-            SizedBox(width: AppSizes.spaceXS),
-            // Icon(
-            //   Icons.keyboard_arrow_down,
-            //   color: isDarkMode ? AppColors.primary : AppColors.primaryDark,
-            //   size: 16,
-            // ),
-          ],
-        ),
-      ),
-    );
-  }
+            final filter = _filters[index - 1];
+            final label = filter['label']!;
+            final value = filter['value']!;
+            final isSelected = _selectedFilter == label;
 
-  Widget _buildFilterChip(BuildContext context, String label, String value) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-    final bool isSelected = _selectedFilter == label;
-
-    return Padding(
-      padding: EdgeInsets.only(right: AppSizes.spaceS),
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedFilter = isSelected ? null : label;
-          });
-          // Notify parent about gender selection
-          if (widget.onGenderSelected != null) {
-            widget.onGenderSelected!(isSelected ? 'unisex' : value);
-          }
-        },
-        borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingL,
-            vertical: AppSizes.paddingS,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
-                : context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-            border: Border.all(
-              color: isSelected
-                  ? (isDarkMode ? AppColors.primaryDark : AppColors.primary)
-                  : (isDarkMode ? AppColors.borderDark : AppColors.border),
-              width: 1.0,
-            ),
-          ),
-          child: Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: isSelected
-                  ? (isDarkMode ? AppColors.primary : AppColors.primaryDark)
-                  : (isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary),
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              fontSize: AppSizes.fontS,
-            ),
-          ),
+            return _buildPill(
+              context: context,
+              label: label,
+              filled: isSelected,
+              onTap: () {
+                setState(() {
+                  _selectedFilter = isSelected ? null : label;
+                });
+                widget.onGenderSelected?.call(isSelected ? 'unisex' : value);
+              },
+            );
+          },
         ),
       ),
     );

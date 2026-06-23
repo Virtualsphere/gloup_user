@@ -367,8 +367,10 @@ class _LocationPageState extends State<LocationPage> {
         final data = json.decode(response.body);
         if (data['status'] == 'OK') {
           final result = data['result'];
-          final lat = result['geometry']['location']['lat'] as double;
-          final lng = result['geometry']['location']['lng'] as double;
+          final lat =
+              (result['geometry']['location']['lat'] as num).toDouble();
+          final lng =
+              (result['geometry']['location']['lng'] as num).toDouble();
 
           List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
           if (placemarks.isNotEmpty && mounted) {
@@ -557,7 +559,7 @@ class _LocationPageState extends State<LocationPage> {
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   borderSide: BorderSide(
                     color:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                        context.onSurfaceEmphasis,
                     width: 2,
                   ),
                 ),
@@ -671,7 +673,7 @@ class _LocationPageState extends State<LocationPage> {
     return Container(
       padding: EdgeInsets.all(AppSizes.paddingL),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+        color: context.onSurfaceEmphasis,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
       ),
       child: Row(

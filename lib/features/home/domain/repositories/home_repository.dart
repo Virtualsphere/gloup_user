@@ -21,5 +21,10 @@ abstract class HomeRepository {
     int? limit,
     int? page,
     String? gender,
+    String? minRating,
+    int? minPrice,
+    int? maxPrice,
+    String? search,
+    String? sort,
   });
 }

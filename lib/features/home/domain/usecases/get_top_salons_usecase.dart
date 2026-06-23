@@ -9,6 +9,11 @@ class GetTopSalonsParams {
   final int? limit;
   final int? page;
   final String? gender;
+  final String? minRating;
+  final int? minPrice;
+  final int? maxPrice;
+  final String? search;
+  final String? sort;
 
   GetTopSalonsParams({
     required this.latitude,
@@ -16,6 +21,11 @@ class GetTopSalonsParams {
     this.limit,
     this.page,
     this.gender,
+    this.minRating,
+    this.minPrice,
+    this.maxPrice,
+    this.search,
+    this.sort,
   });
 }
 
@@ -33,6 +43,11 @@ class GetTopSalonsUseCase {
       limit: params.limit,
       page: params.page,
       gender: params.gender,
+      minRating: params.minRating,
+      minPrice: params.minPrice,
+      maxPrice: params.maxPrice,
+      search: params.search,
+      sort: params.sort,
     );
   }
 }

@@ -264,10 +264,10 @@ class SelectedServicesCard extends StatelessWidget {
               'Add more service',
               style: context.textTheme.bodyMedium?.copyWith(
                 fontSize: AppSizes.fontM,
-                color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                color: context.onSurfaceEmphasis,
                 decoration: TextDecoration.underline,
                 decorationColor:
-                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    context.onSurfaceEmphasis,
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/salon_badges_row.dart';
 import 'package:tressy/shared/widgets/salon_location_row.dart';
 
 class SalonSearchCard extends StatefulWidget {
@@ -48,22 +49,6 @@ class SalonSearchCard extends StatefulWidget {
 }
 
 class _SalonSearchCardState extends State<SalonSearchCard> {
-  // Language icon paths map
-  static const Map<String, String> languageIcons = {
-    'ta': AppIcons.icTamil,
-    'ml': AppIcons.icMalayalam,
-    'hi': AppIcons.icHindi,
-    'te': AppIcons.icTelugu,
-    'kn': AppIcons.icKannada,
-    'bn': AppIcons.icBengali,
-    'gu': AppIcons.icGujarati,
-    'en': AppIcons.icEnglish,
-  };
-
-  String? getLanguageIcon(String languageCode) {
-    return languageIcons[languageCode];
-  }
-
   @override
   void initState() {
     super.initState();
@@ -297,86 +282,13 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
           SizedBox(height: AppSizes.spaceM),
         ],
         // Languages and Categories
-        Row(
-          children: [
-            _buildLanguageBadges(isDarkMode),
-            const Spacer(),
-            _buildCategoryBadges(isDarkMode),
-          ],
+        SalonBadgesRow(
+          languageCodes: widget.languageCodes,
+          categories: widget.categories,
+          languageIconSize: 12,
+          languageFontSize: 7,
         ),
       ],
-    );
-  }
-
-  Widget _buildLanguageBadges(bool isDarkMode) {
-    final languageCodes = widget.languageCodes ?? [];
-    final displayLanguages =
-        languageCodes.isEmpty ? ['en', 'ta'] : languageCodes.take(3).toList();
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: displayLanguages.asMap().entries.expand((entry) {
-        final languageCode = entry.value;
-        final index = entry.key;
-        final iconPath = getLanguageIcon(languageCode);
-        final isLast = index == displayLanguages.length - 1;
-
-        final icon = iconPath != null
-            ? SvgPicture.asset(
-                iconPath,
-                width: 12,
-                height: 12,
-                colorFilter: ColorFilter.mode(
-                  isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  BlendMode.srcIn,
-                ),
-              )
-            : Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
-                      : AppColors.textSecondary.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    languageCode.length >= 2
-                        ? languageCode.substring(0, 2).toUpperCase()
-                        : languageCode.toUpperCase(),
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: isDarkMode
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondary,
-                      fontSize: 7,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-
-        return [
-          icon,
-          if (!isLast)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Container(
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-        ];
-      }).toList(),
     );
   }
 
@@ -385,63 +297,6 @@ class _SalonSearchCardState extends State<SalonSearchCard> {
       locationLabel: widget.address,
       distanceKm: widget.distance,
       isDarkMode: isDarkMode,
-    );
-  }
-
-  Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = (widget.categories == null || widget.categories!.isEmpty)
-        ? ['Haircut', 'Facial']
-        : widget.categories!;
-    final displayCategories = categories.take(2).toList();
-    final hasMoreCategories = categories.length > 2;
-
-    return Row(
-      spacing: 4,
-      children: [
-        // Category badges (up to 2)
-        ...displayCategories.map((category) => Container(
-              constraints: const BoxConstraints(maxWidth: 70),
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingS,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                    : AppColors.textSecondary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-              ),
-              child: Text(
-                category,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )),
-        if (hasMoreCategories)
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingS,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: Color(0xFFF6F1FE),
-              borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-            ),
-            child: Text(
-              '+${categories.length - 2}',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: Color(0xFF8F89CA),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

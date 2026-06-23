@@ -88,7 +88,7 @@ class _LocationWidgetState extends State<LocationWidget> {
               width: AppSizes.iconS,
               height: AppSizes.iconS,
               colorFilter: ColorFilter.mode(
-                isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                context.onSurfaceEmphasis,
                 BlendMode.srcIn,
               ),
             ),

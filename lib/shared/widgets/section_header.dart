@@ -21,7 +21,6 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
     final resolvedPadding = padding ?? EdgeInsets.only(
       left: AppSizes.paddingM,
       right: AppSizes.paddingXS,
@@ -45,8 +44,7 @@ class SectionHeader extends StatelessWidget {
                   style: context.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: AppSizes.fontXL,
-                    color:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    color: context.onSurfaceEmphasis,
                   ),
                 ),
                 if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -54,7 +52,7 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: context.textTheme.titleSmall?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: context.mutedOnSurface,
                       fontSize: AppSizes.fontS,
                     ),
                   ),
@@ -79,9 +77,7 @@ class SectionHeader extends StatelessWidget {
                     Text(
                       seeAllText!,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.primaryDark
-                            : AppColors.primary,
+                        color: context.onSurfaceEmphasis,
                         fontWeight: FontWeight.w600,
                         fontSize: AppSizes.fontM,
                       ),
@@ -89,9 +85,7 @@ class SectionHeader extends StatelessWidget {
                     SizedBox(width: AppSizes.spaceXS),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: isDarkMode
-                          ? AppColors.primaryDark
-                          : AppColors.primary,
+                      color: context.onSurfaceEmphasis,
                       size: 14,
                     ),
                   ],

@@ -44,12 +44,40 @@ class _HomePageState extends State<HomePage> {
   String? _selectedGender; // No default filter
   HomeBloc? _homeBloc;
   bool _isLoadingLocation = true;
+  LocationProvider? _locationProvider;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     _getCurrentLocation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = context.read<LocationProvider>();
+    if (_locationProvider != provider) {
+      _locationProvider?.removeListener(_onLocationToastChanged);
+      _locationProvider = provider;
+      provider.addListener(_onLocationToastChanged);
+    }
+  }
+
+  void _onLocationToastChanged() {
+    if (!mounted) return;
+    final provider = _locationProvider;
+    if (provider == null ||
+        !provider.locationJustUpdated ||
+        provider.lastUpdateMessage == null) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      CustomToast.showInfo(context, provider.lastUpdateMessage!);
+      provider.clearUpdateFlag();
+    });
   }
 
   Future<void> _setChennaiDefault() async {
@@ -215,6 +243,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _locationProvider?.removeListener(_onLocationToastChanged);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
@@ -255,16 +284,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen for location changes and show toast
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final locationProvider = context.read<LocationProvider>();
-      if (locationProvider.locationJustUpdated &&
-          locationProvider.lastUpdateMessage != null) {
-        CustomToast.showInfo(context, locationProvider.lastUpdateMessage!);
-        locationProvider.clearUpdateFlag();
-      }
-    });
-
     final screenWidth = context.screenWidth;
     // Base height on screen width to maintain a consistent aspect ratio across all devices
     final carouselHeight = screenWidth * 0.85;
@@ -523,16 +542,23 @@ class _HomePageState extends State<HomePage> {
                                                     if (result != null &&
                                                         result is Map<String,
                                                             dynamic>) {
-                                                      // Update LocationProvider - this will save and notify all listeners
                                                       await locationProvider
                                                           .updateLocation(
                                                         latitude:
-                                                            result['latitude'],
-                                                        longitude:
-                                                            result['longitude'],
-                                                        city: result['city'],
-                                                        area: result['area'],
+                                                            (result['latitude']
+                                                                    as num)
+                                                                .toDouble(),
+                                                        longitude: (result[
+                                                                    'longitude']
+                                                                as num)
+                                                            .toDouble(),
+                                                        city: result['city']
+                                                            ?.toString(),
+                                                        area: result['area']
+                                                            ?.toString(),
                                                       );
+
+                                                      if (!mounted) return;
 
                                                       // Reload home data with new location
                                                       _homeBloc?.add(
@@ -705,7 +731,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Popular Services
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 340,
+                      height: SalonCard.horizontalListExtent,
                       child: state.isPopularServicesLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.popularServices.isEmpty
@@ -767,7 +793,7 @@ class _HomePageState extends State<HomePage> {
                   // Horizontal Scrollable Salon Cards - Top Salons
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 340,
+                      height: SalonCard.horizontalListExtent,
                       child: state.isTopSalonsLoading
                           ? HomeShimmers.buildSalonCardsShimmer(context)
                           : state.topSalons.isEmpty

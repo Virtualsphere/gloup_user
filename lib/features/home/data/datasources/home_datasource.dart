@@ -22,6 +22,11 @@ abstract class HomeDataSource {
     int? limit,
     int? page,
     String? gender,
+    String? minRating,
+    int? minPrice,
+    int? maxPrice,
+    String? search,
+    String? sort,
   });
 }
 
@@ -138,6 +143,11 @@ class HomeDataSourceImpl implements HomeDataSource {
     int? limit,
     int? page,
     String? gender,
+    String? minRating,
+    int? minPrice,
+    int? maxPrice,
+    String? search,
+    String? sort,
   }) async {
     try {
       // Build query parameters
@@ -149,6 +159,13 @@ class HomeDataSourceImpl implements HomeDataSource {
       if (limit != null) queryParams['limit'] = limit;
       if (page != null) queryParams['page'] = page;
       if (gender != null) queryParams['gender'] = gender;
+      if (minRating != null && minRating.isNotEmpty) {
+        queryParams['minRating'] = minRating;
+      }
+      if (minPrice != null) queryParams['minPrice'] = minPrice;
+      if (maxPrice != null) queryParams['maxPrice'] = maxPrice;
+      if (search != null && search.isNotEmpty) queryParams['search'] = search;
+      if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
 
       // Get auth token if available
       final token = LocalStorageService.accessToken;

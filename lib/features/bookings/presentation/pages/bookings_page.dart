@@ -146,13 +146,10 @@ class _BookingsPageState extends State<BookingsPage>
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor:
-                  isDarkMode ? AppColors.primary : AppColors.primaryDark,
-              unselectedLabelColor: isDarkMode
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
+              labelColor: context.onPrimaryFill,
+              unselectedLabelColor: context.mutedOnSurface,
               indicator: BoxDecoration(
-                color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                color: context.primaryFill,
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
               indicatorSize: TabBarIndicatorSize.tab,
@@ -630,10 +627,8 @@ class _BookingsPageState extends State<BookingsPage>
                   icon: const Icon(Icons.directions_outlined, size: 18),
                   label: const Text('Get Directions'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isDarkMode ? AppColors.primaryDark : AppColors.primary,
-                    foregroundColor:
-                        isDarkMode ? AppColors.black : AppColors.white,
+                    backgroundColor: context.primaryFill,
+                    foregroundColor: context.onPrimaryFill,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -677,7 +672,7 @@ class _BookingsPageState extends State<BookingsPage>
           Icon(
             icon,
             size: 13,
-            color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+            color: context.onSurfaceEmphasis,
           ),
           const SizedBox(width: 5),
           Text(

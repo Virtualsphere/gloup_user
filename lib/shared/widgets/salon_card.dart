@@ -12,6 +12,7 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
+import 'package:tressy/shared/widgets/salon_badges_row.dart';
 import 'package:tressy/shared/widgets/salon_location_row.dart';
 import 'package:tressy/shared/widgets/salon_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,6 +59,11 @@ class SalonCard extends StatefulWidget {
     this.onFavoriteToggle,
   });
 
+  /// Height for horizontal carousels — image + compact content block.
+  static double get horizontalListExtent => imageHeight.h + 118.h;
+
+  static const double imageHeight = 150;
+
   @override
   State<SalonCard> createState() => _SalonCardState();
 }
@@ -72,22 +78,6 @@ class _SalonCardState extends State<SalonCard> {
     final primary = widget.salonImage.trim();
     if (primary.isNotEmpty) return [primary];
     return [];
-  }
-
-  // Language icon paths map
-  static const Map<String, String> languageIcons = {
-    'ta': AppIcons.icTamil,
-    'ml': AppIcons.icMalayalam,
-    'hi': AppIcons.icHindi,
-    'te': AppIcons.icTelugu,
-    'kn': AppIcons.icKannada,
-    'bn': AppIcons.icBengali,
-    'gu': AppIcons.icGujarati,
-    'en': AppIcons.icEnglish,
-  };
-
-  String? getLanguageIcon(String languageCode) {
-    return languageIcons[languageCode];
   }
 
   void _handleFavoriteToggle() {
@@ -147,21 +137,10 @@ class _SalonCardState extends State<SalonCard> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 _buildImageCarousel(isFavorite, isLoading, isDarkMode),
-                SizedBox(
-                    height:
-                        widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceM),
-                _buildSalonInfo(isDarkMode),
-                // Spacer(),
-                SizedBox(
-                    height:
-                        widget.isFullWidth ? AppSizes.spaceM : AppSizes.spaceS),
-                _buildRatingAndDistance(isDarkMode),
-                SizedBox(
-                    height:
-                        widget.isFullWidth ? AppSizes.spaceL : AppSizes.spaceS),
+                _buildContent(isDarkMode),
               ],
             ),
           ),
@@ -183,17 +162,17 @@ class _SalonCardState extends State<SalonCard> {
           ),
           child: images.isEmpty
               ? SizedBox(
-                  height: 150.h,
+                  height: SalonCard.imageHeight.h,
                   width: double.infinity,
                   child: SalonNetworkImage(
                     imageUrl: '',
-                    height: 150.h,
+                    height: SalonCard.imageHeight.h,
                     logTag: 'SalonCard',
                   ),
                 )
               : CarouselSlider(
                   options: CarouselOptions(
-                    height: 150.h,
+                    height: SalonCard.imageHeight.h,
                     viewportFraction: 1.0,
                     enableInfiniteScroll: images.length > 1,
                     autoPlay: false,
@@ -208,10 +187,10 @@ class _SalonCardState extends State<SalonCard> {
                       builder: (BuildContext context) {
                         return SizedBox(
                           width: double.infinity,
-                          height: 150.h,
+                          height: SalonCard.imageHeight.h,
                           child: SalonNetworkImage(
                             imageUrl: imageUrl,
-                            height: 150.h,
+                            height: SalonCard.imageHeight.h,
                             logTag: 'SalonCard',
                           ),
                         );
@@ -396,12 +375,41 @@ class _SalonCardState extends State<SalonCard> {
     );
   }
 
-  Widget _buildSalonInfo(bool isDarkMode) {
+  Widget _buildContent(bool isDarkMode) {
+    final verticalGap = widget.isFullWidth ? AppSizes.spaceS : AppSizes.spaceXS;
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-      child: Row(
+      padding: EdgeInsets.fromLTRB(
+        AppSizes.paddingM,
+        AppSizes.paddingS,
+        AppSizes.paddingM,
+        AppSizes.paddingM,
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          _buildSalonInfo(isDarkMode),
+          SizedBox(height: verticalGap),
+          SalonLocationRow(
+            locationLabel: widget.address,
+            distanceKm: widget.distance,
+            isDarkMode: isDarkMode,
+          ),
+          SizedBox(height: verticalGap),
+          SalonBadgesRow(
+            languageCodes: widget.languageCodes,
+            categories: widget.categories,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSalonInfo(bool isDarkMode) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           // Salon circular image
           Container(
             width: AppSizes.iconM,
@@ -435,7 +443,7 @@ class _SalonCardState extends State<SalonCard> {
               style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color:
-                    isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                    context.onSurfaceEmphasis,
                 height: 1.3,
               ),
             ),
@@ -456,7 +464,7 @@ class _SalonCardState extends State<SalonCard> {
                 style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontM,
-                  color: isDarkMode ? AppColors.primaryDark : AppColors.primary,
+                  color: context.onSurfaceEmphasis,
                 ),
               ),
               const SizedBox(width: 2),
@@ -472,172 +480,6 @@ class _SalonCardState extends State<SalonCard> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildRatingAndDistance(bool isDarkMode) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SalonLocationRow(
-            locationLabel: widget.address,
-            distanceKm: widget.distance,
-            isDarkMode: isDarkMode,
-          ),
-          SizedBox(height: AppSizes.spaceS),
-          // Language and Category badges row (separate)
-          ...[
-            SizedBox(height: AppSizes.spaceS),
-            Row(
-              children: [
-                _buildLanguageBadges(isDarkMode),
-                const Spacer(),
-                _buildCategoryBadges(isDarkMode),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLanguageBadges(bool isDarkMode) {
-    final languageCodes = widget.languageCodes ?? [];
-
-    // If no languages found, show default 'en' and 'ta'
-    final displayLanguages =
-        languageCodes.isEmpty ? ['en', 'ta'] : languageCodes.take(3).toList();
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Language badges (max 3)
-        ...displayLanguages.asMap().entries.expand((entry) {
-          final languageCode = entry.value;
-          final index = entry.key;
-          final iconPath = getLanguageIcon(languageCode);
-          final isLast = index == displayLanguages.length - 1;
-
-          final icon = iconPath != null
-              ? SvgPicture.asset(
-                  iconPath,
-                  width: 14.w,
-                  height: 14.h,
-                  colorFilter: ColorFilter.mode(
-                    isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    BlendMode.srcIn,
-                  ),
-                )
-              : Container(
-                  width: 20.w,
-                  height: 20.h,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
-                        : AppColors.textSecondary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      languageCode.length >= 2
-                          ? languageCode.substring(0, 2).toUpperCase()
-                          : languageCode.toUpperCase(),
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
-
-          return [
-            icon,
-            if (!isLast)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Container(
-                  width: 4.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-          ];
-        }),
-      ],
-    );
-  }
-
-  Widget _buildCategoryBadges(bool isDarkMode) {
-    final categories = (widget.categories == null || widget.categories!.isEmpty)
-        ? ['Haircut', 'Facial']
-        : widget.categories!;
-    final displayCategories = categories.take(2).toList();
-    final hasMoreCategories = categories.length > 2;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ...displayCategories.map((category) => Container(
-              constraints: BoxConstraints(maxWidth: 75.w),
-              margin: const EdgeInsets.only(left: 6),
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingM,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFFF6F1FE),
-                borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-              ),
-              child: Text(
-                category,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: Color(0xFF8F89CA),
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )),
-        if (hasMoreCategories)
-          Container(
-            margin: const EdgeInsets.only(left: 6),
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingM,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark.withValues(alpha: 0.15)
-                  : AppColors.textSecondary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-            ),
-            child: Text(
-              '+${categories.length - 2}',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
