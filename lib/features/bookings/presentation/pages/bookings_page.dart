@@ -300,8 +300,9 @@ class _BookingsPageState extends State<BookingsPage>
             imageBaseUrl: ApiRoutes.imageBaseUrl,
           )
         : null;
-    final hasImage =
-        imageUrl != null && imageUrl.isNotEmpty && ImageUrlResolver.isAbsoluteUrl(imageUrl);
+    final hasImage = imageUrl != null &&
+        imageUrl.isNotEmpty &&
+        ImageUrlResolver.isAbsoluteUrl(imageUrl);
 
     final address = [appointment.addressLine1, appointment.city]
         .where((s) => s.isNotEmpty)

@@ -366,8 +366,8 @@ class _MyProfileState extends State<MyProfile> {
                                   children: [
                                     Text(
                                       'Mobile',
-                                      style:
-                                          context.textTheme.bodyMedium?.copyWith(
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: isDarkMode
@@ -636,9 +636,13 @@ class _MyProfileState extends State<MyProfile> {
     final currentState = context.read<ProfileBloc>().state;
 
     ProfileEntity? currentProfile;
-    if (currentState is ProfileLoaded) currentProfile = currentState.profile;
-    else if (currentState is ProfileUpdateSuccess) currentProfile = currentState.profile;
-    else if (currentState is ProfileUpdateFailure) currentProfile = currentState.profile;
+    if (currentState is ProfileLoaded) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdateSuccess) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdateFailure) {
+      currentProfile = currentState.profile;
+    }
 
     if (currentProfile != null) {
       final updatedProfile = currentProfile.copyWith(

@@ -101,8 +101,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
       // Calculate end time using the slot interval
       final startDateTime = DateTime(2000, 1, 1, startHour, startMinute);
-      final endDateTime =
-          startDateTime.add(Duration(minutes: slotInterval));
+      final endDateTime = startDateTime.add(Duration(minutes: slotInterval));
 
       // Format start time
       final startPeriod = startHour >= 12 ? 'PM' : 'AM';
@@ -249,8 +248,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
                       // Section title
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingM),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -504,8 +503,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                   _formatTimeRange(selectedTime),
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color:
-                        context.onSurfaceEmphasis,
+                    color: context.onSurfaceEmphasis,
                   ),
                 ),
               ],

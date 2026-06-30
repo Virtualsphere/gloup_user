@@ -220,8 +220,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
             child: ListView.builder(
               controller: scrollController,
               scrollDirection: Axis.horizontal,
-              padding:
-                  EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
               itemCount: dates.length,
               itemBuilder: (context, index) {
                 final date = dates[index];

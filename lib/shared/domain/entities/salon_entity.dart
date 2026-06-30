@@ -11,6 +11,7 @@ class SalonEntity extends Equatable {
   final int reviewCount;
   final double distance;
   final String address;
+
   /// Short label for cards: area and city only.
   final String displayAddress;
   final bool isPremium;

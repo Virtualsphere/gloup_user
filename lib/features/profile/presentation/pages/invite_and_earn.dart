@@ -252,7 +252,9 @@ class _InviteAndEarnState extends State<InviteAndEarn> {
                       text: 'Invite Friends',
                       isLoading: false,
                       onPressed: () {
-                        Share.share('Welcome to GloUp Salon!!');
+                        SharePlus.instance.share(
+                          ShareParams(text: 'Welcome to GloUp Salon!!'),
+                        );
                       },
                     ),
                   )

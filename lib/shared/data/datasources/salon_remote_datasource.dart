@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 
 /// Top-level function for compute() — must not be a closure or instance method.
@@ -57,15 +56,9 @@ class SalonRemoteDataSourceImpl implements SalonRemoteDataSource {
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
       if (category != null) queryParams['category'] = category;
 
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.get(
         ApiRoutes.getAllStores,
         queryParameters: queryParams,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.statusCode == 200) {

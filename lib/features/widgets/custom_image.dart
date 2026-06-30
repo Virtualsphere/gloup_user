@@ -52,8 +52,7 @@ class CustomNetworkImage extends StatelessWidget {
               width: placeHolderHeight,
               height: placeHolderHeight,
               colorFilter: ColorFilter.mode(
-                  context.onSurfaceEmphasis,
-                  BlendMode.modulate),
+                  context.onSurfaceEmphasis, BlendMode.modulate),
             ),
           ),
         );

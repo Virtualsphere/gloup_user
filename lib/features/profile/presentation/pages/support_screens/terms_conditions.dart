@@ -130,7 +130,8 @@ class _TermsConditionsContent extends StatelessWidget {
           number: '4',
           title: 'Limitation of Liability',
           children: [
-            const _BodyText('To the fullest extent permitted under Indian law:'),
+            const _BodyText(
+                'To the fullest extent permitted under Indian law:'),
             const _BodyText(
               'Gloup Instantly shall not be liable for any direct, indirect, incidental, special, punitive, exemplary, or consequential damages including but not limited to:',
             ),
@@ -197,7 +198,8 @@ class _TermsConditionsContent extends StatelessWidget {
           number: '9',
           title: 'Suspension / Termination',
           children: [
-            const _BodyText('Gloup Instantly may suspend or terminate User access for:'),
+            const _BodyText(
+                'Gloup Instantly may suspend or terminate User access for:'),
             const _BulletList(items: [
               'Abuse of platform',
               'Fake bookings',
@@ -240,7 +242,8 @@ class _TermsConditionsContent extends StatelessWidget {
           title: 'PARTNER (SALON) TERMS & CONDITIONS',
           subtitle:
               'Applicable to Partner Salons, Parlours & Beauty Centers Using the Gloup Instantly Platform',
-          company: 'Owned and operated by: JR STYLE\'O BOOKING AND FASHION PVT LTD',
+          company:
+              'Owned and operated by: JR STYLE\'O BOOKING AND FASHION PVT LTD',
           lastUpdated: '01/03/2026',
         ),
         _buildSection(
@@ -254,14 +257,16 @@ class _TermsConditionsContent extends StatelessWidget {
               'service operators ("Partner", "Salon", "Vendor", "You", and "Your") and JR STYLE\'O '
               'BOOKING AND FASHION PVT LTD.',
             ),
-            const _BodyText('Gloup Instantly operates as a digital technology aggregator in accordance with:'),
+            const _BodyText(
+                'Gloup Instantly operates as a digital technology aggregator in accordance with:'),
             const _BulletList(items: [
               'The Information Technology Act, 2000',
               'Intermediary Guidelines & Digital Media Ethics Code Rules, 2021',
               'The Indian Contract Act, 1872',
               'Consumer Protection Act, 2019',
             ]),
-            const _BodyText('Gloup Instantly does not provide any salon or grooming services.'),
+            const _BodyText(
+                'Gloup Instantly does not provide any salon or grooming services.'),
           ],
         ),
         _buildSection(
@@ -433,7 +438,8 @@ class _TermsConditionsContent extends StatelessWidget {
           title: 'TERMS & CONDITIONS FOR FRANCHISED SALONS',
           subtitle:
               '(For salons operating under franchise brands such as Naturals, Green Trends, Toni & Guy, etc.)',
-          company: 'Owned and Operated by JR STYLE\'O BOOKING AND FASHION PVT LTD',
+          company:
+              'Owned and Operated by JR STYLE\'O BOOKING AND FASHION PVT LTD',
           lastUpdated: null,
           footer:
               'These terms govern the listing and participation of franchised salons on the Gloup Instantly platform.',
@@ -607,7 +613,8 @@ class _TermsConditionsContent extends StatelessWidget {
         _DocumentHeader(
           title: 'TERMS & CONDITIONS FOR TELECALLING TEAM',
           subtitle: 'TELECALLING DISCLAIMER & RESPONSIBILITY POLICY',
-          company: 'Owned and Operated by: JR STYLE\'O BOOKING AND FASHION PVT LTD',
+          company:
+              'Owned and Operated by: JR STYLE\'O BOOKING AND FASHION PVT LTD',
           lastUpdated: null,
           footer:
               'This policy governs all telecalling activities related to Gloup Instantly.',
@@ -630,7 +637,8 @@ class _TermsConditionsContent extends StatelessWidget {
             const _BodyText(
               'Telecalling is conducted only to introduce the platform and provide information.',
             ),
-            const _BodyText('Telecallers are not authorised to make commitments.'),
+            const _BodyText(
+                'Telecallers are not authorised to make commitments.'),
           ],
         ),
         _buildSection(

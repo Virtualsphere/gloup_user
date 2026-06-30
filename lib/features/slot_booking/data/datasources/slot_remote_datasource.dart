@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/slot_booking/data/models/slot_model.dart';
 
 abstract class SlotRemoteDataSource {
@@ -24,18 +23,12 @@ class SlotRemoteDataSourceImpl implements SlotRemoteDataSource {
     required String date,
   }) async {
     try {
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.get(
         ApiRoutes.getSlotStatus,
         queryParameters: {
           'saloon_id': salonId,
           'date': date, // Format: YYYY-MM-DD (e.g., 2025-12-20)
         },
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.data['success'] == true) {

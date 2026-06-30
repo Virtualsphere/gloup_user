@@ -322,7 +322,9 @@ class _SalonCardState extends State<SalonCard> {
                 vertical: AppSizes.paddingXS,
               ),
               decoration: BoxDecoration(
-                color: widget.isOfferCard ? const Color(0xFF1ECB5D) : AppColors.white,
+                color: widget.isOfferCard
+                    ? const Color(0xFF1ECB5D)
+                    : AppColors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
                 boxShadow: [
                   BoxShadow(
@@ -344,7 +346,9 @@ class _SalonCardState extends State<SalonCard> {
                       style: context.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 11.sp,
-                        color: widget.isOfferCard ? Colors.white : AppColors.textPrimary,
+                        color: widget.isOfferCard
+                            ? Colors.white
+                            : AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -354,7 +358,9 @@ class _SalonCardState extends State<SalonCard> {
                       width: 3.w,
                       height: 3.h,
                       decoration: BoxDecoration(
-                        color: widget.isOfferCard ? Colors.white : AppColors.textSecondary,
+                        color: widget.isOfferCard
+                            ? Colors.white
+                            : AppColors.textSecondary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -364,7 +370,8 @@ class _SalonCardState extends State<SalonCard> {
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       fontSize: 11.sp,
-                      color: widget.isOfferCard ? Colors.white : AppColors.primary,
+                      color:
+                          widget.isOfferCard ? Colors.white : AppColors.primary,
                     ),
                   ),
                 ],
@@ -410,76 +417,75 @@ class _SalonCardState extends State<SalonCard> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          // Salon circular image
-          Container(
-            width: AppSizes.iconM,
-            height: AppSizes.iconM,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isDarkMode
-                    ? AppColors.primaryDark.withValues(alpha: 0.5)
-                    : AppColors.primary.withValues(alpha: 0.5),
-                width: 1,
-              ),
-            ),
-            child: ClipOval(
-              child: SalonNetworkImage(
-                imageUrl: widget.salonImage,
-                width: AppSizes.iconM,
-                height: AppSizes.iconM,
-                placeholderIconSize: 20,
-                showErrorLabel: false,
-                logTag: 'SalonCardAvatar',
-              ),
+        // Salon circular image
+        Container(
+          width: AppSizes.iconM,
+          height: AppSizes.iconM,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDarkMode
+                  ? AppColors.primaryDark.withValues(alpha: 0.5)
+                  : AppColors.primary.withValues(alpha: 0.5),
+              width: 1,
             ),
           ),
-          SizedBox(width: AppSizes.spaceS),
-          // Salon name and rating
-          Expanded(
-            child: ResponsiveEllipsisText(
-              text: widget.salonName,
-              maxLines: 2,
+          child: ClipOval(
+            child: SalonNetworkImage(
+              imageUrl: widget.salonImage,
+              width: AppSizes.iconM,
+              height: AppSizes.iconM,
+              placeholderIconSize: 20,
+              showErrorLabel: false,
+              logTag: 'SalonCardAvatar',
+            ),
+          ),
+        ),
+        SizedBox(width: AppSizes.spaceS),
+        // Salon name and rating
+        Expanded(
+          child: ResponsiveEllipsisText(
+            text: widget.salonName,
+            maxLines: 2,
+            style: context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: context.onSurfaceEmphasis,
+              height: 1.3,
+            ),
+          ),
+        ),
+        SizedBox(width: AppSizes.spaceS),
+        // Rating — fixed width so the name keeps remaining space
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.star,
+              color: const Color(0xFFFFA500), // Orange/Gold for rating
+              size: 16.w,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              widget.rating.toStringAsFixed(1),
               style: context.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color:
-                    context.onSurfaceEmphasis,
-                height: 1.3,
+                fontWeight: FontWeight.w600,
+                fontSize: AppSizes.fontM,
+                color: context.onSurfaceEmphasis,
               ),
             ),
-          ),
-          SizedBox(width: AppSizes.spaceS),
-          // Rating — fixed width so the name keeps remaining space
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.star,
-                color: const Color(0xFFFFA500), // Orange/Gold for rating
-                size: 16.w,
+            const SizedBox(width: 2),
+            Text(
+              '(${widget.reviewCount})',
+              style: context.textTheme.bodySmall?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+                fontSize: AppSizes.fontXS,
               ),
-              const SizedBox(width: 4),
-              Text(
-                widget.rating.toStringAsFixed(1),
-                style: context.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: AppSizes.fontM,
-                  color: context.onSurfaceEmphasis,
-                ),
-              ),
-              const SizedBox(width: 2),
-              Text(
-                '(${widget.reviewCount})',
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontSize: AppSizes.fontXS,
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

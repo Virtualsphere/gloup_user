@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/shared/data/datasources/salon_remote_datasource.dart';
 import 'package:tressy/shared/domain/entities/salon_entity.dart';
 import 'package:tressy/shared/domain/repositories/salon_repository.dart';
@@ -8,8 +10,9 @@ import 'package:tressy/shared/domain/repositories/salon_repository.dart';
 /// Shared Salon Repository Implementation
 class SalonRepositoryImpl implements SalonRepository {
   final SalonRemoteDataSource dataSource;
+  final NetworkInfo networkInfo;
 
-  SalonRepositoryImpl(this.dataSource);
+  SalonRepositoryImpl(this.dataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, List<SalonEntity>>> getSalons({
@@ -21,6 +24,10 @@ class SalonRepositoryImpl implements SalonRepository {
     String? search,
     String? category,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.getSalons(
         latitude: latitude,
@@ -32,7 +39,6 @@ class SalonRepositoryImpl implements SalonRepository {
         category: category,
       );
 
-      // Convert models to entities
       final entities =
           response.salons.map((model) => model.toEntity()).toList();
 

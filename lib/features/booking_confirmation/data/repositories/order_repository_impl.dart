@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/booking_confirmation/data/datasources/booking_remote_datasource.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 import 'package:tressy/features/booking_confirmation/domain/entities/order_entity.dart';
@@ -8,13 +10,17 @@ import 'package:tressy/features/booking_confirmation/domain/repositories/order_r
 
 class OrderRepositoryImpl implements OrderRepository {
   final BookingRemoteDataSource dataSource;
+  final NetworkInfo networkInfo;
 
-  OrderRepositoryImpl(this.dataSource);
+  OrderRepositoryImpl(this.dataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, OrderEntity>> createOrder(
     CreateOrderRequest request,
   ) async {
+    final disconnected = await leftIfDisconnected<OrderEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final model = await dataSource.createOrder(request);
       return Right(model.toEntity());
@@ -35,6 +41,9 @@ class OrderRepositoryImpl implements OrderRepository {
     required String razorpayPaymentId,
     required String razorpaySignature,
   }) async {
+    final disconnected = await leftIfDisconnected<void>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       await dataSource.verifyPayment(
         razorpayOrderId: razorpayOrderId,

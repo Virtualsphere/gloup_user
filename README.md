@@ -1,16 +1,21 @@
-# tressy
+# GloUp User App (tressy)
 
-A new Flutter project.
+Flutter client for the GloUp salon booking platform.
+
+## API configuration
+
+Production API is the default (`https://api.v1.gloup.in`). For local or staging backends, pass `API_BASE_URL` at run or build time — do not commit private IPs or dev URLs in source.
+
+```bash
+# Debug on a device/emulator (replace with your machine's LAN IP)
+flutter run --dart-define=API_BASE_URL=http://192.168.x.x:5678
+
+# Release / Shorebird (example)
+flutter build apk --release --dart-define=API_BASE_URL=https://api.v1.gloup.in
+shorebird release android -- --dart-define=API_BASE_URL=https://api.v1.gloup.in
+```
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [Flutter documentation](https://docs.flutter.dev/)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)

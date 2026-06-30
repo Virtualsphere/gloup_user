@@ -87,7 +87,8 @@ class ServiceCardWidget extends StatelessWidget {
   });
 
   static double get cardHeight => 230.0.h;
-  static EdgeInsets get headerPadding => EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h);
+  static EdgeInsets get headerPadding =>
+      EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h);
   static double get contentHorizontalPadding => 20.0.w;
   static double get headerListGap => 16.0.h;
   static double get itemGap => 12.0.w;

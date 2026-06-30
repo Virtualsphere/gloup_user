@@ -62,258 +62,251 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocConsumer<ProfileBloc, ProfileState>(
-          listener: (context, state) {
-            if (state is ProfileLoggedOut) {
-              context.go('/login');
-            } else if (state is ProfileFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-            }
-          },
-          builder: (context, state) {
-            // Show loading shimmer on initial load
-            if (state is ProfileLoading) {
-              return Scaffold(
-                appBar: ProfileAppBar(
-                    title: 'Personal Profile', centerTitle: false),
-                body: _ProfilePageShimmer(isDarkMode: isDarkMode),
-              );
-            }
+      listener: (context, state) {
+        if (state is ProfileLoggedOut) {
+          context.go('/login');
+        } else if (state is ProfileFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      builder: (context, state) {
+        // Show loading shimmer on initial load
+        if (state is ProfileLoading) {
+          return Scaffold(
+            appBar:
+                ProfileAppBar(title: 'Personal Profile', centerTitle: false),
+            body: _ProfilePageShimmer(isDarkMode: isDarkMode),
+          );
+        }
 
-            final isLoggingOut = state is ProfileLoggingOut;
+        final isLoggingOut = state is ProfileLoggingOut;
 
-            // Get profile data from state
-            final profile = state is ProfileLoaded ? state.profile : null;
-            final userName = profile?.fullName ?? 'Guest User';
-            final walletAmount = profile?.wallet ?? '0.00';
-            final profilePicUrl = profile?.fullProfilePicUrl ?? '';
+        // Get profile data from state
+        final profile = state is ProfileLoaded ? state.profile : null;
+        final userName = profile?.fullName ?? 'Guest User';
+        final walletAmount = profile?.wallet ?? '0.00';
+        final profilePicUrl = profile?.fullProfilePicUrl ?? '';
 
-            return Stack(
-              children: [
-                Scaffold(
-                  backgroundColor: isDarkMode
-                      ? AppColors.backgroundDark
-                      : AppColors.background,
-                  appBar: ProfileAppBar(
-                    title: 'Personal Profile',
-                    centerTitle: false,
-                  ),
-                  body: SafeArea(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSizes.paddingL,
-                          vertical: AppSizes.paddingL,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ── Header: Name + Avatar ──────────────────────────────
-                            Container(
-                              padding: EdgeInsets.only(
-                                  left: 16.0,
-                                  right: 16.0,
-                                  top: 10.0,
-                                  bottom: 10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: isDarkMode
-                                        ? AppColors.white
-                                            .withValues(alpha: 0.08)
-                                        : AppColors.black
-                                            .withValues(alpha: 0.08),
-                                    blurRadius: 1,
-                                  ),
-                                ],
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor:
+                  isDarkMode ? AppColors.backgroundDark : AppColors.background,
+              appBar: ProfileAppBar(
+                title: 'Personal Profile',
+                centerTitle: false,
+              ),
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSizes.paddingL,
+                      vertical: AppSizes.paddingL,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Header: Name + Avatar ──────────────────────────────
+                        Container(
+                          padding: EdgeInsets.only(
+                              left: 16.0, right: 16.0, top: 10.0, bottom: 10.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
                                 color: isDarkMode
-                                    ? AppColors.surfaceDark
-                                    : AppColors.surface,
+                                    ? AppColors.white.withValues(alpha: 0.08)
+                                    : AppColors.black.withValues(alpha: 0.08),
+                                blurRadius: 1,
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          userName,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: context.textTheme.bodySmall
-                                              ?.copyWith(
-                                            color:
-                                                context.colorScheme.onSurface,
-                                            fontSize: 18.0,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Personal Profile',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: context.textTheme.bodySmall
-                                              ?.copyWith(
-                                            color:
-                                                context.colorScheme.onSurface,
-                                            fontSize: AppSizes.fontM,
-                                          ),
-                                        ),
-                                      ],
+                            ],
+                            color: isDarkMode
+                                ? AppColors.surfaceDark
+                                : AppColors.surface,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      userName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          context.textTheme.bodySmall?.copyWith(
+                                        color: context.colorScheme.onSurface,
+                                        fontSize: 18.0,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: AppSizes.paddingM),
-                                  // Profile Avatar
-                                  Container(
-                                    height: 50,
-                                    width: 50,
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle),
-                                    child: profilePicUrl.isNotEmpty
-                                        ? CustomNetworkImage(
-                                            imageUrl: profilePicUrl,
-                                            imageType: ImageType.profilepic,
-                                          )
-                                        : Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade200,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.person_outline,
-                                              color: Colors.grey,
-                                              size: 28,
-                                            ),
-                                          ),
-                                  ),
-                                ],
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Personal Profile',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          context.textTheme.bodySmall?.copyWith(
+                                        color: context.colorScheme.onSurface,
+                                        fontSize: AppSizes.fontM,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                              SizedBox(width: AppSizes.paddingM),
+                              // Profile Avatar
+                              Container(
+                                height: 50,
+                                width: 50,
+                                clipBehavior: Clip.hardEdge,
+                                decoration:
+                                    const BoxDecoration(shape: BoxShape.circle),
+                                child: profilePicUrl.isNotEmpty
+                                    ? CustomNetworkImage(
+                                        imageUrl: profilePicUrl,
+                                        imageType: ImageType.profilepic,
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.person_outline,
+                                          color: Colors.grey,
+                                          size: 28,
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                            SizedBox(height: AppSizes.paddingL),
+                        SizedBox(height: AppSizes.paddingL),
 
-                            // ── Wallet Balance Card ────────────────────────────────
-                            WalletBalanceContainer(
-                              amount: walletAmount,
-                              isViewWalletButton: true,
-                              viewWalletOnTap: () {
-                                context.pushNamed(RouteNames.wallet);
+                        // ── Wallet Balance Card ────────────────────────────────
+                        WalletBalanceContainer(
+                          amount: walletAmount,
+                          isViewWalletButton: true,
+                          viewWalletOnTap: () {
+                            context.pushNamed(RouteNames.wallet);
+                          },
+                        ),
+                        SizedBox(height: AppSizes.paddingL),
+                        // ── Main Menu Card ─────────────────────────────────────
+                        _MenuCard(
+                          items: [
+                            _MenuItem(
+                              icon: Icons.person_outline,
+                              label: 'Profile',
+                              onTap: () async {
+                                await context.pushNamed(RouteNames.profile);
+                                if (context.mounted) {
+                                  context
+                                      .read<ProfileBloc>()
+                                      .add(const RefreshProfileEvent());
+                                }
                               },
                             ),
-                            SizedBox(height: AppSizes.paddingL),
-                            // ── Main Menu Card ─────────────────────────────────────
-                            _MenuCard(
-                              items: [
-                                _MenuItem(
-                                  icon: Icons.person_outline,
-                                  label: 'Profile',
-                                  onTap: () async {
-                                    await context.pushNamed(RouteNames.profile);
-                                    if (context.mounted) {
-                                      context.read<ProfileBloc>().add(const RefreshProfileEvent());
-                                    }
-                                  },
-                                ),
-                                /* _MenuItem(
+                            /* _MenuItem(
                         icon: Icons.star_border,
                         label: 'My Reviews',
                         onTap: () {
                           context.pushNamed(RouteNames.reviews);
                         },
                       ),*/
-                                _MenuItem(
-                                  icon: Icons.person_add_alt_1_outlined,
-                                  label: 'Invite & Earn',
-                                  onTap: () {
-                                    context.pushNamed(RouteNames.inviteAndEarn);
-                                  },
-                                ),
-                                _MenuItem(
-                                  icon: Icons.color_lens_outlined,
-                                  label: 'Switch Theme',
-                                  trailing: true,
-                                  onTap: () {},
-                                ),
-                                _MenuItem(
-                                  icon: Icons.settings_outlined,
-                                  label: 'Settings',
-                                  onTap: () {
-                                    context.pushNamed(RouteNames.settings,
-                                        extra: profile);
-                                  },
-                                ),
-                              ],
+                            _MenuItem(
+                              icon: Icons.person_add_alt_1_outlined,
+                              label: 'Invite & Earn',
+                              onTap: () {
+                                context.pushNamed(RouteNames.inviteAndEarn);
+                              },
                             ),
-                            SizedBox(height: AppSizes.paddingM),
-
-                            // ── Support & Logout Card ──────────────────────────────
-                            _MenuCard(
-                              items: [
-                                _MenuItem(
-                                  icon: Icons.help_outline,
-                                  label: 'Support',
-                                  onTap: () {
-                                    context.pushNamed(RouteNames.support);
-                                  },
-                                ),
-                                _MenuItem(
-                                  icon: Icons.logout,
-                                  label: 'Logout',
-                                  onTap: () {
-                                    CustomDialogues.showCancelDialogue(
-                                      context,
-                                      title: 'Logout',
-                                      submitOnTap: () {
-                                        Navigator.of(context).pop();
-                                        context
-                                            .read<ProfileBloc>()
-                                            .add(const LogoutEvent());
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
+                            _MenuItem(
+                              icon: Icons.color_lens_outlined,
+                              label: 'Switch Theme',
+                              trailing: true,
+                              onTap: () {},
                             ),
-
-                            SizedBox(height: AppSizes.paddingL),
+                            _MenuItem(
+                              icon: Icons.settings_outlined,
+                              label: 'Settings',
+                              onTap: () {
+                                context.pushNamed(RouteNames.settings,
+                                    extra: profile);
+                              },
+                            ),
                           ],
                         ),
-                      ),
+                        SizedBox(height: AppSizes.paddingM),
+
+                        // ── Support & Logout Card ──────────────────────────────
+                        _MenuCard(
+                          items: [
+                            _MenuItem(
+                              icon: Icons.help_outline,
+                              label: 'Support',
+                              onTap: () {
+                                context.pushNamed(RouteNames.support);
+                              },
+                            ),
+                            _MenuItem(
+                              icon: Icons.logout,
+                              label: 'Logout',
+                              onTap: () {
+                                CustomDialogues.showCancelDialogue(
+                                  context,
+                                  title: 'Logout',
+                                  submitOnTap: () {
+                                    Navigator.of(context).pop();
+                                    context
+                                        .read<ProfileBloc>()
+                                        .add(const LogoutEvent());
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: AppSizes.paddingL),
+                      ],
                     ),
                   ),
                 ),
-                // Logout progress overlay
-                if (isLoggingOut)
-                  Container(
-                    color: Colors.black.withValues(alpha: 0.45),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(AppColors.white),
-                          ),
-                          SizedBox(height: AppSizes.spaceM),
-                          Text(
-                            'Logging out...',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: AppSizes.fontM,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+              ),
+            ),
+            // Logout progress overlay
+            if (isLoggingOut)
+              Container(
+                color: Colors.black.withValues(alpha: 0.45),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.white),
                       ),
-                    ),
+                      SizedBox(height: AppSizes.spaceM),
+                      Text(
+                        'Logging out...',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: AppSizes.fontM,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            );
-          },
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

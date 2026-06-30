@@ -6,9 +6,11 @@ class ApiRoutes {
 
   static const String _logTag = 'API';
 
-  // Base URL - Update this with your actual API base URL
-  static const String baseUrl = 'https://api.v1.gloup.in';
-  // static const String baseUrl = 'http://10.118.63.79:5678';
+  /// Override at build/run time: `--dart-define=API_BASE_URL=https://your-api`
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://api.v1.gloup.in',
+  );
 
   // Image Base URL - For appending to image paths from API
   static const String imageBaseUrl =
@@ -123,6 +125,23 @@ class ApiRoutes {
     'googlePlacesDetails':
         'https://maps.googleapis.com/maps/api/place/details/json',
   };
+
+  /// Paths that must not receive the `userauth` header (login / OTP only).
+  static const List<String> _publicAuthPathSuffixes = [
+    '/user/auth/sendOTP',
+    '/user/auth/verifyOTP',
+    '/user/auth/googlelogin',
+    '/user/auth/appleLogin',
+  ];
+
+  /// Whether [uri] is a public auth endpoint (no token header).
+  static bool isPublicAuthEndpoint(Uri uri) {
+    final path = uri.path;
+    return _publicAuthPathSuffixes.any(path.endsWith);
+  }
+
+  /// Whether [uri] should attach auth and trigger session expiry on 401.
+  static bool requiresAuth(Uri uri) => !isPublicAuthEndpoint(uri);
 
   /// Resolves a friendly endpoint name from a request URL (ignores query string).
   static String? nameForUrl(String url) {

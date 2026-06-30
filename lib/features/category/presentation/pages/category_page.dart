@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/providers/location_provider.dart';
@@ -355,8 +354,7 @@ class _CategoryPageState extends State<CategoryPage> {
             // Section Title
             SliverToBoxAdapter(
               child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -428,15 +426,13 @@ class _CategoryPageState extends State<CategoryPage> {
 
                 // Display salons
                 return SliverPadding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+                  padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final salon = state.salons[index];
                         return Padding(
-                          padding:
-                              EdgeInsets.only(bottom: AppSizes.spaceM),
+                          padding: EdgeInsets.only(bottom: AppSizes.spaceM),
                           child: SalonSearchCard(
                             salonName: salon.salonName,
                             salonImage: salon.salonImage,
@@ -534,8 +530,7 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
 
             // Bottom spacing
-            SliverToBoxAdapter(
-                child: SizedBox(height: AppSizes.spaceXXL)),
+            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
           ],
         ),
       ),

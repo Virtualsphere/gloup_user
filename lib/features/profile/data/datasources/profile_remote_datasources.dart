@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/data/models/profile_model.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 
@@ -22,12 +21,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<ProfileModel> getProfile() async {
     try {
-      final response = await dioClient.get(
-        ApiRoutes.getUserProfile,
-        options: Options(
-          headers: {'userauth': LocalStorageService.accessToken},
-        ),
-      );
+      final response = await dioClient.get(ApiRoutes.getUserProfile);
       if (response.statusCode == 200) {
         return ProfileModel.fromJson(
           response.data['data'],
@@ -55,11 +49,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await dioClient.patch(
         ApiRoutes.getUserProfile,
         data: formData,
-        options: Options(
-          headers: {
-            'userauth': LocalStorageService.accessToken,
-          },
-        ),
       );
 
       if (response.statusCode == 200) {
@@ -77,12 +66,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      final response = await dioClient.post(
-        ApiRoutes.logout,
-        options: Options(
-          headers: {'userauth': LocalStorageService.accessToken},
-        ),
-      );
+      final response = await dioClient.post(ApiRoutes.logout);
       if (response.statusCode != 200) {
         throw ServerException(
           message: response.data['message'] ?? 'Logout failed',
@@ -99,14 +83,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<DeleteProfile> deleteProfile() async {
     try {
-      final response = await dioClient.delete(
-        ApiRoutes.deleteProfile,
-        options: Options(
-          headers: {
-            'userauth': LocalStorageService.accessToken,
-          },
-        ),
-      );
+      final response = await dioClient.delete(ApiRoutes.deleteProfile);
 
       if (response.statusCode == 200) {
         return DeleteProfile.fromJson(response.data);

@@ -1,23 +1,38 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tressy/core/utils/access_token_migration.dart';
 
-/// Service for managing local storage using SharedPreferences
+/// Service for managing local storage.
+///
+/// Non-sensitive flags use [SharedPreferences]. The auth access token uses
+/// [FlutterSecureStorage] (Keychain / EncryptedSharedPreferences).
 class LocalStorageService {
+  LocalStorageService._();
+
   static const String _keyOnboardingCompleted = 'onboarding_completed';
   static const String _keyIsLoggedIn = 'is_logged_in';
-  static const String _keyAccessToken = 'access_token';
+  static const String _legacyAccessTokenKey = 'access_token';
+  static const String _secureAccessTokenKey = 'access_token';
+
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   static SharedPreferences? _preferences;
+  static String? _cachedAccessToken;
+  static bool _accessTokenCacheReady = false;
 
-  /// Initialize the service
+  /// Initialize preferences, migrate any legacy token, and warm the token cache.
   static Future<void> init() async {
     _preferences = await SharedPreferences.getInstance();
+    await _migrateLegacyAccessTokenIfNeeded();
+    await _refreshAccessTokenCache();
   }
 
-  /// Check if preferences are initialized
+  /// Check if preferences are initialized.
   static SharedPreferences get _prefs {
     if (_preferences == null) {
       throw Exception(
-          'LocalStorageService not initialized. Call init() first.');
+        'LocalStorageService not initialized. Call init() first.',
+      );
     }
     return _preferences!;
   }
@@ -37,23 +52,35 @@ class LocalStorageService {
     await _prefs.setBool(_keyIsLoggedIn, value);
   }
 
-  // Token Management
-  static String? get accessToken => _prefs.getString(_keyAccessToken);
+  // Token management (secure storage + in-memory cache for sync reads)
+  static String? get accessToken {
+    if (!_accessTokenCacheReady) return null;
+    return _cachedAccessToken;
+  }
 
   static Future<void> setAccessToken(String token) async {
-    await _prefs.setString(_keyAccessToken, token);
+    await _secureStorage.write(key: _secureAccessTokenKey, value: token);
+    _cachedAccessToken = token;
+    _accessTokenCacheReady = true;
+    await _prefs.remove(_legacyAccessTokenKey);
   }
 
   static Future<void> clearTokens() async {
-    await _prefs.remove(_keyAccessToken);
+    await _secureStorage.delete(key: _secureAccessTokenKey);
+    _cachedAccessToken = null;
+    _accessTokenCacheReady = true;
+    await _prefs.remove(_legacyAccessTokenKey);
   }
 
-  // Clear all data (logout)
+  /// Clear all data (logout).
   static Future<void> clearAll() async {
     await _prefs.clear();
+    await _secureStorage.delete(key: _secureAccessTokenKey);
+    _cachedAccessToken = null;
+    _accessTokenCacheReady = true;
   }
 
-  // Generic methods
+  // Generic methods (SharedPreferences only)
   static Future<void> setString(String key, String value) async {
     await _prefs.setString(key, value);
   }
@@ -88,5 +115,20 @@ class LocalStorageService {
 
   static Future<void> remove(String key) async {
     await _prefs.remove(key);
+  }
+
+  static Future<void> _migrateLegacyAccessTokenIfNeeded() async {
+    await migrateLegacyAccessToken(
+      legacyToken: _prefs.getString(_legacyAccessTokenKey),
+      readSecure: () => _secureStorage.read(key: _secureAccessTokenKey),
+      writeSecure: (token) =>
+          _secureStorage.write(key: _secureAccessTokenKey, value: token),
+      removeLegacy: () => _prefs.remove(_legacyAccessTokenKey),
+    );
+  }
+
+  static Future<void> _refreshAccessTokenCache() async {
+    _cachedAccessToken = await _secureStorage.read(key: _secureAccessTokenKey);
+    _accessTokenCacheReady = true;
   }
 }

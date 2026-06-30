@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
+import 'package:tressy/core/constants/cancellation_policy.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
@@ -134,8 +135,7 @@ class CustomDialogues {
                     SizedBox(height: 15),
                     Center(
                       child: BodyTextColors(
-                        title:
-                            'Bookings can only be canceled up to 8 hours before the scheduled time.',
+                        title: CancellationPolicy.cancellationDeadlineMessage,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         color: AppColors.circleGreyColor,
@@ -168,8 +168,7 @@ class CustomDialogues {
                     SizedBox(height: 15),
                     Center(
                       child: BodyTextColors(
-                        title:
-                            'Bookings can only be canceled up to 8 hours before the scheduled time.',
+                        title: CancellationPolicy.cancellationDeadlineMessage,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         color: AppColors.circleGreyColor,

@@ -1,23 +1,29 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/salon_details/data/datasources/salon_detail_remote_datasource.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/domain/repositories/salon_detail_repository.dart';
 
 class SalonDetailRepositoryImpl implements SalonDetailRepository {
   final SalonDetailRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
-  SalonDetailRepositoryImpl(this.remoteDataSource);
+  SalonDetailRepositoryImpl(this.remoteDataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, SalonDetailEntity>> getSalonDetails({
     required String salonId,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<SalonDetailEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final model = await remoteDataSource.getSalonDetails(salonId: salonId);
 
-      // Map model to entity
       final entity = SalonDetailEntity(
         id: model.id,
         name: model.name,
@@ -80,11 +86,16 @@ class SalonDetailRepositoryImpl implements SalonDetailRepository {
       );
 
       return Right(entity);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(
-          ServerFailure('An unexpected error occurred: ${e.toString()}'));
+        ServerFailure('An unexpected error occurred: ${e.toString()}'),
+      );
     }
   }
 }

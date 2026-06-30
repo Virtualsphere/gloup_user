@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/bookings/data/models/appointment_model.dart';
 
 abstract class AppointmentsRemoteDataSource {
@@ -17,14 +16,7 @@ class AppointmentsRemoteDataSourceImpl implements AppointmentsRemoteDataSource {
   @override
   Future<Map<String, List<AppointmentModel>>> getAllAppointments() async {
     try {
-      final token = LocalStorageService.accessToken;
-
-      final response = await dioClient.post(
-        ApiRoutes.getAllAppointments,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
-      );
+      final response = await dioClient.post(ApiRoutes.getAllAppointments);
 
       final data = response.data['data'] as Map<String, dynamic>;
 

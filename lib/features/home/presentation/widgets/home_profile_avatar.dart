@@ -39,9 +39,8 @@ class HomeProfileAvatar extends StatelessWidget {
             height: 40,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.backgroundDark
-                  : AppColors.background,
+              color:
+                  isDarkMode ? AppColors.backgroundDark : AppColors.background,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(

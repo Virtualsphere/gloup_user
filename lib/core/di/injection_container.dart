@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tressy/core/network/auth_interceptor.dart';
 import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/core/network/interceptor.dart';
 import 'package:tressy/core/network/network_info.dart';
@@ -111,7 +112,13 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton<LoggerInterceptor>(() => LoggerInterceptor());
-  sl.registerLazySingleton<DioClient>(() => DioClient());
+  sl.registerLazySingleton<AuthInterceptor>(() => AuthInterceptor());
+  sl.registerLazySingleton<DioClient>(
+    () => DioClient(
+      authInterceptor: sl(),
+      loggerInterceptor: sl(),
+    ),
+  );
 
   // ==================== Features ====================
 
@@ -133,7 +140,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl()),
+    () => AuthRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -149,7 +156,7 @@ Future<void> initializeDependencies() async {
 
   // Repositories
   sl.registerLazySingleton<SalonRepository>(
-    () => SalonRepositoryImpl(sl()),
+    () => SalonRepositoryImpl(sl(), sl()),
   );
 
   // Use Cases
@@ -171,7 +178,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<CategoryRepository>(
-    () => CategoryRepositoryImpl(sl()),
+    () => CategoryRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -180,8 +187,8 @@ Future<void> initializeDependencies() async {
   );
 
   // Home Feature
-  // BLoC
-  sl.registerFactory<HomeBloc>(() => HomeBloc(
+  // BLoC - singleton so home data survives tab switches and rebuilds
+  sl.registerLazySingleton<HomeBloc>(() => HomeBloc(
         getCarouselBannersUseCase: sl(),
         getPopularServicesUseCase: sl(),
         getTopSalonsUseCase: sl(),
@@ -208,7 +215,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<HomeRepository>(
-    () => HomeRepositoryImpl(sl()),
+    () => HomeRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -232,7 +239,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<SalonDetailRepository>(
-    () => SalonDetailRepositoryImpl(sl()),
+    () => SalonDetailRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -258,7 +265,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<FavoritesRepository>(
-    () => FavoritesRepositoryImpl(remoteDataSource: sl()),
+    () => FavoritesRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   // Data Sources
@@ -279,7 +286,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<SlotRepository>(
-    () => SlotRepositoryImpl(remoteDataSource: sl()),
+    () => SlotRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   // Data Sources
@@ -295,7 +302,7 @@ Future<void> initializeDependencies() async {
 
 // Repository
   sl.registerLazySingleton<ProfileRepository>(
-    () => ProfileRepositoryImpl(sl()),
+    () => ProfileRepositoryImpl(sl(), sl()),
   );
 
 // UseCases
@@ -335,7 +342,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<GuestRepository>(
-    () => GuestRepositoryImpl(remoteDataSource: sl()),
+    () => GuestRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   // Data Sources
@@ -360,7 +367,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<OrderRepository>(
-    () => OrderRepositoryImpl(sl()),
+    () => OrderRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -381,7 +388,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<CouponRepository>(
-    () => CouponRepositoryImpl(sl()),
+    () => CouponRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -417,7 +424,7 @@ Future<void> initializeDependencies() async {
 
   // Repository
   sl.registerLazySingleton<SearchRepository>(
-    () => SearchRepositoryImpl(sl()),
+    () => SearchRepositoryImpl(sl(), sl()),
   );
 
   // Data Sources
@@ -439,7 +446,7 @@ Future<void> initializeDependencies() async {
   );
 
   sl.registerLazySingleton<AppointmentsRepository>(
-    () => AppointmentsRepositoryImpl(remoteDataSource: sl()),
+    () => AppointmentsRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
 
   sl.registerLazySingleton<AppointmentsRemoteDataSource>(

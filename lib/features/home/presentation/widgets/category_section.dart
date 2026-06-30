@@ -101,40 +101,37 @@ class _CategorySectionState extends State<CategorySection> {
           ? _buildCategoryShimmer()
           : error != null
               ? _buildErrorWidget(error)
-              : Builder(
-                  builder: (context) {
-                    final displayCategories = [
-                      const CategoryEntity(id: 'all', label: 'All', imageUrl: ''),
-                      ...categories,
-                    ];
-                    return Row(
-                      children: [
-                        // Sticky Premium Category
-                        // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
-                        // Horizontally Scrollable Categories
-                        Expanded(
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding:
-                                EdgeInsets.only(right: AppSizes.paddingS),
-                            itemCount: displayCategories.length,
-                            itemBuilder: (context, index) {
-                              final category = displayCategories[index];
-                              return _buildCategory(
-                                context,
-                                category.label,
-                                category.imageUrl,
-                                id: category.id,
-                                index: index,
-                                apiCategories: categories,
-                              );
-                            },
-                          ),
+              : Builder(builder: (context) {
+                  final displayCategories = [
+                    const CategoryEntity(id: 'all', label: 'All', imageUrl: ''),
+                    ...categories,
+                  ];
+                  return Row(
+                    children: [
+                      // Sticky Premium Category
+                      // _buildPremiumCategory(context, isActive: _selectedIndex == 0),
+                      // Horizontally Scrollable Categories
+                      Expanded(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.only(right: AppSizes.paddingS),
+                          itemCount: displayCategories.length,
+                          itemBuilder: (context, index) {
+                            final category = displayCategories[index];
+                            return _buildCategory(
+                              context,
+                              category.label,
+                              category.imageUrl,
+                              id: category.id,
+                              index: index,
+                              apiCategories: categories,
+                            );
+                          },
                         ),
-                      ],
-                    );
-                  }
-                ),
+                      ),
+                    ],
+                  );
+                }),
     );
   }
 
@@ -150,9 +147,7 @@ class _CategorySectionState extends State<CategorySection> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isActive
-                ? context.primaryFill
-                : Colors.transparent,
+            color: isActive ? context.primaryFill : Colors.transparent,
             width: 2.5,
           ),
         ),
@@ -203,9 +198,7 @@ class _CategorySectionState extends State<CategorySection> {
                 style: context.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: AppSizes.fontS,
-                  color: isActive
-                      ? context.onSurfaceEmphasis
-                      : null,
+                  color: isActive ? context.onSurfaceEmphasis : null,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -238,9 +231,7 @@ class _CategorySectionState extends State<CategorySection> {
         border: widget.showActiveBorder
             ? Border(
                 bottom: BorderSide(
-                  color: isActive
-                      ? context.primaryFill
-                      : Colors.transparent,
+                  color: isActive ? context.primaryFill : Colors.transparent,
                   width: 2.5,
                 ),
               )

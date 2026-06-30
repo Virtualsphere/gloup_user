@@ -267,8 +267,7 @@ class SalonInfoCard extends StatelessWidget {
                   ),
                 // Time slot row
                 if (selectedTimeSlot != null) ...[
-                  if (selectedDate != null)
-                    SizedBox(height: AppSizes.spaceS),
+                  if (selectedDate != null) SizedBox(height: AppSizes.spaceS),
                   AppSizes.widthL,
                   Row(
                     children: [

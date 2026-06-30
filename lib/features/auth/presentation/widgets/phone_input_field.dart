@@ -104,8 +104,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
         return Dialog(
           backgroundColor:
               isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-          insetPadding:
-              EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+          insetPadding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
           ),
@@ -119,8 +118,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
                   color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
                   borderRadius: BorderRadius.circular(AppSizes.radiusL),
                 ),
-                padding:
-                    EdgeInsets.symmetric(vertical: AppSizes.paddingL),
+                padding: EdgeInsets.symmetric(vertical: AppSizes.paddingL),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

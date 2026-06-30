@@ -29,7 +29,7 @@ class SalonLocationRow extends StatelessWidget {
     final parts = SalonAddressFormatter.parse(locationLabel);
     final secondaryColor =
         isDarkMode ? AppColors.textSecondaryDark : const Color(0xFF737373);
-    
+
     final locationStyle = GoogleFonts.inter(
       color: secondaryColor,
       fontSize: 14,

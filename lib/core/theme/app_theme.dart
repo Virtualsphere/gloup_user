@@ -67,8 +67,7 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
-        side: BorderSide(
-            color: AppColors.primary, width: AppSizes.borderWidth),
+        side: BorderSide(color: AppColors.primary, width: AppSizes.borderWidth),
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
           vertical: AppSizes.paddingM,
@@ -202,8 +201,7 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
-        side: BorderSide(
-            color: AppColors.primary, width: AppSizes.borderWidth),
+        side: BorderSide(color: AppColors.primary, width: AppSizes.borderWidth),
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
           vertical: AppSizes.paddingM,
