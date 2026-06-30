@@ -8,7 +8,7 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/enums.dart';
 import 'package:tressy/core/constants/strings.dart';
 import 'package:tressy/core/router/route_names.dart';
-import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -25,15 +25,43 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
     return LoginRequiredWidget(
       title: 'Login to View Profile',
       message:
           'Please login to see your profile details, wallet balance, and personalized features.',
       showBrowseAsGuest: false,
-      child: BlocProvider(
-        create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
-        child: BlocConsumer<ProfileBloc, ProfileState>(
+      onLoginSuccess: () {
+        context.read<ProfileBloc>().add(const GetProfileEvent());
+      },
+      child: const _ProfilePageContent(),
+    );
+  }
+}
+
+class _ProfilePageContent extends StatefulWidget {
+  const _ProfilePageContent();
+
+  @override
+  State<_ProfilePageContent> createState() => _ProfilePageContentState();
+}
+
+class _ProfilePageContentState extends State<_ProfilePageContent> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final bloc = context.read<ProfileBloc>();
+      if (LocalStorageService.isLoggedIn && bloc.state is ProfileInitial) {
+        bloc.add(const RefreshProfileEvent());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
+    return BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileLoggedOut) {
               context.go('/login');
@@ -286,8 +314,6 @@ class ProfilePage extends StatelessWidget {
               ],
             );
           },
-        ),
-      ),
     );
   }
 }

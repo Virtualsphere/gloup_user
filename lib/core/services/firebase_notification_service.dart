@@ -18,13 +18,62 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await showLocalNotification(message);
+  await handleRemoteMessage(message, isBackground: true);
 }
 
-/// Shows a local notification from a [RemoteMessage]
+/// Handles FCM without duplicating notifications the OS already displayed.
+Future<void> handleRemoteMessage(
+  RemoteMessage message, {
+  required bool isBackground,
+}) async {
+  if (message.notification != null) {
+    // Background/killed: Android and iOS already show notification payloads.
+    if (isBackground) {
+      return;
+    }
+    // Foreground: iOS presents via [setForegroundNotificationPresentationOptions].
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return;
+    }
+    // Foreground Android: system does not display notification payloads.
+    await _showLocalNotification(
+      title: message.notification!.title,
+      body: message.notification!.body,
+      payload: message.data.isNotEmpty ? message.data.toString() : null,
+      id: message.hashCode,
+    );
+    return;
+  }
+
+  // Data-only message: app must show the notification.
+  final title = message.data['title'] ?? message.data['notification_title'];
+  final body = message.data['body'] ??
+      message.data['message'] ??
+      message.data['notification_body'];
+  if (title == null && body == null) return;
+
+  await _showLocalNotification(
+    title: title,
+    body: body,
+    payload: message.data.isNotEmpty ? message.data.toString() : null,
+    id: message.hashCode,
+  );
+}
+
+/// Shows a local notification from a [RemoteMessage] (legacy entry point).
 Future<void> showLocalNotification(RemoteMessage message) async {
-  final notification = message.notification;
-  if (notification == null) return;
+  await handleRemoteMessage(message, isBackground: false);
+}
+
+Future<void> _showLocalNotification({
+  required String? title,
+  required String? body,
+  required String? payload,
+  required int id,
+}) async {
+  if ((title == null || title.isEmpty) && (body == null || body.isEmpty)) {
+    return;
+  }
 
   const androidDetails = AndroidNotificationDetails(
     'gloup_default_channel',
@@ -47,11 +96,11 @@ Future<void> showLocalNotification(RemoteMessage message) async {
   );
 
   await flutterLocalNotificationsPlugin.show(
-    notification.hashCode,
-    notification.title,
-    notification.body,
+    id,
+    title,
+    body,
     platformDetails,
-    payload: message.data.isNotEmpty ? message.data.toString() : null,
+    payload: payload,
   );
 }
 
@@ -92,9 +141,7 @@ class FirebaseNotificationService {
 
     // Foreground message handler
     FirebaseMessaging.onMessage.listen((message) {
-      if (message.notification != null) {
-        showLocalNotification(message);
-      }
+      handleRemoteMessage(message, isBackground: false);
     });
 
     // Notification tap when app is in background (not terminated)

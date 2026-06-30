@@ -17,8 +17,12 @@ import 'package:tressy/features/home/presentation/bloc/home_state.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
 import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
+import 'package:tressy/features/home/presentation/widgets/home_profile_avatar.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/home/presentation/widgets/services_at_49_section.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
@@ -44,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   String? _selectedGender; // No default filter
   HomeBloc? _homeBloc;
   bool _isLoadingLocation = true;
+  bool _profileRequested = false;
   LocationProvider? _locationProvider;
 
   @override
@@ -62,6 +67,24 @@ class _HomePageState extends State<HomePage> {
       _locationProvider = provider;
       provider.addListener(_onLocationToastChanged);
     }
+    _requestProfileIfNeeded();
+  }
+
+  void _requestProfileIfNeeded() {
+    if (!LocalStorageService.isLoggedIn) {
+      _profileRequested = false;
+      return;
+    }
+
+    final profileState = context.read<ProfileBloc>().state;
+    final shouldFetch = profileState is ProfileInitial ||
+        profileState is ProfileLoggedOut ||
+        profileState is ProfileFailure;
+
+    if (_profileRequested && !shouldFetch) return;
+
+    _profileRequested = true;
+    context.read<ProfileBloc>().add(const GetProfileEvent());
   }
 
   void _onLocationToastChanged() {
@@ -298,7 +321,13 @@ class _HomePageState extends State<HomePage> {
           ));
         return _homeBloc!;
       },
-      child: BlocListener<FavoritesBloc, FavoritesState>(
+      child: BlocListener<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileLoggedOut) {
+            _profileRequested = false;
+          }
+        },
+        child: BlocListener<FavoritesBloc, FavoritesState>(
         listener: (context, state) {
           if (state.status == FavoritesStatus.failure &&
               state.lastToggledStoreId != null) {
@@ -576,43 +605,7 @@ class _HomePageState extends State<HomePage> {
                                               },
                                             ),
                                       const Spacer(),
-                                      InkWell(
-                                        onTap: () {
-                                          context.pushNamed(
-                                              RouteNames.personalProfile);
-                                        },
-                                        borderRadius: BorderRadius.circular(
-                                          AppSizes.radiusCircular,
-                                        ),
-                                        child: Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: isDarkMode
-                                                ? AppColors.backgroundDark
-                                                : AppColors.background,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color:
-                                                    AppColors.black.withValues(
-                                                  alpha: 0.1,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                              child: Icon(
-                                            Icons.person,
-                                            color: isDarkMode
-                                                ? AppColors.primaryDark
-                                                : AppColors.primary,
-                                            size: AppSizes.iconS,
-                                          )),
-                                        ),
-                                      ),
+                                      const HomeProfileAvatar(),
                                     ],
                                   ),
                                   AppSizes.heightM,
@@ -944,6 +937,7 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
+      ),
       ),
     );
   }

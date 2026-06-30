@@ -14,6 +14,7 @@ class CustomDropDownField extends StatelessWidget {
     required this.items,
     required this.onChanged,
     required this.hintText,
+    this.labelText,
     this.icon = '',
     this.validator,
     this.maxHeight,
@@ -24,6 +25,7 @@ class CustomDropDownField extends StatelessWidget {
   final List<String> items;
   final ValueChanged<String?> onChanged;
   final String hintText;
+  final String? labelText;
   final String icon;
   final FormFieldValidator<String>? validator;
   final int? maxHeight;
@@ -34,7 +36,7 @@ class CustomDropDownField extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
-    return DropdownButtonHideUnderline(
+    final dropdown = DropdownButtonHideUnderline(
       child: DropdownButtonFormField2(
         isExpanded: true,
         decoration: InputDecoration(
@@ -115,6 +117,27 @@ class CustomDropDownField extends StatelessWidget {
           );
         }).toList(),
       ),
+    );
+
+    if (labelText == null || labelText!.isEmpty) {
+      return dropdown;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          labelText!,
+          style: context.textTheme.bodyMedium?.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDarkMode ? AppColors.white : AppColors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        dropdown,
+      ],
     );
   }
 }

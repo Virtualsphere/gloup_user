@@ -12,6 +12,7 @@ import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/firebase_options.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -63,6 +64,10 @@ class MyApp extends StatelessWidget {
         // Global FavoritesBloc - manages favorite state across all screens
         BlocProvider<FavoritesBloc>.value(
           value: sl<FavoritesBloc>(),
+        ),
+        // Global ProfileBloc - shared profile state for home, profile, and edit screens
+        BlocProvider<ProfileBloc>(
+          create: (_) => sl<ProfileBloc>(),
         ),
       ],
       child: MultiProvider(
