@@ -227,7 +227,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                             ),
                             _MenuItem(
                               icon: Icons.color_lens_outlined,
-                              label: 'Switch Theme',
+                              label: 'Theme',
                               trailing: true,
                               onTap: () {},
                             ),
