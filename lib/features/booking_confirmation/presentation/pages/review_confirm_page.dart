@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
@@ -68,6 +71,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   String? _lastPaymentId;
   String? _pendingOrderFingerprint;
   String? _lastCreateOrderFingerprint;
+  CreateOrderRequest? _lastPaymentRequest;
   late Razorpay _razorpay;
   late OrderBloc _orderBloc;
 
@@ -114,6 +118,12 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    final order = _orderBloc.state.order;
+    if (order != null && !_orderBloc.state.isPaymentVerified) {
+      unawaited(
+        sl<CancelPendingOrderUseCase>().call(orderId: order.orderId),
+      );
+    }
     _razorpay.clear();
     _orderBloc.close();
     super.dispose();
@@ -147,12 +157,14 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    _orderBloc.add(const PaymentFailedEvent());
+    final orderId = _orderBloc.state.order?.orderId;
+    _pendingOrderFingerprint = null;
+    _orderBloc.add(PaymentFailedEvent(orderId: orderId));
     if (mounted) {
       PaymentFailedDialog.show(
         context,
         message: _paymentFailureMessage(response),
-        onRetry: _retryPendingPayment,
+        onRetry: () => _retryPendingPayment(context),
       );
     }
   }
@@ -162,7 +174,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     if (razorpayMessage != null && razorpayMessage.isNotEmpty) {
       return razorpayMessage;
     }
-    return 'Payment was not completed. Your slot is still reserved — try again.';
+    return 'Payment was not completed. Your slot has been released — you can try again.';
   }
 
   String _orderFingerprint(CreateOrderRequest request) {
@@ -173,18 +185,18 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         '${request.bookingFor}|${request.guestId ?? ''}';
   }
 
-  void _retryPendingPayment() {
-    final order = _orderBloc.state.order;
-    if (order == null) return;
+  void _retryPendingPayment(BuildContext context) {
+    final request = _lastPaymentRequest;
+    if (request == null) return;
 
-    final salonName = widget.bookingData?['salonName'] as String? ?? 'Salon';
-    _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+    _initiateOrResumePayment(context, request);
   }
 
   void _initiateOrResumePayment(
     BuildContext context,
     CreateOrderRequest request,
   ) {
+    _lastPaymentRequest = request;
     final orderState = context.read<OrderBloc>().state;
     final fingerprint = _orderFingerprint(request);
     final salonName = widget.bookingData?['salonName'] as String? ?? 'Salon';
@@ -354,7 +366,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               PaymentFailedDialog.show(
                 context,
                 message: orderState.errorMessage!,
-                onRetry: _retryPendingPayment,
+                onRetry: () => _retryPendingPayment(context),
               );
             } else {
               CustomToast.showError(context, orderState.errorMessage!);

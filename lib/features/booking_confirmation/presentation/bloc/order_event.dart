@@ -27,9 +27,14 @@ class RazorpayOpenedEvent extends OrderEvent {
   const RazorpayOpenedEvent();
 }
 
-/// Keeps the pending order in state after Razorpay reports failure or dismiss.
+/// Releases the pending booking slot after Razorpay reports failure or dismiss.
 class PaymentFailedEvent extends OrderEvent {
-  const PaymentFailedEvent();
+  final int? orderId;
+
+  const PaymentFailedEvent({this.orderId});
+
+  @override
+  List<Object?> get props => [orderId];
 }
 
 class VerifyPaymentEvent extends OrderEvent {

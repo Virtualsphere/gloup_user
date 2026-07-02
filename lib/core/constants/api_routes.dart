@@ -66,6 +66,8 @@ class ApiRoutes {
   // Order
   static const String createOrder = '$baseUrl/user/app/v2/createorder';
   static const String paymentSuccess = '$baseUrl/user/app/v2/paymentsuccess';
+  static const String cancelPendingOrder =
+      '$baseUrl/user/app/v2/cancel-pending-order';
 
   // Razorpay
   static const String razorpayKey = 'rzp_live_T01AE9lLGbNxLd';
@@ -108,6 +110,7 @@ class ApiRoutes {
     'updateGuest': updateGuest,
     'createOrder': createOrder,
     'paymentSuccess': paymentSuccess,
+    'cancelPendingOrder': cancelPendingOrder,
     // Profile
     'getUserProfile': getUserProfile,
     'deleteProfile': deleteProfile,

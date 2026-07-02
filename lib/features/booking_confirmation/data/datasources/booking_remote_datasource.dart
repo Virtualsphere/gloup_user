@@ -12,6 +12,8 @@ abstract class BookingRemoteDataSource {
     required String razorpayPaymentId,
     required String razorpaySignature,
   });
+
+  Future<void> cancelPendingOrder({required int orderId});
 }
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
@@ -62,6 +64,28 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       if (response.data['success'] != true) {
         throw ApiException(
           message: response.data['message'] ?? 'Payment verification failed',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> cancelPendingOrder({required int orderId}) async {
+    try {
+      final response = await dioClient.post(
+        ApiRoutes.cancelPendingOrder,
+        data: {'order_id': orderId},
+      );
+
+      if (response.data['success'] != true) {
+        throw ApiException(
+          message: response.data['message'] ?? 'Failed to release slot',
           statusCode: response.statusCode,
         );
       }

@@ -75,6 +75,7 @@ import 'package:tressy/features/booking_confirmation/data/datasources/booking_re
 import 'package:tressy/features/booking_confirmation/data/repositories/order_repository_impl.dart';
 import 'package:tressy/features/booking_confirmation/domain/repositories/order_repository.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/create_order_usecase.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/verify_payment_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/order_bloc.dart';
 
@@ -355,6 +356,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<OrderBloc>(() => OrderBloc(
         createOrderUseCase: sl(),
         verifyPaymentUseCase: sl(),
+        cancelPendingOrderUseCase: sl(),
       ));
 
   // Use Cases
@@ -363,6 +365,9 @@ Future<void> initializeDependencies() async {
   );
   sl.registerLazySingleton<VerifyPaymentUseCase>(
     () => VerifyPaymentUseCase(sl()),
+  );
+  sl.registerLazySingleton<CancelPendingOrderUseCase>(
+    () => CancelPendingOrderUseCase(sl()),
   );
 
   // Repository

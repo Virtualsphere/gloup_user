@@ -61,4 +61,25 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(ServerFailure('Unexpected error: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> cancelPendingOrder({
+    required int orderId,
+  }) async {
+    final disconnected = await leftIfDisconnected<void>(networkInfo);
+    if (disconnected != null) return disconnected;
+
+    try {
+      await dataSource.cancelPendingOrder(orderId: orderId);
+      return const Right(null);
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
 }
