@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 
 abstract class BookingRemoteDataSource {
@@ -13,6 +12,8 @@ abstract class BookingRemoteDataSource {
     required String razorpayPaymentId,
     required String razorpaySignature,
   });
+
+  Future<void> cancelPendingOrder({required int orderId});
 }
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
@@ -23,14 +24,9 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   @override
   Future<OrderModel> createOrder(CreateOrderRequest request) async {
     try {
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.createOrder,
         data: request.toJson(),
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.data['success'] == true) {
@@ -56,8 +52,6 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String razorpaySignature,
   }) async {
     try {
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.paymentSuccess,
         data: {
@@ -65,14 +59,33 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
           'razorpay_payment_id': razorpayPaymentId,
           'razorpay_signature': razorpaySignature,
         },
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.data['success'] != true) {
         throw ApiException(
           message: response.data['message'] ?? 'Payment verification failed',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(message: 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> cancelPendingOrder({required int orderId}) async {
+    try {
+      final response = await dioClient.post(
+        ApiRoutes.cancelPendingOrder,
+        data: {'order_id': orderId},
+      );
+
+      if (response.data['success'] != true) {
+        throw ApiException(
+          message: response.data['message'] ?? 'Failed to release slot',
           statusCode: response.statusCode,
         );
       }
@@ -95,12 +108,13 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
         final responseData = e.response?.data;
-        
+
         String? message = e.message;
         String? errorType;
-        
+
         if (responseData is Map<String, dynamic>) {
-          if (responseData.containsKey('error') && responseData['error'] is Map<String, dynamic>) {
+          if (responseData.containsKey('error') &&
+              responseData['error'] is Map<String, dynamic>) {
             message = responseData['error']['message'] ?? message;
             errorType = responseData['error']['type'];
           } else {

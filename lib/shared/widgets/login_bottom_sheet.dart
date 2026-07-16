@@ -188,8 +188,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                         child: Container(
                           width: 40,
                           height: 4,
-                          margin:
-                              EdgeInsets.only(bottom: AppSizes.spaceL),
+                          margin: EdgeInsets.only(bottom: AppSizes.spaceL),
                           decoration: BoxDecoration(
                             color: isDarkMode
                                 ? AppColors.borderDark

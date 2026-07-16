@@ -13,8 +13,6 @@ import 'package:tressy/features/explore/presentation/pages/explore_page.dart';
 import 'package:tressy/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:tressy/features/home/presentation/pages/home_page.dart';
 import 'package:tressy/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/pages/invite_and_earn.dart';
 import 'package:tressy/features/profile/presentation/pages/my_profile.dart';
 import 'package:tressy/features/my_reviews/my_reviews.dart';
@@ -266,12 +264,7 @@ class AppRouter {
     GoRoute(
       path: '/profile',
       name: RouteNames.profile,
-      builder: (context, state) {
-        return BlocProvider(
-          create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
-          child: const MyProfile(),
-        );
-      },
+      builder: (context, state) => const MyProfile(),
     ),
 
     //Review

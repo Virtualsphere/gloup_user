@@ -266,8 +266,7 @@ class SelectedServicesCard extends StatelessWidget {
                 fontSize: AppSizes.fontM,
                 color: context.onSurfaceEmphasis,
                 decoration: TextDecoration.underline,
-                decorationColor:
-                    context.onSurfaceEmphasis,
+                decorationColor: context.onSurfaceEmphasis,
               ),
             ),
           ),

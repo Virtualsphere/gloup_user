@@ -1,12 +1,16 @@
-import 'package:dio/dio.dart' show Options;
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart' hide Priority;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/router/app_router.dart';
+import 'package:tressy/core/router/notification_routes.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/firebase_options.dart';
 
@@ -18,13 +22,119 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await showLocalNotification(message);
+  await handleRemoteMessage(message, isBackground: true);
 }
 
-/// Shows a local notification from a [RemoteMessage]
+/// Handles FCM without duplicating notifications the OS already displayed.
+Future<void> handleRemoteMessage(
+  RemoteMessage message, {
+  required bool isBackground,
+}) async {
+  if (message.notification != null) {
+    // Background/killed: Android and iOS already show notification payloads.
+    if (isBackground) {
+      return;
+    }
+    // Foreground: iOS presents via [setForegroundNotificationPresentationOptions].
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return;
+    }
+    // Foreground Android: system does not display notification payloads.
+    await _showLocalNotification(
+      title: message.notification!.title,
+      body: message.notification!.body,
+      payload: _encodeNotificationPayload(message.data),
+      id: message.hashCode,
+    );
+    return;
+  }
+
+  // Data-only message: app must show the notification.
+  final title = message.data['title'] ?? message.data['notification_title'];
+  final body = message.data['body'] ??
+      message.data['message'] ??
+      message.data['notification_body'];
+  if (title == null && body == null) return;
+
+  await _showLocalNotification(
+    title: title,
+    body: body,
+    payload: _encodeNotificationPayload(message.data),
+    id: message.hashCode,
+  );
+}
+
+/// Shows a local notification from a [RemoteMessage] (legacy entry point).
 Future<void> showLocalNotification(RemoteMessage message) async {
-  final notification = message.notification;
-  if (notification == null) return;
+  await handleRemoteMessage(message, isBackground: false);
+}
+
+String? _encodeNotificationPayload(Map<String, dynamic> data) {
+  if (data.isEmpty) return null;
+  return jsonEncode(data);
+}
+
+Map<String, dynamic> decodeNotificationPayload(String? payload) {
+  if (payload == null || payload.isEmpty) return {};
+
+  try {
+    final decoded = jsonDecode(payload);
+    if (decoded is Map<String, dynamic>) return decoded;
+    if (decoded is Map) return Map<String, dynamic>.from(decoded);
+  } catch (_) {
+    // Ignore legacy non-JSON payloads.
+  }
+  return {};
+}
+
+void _scheduleNotificationNavigation(Map<String, dynamic> data) {
+  if (data.isEmpty) return;
+
+  SchedulerBinding.instance.scheduleFrameCallback((_) {
+    NotificationRoutes.navigateFromData(AppRouter.router, data);
+  });
+}
+
+/// Test-only counter for [_showLocalNotification] invocations.
+@visibleForTesting
+int localNotificationShowCallCount = 0;
+
+/// Optional override used by tests to avoid platform notification plugins.
+@visibleForTesting
+Future<void> Function({
+  required String? title,
+  required String? body,
+  required String? payload,
+  required int id,
+})? showLocalNotificationOverride;
+
+/// Resets [localNotificationShowCallCount] between tests.
+@visibleForTesting
+void resetLocalNotificationShowCallCount() {
+  localNotificationShowCallCount = 0;
+  showLocalNotificationOverride = null;
+}
+
+Future<void> _showLocalNotification({
+  required String? title,
+  required String? body,
+  required String? payload,
+  required int id,
+}) async {
+  localNotificationShowCallCount++;
+  if ((title == null || title.isEmpty) && (body == null || body.isEmpty)) {
+    return;
+  }
+
+  if (showLocalNotificationOverride != null) {
+    await showLocalNotificationOverride!(
+      title: title,
+      body: body,
+      payload: payload,
+      id: id,
+    );
+    return;
+  }
 
   const androidDetails = AndroidNotificationDetails(
     'gloup_default_channel',
@@ -47,11 +157,11 @@ Future<void> showLocalNotification(RemoteMessage message) async {
   );
 
   await flutterLocalNotificationsPlugin.show(
-    notification.hashCode,
-    notification.title,
-    notification.body,
+    id,
+    title,
+    body,
     platformDetails,
-    payload: message.data.isNotEmpty ? message.data.toString() : null,
+    payload: payload,
   );
 }
 
@@ -73,7 +183,9 @@ Future<void> initializeLocalNotifications() async {
   await flutterLocalNotificationsPlugin.initialize(
     initSettings,
     onDidReceiveNotificationResponse: (NotificationResponse response) {
-      // TODO: Handle notification tap / deep link navigation
+      _scheduleNotificationNavigation(
+        decodeNotificationPayload(response.payload),
+      );
     },
   );
 }
@@ -82,6 +194,18 @@ class FirebaseNotificationService {
   FirebaseNotificationService._();
 
   static final _messaging = FirebaseMessaging.instance;
+  static RemoteMessage? _pendingLaunchMessage;
+
+  /// Notification that opened the app from a terminated state (if any).
+  static RemoteMessage? takePendingLaunchMessage() {
+    final message = _pendingLaunchMessage;
+    _pendingLaunchMessage = null;
+    return message;
+  }
+
+  static void clearPendingLaunchMessage() {
+    _pendingLaunchMessage = null;
+  }
 
   static Future<void> initialize() async {
     // Request notification permission
@@ -92,14 +216,12 @@ class FirebaseNotificationService {
 
     // Foreground message handler
     FirebaseMessaging.onMessage.listen((message) {
-      if (message.notification != null) {
-        showLocalNotification(message);
-      }
+      handleRemoteMessage(message, isBackground: false);
     });
 
     // Notification tap when app is in background (not terminated)
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      // TODO: Handle navigation based on message.data
+      _scheduleNotificationNavigation(message.data);
     });
 
     // iOS: show notifications while app is in foreground
@@ -108,6 +230,12 @@ class FirebaseNotificationService {
       badge: true,
       sound: true,
     );
+
+    // Cold start from notification tap
+    final initialMessage = await _messaging.getInitialMessage();
+    if (initialMessage != null) {
+      _pendingLaunchMessage = initialMessage;
+    }
 
     // Listen for token refresh
     _messaging.onTokenRefresh.listen((token) async {
@@ -175,7 +303,6 @@ class FirebaseNotificationService {
       await sl<DioClient>().post(
         ApiRoutes.deviceId,
         data: {'device_id': token},
-        options: Options(headers: {'userauth': accessToken}),
       );
     } catch (e) {
       debugPrint('[FCM] Failed to register device token: $e');

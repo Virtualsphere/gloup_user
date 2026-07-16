@@ -367,10 +367,8 @@ class _LocationPageState extends State<LocationPage> {
         final data = json.decode(response.body);
         if (data['status'] == 'OK') {
           final result = data['result'];
-          final lat =
-              (result['geometry']['location']['lat'] as num).toDouble();
-          final lng =
-              (result['geometry']['location']['lng'] as num).toDouble();
+          final lat = (result['geometry']['location']['lat'] as num).toDouble();
+          final lng = (result['geometry']['location']['lng'] as num).toDouble();
 
           List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
           if (placemarks.isNotEmpty && mounted) {
@@ -558,8 +556,7 @@ class _LocationPageState extends State<LocationPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   borderSide: BorderSide(
-                    color:
-                        context.onSurfaceEmphasis,
+                    color: context.onSurfaceEmphasis,
                     width: 2,
                   ),
                 ),
@@ -575,11 +572,9 @@ class _LocationPageState extends State<LocationPage> {
           if (isSearching) ...[
             Expanded(
               child: ListView.separated(
-                padding:
-                    EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 itemCount: _predictions.length + 1,
-                separatorBuilder: (_, __) =>
-                    SizedBox(height: AppSizes.spaceS),
+                separatorBuilder: (_, __) => SizedBox(height: AppSizes.spaceS),
                 itemBuilder: (context, index) {
                   // First item: "Use current location"
                   if (index == 0) {
@@ -615,8 +610,7 @@ class _LocationPageState extends State<LocationPage> {
           ] else ...[
             // Current Location Card
             Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
               child: InkWell(
                 onTap: _isLoadingLocation
                     ? null
@@ -641,8 +635,7 @@ class _LocationPageState extends State<LocationPage> {
             // Nearby Locations
             if (_nearbyLocations.isNotEmpty) ...[
               Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                 child: Text(
                   'Nearby Locations',
                   style: context.textTheme.titleMedium?.copyWith(
@@ -653,8 +646,7 @@ class _LocationPageState extends State<LocationPage> {
               SizedBox(height: AppSizes.spaceM),
               Expanded(
                 child: ListView.builder(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+                  padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                   itemCount: _nearbyLocations.length,
                   itemBuilder: (context, index) {
                     final location = _nearbyLocations[index];

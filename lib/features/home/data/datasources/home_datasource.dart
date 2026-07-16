@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/home/data/models/home_models.dart';
 
 /// Home Data Source
@@ -39,15 +38,7 @@ class HomeDataSourceImpl implements HomeDataSource {
   @override
   Future<List<CarouselBannerModel>> getCarouselBanners() async {
     try {
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
-      final response = await dioClient.get(
-        ApiRoutes.getBanners,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
-      );
+      final response = await dioClient.get(ApiRoutes.getBanners);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -98,15 +89,9 @@ class HomeDataSourceImpl implements HomeDataSource {
       if (page != null) requestData['page'] = page;
       if (gender != null) requestData['gender'] = gender;
 
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.getNearbyStores,
         data: requestData,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.statusCode == 200) {
@@ -167,15 +152,9 @@ class HomeDataSourceImpl implements HomeDataSource {
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
       if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
 
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.get(
         ApiRoutes.getTopSalons,
         queryParameters: queryParams,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.statusCode == 200) {

@@ -106,7 +106,9 @@ class SalonModel {
       id: salonId,
       salonName: json['salonName'] ?? '',
       salonImage: salonImage,
-      images: gallery.isNotEmpty ? gallery : (salonImage.isNotEmpty ? [salonImage] : []),
+      images: gallery.isNotEmpty
+          ? gallery
+          : (salonImage.isNotEmpty ? [salonImage] : []),
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
       reviewCount: json['reviewCount'] ?? 0,
       distance: (json['distance'] as num?)?.toDouble() ?? 0,

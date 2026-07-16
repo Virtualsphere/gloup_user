@@ -21,6 +21,7 @@ class ProfileTextField extends StatelessWidget {
     this.onClearTap,
     this.onChangeTap,
     this.maxLength,
+    this.includeOuterPadding = true,
   });
 
   final TextEditingController? controller;
@@ -39,109 +40,139 @@ class ProfileTextField extends StatelessWidget {
   final bool showChange;
   final VoidCallback? onClearTap;
   final VoidCallback? onChangeTap;
+  final bool includeOuterPadding;
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    return Container(
-      height: 55.0,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ValueListenableBuilder<TextEditingValue>(
-        valueListenable: controller!,
-        builder: (context, value, child) {
-          final isEmpty = value.text.isEmpty;
 
-          return TextFormField(
-            controller: controller,
-            readOnly: isReadOnly,
-            maxLength: maxLength,
-            onTap: onTap,
-            onChanged: onChanged,
-            focusNode: focusNode,
-            keyboardType: inputType,
-            textInputAction: inputAction,
-            maxLines: maxLines,
-            style: context.textTheme.bodyLarge?.copyWith(
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: isDarkMode ? AppColors.white : AppColors.black,
+    return Padding(
+      padding: includeOuterPadding
+          ? const EdgeInsets.symmetric(horizontal: 16.0)
+          : EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (labelText != null && labelText!.isNotEmpty) ...[
+            Text(
+              labelText!,
+              style: context.textTheme.bodyMedium?.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? AppColors.white : AppColors.black,
+              ),
             ),
-            decoration: InputDecoration(
-              counterText: '',
-              // labelText: labelText,
-              hintText: hintText,
-              filled: true,
-              fillColor:
-                  isDarkMode ? AppColors.backgroundDark : AppColors.background,
-              hintStyle: context.textTheme.bodyLarge?.copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: isDarkMode ? AppColors.white : AppColors.black,
-              ),
-              labelStyle: context.textTheme.bodyLarge?.copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: isDarkMode ? AppColors.white : AppColors.black,
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: AppColors.transparent,
-                  width: 1.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: isDarkMode ? AppColors.transparent : AppColors.border,
-                  width: 1,
-                ),
-              ),
-              suffixIcon: isEmpty
-                  ? null
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (showClear)
-                          GestureDetector(
-                            onTap: onClearTap ??
-                                () {
-                                  controller?.clear();
-                                },
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 5.0, left: 15.0),
-                              child: Icon(
-                                Icons.clear,
-                                size: 18,
-                                color: isDarkMode
-                                    ? AppColors.white
-                                    : AppColors.greyColor,
-                              ),
-                            ),
-                          ),
-                        if (showChange)
-                          GestureDetector(
-                            onTap: onChangeTap,
-                            child: const Padding(
-                              padding: EdgeInsets.only(right: 10.0, left: 15.0),
-                              child: Text(
-                                "CHANGE",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
+            const SizedBox(height: 8),
+          ],
+          SizedBox(
+            height: 55.0,
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller!,
+              builder: (context, value, child) {
+                final isEmpty = value.text.isEmpty;
+
+                return TextFormField(
+                  controller: controller,
+                  readOnly: isReadOnly,
+                  maxLength: maxLength,
+                  onTap: onTap,
+                  onChanged: onChanged,
+                  focusNode: focusNode,
+                  keyboardType: inputType,
+                  textInputAction: inputAction,
+                  maxLines: maxLines,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: isDarkMode ? AppColors.white : AppColors.black,
+                  ),
+                  decoration: InputDecoration(
+                    counterText: '',
+                    hintText: hintText,
+                    filled: true,
+                    fillColor: isDarkMode
+                        ? AppColors.backgroundDark
+                        : AppColors.background,
+                    hintStyle: context.textTheme.bodyLarge?.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      color: isDarkMode
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
                     ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 18,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: AppColors.transparent,
+                        width: 1.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: isDarkMode
+                            ? AppColors.transparent
+                            : AppColors.border,
+                        width: 1,
+                      ),
+                    ),
+                    suffixIcon: isEmpty
+                        ? null
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (showClear)
+                                GestureDetector(
+                                  onTap: onClearTap ??
+                                      () {
+                                        controller?.clear();
+                                      },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 5.0,
+                                      left: 15.0,
+                                    ),
+                                    child: Icon(
+                                      Icons.clear,
+                                      size: 18,
+                                      color: isDarkMode
+                                          ? AppColors.white
+                                          : AppColors.greyColor,
+                                    ),
+                                  ),
+                                ),
+                              if (showChange)
+                                GestureDetector(
+                                  onTap: onChangeTap,
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(
+                                      right: 10.0,
+                                      left: 15.0,
+                                    ),
+                                    child: Text(
+                                      'CHANGE',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                  ),
+                  validator: validator,
+                );
+              },
             ),
-            validator: validator,
-          );
-        },
+          ),
+        ],
       ),
     );
   }

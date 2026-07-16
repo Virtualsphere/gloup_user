@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/salon_details/data/models/salon_detail_model.dart';
 
 abstract class SalonDetailRemoteDataSource {
@@ -30,15 +29,9 @@ class SalonDetailRemoteDataSourceImpl implements SalonDetailRemoteDataSource {
         'sex': sex,
       };
 
-      // Get auth token if available
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.getStoreDetails,
         data: requestData,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       // Check if response is successful

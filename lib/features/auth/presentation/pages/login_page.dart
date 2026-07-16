@@ -23,12 +23,15 @@ import 'package:tressy/shared/widgets/primary_button.dart';
 import 'package:tressy/shared/widgets/theme_toggle_button.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.authBloc});
+
+  /// Optional bloc for widget tests; production uses [sl].
+  final AuthBloc? authBloc;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<AuthBloc>(),
+      create: (context) => authBloc ?? sl<AuthBloc>(),
       child: const _LoginPageContent(),
     );
   }

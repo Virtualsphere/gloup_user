@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:tressy/core/network/connectivity_status.dart';
 import 'package:tressy/core/network/network_info.dart';
 
 class NetworkInfoImpl implements NetworkInfo {
@@ -8,7 +9,7 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @override
   Future<bool> get isConnected async {
-    final result = await connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    final results = await connectivity.checkConnectivity();
+    return hasActiveConnectivity(results);
   }
 }

@@ -315,6 +315,7 @@ class _MyProfileState extends State<MyProfile> {
                                   bottom: 20.0,
                                 ),
                                 child: CustomDropDownField(
+                                  labelText: 'Gender',
                                   dropdownValue: _selectedGender,
                                   items: ['Not Selected', 'Male', 'Female'],
                                   onChanged: (value) {
@@ -357,33 +358,54 @@ class _MyProfileState extends State<MyProfile> {
 
                               // Mobile with country picker
                               Padding(
-                                padding: const EdgeInsets.only(left: 16.0),
-                                child: Row(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    IntrinsicWidth(
-                                      child: CustomCountryPicker(
-                                        onChanged: (value) {},
+                                    Text(
+                                      'Mobile',
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: isDarkMode
+                                            ? AppColors.white
+                                            : AppColors.black,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: ProfileTextField(
-                                        labelText: "Mobile",
-                                        controller: mobileController,
-                                        inputType: TextInputType.number,
-                                        inputAction: TextInputAction.done,
-                                        showChange: true,
-                                        maxLength: 10,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter mobile number';
-                                          }
-                                          if (value.length != 10) {
-                                            return 'Please enter 10 digit mobile number';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) => setState(() {}),
-                                      ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        IntrinsicWidth(
+                                          child: CustomCountryPicker(
+                                            onChanged: (value) {},
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: ProfileTextField(
+                                            includeOuterPadding: false,
+                                            controller: mobileController,
+                                            inputType: TextInputType.number,
+                                            inputAction: TextInputAction.done,
+                                            showChange: true,
+                                            maxLength: 10,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter mobile number';
+                                              }
+                                              if (value.length != 10) {
+                                                return 'Please enter 10 digit mobile number';
+                                              }
+                                              return null;
+                                            },
+                                            onChanged: (value) =>
+                                                setState(() {}),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -614,9 +636,13 @@ class _MyProfileState extends State<MyProfile> {
     final currentState = context.read<ProfileBloc>().state;
 
     ProfileEntity? currentProfile;
-    if (currentState is ProfileLoaded) currentProfile = currentState.profile;
-    else if (currentState is ProfileUpdateSuccess) currentProfile = currentState.profile;
-    else if (currentState is ProfileUpdateFailure) currentProfile = currentState.profile;
+    if (currentState is ProfileLoaded) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdateSuccess) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdateFailure) {
+      currentProfile = currentState.profile;
+    }
 
     if (currentProfile != null) {
       final updatedProfile = currentProfile.copyWith(

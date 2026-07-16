@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/favorites/data/models/favorite_model.dart';
 import 'package:tressy/features/favorites/data/models/favorites_list_model.dart';
 
@@ -19,19 +18,11 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
   @override
   Future<FavoriteModel> toggleFavorite(int storeId) async {
     try {
-      // Get auth token
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.toggleFavorite,
         data: {
           'store_id': storeId,
         },
-        options: Options(
-          headers: {
-            'userauth': token,
-          },
-        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -51,17 +42,7 @@ class FavoritesRemoteDataSourceImpl implements FavoritesRemoteDataSource {
   @override
   Future<FavoritesListModel> getFavorites() async {
     try {
-      // Get auth token
-      final token = LocalStorageService.accessToken;
-
-      final response = await dioClient.get(
-        ApiRoutes.getFavorites,
-        options: Options(
-          headers: {
-            'userauth': token,
-          },
-        ),
-      );
+      final response = await dioClient.get(ApiRoutes.getFavorites);
 
       if (response.statusCode == 200) {
         return FavoritesListModel.fromJson(

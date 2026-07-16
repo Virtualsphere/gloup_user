@@ -327,7 +327,8 @@ class MyReviewContainer extends StatelessWidget {
                       },
                       child: SvgPicture.asset(
                         AppIcons.edit,
-                        colorFilter: const ColorFilter.mode(AppColors.black, BlendMode.srcIn),
+                        colorFilter: const ColorFilter.mode(
+                            AppColors.black, BlendMode.srcIn),
                       ),
                     ),
                   ],

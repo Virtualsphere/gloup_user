@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
@@ -17,6 +20,7 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/guest_
 import 'package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_event.dart';
 import 'package:tressy/features/coupons/presentation/bloc/coupon_state.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
@@ -67,6 +71,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   String? _lastPaymentId;
   String? _pendingOrderFingerprint;
   String? _lastCreateOrderFingerprint;
+  CreateOrderRequest? _lastPaymentRequest;
   late Razorpay _razorpay;
   late OrderBloc _orderBloc;
 
@@ -79,11 +84,46 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _requestProfileIfNeeded();
+    });
+  }
+
+  void _requestProfileIfNeeded() {
+    if (!mounted) return;
+    if (!LocalStorageService.isLoggedIn ||
+        LocalStorageService.accessToken == null) {
+      return;
+    }
+
+    final bloc = context.read<ProfileBloc>();
+    final state = bloc.state;
+    final shouldFetch = state is ProfileInitial ||
+        state is ProfileLoggedOut ||
+        state is ProfileFailure;
+
+    if (!shouldFetch) return;
+
+    bloc.add(const GetProfileEvent());
+  }
+
+  ProfileEntity? _profileFromState(ProfileState state) {
+    if (state is ProfileLoaded) return state.profile;
+    if (state is ProfileUpdating) return state.profile;
+    if (state is ProfileUpdateSuccess) return state.profile;
+    if (state is ProfileUpdateFailure) return state.profile;
+    return null;
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    final order = _orderBloc.state.order;
+    if (order != null && !_orderBloc.state.isPaymentVerified) {
+      unawaited(
+        sl<CancelPendingOrderUseCase>().call(orderId: order.orderId),
+      );
+    }
     _razorpay.clear();
     _orderBloc.close();
     super.dispose();
@@ -117,12 +157,14 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    _orderBloc.add(const PaymentFailedEvent());
+    final orderId = _orderBloc.state.order?.orderId;
+    _pendingOrderFingerprint = null;
+    _orderBloc.add(PaymentFailedEvent(orderId: orderId));
     if (mounted) {
       PaymentFailedDialog.show(
         context,
         message: _paymentFailureMessage(response),
-        onRetry: _retryPendingPayment,
+        onRetry: () => _retryPendingPayment(context),
       );
     }
   }
@@ -132,35 +174,32 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     if (razorpayMessage != null && razorpayMessage.isNotEmpty) {
       return razorpayMessage;
     }
-    return 'Payment was not completed. Your slot is still reserved — try again.';
+    return 'Payment was not completed. Your slot has been released — you can try again.';
   }
 
   String _orderFingerprint(CreateOrderRequest request) {
-    final serviceIds = request.services
-        .map((service) => service['service_id'])
-        .join(',');
+    final serviceIds =
+        request.services.map((service) => service['service_id']).join(',');
     return '${request.slotId}|$serviceIds|${request.finalAmount}|'
         '${request.couponCode ?? ''}|${request.walletAmountUsed}|'
         '${request.bookingFor}|${request.guestId ?? ''}';
   }
 
-  void _retryPendingPayment() {
-    final order = _orderBloc.state.order;
-    if (order == null) return;
+  void _retryPendingPayment(BuildContext context) {
+    final request = _lastPaymentRequest;
+    if (request == null) return;
 
-    final salonName =
-        widget.bookingData?['salonName'] as String? ?? 'Salon';
-    _openRazorpay(order.razorpayOrderId, order.amount, salonName);
+    _initiateOrResumePayment(context, request);
   }
 
   void _initiateOrResumePayment(
     BuildContext context,
     CreateOrderRequest request,
   ) {
+    _lastPaymentRequest = request;
     final orderState = context.read<OrderBloc>().state;
     final fingerprint = _orderFingerprint(request);
-    final salonName =
-        widget.bookingData?['salonName'] as String? ?? 'Salon';
+    final salonName = widget.bookingData?['salonName'] as String? ?? 'Salon';
 
     final canReusePendingOrder = orderState.order != null &&
         !orderState.isPaymentVerified &&
@@ -295,9 +334,6 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<ProfileBloc>()..add(const GetProfileEvent()),
-        ),
-        BlocProvider(
           create: (context) =>
               sl<CouponBloc>()..add(const GetActiveCouponsEvent()),
         ),
@@ -330,7 +366,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               PaymentFailedDialog.show(
                 context,
                 message: orderState.errorMessage!,
-                onRetry: _retryPendingPayment,
+                onRetry: () => _retryPendingPayment(context),
               );
             } else {
               CustomToast.showError(context, orderState.errorMessage!);
@@ -428,8 +464,12 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               if (isLoggedIn && selectedBookingFor == 'myself')
                                 BlocBuilder<ProfileBloc, ProfileState>(
                                   builder: (context, profileState) {
-                                    // Show loading shimmer
-                                    if (profileState is ProfileLoading) {
+                                    final profile =
+                                        _profileFromState(profileState);
+
+                                    if (profileState is ProfileLoading ||
+                                        (profileState is ProfileInitial &&
+                                            profile == null)) {
                                       return Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: AppSizes.paddingM),
@@ -458,11 +498,6 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                       );
                                     }
 
-                                    // Get profile data
-                                    final profile =
-                                        profileState is ProfileLoaded
-                                            ? profileState.profile
-                                            : null;
                                     final userName =
                                         profile?.fullName ?? 'User';
                                     final userGender =
@@ -519,8 +554,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     // Show error state
                                     if (guestState.errorMessage != null) {
                                       return Padding(
-                                        padding: EdgeInsets.all(
-                                            AppSizes.paddingXL),
+                                        padding:
+                                            EdgeInsets.all(AppSizes.paddingXL),
                                         child: Center(
                                           child: Column(
                                             children: [
@@ -529,8 +564,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                 size: 48,
                                                 color: AppColors.error,
                                               ),
-                                              SizedBox(
-                                                  height: AppSizes.spaceM),
+                                              SizedBox(height: AppSizes.spaceM),
                                               Text(
                                                 guestState.errorMessage!,
                                                 textAlign: TextAlign.center,
@@ -538,8 +572,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     .textTheme
                                                     .bodyMedium,
                                               ),
-                                              SizedBox(
-                                                  height: AppSizes.spaceM),
+                                              SizedBox(height: AppSizes.spaceM),
                                               ElevatedButton(
                                                 onPressed: () {
                                                   context.read<GuestBloc>().add(
@@ -626,8 +659,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                               );
                                             },
                                           ),
-                                          SizedBox(
-                                              height: AppSizes.spaceM),
+                                          SizedBox(height: AppSizes.spaceM),
                                           // Add a New Person card-styled button
                                           GestureDetector(
                                             onTap: () {
@@ -636,10 +668,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                             child: Container(
                                               constraints: const BoxConstraints(
                                                   minHeight: 72.0),
-                                              padding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          AppSizes.paddingL),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      AppSizes.paddingL),
                                               decoration: BoxDecoration(
                                                 color: isDarkMode
                                                     ? AppColors.surfaceDark

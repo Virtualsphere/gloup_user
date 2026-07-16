@@ -133,8 +133,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     // Section Title
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingL),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -249,15 +249,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     if (state.listStatus == FavoritesListStatus.loaded &&
                         state.favoritesList.isNotEmpty)
                       SliverPadding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingL),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               final salon = state.favoritesList[index];
                               return Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: AppSizes.paddingM),
+                                padding:
+                                    EdgeInsets.only(bottom: AppSizes.paddingM),
                                 child: ExploreSalonCard(
                                   storeId: int.tryParse(salon.id) ?? 0,
                                   salonName: salon.salonName,

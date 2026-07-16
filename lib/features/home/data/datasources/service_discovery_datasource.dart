@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/home/data/models/service_category_model.dart';
 import 'package:tressy/shared/data/models/salon_model.dart';
 
@@ -25,16 +24,12 @@ class ServiceDiscoveryDataSourceImpl implements ServiceDiscoveryDataSource {
   ServiceDiscoveryDataSourceImpl(this.dioClient);
 
   @override
-  Future<List<ServiceCategoryModel>> getTopCategories({String sex = 'male'}) async {
+  Future<List<ServiceCategoryModel>> getTopCategories(
+      {String sex = 'male'}) async {
     try {
-      final token = LocalStorageService.accessToken;
-
       final response = await dioClient.post(
         ApiRoutes.getTopCategories,
         data: {'sex': sex},
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {
@@ -68,8 +63,6 @@ class ServiceDiscoveryDataSourceImpl implements ServiceDiscoveryDataSource {
     String rating = '',
   }) async {
     try {
-      final token = LocalStorageService.accessToken;
-
       final payload = <String, dynamic>{
         'category_id': categoryId == 'all' ? '' : categoryId,
         'sex': sex,
@@ -83,9 +76,6 @@ class ServiceDiscoveryDataSourceImpl implements ServiceDiscoveryDataSource {
         ApiRoutes.getStoresByCategory,
         data: payload,
         queryParameters: {'lat': lat, 'lng': lng},
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {

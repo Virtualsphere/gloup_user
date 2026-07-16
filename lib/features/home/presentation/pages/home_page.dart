@@ -8,7 +8,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
-import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
@@ -17,8 +16,12 @@ import 'package:tressy/features/home/presentation/bloc/home_state.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
 import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
+import 'package:tressy/features/home/presentation/widgets/home_profile_avatar.dart';
 import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
 import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/home/presentation/widgets/services_at_49_section.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
@@ -42,8 +45,9 @@ class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
   String? _selectedGender; // No default filter
-  HomeBloc? _homeBloc;
   bool _isLoadingLocation = true;
+  bool _profileRequested = false;
+  bool _homeDataRequested = false;
   LocationProvider? _locationProvider;
 
   @override
@@ -62,6 +66,46 @@ class _HomePageState extends State<HomePage> {
       _locationProvider = provider;
       provider.addListener(_onLocationToastChanged);
     }
+    _requestProfileIfNeeded();
+    _requestHomeDataIfNeeded();
+  }
+
+  void _requestHomeDataIfNeeded() {
+    final bloc = context.read<HomeBloc>();
+    final state = bloc.state;
+
+    final hasData = state.carouselBanners.isNotEmpty ||
+        state.popularServices.isNotEmpty ||
+        state.topSalons.isNotEmpty ||
+        state.recommendedSalons.isNotEmpty;
+
+    if (_homeDataRequested && (hasData || state.isAnyLoading)) return;
+
+    _homeDataRequested = true;
+    final locationProvider = context.read<LocationProvider>();
+    bloc.add(LoadAllHomeDataEvent(
+      latitude: locationProvider.latitude,
+      longitude: locationProvider.longitude,
+    ));
+  }
+
+  HomeBloc get _homeBloc => context.read<HomeBloc>();
+
+  void _requestProfileIfNeeded() {
+    if (!LocalStorageService.isLoggedIn) {
+      _profileRequested = false;
+      return;
+    }
+
+    final profileState = context.read<ProfileBloc>().state;
+    final shouldFetch = profileState is ProfileInitial ||
+        profileState is ProfileLoggedOut ||
+        profileState is ProfileFailure;
+
+    if (_profileRequested && !shouldFetch) return;
+
+    _profileRequested = true;
+    context.read<ProfileBloc>().add(const GetProfileEvent());
   }
 
   void _onLocationToastChanged() {
@@ -192,7 +236,7 @@ class _HomePageState extends State<HomePage> {
       });
 
       // Reload home data with new coordinates
-      _homeBloc?.add(LoadAllHomeDataEvent(
+      _homeBloc.add(LoadAllHomeDataEvent(
         latitude: locationProvider.latitude,
         longitude: locationProvider.longitude,
       ));
@@ -215,7 +259,7 @@ class _HomePageState extends State<HomePage> {
     final genderParam = (gender.toLowerCase() == 'all') ? null : gender;
 
     // Reload popular services with new gender filter
-    _homeBloc?.add(LoadPopularServicesEvent(
+    _homeBloc.add(LoadPopularServicesEvent(
       latitude: locationProvider.latitude,
       longitude: locationProvider.longitude,
       limit: 10, // Set limit to 10 for home screen
@@ -223,7 +267,7 @@ class _HomePageState extends State<HomePage> {
     ));
 
     // Reload top salons with new gender filter
-    _homeBloc?.add(LoadTopSalonsEvent(
+    _homeBloc.add(LoadTopSalonsEvent(
       latitude: locationProvider.latitude,
       longitude: locationProvider.longitude,
       limit: 10, // Set limit to 10 for home screen
@@ -231,7 +275,7 @@ class _HomePageState extends State<HomePage> {
     ));
 
     // Also reload recommended salons with new gender filter
-    _homeBloc?.add(LoadRecommendedSalonsEvent(
+    _homeBloc.add(LoadRecommendedSalonsEvent(
       latitude: locationProvider.latitude,
       longitude: locationProvider.longitude,
       limit: 10,
@@ -273,7 +317,7 @@ class _HomePageState extends State<HomePage> {
     if (maxScroll - currentScroll <= scrollThreshold) {
       // Trigger load more event
       final locationProvider = context.read<LocationProvider>();
-      _homeBloc?.add(LoadRecommendedSalonsEvent(
+      _homeBloc.add(LoadRecommendedSalonsEvent(
         latitude: locationProvider.latitude,
         longitude: locationProvider.longitude,
         limit: 10,
@@ -288,15 +332,11 @@ class _HomePageState extends State<HomePage> {
     // Base height on screen width to maintain a consistent aspect ratio across all devices
     final carouselHeight = screenWidth * 0.85;
     final isDarkMode = context.theme.brightness == Brightness.dark;
-    return BlocProvider(
-      create: (context) {
-        final locationProvider = context.read<LocationProvider>();
-        _homeBloc = sl<HomeBloc>()
-          ..add(LoadAllHomeDataEvent(
-            latitude: locationProvider.latitude,
-            longitude: locationProvider.longitude,
-          ));
-        return _homeBloc!;
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileLoggedOut) {
+          _profileRequested = false;
+        }
       },
       child: BlocListener<FavoritesBloc, FavoritesState>(
         listener: (context, state) {
@@ -468,8 +508,7 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       _isLoadingLocation
                                           ? Container(
-                                              padding:
-                                                  EdgeInsets.symmetric(
+                                              padding: EdgeInsets.symmetric(
                                                 horizontal: AppSizes.paddingM,
                                                 vertical: AppSizes.paddingS,
                                               ),
@@ -548,10 +587,10 @@ class _HomePageState extends State<HomePage> {
                                                             (result['latitude']
                                                                     as num)
                                                                 .toDouble(),
-                                                        longitude: (result[
-                                                                    'longitude']
-                                                                as num)
-                                                            .toDouble(),
+                                                        longitude:
+                                                            (result['longitude']
+                                                                    as num)
+                                                                .toDouble(),
                                                         city: result['city']
                                                             ?.toString(),
                                                         area: result['area']
@@ -561,7 +600,7 @@ class _HomePageState extends State<HomePage> {
                                                       if (!mounted) return;
 
                                                       // Reload home data with new location
-                                                      _homeBloc?.add(
+                                                      _homeBloc.add(
                                                           LoadAllHomeDataEvent(
                                                         latitude:
                                                             locationProvider
@@ -576,43 +615,7 @@ class _HomePageState extends State<HomePage> {
                                               },
                                             ),
                                       const Spacer(),
-                                      InkWell(
-                                        onTap: () {
-                                          context.pushNamed(
-                                              RouteNames.personalProfile);
-                                        },
-                                        borderRadius: BorderRadius.circular(
-                                          AppSizes.radiusCircular,
-                                        ),
-                                        child: Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: isDarkMode
-                                                ? AppColors.backgroundDark
-                                                : AppColors.background,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color:
-                                                    AppColors.black.withValues(
-                                                  alpha: 0.1,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                              child: Icon(
-                                            Icons.person,
-                                            color: isDarkMode
-                                                ? AppColors.primaryDark
-                                                : AppColors.primary,
-                                            size: AppSizes.iconS,
-                                          )),
-                                        ),
-                                      ),
+                                      const HomeProfileAvatar(),
                                     ],
                                   ),
                                   AppSizes.heightM,
@@ -669,7 +672,9 @@ class _HomePageState extends State<HomePage> {
 
                   SliverToBoxAdapter(
                     child: Container(
-                      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                      color: isDarkMode
+                          ? AppColors.surfaceDark
+                          : AppColors.surface,
                       child: Column(
                         children: [
                           Padding(
@@ -709,7 +714,9 @@ class _HomePageState extends State<HomePage> {
 
                   SliverToBoxAdapter(
                     child: Container(
-                      color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+                      color: isDarkMode
+                          ? AppColors.surfaceDark
+                          : AppColors.surface,
                       child: AppSizes.heightM,
                     ),
                   ),
@@ -861,8 +868,8 @@ class _HomePageState extends State<HomePage> {
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: AppSizes.paddingM),
+                                padding:
+                                    EdgeInsets.only(bottom: AppSizes.paddingM),
                                 child:
                                     HomeShimmers.buildVerticalSalonCardShimmer(
                                         context),

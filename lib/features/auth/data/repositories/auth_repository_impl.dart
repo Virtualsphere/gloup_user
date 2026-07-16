@@ -1,17 +1,23 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:tressy/features/auth/domain/entities/auth_entity.dart';
 import 'package:tressy/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
-  AuthRepositoryImpl(this.remoteDataSource);
+  AuthRepositoryImpl(this.remoteDataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, AuthEntity>> sendOtp(String phone) async {
+    final disconnected = await leftIfDisconnected<AuthEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final result = await remoteDataSource.sendOtp(phone);
       return Right(result);
@@ -28,7 +34,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, AuthEntity>> verifyOtp(
-      String phone, String otp) async {
+    String phone,
+    String otp,
+  ) async {
+    final disconnected = await leftIfDisconnected<AuthEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final result = await remoteDataSource.verifyOtp(phone, otp);
       return Right(result);
@@ -45,6 +56,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, AuthEntity>> googleLogin(String idToken) async {
+    final disconnected = await leftIfDisconnected<AuthEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final result = await remoteDataSource.googleLogin(idToken);
       return Right(result);
@@ -65,6 +79,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String identityToken,
     required String userIdentifier,
   }) async {
+    final disconnected = await leftIfDisconnected<AuthEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final result = await remoteDataSource.appleLogin(
         authorizationCode: authorizationCode,

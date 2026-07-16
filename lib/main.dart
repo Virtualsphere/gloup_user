@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_strings.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/providers/location_provider.dart';
+import 'package:tressy/core/network/auth_session_manager.dart';
 import 'package:tressy/core/router/app_router.dart';
 import 'package:tressy/core/services/firebase_notification_service.dart';
 import 'package:tressy/core/theme/app_theme.dart';
@@ -12,6 +13,8 @@ import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/firebase_options.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,6 +27,10 @@ void main() async {
 
   // Initialize local storage
   await LocalStorageService.init();
+
+  AuthSessionManager.onSessionExpired = () async {
+    AppRouter.router.go(RouteNames.login);
+  };
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -64,6 +71,14 @@ class MyApp extends StatelessWidget {
         BlocProvider<FavoritesBloc>.value(
           value: sl<FavoritesBloc>(),
         ),
+        // Global HomeBloc - shared home feed state across tab switches
+        BlocProvider<HomeBloc>.value(
+          value: sl<HomeBloc>(),
+        ),
+        // Global ProfileBloc - shared profile state for home, profile, and edit screens
+        BlocProvider<ProfileBloc>(
+          create: (_) => sl<ProfileBloc>(),
+        ),
       ],
       child: MultiProvider(
         providers: [
@@ -94,8 +109,10 @@ class MyApp extends StatelessWidget {
                       shouldPopScope: () => false,
                       dialogStyle: UpgradeDialogStyle.cupertino,
                       upgrader: Upgrader(
-                        debugLogging: true, // Enables logs to debug why it might not be showing
-                        durationUntilAlertAgain: Duration.zero, // Ignores the default 3-day wait period
+                        debugLogging:
+                            true, // Enables logs to debug why it might not be showing
+                        durationUntilAlertAgain: Duration
+                            .zero, // Ignores the default 3-day wait period
                       ),
                       child: child ?? const SizedBox.shrink(),
                     );

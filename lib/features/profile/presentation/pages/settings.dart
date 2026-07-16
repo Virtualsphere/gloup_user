@@ -32,15 +32,8 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => sl<GuestBloc>()..add(const LoadGuestsEvent()),
-        ),
-        BlocProvider(
-          create: (_) => sl<ProfileBloc>(),
-        ),
-      ],
+    return BlocProvider(
+      create: (_) => sl<GuestBloc>()..add(const LoadGuestsEvent()),
       child: SettingsView(profile: profile),
     );
   }

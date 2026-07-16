@@ -34,14 +34,14 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # - name: Verify Formatting
-      #   run: dart format --output=none --set-exit-if-changed .
-        
-      # - name: Analyze Code
-      #   run: flutter analyze
+      - name: Verify Formatting
+        run: dart format --output=none --set-exit-if-changed .
 
-      # - name: Run Tests
-      #   run: flutter test
+      - name: Analyze Code
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run Tests
+        run: flutter test
 
   build-android:
     name: Build Android APK

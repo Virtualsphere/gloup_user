@@ -150,8 +150,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             right: 0,
             bottom: AppSizes.paddingXL,
             child: Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
+              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
               child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

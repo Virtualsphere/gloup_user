@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_images.dart';
+import 'package:tressy/core/router/notification_routes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/services/firebase_notification_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
@@ -22,20 +24,34 @@ class _SplashPageState extends State<SplashPage> {
 
   void _navigateToNextScreen() {
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        final hasCompletedOnboarding =
-            LocalStorageService.hasCompletedOnboarding;
-        final isLoggedIn = LocalStorageService.isLoggedIn;
+      if (!mounted) return;
 
-        if (!hasCompletedOnboarding) {
-          context.go(RouteNames.onboarding);
-        } else if (!isLoggedIn) {
-          context.go(RouteNames.login);
-        } else {
-          // User is logged in - go to home
-          context.go(RouteNames.home);
-        }
+      final hasCompletedOnboarding = LocalStorageService.hasCompletedOnboarding;
+      final isLoggedIn = LocalStorageService.isLoggedIn;
+
+      if (!hasCompletedOnboarding) {
+        FirebaseNotificationService.clearPendingLaunchMessage();
+        context.go(RouteNames.onboarding);
+        return;
       }
+
+      if (!isLoggedIn) {
+        FirebaseNotificationService.clearPendingLaunchMessage();
+        context.go(RouteNames.login);
+        return;
+      }
+
+      final launchMessage =
+          FirebaseNotificationService.takePendingLaunchMessage();
+      if (launchMessage != null) {
+        NotificationRoutes.navigateFromMessage(
+          GoRouter.of(context),
+          launchMessage,
+        );
+        return;
+      }
+
+      context.go(RouteNames.home);
     });
   }
 

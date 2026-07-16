@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/salon_search/data/datasources/search_remote_datasource.dart';
 import 'package:tressy/features/salon_search/domain/repositories/search_repository.dart';
 import 'package:tressy/shared/domain/entities/salon_entity.dart';
@@ -9,8 +11,9 @@ import 'package:tressy/features/map_markers/data/models/map_marker_models.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   final SearchRemoteDataSource dataSource;
+  final NetworkInfo networkInfo;
 
-  SearchRepositoryImpl(this.dataSource);
+  SearchRepositoryImpl(this.dataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, List<SalonEntity>>> getNearbySalons({
@@ -20,6 +23,10 @@ class SearchRepositoryImpl implements SearchRepository {
     int? page,
     String? gender,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.getNearbySalons(
         latitude: latitude,
@@ -29,8 +36,8 @@ class SearchRepositoryImpl implements SearchRepository {
         gender: gender,
       );
 
-      // Convert models to entities
-      final entities = response.salons.map((model) => model.toEntity()).toList();
+      final entities =
+          response.salons.map((model) => model.toEntity()).toList();
 
       return Right(entities);
     } on NetworkException catch (e) {
@@ -41,7 +48,8 @@ class SearchRepositoryImpl implements SearchRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(
-          ServerFailure('Failed to fetch nearby salons: ${e.toString()}'));
+        ServerFailure('Failed to fetch nearby salons: ${e.toString()}'),
+      );
     }
   }
 
@@ -55,6 +63,10 @@ class SearchRepositoryImpl implements SearchRepository {
     int? limit,
     int? page,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.searchSalons(
         latitude: latitude,
@@ -66,8 +78,8 @@ class SearchRepositoryImpl implements SearchRepository {
         page: page,
       );
 
-      // Convert models to entities
-      final entities = response.salons.map((model) => model.toEntity()).toList();
+      final entities =
+          response.salons.map((model) => model.toEntity()).toList();
 
       return Right(entities);
     } on NetworkException catch (e) {
@@ -85,6 +97,10 @@ class SearchRepositoryImpl implements SearchRepository {
   Future<Either<Failure, MapMarkersEntity>> getClusteredMarkers({
     required MapMarkersRequestModel request,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<MapMarkersEntity>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.getClusteredMarkers(request: request);
       return Right(response.toEntity());
@@ -96,7 +112,8 @@ class SearchRepositoryImpl implements SearchRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(
-          ServerFailure('Failed to fetch map markers: ${e.toString()}'));
+        ServerFailure('Failed to fetch map markers: ${e.toString()}'),
+      );
     }
   }
 }

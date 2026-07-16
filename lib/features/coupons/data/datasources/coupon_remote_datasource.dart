@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/core/network/api_exception.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/coupons/data/models/coupon_model.dart';
 
 abstract class CouponRemoteDataSource {
@@ -17,12 +15,7 @@ class CouponRemoteDataSourceImpl implements CouponRemoteDataSource {
   @override
   Future<List<CouponModel>> getActiveCoupons() async {
     try {
-      final response = await dioClient.get(
-        ApiRoutes.getActiveCoupons,
-        options: Options(
-          headers: {'userauth': LocalStorageService.accessToken},
-        ),
-      );
+      final response = await dioClient.get(ApiRoutes.getActiveCoupons);
 
       if (response.statusCode == 200) {
         final data = response.data;

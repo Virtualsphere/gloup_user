@@ -73,23 +73,21 @@ class CouponCard extends StatelessWidget {
                       Text.rich(
                         TextSpan(
                           text: 'Save ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color: isEnabled
-                                    ? (isDarkMode
-                                        ? AppColors.textPrimaryDark
-                                        : AppColors.textPrimary)
-                                    : Colors.grey,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: isEnabled
+                                        ? (isDarkMode
+                                            ? AppColors.textPrimaryDark
+                                            : AppColors.textPrimary)
+                                        : Colors.grey,
+                                  ),
                           children: [
                             TextSpan(
                               text: discountType == 'percentage'
                                   ? '$discountAmount%'
                                   : '₹$discountAmount',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w700),
                             ),
                             const TextSpan(text: ' with'),
                           ],
@@ -98,10 +96,7 @@ class CouponCard extends StatelessWidget {
                       SizedBox(height: AppSizes.spaceXS),
                       Text(
                         '"$couponCode"',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w700,
                               color:
                                   isEnabled ? AppColors.success : Colors.grey,
@@ -142,11 +137,10 @@ class CouponCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         disabledReason!,
-                        style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.warning,
-                                  fontSize: 11,
-                                ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.warning,
+                              fontSize: 11,
+                            ),
                       ),
                     ),
                   ],

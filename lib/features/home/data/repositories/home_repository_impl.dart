@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:tressy/core/error/failures.dart';
 import 'package:tressy/core/network/api_exception.dart';
+import 'package:tressy/core/network/network_info.dart';
+import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/home/data/datasources/home_datasource.dart';
 import 'package:tressy/features/home/domain/entities/home_entity.dart'
     hide SalonEntity;
@@ -9,12 +11,17 @@ import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeDataSource dataSource;
+  final NetworkInfo networkInfo;
 
-  HomeRepositoryImpl(this.dataSource);
+  HomeRepositoryImpl(this.dataSource, this.networkInfo);
 
   @override
   Future<Either<Failure, List<CarouselBannerEntity>>>
       getCarouselBanners() async {
+    final disconnected =
+        await leftIfDisconnected<List<CarouselBannerEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final models = await dataSource.getCarouselBanners();
       final entities = models
@@ -43,6 +50,10 @@ class HomeRepositoryImpl implements HomeRepository {
     int? page,
     String? gender,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.getPopularServices(
         latitude: latitude,
@@ -52,7 +63,8 @@ class HomeRepositoryImpl implements HomeRepository {
         gender: gender,
       );
 
-      final entities = response.salons.map((model) => model.toEntity()).toList();
+      final entities =
+          response.salons.map((model) => model.toEntity()).toList();
       return Right(entities);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
@@ -78,6 +90,10 @@ class HomeRepositoryImpl implements HomeRepository {
     String? search,
     String? sort,
   }) async {
+    final disconnected =
+        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
     try {
       final response = await dataSource.getTopSalons(
         latitude: latitude,
@@ -92,7 +108,8 @@ class HomeRepositoryImpl implements HomeRepository {
         sort: sort,
       );
 
-      final entities = response.salons.map((model) => model.toEntity()).toList();
+      final entities =
+          response.salons.map((model) => model.toEntity()).toList();
       return Right(entities);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

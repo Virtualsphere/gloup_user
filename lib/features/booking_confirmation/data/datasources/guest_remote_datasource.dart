@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
-import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/guest_model.dart';
 
 abstract class GuestRemoteDataSource {
@@ -35,15 +34,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
   @override
   Future<List<GuestModel>> getAllGuests() async {
     try {
-      // Get auth token
-      final token = LocalStorageService.accessToken;
-
-      final response = await dioClient.get(
-        ApiRoutes.getAllGuests,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
-      );
+      final response = await dioClient.get(ApiRoutes.getAllGuests);
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data'] ?? [];
@@ -69,9 +60,6 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
     required String phone,
   }) async {
     try {
-      // Get auth token
-      final token = LocalStorageService.accessToken;
-
       final requestData = {
         'name': name,
         'gender': gender,
@@ -82,9 +70,6 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
       final response = await dioClient.post(
         ApiRoutes.addGuest,
         data: requestData,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.data['success'] != true) {
@@ -109,9 +94,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
     String? phone,
   }) async {
     try {
-      // Get auth token
-      final token = LocalStorageService.accessToken;
-
+      // Build optional update payload
       final requestData = <String, dynamic>{
         'guestId': guestId,
       };
@@ -125,9 +108,6 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
       final response = await dioClient.patch(
         ApiRoutes.updateGuest,
         data: requestData,
-        options: token != null && token.isNotEmpty
-            ? Options(headers: {'userauth': token})
-            : null,
       );
 
       if (response.data['success'] != true) {

@@ -65,7 +65,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         final refresh = await getProfileUseCase();
 
         refresh.fold(
-          (failure) => emit(ProfileUpdateFailure(failure.message, currentProfile)),
+          (failure) =>
+              emit(ProfileUpdateFailure(failure.message, currentProfile)),
           (profile) {
             emit(ProfileUpdateSuccess(profile));
             emit(ProfileLoaded(profile));

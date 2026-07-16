@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tressy/core/constants/cancellation_policy.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/legal_content_widgets.dart';
 import 'package:tressy/features/widgets/profile_appbar.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
@@ -36,17 +37,19 @@ class _CancellationContent extends StatelessWidget {
           company: 'Operated by JR STYLE\'O BOOKING AND FASHION PVT LTD',
           lastUpdated: '01/03/2026',
         ),
-        const LegalSection(
+        LegalSection(
           number: '1',
           title: 'Customer Cancellation',
           children: [
-            LegalSubSectionTitle('More than 2 Hours Before Appointment'),
-            LegalBulletList(items: [
+            LegalSubSectionTitle(
+                CancellationPolicy.moreThanBeforeAppointmentTitle),
+            const LegalBulletList(items: [
               '100% refund.',
               'Refund processed within 5–7 business days.',
             ]),
-            LegalSubSectionTitle('Less than 2 Hours Before Appointment'),
-            LegalBulletList(items: [
+            LegalSubSectionTitle(
+                CancellationPolicy.lessThanBeforeAppointmentTitle),
+            const LegalBulletList(items: [
               '50% refund.',
               'Remaining amount retained to compensate salon slot blocking.',
             ]),

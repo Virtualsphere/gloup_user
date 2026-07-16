@@ -1,51 +1,49 @@
 default_platform(:android)
 
+# Shorebird must build Play Store binaries — plain `gradle bundle` / `flutter build`
+# does NOT embed the updater, so patches never reach production users.
+# See README.md and https://docs.shorebird.dev/code-push/release/
+
+def project_root
+  File.expand_path("../..", __dir__)
+end
+
+def shorebird_dart_defines
+  ENV.fetch("SHOREBIRD_DART_DEFINES", "--dart-define=API_BASE_URL=https://api.v1.gloup.in")
+end
+
 platform :android do
 
   desc "Build and distribute to Firebase App Distribution for Staging/QA"
   lane :staging do
-    # Build the APK or AAB
-    gradle(
-      task: "assemble",
-      build_type: "Release"
-      # If you use flavors, change this to:
-      # task: "assemble",
-      # flavor: "Staging",
-      # build_type: "Release"
-    )
+    Dir.chdir(project_root) do
+      sh("shorebird release android --artifact apk -- #{shorebird_dart_defines}")
+    end
 
-    # Upload to Firebase App Distribution
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID_ANDROID"],
       testers: "qa-team@example.com",
       release_notes: "Automated staging build via GitHub Actions",
-      groups: "qa-team" # Make sure to create this group in Firebase Console
+      groups: "qa-team",
+      android_artifact_type: "APK",
+      apk_path: File.join(project_root, "build/app/outputs/flutter-apk/app-release.apk")
     )
   end
 
-  desc "Build and upload a new release to Google Play Internal Track"
+  desc "Build with Shorebird and upload to Google Play (internal track by default)"
   lane :production do
-    # Ensure tests pass before production build
-    # sh "cd .. && flutter test"
+  # sh "cd #{project_root} && flutter test"
 
-    # Build the App Bundle
-    gradle(
-      task: "bundle",
-      build_type: "Release"
-      # If you use flavors, change this to:
-      # task: "bundle",
-      # flavor: "Production",
-      # build_type: "Release"
-    )
+    Dir.chdir(project_root) do
+      sh("shorebird release android -- #{shorebird_dart_defines}")
+    end
 
-    # Upload to Google Play Internal Track
     upload_to_play_store(
-      track: 'internal',
+      track: ENV.fetch("PLAY_TRACK", "internal"),
+      aab: File.join(project_root, "build/app/outputs/bundle/release/app-release.aab"),
       skip_upload_metadata: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true,
-      # You can automate release notes reading from a file
-      # release_notes: { "en-US" => "Minor bug fixes and improvements." }
+      skip_upload_screenshots: true
     )
   end
 

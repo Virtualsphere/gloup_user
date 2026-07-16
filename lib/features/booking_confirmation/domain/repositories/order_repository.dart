@@ -10,4 +10,6 @@ abstract class OrderRepository {
     required String razorpayPaymentId,
     required String razorpaySignature,
   });
+
+  Future<Either<Failure, void>> cancelPendingOrder({required int orderId});
 }

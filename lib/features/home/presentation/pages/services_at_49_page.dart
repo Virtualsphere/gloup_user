@@ -233,8 +233,7 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
           // ── "X Salons Available" status ──
           SliverToBoxAdapter(
             child: Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
               child: _buildStatusText(isDarkMode),
             ),
           ),
@@ -459,8 +458,8 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       height: 95,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingS, vertical: 8),
+        padding:
+            EdgeInsets.symmetric(horizontal: AppSizes.paddingS, vertical: 8),
         itemCount: _categories.length,
         itemBuilder: (context, index) {
           final category = _categories[index];
@@ -543,8 +542,8 @@ class _ServicesAt49PageState extends State<ServicesAt49Page> {
       height: 105,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingS, vertical: 8),
+        padding:
+            EdgeInsets.symmetric(horizontal: AppSizes.paddingS, vertical: 8),
         itemCount: 6,
         itemBuilder: (context, index) {
           return Container(
