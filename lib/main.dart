@@ -22,6 +22,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:app_links/app_links.dart';
 import 'package:tressy/core/router/route_names.dart';
 
+bool _isSupportedAppLink(Uri uri) {
+  final path = uri.path.endsWith('/') && uri.path.length > 1
+      ? uri.path.substring(0, uri.path.length - 1)
+      : uri.path;
+
+  return (uri.host == 'www.gloup.in' && path == '/open') ||
+      (uri.host == 'api.v1.gloup.in' && path == '/download');
+}
+
+void _handleAppLink(Uri uri) {
+  debugPrint('App Link Received: $uri');
+  if (_isSupportedAppLink(uri)) {
+    AppRouter.router.go(RouteNames.home);
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -46,14 +62,24 @@ void main() async {
 
   // Initialize App Links listener
   final appLinks = AppLinks();
-  appLinks.uriLinkStream.listen((uri) {
-    debugPrint('App Link Received: $uri');
-    if (uri.path == "/open" || uri.path == "/open/") {
-      AppRouter.router.go(RouteNames.home);
-    }
-  });
+  Uri? initialAppLink;
+  try {
+    initialAppLink = await appLinks.getInitialLink();
+    appLinks.uriLinkStream.listen(
+      _handleAppLink,
+      onError: (error) => debugPrint('App Link Error: $error'),
+    );
+  } catch (error) {
+    debugPrint('Failed to initialize app links: $error');
+  }
 
   runApp(const MyApp());
+
+  if (initialAppLink != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleAppLink(initialAppLink!);
+    });
+  }
 }
 
 class MyApp extends StatelessWidget {
