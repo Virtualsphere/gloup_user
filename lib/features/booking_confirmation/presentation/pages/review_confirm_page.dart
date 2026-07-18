@@ -36,6 +36,7 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/coupon
 import 'package:tressy/features/booking_confirmation/presentation/widgets/coupons_bottom_sheet.dart';
 import 'package:tressy/shared/widgets/coupon_applied_dialog.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/billing_summary_card.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/recommended_service_card.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
@@ -72,6 +73,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   String? _pendingOrderFingerprint;
   String? _lastCreateOrderFingerprint;
   CreateOrderRequest? _lastPaymentRequest;
+  BookingContactDetails? _contactDetails;
   late Razorpay _razorpay;
   late OrderBloc _orderBloc;
 
@@ -115,6 +117,17 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     return null;
   }
 
+  /// Contact details collected by the "Book Now" bottom sheet, carried
+  /// through the slot-booking flow inside [ReviewConfirmPage.bookingData].
+  BookingContactDetails? _contactFromBookingData() {
+    final name = widget.bookingData?['customerName'] as String?;
+    final phone = widget.bookingData?['customerPhone'] as String?;
+    final email = widget.bookingData?['customerEmail'] as String?;
+    if (name == null || phone == null || email == null) return null;
+
+    return BookingContactDetails(name: name, phone: phone, email: email);
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -138,7 +151,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       'description': 'Salon Booking Payment',
       'send_sms_hash': true,
       'prefill': {
-        'contact': '',
+        'contact': _contactDetails?.phone ?? '',
+        'email': _contactDetails?.email ?? '',
       },
       'theme': {'color': '#000000'},
     };
@@ -182,7 +196,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         request.services.map((service) => service['service_id']).join(',');
     return '${request.slotId}|$serviceIds|${request.finalAmount}|'
         '${request.couponCode ?? ''}|${request.walletAmountUsed}|'
-        '${request.bookingFor}|${request.guestId ?? ''}';
+        '${request.bookingFor}|${request.guestId ?? ''}|'
+        '${request.customerName}|${request.customerPhone}|'
+        '${request.customerEmail}';
   }
 
   void _retryPendingPayment(BuildContext context) {
@@ -1340,7 +1356,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                   onPressed: (orderState.isLoading ||
                           orderState.isVerifyingPayment)
                       ? null
-                      : () {
+                      : () async {
                           final allSelectedServices = [
                             ...((widget.bookingData!['selectedServices']
                                         as List?)
@@ -1361,6 +1377,25 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                           guestState.guests.length
                                   ? guestState.guests[selectedSomeoneElseIndex!]
                                   : null;
+
+                          // Contact details are collected via the bottom
+                          // sheet when the user taps "Book Now"; fall back
+                          // to showing it here only if they are missing.
+                          var contact = _contactFromBookingData();
+                          if (contact == null) {
+                            final profile = _profileFromState(
+                                context.read<ProfileBloc>().state);
+                            contact = await showBookingDetailsBottomSheet(
+                              context,
+                              initialName: profile?.fullName,
+                              initialPhone: (profile?.phone ?? 0) > 0
+                                  ? profile!.phone.toString()
+                                  : null,
+                              initialEmail: profile?.email,
+                            );
+                            if (contact == null || !context.mounted) return;
+                          }
+                          _contactDetails = contact;
 
                           final request = CreateOrderRequest(
                             bookingDate:
@@ -1383,6 +1418,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             couponCode: selectedCouponCode,
                             walletAmountUsed: gloupCash,
                             finalAmount: finalTotal,
+                            customerName: contact.name,
+                            customerPhone: contact.phone,
+                            customerEmail: contact.email,
                           );
 
                           _initiateOrResumePayment(context, request);

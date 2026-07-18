@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/create_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/verify_payment_usecase.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/order_bloc.dart';
@@ -15,13 +16,18 @@ class MockCreateOrderUseCase extends Mock implements CreateOrderUseCase {}
 
 class MockVerifyPaymentUseCase extends Mock implements VerifyPaymentUseCase {}
 
+class MockCancelPendingOrderUseCase extends Mock
+    implements CancelPendingOrderUseCase {}
+
 void main() {
   late MockCreateOrderUseCase createOrderUseCase;
   late MockVerifyPaymentUseCase verifyPaymentUseCase;
+  late MockCancelPendingOrderUseCase cancelPendingOrderUseCase;
 
   OrderBloc buildBloc() => OrderBloc(
         createOrderUseCase: createOrderUseCase,
         verifyPaymentUseCase: verifyPaymentUseCase,
+        cancelPendingOrderUseCase: cancelPendingOrderUseCase,
       );
 
   setUpAll(() {
@@ -31,6 +37,7 @@ void main() {
   setUp(() {
     createOrderUseCase = MockCreateOrderUseCase();
     verifyPaymentUseCase = MockVerifyPaymentUseCase();
+    cancelPendingOrderUseCase = MockCancelPendingOrderUseCase();
   });
 
   group('OrderBloc', () {

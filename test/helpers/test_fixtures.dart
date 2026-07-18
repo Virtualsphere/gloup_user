@@ -63,4 +63,7 @@ const testCreateOrderRequest = CreateOrderRequest(
   serviceDiscount: 0,
   walletAmountUsed: 0,
   finalAmount: 499,
+  customerName: 'Test User',
+  customerPhone: '9876543210',
+  customerEmail: 'test@example.com',
 );

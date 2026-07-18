@@ -19,6 +19,9 @@ class CreateOrderRequest {
   final String? couponCode;
   final double walletAmountUsed;
   final double finalAmount;
+  final String customerName;
+  final String customerPhone;
+  final String customerEmail;
 
   const CreateOrderRequest({
     required this.bookingDate,
@@ -38,6 +41,9 @@ class CreateOrderRequest {
     this.couponCode,
     required this.walletAmountUsed,
     required this.finalAmount,
+    required this.customerName,
+    required this.customerPhone,
+    required this.customerEmail,
   });
 
   Map<String, dynamic> toJson() {
@@ -58,6 +64,9 @@ class CreateOrderRequest {
       'discount_id': couponId,
       'wallet_amount_used': walletAmountUsed,
       'is_wallet': walletAmountUsed > 0,
+      'customer_name': customerName,
+      'customer_phone': customerPhone,
+      'customer_email': customerEmail,
     };
 
     if (guestId != null) data['guest_id'] = guestId;

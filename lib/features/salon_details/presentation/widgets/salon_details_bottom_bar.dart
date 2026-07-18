@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_state.dart';
@@ -34,6 +38,14 @@ class SalonDetailsBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _buildBottomNavBar(context, isDarkMode);
+  }
+
+  ProfileEntity? _profileFromState(ProfileState state) {
+    if (state is ProfileLoaded) return state.profile;
+    if (state is ProfileUpdating) return state.profile;
+    if (state is ProfileUpdateSuccess) return state.profile;
+    if (state is ProfileUpdateFailure) return state.profile;
+    return null;
   }
 
   Widget _buildBottomNavBar(BuildContext context, bool isDarkMode) {
@@ -102,8 +114,25 @@ class SalonDetailsBottomBar extends StatelessWidget {
                       width: 150,
                       child: PrimaryButton(
                         text: 'Book Now',
-                        onPressed: () {
+                        onPressed: () async {
+                          // Collect the booker's contact details up front,
+                          // prefilled from the profile when available.
+                          final profile = _profileFromState(
+                              context.read<ProfileBloc>().state);
+                          final contact = await showBookingDetailsBottomSheet(
+                            context,
+                            initialName: profile?.fullName,
+                            initialPhone: (profile?.phone ?? 0) > 0
+                                ? profile!.phone.toString()
+                                : null,
+                            initialEmail: profile?.email,
+                          );
+                          if (contact == null || !context.mounted) return;
+
                           final salonData = {
+                            'customerName': contact.name,
+                            'customerPhone': contact.phone,
+                            'customerEmail': contact.email,
                             'salonId': salonId,
                             'salonName': state.salonDetail?.name,
                             'salonImage':
