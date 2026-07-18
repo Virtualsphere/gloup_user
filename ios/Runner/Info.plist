@@ -51,6 +51,9 @@
 		<!-- Firebase -->
 		<key>FirebaseMessagingAutoInitEnabled</key>
 		<false/>
+		<!-- Disable Flutter's automatic deep-link routing; links just open the app -->
+		<key>FlutterDeepLinkingEnabled</key>
+		<false/>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>sms</string>
