@@ -485,8 +485,8 @@
     "semantic_hash": "f9129ac11a8621ebcd723be3910dc269"
   },
   "lib/features/booking_confirmation/presentation/pages/review_confirm_page.dart": {
-    "mtime": 1785089179.5440395,
-    "ast_hash": "86bd667d468ed4c1b49397a1746f2377",
+    "mtime": 1785077656.6395435,
+    "ast_hash": "119d6258c18797276135176e07592e81",
     "semantic_hash": ""
   },
   "lib/features/booking_confirmation/presentation/widgets/billing_summary_card.dart": {
@@ -525,8 +525,8 @@
     "semantic_hash": "2b706b01ef7082fe4ad9e47808cc5a15"
   },
   "lib/features/booking_confirmation/presentation/widgets/selected_services_card.dart": {
-    "mtime": 1785089213.8493514,
-    "ast_hash": "25a155c24085fd1c3ce4ff4650a227f7",
+    "mtime": 1784449041.4468591,
+    "ast_hash": "0f8b7db7ca2b246a8e2da30911b44140",
     "semantic_hash": ""
   },
   "lib/features/bookings/data/datasources/appointments_remote_datasource.dart": {
@@ -1045,9 +1045,9 @@
     "semantic_hash": "71f927350a475aa7fa8d336ad01788ac"
   },
   "lib/features/salon_details/data/models/salon_detail_model.dart": {
-    "mtime": 1785089196.928038,
-    "ast_hash": "8d847eb39db21870afdb83a6f66759f4",
-    "semantic_hash": ""
+    "mtime": 1784438708.3447504,
+    "ast_hash": "e8419faa2243b356e96124a6666ed35a",
+    "semantic_hash": "e8419faa2243b356e96124a6666ed35a"
   },
   "lib/features/salon_details/data/repositories/salon_detail_repository_impl.dart": {
     "mtime": 1784438708.3447504,
@@ -1125,9 +1125,9 @@
     "semantic_hash": "de07c891fb96986e1329ad791b5850bb"
   },
   "lib/features/salon_details/presentation/widgets/salon_details_bottom_bar.dart": {
-    "mtime": 1785089197.959505,
-    "ast_hash": "86b6171c65aaada5743e9b04f041940e",
-    "semantic_hash": ""
+    "mtime": 1784438708.3457503,
+    "ast_hash": "98ef16f575bfccc8cba472f96b2a5ccd",
+    "semantic_hash": "98ef16f575bfccc8cba472f96b2a5ccd"
   },
   "lib/features/salon_details/presentation/widgets/salon_details_sections.dart": {
     "mtime": 1784438708.3457503,
@@ -3050,13 +3050,13 @@
     "semantic_hash": ""
   },
   "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart": {
-    "mtime": 1785089160.8088136,
-    "ast_hash": "ddbb606df2a973130492cc50c68344a3",
+    "mtime": 1785077625.0455816,
+    "ast_hash": "f5bd191323f98629d14323d3baa4d9c1",
     "semantic_hash": ""
   },
   "test/features/booking_confirmation/domain/utils/booking_price_calculator_test.dart": {
-    "mtime": 1785089197.5447192,
-    "ast_hash": "d146ad742569d4dfcf5db57a7939f2f3",
+    "mtime": 1785077625.2235644,
+    "ast_hash": "f3ff8ac1763ee61ecac9745f3a78b2ca",
     "semantic_hash": ""
   }
 }

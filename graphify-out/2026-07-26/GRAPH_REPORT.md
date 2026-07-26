@@ -1,16 +1,16 @@
 # Graph Report - gloup_user  (2026-07-26)
 
 ## Corpus Check
-- 356 files · ~484,946 words
+- 356 files · ~484,576 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4581 nodes · 7236 edges · 210 communities (205 shown, 5 thin omitted)
+- 4579 nodes · 7233 edges · 214 communities (207 shown, 7 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9ab9e31f`
+- Built from commit: `19e202c4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -195,15 +195,19 @@
 - Community 177
 - Community 178
 - Community 179
+- Community 180
 - Community 181
 - Community 182
 - Community 183
 - Community 184
 - Community 185
+- Community 186
+- Community 187
 - Community 188
 - Community 189
 - Community 191
 - Community 192
+- Community 193
 - Community 195
 - Community 196
 - Community 198
@@ -234,21 +238,21 @@
 10. `HomeBloc` - 17 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `main` --calls--> `SendOtpEvent`  [EXTRACTED]
-  test/features/auth/login_page_test.dart → lib/features/auth/presentation/bloc/auth_event.dart
 - `MockAuthBloc` --implements--> `AuthBloc`  [EXTRACTED]
   test/features/auth/login_page_test.dart → lib/features/auth/presentation/bloc/auth_bloc.dart
+- `main` --calls--> `SendOtpEvent`  [EXTRACTED]
+  test/features/auth/auth_bloc_test.dart → lib/features/auth/presentation/bloc/auth_event.dart
+- `main` --calls--> `SendOtpEvent`  [EXTRACTED]
+  test/features/auth/login_page_test.dart → lib/features/auth/presentation/bloc/auth_event.dart
 - `MockCategoryBloc` --implements--> `CategoryBloc`  [EXTRACTED]
   test/helpers/widget_test_helpers.dart → lib/features/category/presentation/bloc/category_bloc.dart
 - `MockFavoritesBloc` --implements--> `FavoritesBloc`  [EXTRACTED]
   test/helpers/widget_test_helpers.dart → lib/features/favorites/presentation/bloc/favorites_bloc.dart
-- `MockHomeBloc` --implements--> `HomeBloc`  [EXTRACTED]
-  test/helpers/widget_test_helpers.dart → lib/features/home/presentation/bloc/home_bloc.dart
 
 ## Import Cycles
 - None detected.
 
-## Communities (210 total, 5 thin omitted)
+## Communities (214 total, 7 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -259,8 +263,8 @@ Cohesion: 0.02
 Nodes (83): accent, accentLight, AppColors, background, backgroundDark, black, border, borderColor (+75 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.04
-Nodes (72): DioClient, BookingRemoteDataSource, BookingRemoteDataSourceImpl, cancelPendingOrder, createOrder, dioClient, _handleDioException, verifyPayment (+64 more)
+Cohesion: 0.03
+Nodes (80): DioClient, BookingRemoteDataSource, BookingRemoteDataSourceImpl, cancelPendingOrder, createOrder, dioClient, _handleDioException, verifyPayment (+72 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.04
@@ -268,7 +272,7 @@ Nodes (56): AppIcons, arrowBack, bfButton, call, camera, cancel, cancelNotAllowe
 
 ### Community 4 - "Community 4"
 Cohesion: 0.03
-Nodes (79): IconData?, build, CountryCodeSelector, initialSelection, _guestCardShimmer, guestListShimmer, GuestShimmers, build (+71 more)
+Nodes (75): build, CountryCodeSelector, initialSelection, _guestCardShimmer, guestListShimmer, GuestShimmers, build, _buildAddMoreService (+67 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.04
@@ -283,12 +287,12 @@ Cohesion: 0.04
 Nodes (46): addGuest, ApiRoutes, appleLogin, bannerImageBaseUrl, baseUrl, cancelPendingOrder, categoryImageBaseUrl, createOrder (+38 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.08
-Nodes (25): fromJson, toEntity, toJson, addGuest, getAllGuests, GuestRepositoryImpl, networkInfo, remoteDataSource (+17 more)
+Cohesion: 0.05
+Nodes (51): noInternetConnectionMessage, addGuest, getAllGuests, GuestRepositoryImpl, networkInfo, remoteDataSource, updateGuest, addGuest (+43 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.05
-Nodes (38): MapMarkersEntity, dataSource, getClusteredMarkers, getNearbySalons, networkInfo, SearchRepositoryImpl, searchSalons, getClusteredMarkers (+30 more)
+Nodes (39): MapMarkersEntity, dataSource, getClusteredMarkers, getNearbySalons, networkInfo, SearchRepositoryImpl, searchSalons, getClusteredMarkers (+31 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.05
@@ -300,15 +304,15 @@ Nodes (43): brushFill, brushHeight, build, _buildServiceList, cardBase, cardGrad
 
 ### Community 12 - "Community 12"
 Cohesion: 0.04
-Nodes (47): addedServices, availableCoupons, _billingBreakdown, bookingData, _buildGloupCashCheckbox, _buildRecommendedServices, _buildSectionTitle, _calculateAge (+39 more)
+Nodes (45): addedServices, availableCoupons, _billingBreakdown, bookingData, _buildGloupCashCheckbox, _buildRecommendedServices, _buildSectionTitle, _calculateAge (+37 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.05
-Nodes (41): @pragma, @visibleForTesting, FlutterLocalNotificationsPlugin, androidDetails, androidSettings, body, clearPendingLaunchMessage, darwinDetails (+33 more)
+Nodes (37): FlutterLocalNotificationsPlugin, androidDetails, androidSettings, body, clearPendingLaunchMessage, darwinDetails, darwinSettings, data (+29 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.06
-Nodes (32): Connectivity, Future, any, hasActiveConnectivity, connectivity, NetworkInfoImpl, isConnected, NetworkInfo (+24 more)
+Cohesion: 0.14
+Nodes (11): Connectivity, Future, any, hasActiveConnectivity, connectivity, NetworkInfoImpl, isConnected, NetworkInfo (+3 more)
 
 ### Community 15 - "Community 15"
 Cohesion: 0.05
@@ -327,8 +331,8 @@ Cohesion: 0.05
 Nodes (38): about, address, ambients, category, closingTime, discountPercentage, duration, gender (+30 more)
 
 ### Community 19 - "Community 19"
-Cohesion: 0.05
-Nodes (39): Dio, Interceptor, initializeDependencies, sl, AuthInterceptor, delete, _dio, _handleDioException (+31 more)
+Cohesion: 0.06
+Nodes (34): Interceptor, initializeDependencies, sl, AuthInterceptor, LoggerInterceptor, CategoryRepositoryImpl, dataSource, getCategories (+26 more)
 
 ### Community 20 - "Community 20"
 Cohesion: 0.05
@@ -336,11 +340,11 @@ Nodes (37): address, averageRating, basicInfo, bookedDate, bookingDate, category
 
 ### Community 21 - "Community 21"
 Cohesion: 0.11
-Nodes (19): authBloc, build, createState, dispose, _formKey, initState, _isLoading, LoginPage (+11 more)
+Nodes (18): authBloc, createState, dispose, _formKey, initState, _isLoading, LoginPage, _LoginPageContent (+10 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.09
-Nodes (36): getCarouselBannersUseCase, getPopularServicesUseCase, getSalonsUseCase, getTopSalonsUseCase, HomeBloc, _mapFailureToMessage, _onLoadAllHomeData, _onLoadCarouselBanners (+28 more)
+Cohesion: 0.10
+Nodes (34): getCarouselBannersUseCase, getPopularServicesUseCase, getSalonsUseCase, getTopSalonsUseCase, HomeBloc, _mapFailureToMessage, _onLoadAllHomeData, _onLoadCarouselBanners (+26 more)
 
 ### Community 23 - "Community 23"
 Cohesion: 0.06
@@ -348,11 +352,11 @@ Nodes (35): class, BookingContactDetails, _BookingDetailsBottomSheet, _BookingDe
 
 ### Community 24 - "Community 24"
 Cohesion: 0.03
-Nodes (79): @gloup, answer, build, children, company, email, emails, fontWeight (+71 more)
+Nodes (80): @gloup, FontWeight?, answer, build, children, company, email, emails (+72 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.08
-Nodes (35): int?, addGuestUseCase, getAllGuestsUseCase, GuestBloc, _onAddGuest, _onLoadGuests, _onSelectGuest, _onUpdateGuest (+27 more)
+Cohesion: 0.14
+Nodes (22): int?, GuestBloc, AddGuestEvent, age, gender, GuestEvent, guestId, index (+14 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.06
@@ -368,7 +372,7 @@ Nodes (32): ExploreBloc, getSalonsUseCase, _mapFailureToMessage, _onLoadSalons, 
 
 ### Community 29 - "Community 29"
 Cohesion: 0.06
-Nodes (33): build, _buildCategoriesRow, _buildCategoryShimmer, _buildFiltersRow, _buildSliverAppBar, _buildStatusText, _carouselImages, _categories (+25 more)
+Nodes (32): build, _buildCategoriesRow, _buildCategoryShimmer, _buildFiltersRow, _buildSliverAppBar, _buildStatusText, _carouselImages, _categories (+24 more)
 
 ### Community 30 - "Community 30"
 Cohesion: 0.06
@@ -376,7 +380,7 @@ Nodes (32): _accessTokenCacheReady, _cachedAccessToken, clearAll, clearTokens, g
 
 ### Community 31 - "Community 31"
 Cohesion: 0.09
-Nodes (25): getFavoritesUseCase, _mapFailureToMessage, _onLoadFavorites, _onToggleFavorite, toggleFavoriteUseCase, currentIsFavorite, FavoritesEvent, LoadFavoritesEvent (+17 more)
+Nodes (30): FavoritesBloc, getFavoritesUseCase, _mapFailureToMessage, _onLoadFavorites, _onToggleFavorite, toggleFavoriteUseCase, currentIsFavorite, FavoritesEvent (+22 more)
 
 ### Community 32 - "Community 32"
 Cohesion: 0.06
@@ -387,20 +391,20 @@ Cohesion: 0.06
 Nodes (32): age, _ageCtrl, build, controller, createState, dispose, _EditPersonBottomSheet, _EditPersonBottomSheetState (+24 more)
 
 ### Community 34 - "Community 34"
-Cohesion: 0.08
-Nodes (30): AnimationController, Cubit, SalonDetailsPageCubit, _bottomNavAnimation, _bottomNavController, build, _buildContent, createState (+22 more)
+Cohesion: 0.07
+Nodes (31): AnimationController, Cubit, SalonDetailsPageCubit, _bottomNavAnimation, _bottomNavController, build, _buildContent, createState (+23 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.26
-Nodes (11): authEntity, AuthFailure, AuthInitial, AuthLoading, AuthState, message, OtpSentSuccess, OtpVerifiedSuccess (+3 more)
+Cohesion: 0.20
+Nodes (18): AuthBloc, SendOtpEvent, authEntity, AuthFailure, AuthInitial, AuthLoading, AuthState, message (+10 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.06
 Nodes (31): build, _buildCurrentLocationCard, _buildLocationCard, _buildPredictionCard, createState, _currentArea, _currentCity, _currentFullAddress (+23 more)
 
 ### Community 37 - "Community 37"
-Cohesion: 0.17
-Nodes (11): deleteProfileUseCase, getProfileUseCase, logoutUseCase, _mapFailureToMessage, _onDeleteProfile, _onGetProfile, _onLogout, _onRefreshProfile (+3 more)
+Cohesion: 0.08
+Nodes (26): ../../helpers/test_fixtures.dart, DeleteProfileUseCase, GetProfileUseCase, LogoutUseCase, UpdateProfileUseCase, deleteProfileUseCase, getProfileUseCase, logoutUseCase (+18 more)
 
 ### Community 38 - "Community 38"
 Cohesion: 0.10
@@ -415,8 +419,8 @@ Cohesion: 0.06
 Nodes (30): AppRouter, build, error, _ErrorPage, router, _routes, package:tressy/features/auth/presentation/pages/otp_page.dart, package:tressy/features/booking_confirmation/presentation/pages/review_confirm_page.dart (+22 more)
 
 ### Community 41 - "Community 41"
-Cohesion: 0.06
-Nodes (30): build, _buildSearchInput, categoryIndex, categoryName, _CategorySectionDelegate, createState, _debounceTimer, didChangeDependencies (+22 more)
+Cohesion: 0.07
+Nodes (29): build, _buildSearchInput, categoryIndex, categoryName, _CategorySectionDelegate, createState, _debounceTimer, dispose (+21 more)
 
 ### Community 42 - "Community 42"
 Cohesion: 0.07
@@ -432,11 +436,11 @@ Nodes (29): BuildContext, Color get, ColorScheme get, appSurface, canPop, colorS
 
 ### Community 45 - "Community 45"
 Cohesion: 0.07
-Nodes (28): CameraPosition?, DraggableScrollableController, GoogleMapController?, build, createState, _debounceTimer, dispose, _draggableController (+20 more)
+Nodes (27): CameraPosition?, DraggableScrollableController, GoogleMapController?, build, createState, _debounceTimer, dispose, _draggableController (+19 more)
 
 ### Community 46 - "Community 46"
-Cohesion: 0.07
-Nodes (29): HomeBloc get, createState, _currentCarouselIndex, didChangeDependencies, dispose, _getCurrentLocation, _homeBloc, _homeDataRequested (+21 more)
+Cohesion: 0.06
+Nodes (36): ChangeNotifier, HomeBloc get, LocationProvider, didChangeDependencies, createState, _currentCarouselIndex, didChangeDependencies, dispose (+28 more)
 
 ### Community 47 - "Community 47"
 Cohesion: 0.07
@@ -444,7 +448,7 @@ Nodes (29): bookings, cancellation, category, contact, devInfo, editProfile, exp
 
 ### Community 48 - "Community 48"
 Cohesion: 0.09
-Nodes (26): class MockCancelPendingOrderUseCase extends, CancelPendingOrderUseCase, CreateOrderUseCase, VerifyPaymentUseCase, cancelPendingOrderUseCase, createOrderUseCase, _onCreateOrder, _onPaymentFailed (+18 more)
+Nodes (27): class MockCancelPendingOrderUseCase extends, CancelPendingOrderUseCase, CreateOrderUseCase, VerifyPaymentUseCase, cancelPendingOrderUseCase, createOrderUseCase, _onCreateOrder, _onPaymentFailed (+19 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.14
@@ -472,19 +476,19 @@ Nodes (27): addressLine1, addressLine2, amount, AppointmentItemModel, Appointmen
 
 ### Community 55 - "Community 55"
 Cohesion: 0.05
-Nodes (35): _ApplyToggle, build, CouponCard, couponCode, disabledReason, discountAmount, discountType, isEnabled (+27 more)
+Nodes (33): age, build, gender, isSelected, name, onEdit, onTap, ProfileCard (+25 more)
 
 ### Community 56 - "Community 56"
-Cohesion: 0.18
-Nodes (10): copyWithError, copyWithFavoriteToggled, copyWithLoading, copyWithSuccess, errorMessage, initial, isFavorite, isLoading (+2 more)
+Cohesion: 0.09
+Nodes (21): SalonDetailEntity, copyWithError, copyWithFavoriteToggled, copyWithLoading, copyWithSuccess, errorMessage, initial, isFavorite (+13 more)
 
 ### Community 57 - "Community 57"
 Cohesion: 0.07
-Nodes (27): address, build, _buildContent, _buildImageCarousel, _buildSalonInfo, categories, createState, _currentImageIndex (+19 more)
+Nodes (29): address, build, _buildContent, _buildImageCarousel, _buildSalonInfo, categories, createState, _currentImageIndex (+21 more)
 
 ### Community 58 - "Community 58"
-Cohesion: 0.19
-Nodes (15): SlotBloc, ClearSelectedSlotEvent, date, LoadSlotsEvent, props, salonId, SelectSlotEvent, SlotEvent (+7 more)
+Cohesion: 0.15
+Nodes (11): IconData?, AmbientCard, build, icon, label, actionLabel, build, EmptyWidget (+3 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.08
@@ -495,8 +499,8 @@ Cohesion: 0.08
 Nodes (26): build, HomeProfileAvatar, amount, createState, icon, isDarkMode, isViewWalletButton, item (+18 more)
 
 ### Community 61 - "Community 61"
-Cohesion: 0.05
-Nodes (41): build, _buildIndicator, createState, _currentPage, dispose, initState, _nextPage, _onboardingBackgrounds (+33 more)
+Cohesion: 0.15
+Nodes (12): build, icon, onTap, ProfileListTile, Support, package:tressy/core/extensions/string_extensions.dart, RouteNames.cancellation, RouteNames.contact (+4 more)
 
 ### Community 62 - "Community 62"
 Cohesion: 0.08
@@ -507,16 +511,16 @@ Cohesion: 0.10
 Nodes (20): FlPluginRegistry, GApplication, gboolean, gchar, GObject, GtkApplication, fl_register_plugins(), main() (+12 more)
 
 ### Community 64 - "Community 64"
-Cohesion: 0.12
-Nodes (15): fromJson, toJson, AuthRepositoryImpl, appleLogin, AuthRepository, googleLogin, sendOtp, verifyOtp (+7 more)
+Cohesion: 0.06
+Nodes (31): appleLogin, AuthRemoteDataSource, AuthRemoteDataSourceImpl, dioClient, googleLogin, _handleDioException, sendOtp, verifyOtp (+23 more)
 
 ### Community 65 - "Community 65"
-Cohesion: 0.12
-Nodes (16): _appointmentsBloc, _bannerPlaceholder, _buildBookingCard, _buildContent, _buildList, createState, dispose, _formatDate (+8 more)
+Cohesion: 0.08
+Nodes (30): Bloc, AppointmentsBloc, getAllAppointmentsUseCase, _onLoadAppointments, AppointmentsEvent, LoadAppointmentsEvent, _appointmentsBloc, _bannerPlaceholder (+22 more)
 
 ### Community 66 - "Community 66"
-Cohesion: 0.05
-Nodes (41): ../../helpers/test_fixtures.dart, DeleteProfileUseCase, GetProfileUseCase, LogoutUseCase, UpdateProfileUseCase, Mock, package:bloc_test/bloc_test.dart, package:mocktail/mocktail.dart (+33 more)
+Cohesion: 0.09
+Nodes (24): Mock, MockAuthBloc, bloc, buildHomePageTestHarness, buildTestMaterialApp, category, _defaultCategoryBloc, _defaultFavoritesBloc (+16 more)
 
 ### Community 67 - "Community 67"
 Cohesion: 0.09
@@ -540,15 +544,15 @@ Nodes (20): build, _buildLoginPrompt, buttonText, _checkAuthentication, child, c
 
 ### Community 72 - "Community 72"
 Cohesion: 0.08
-Nodes (23): address, build, _buildImageCarousel, _buildRatingAndDistance, _buildSalonInfo, categories, createState, _currentImageIndex (+15 more)
+Nodes (25): address, build, _buildImageCarousel, _buildRatingAndDistance, _buildSalonInfo, categories, createState, _currentImageIndex (+17 more)
 
 ### Community 73 - "Community 73"
-Cohesion: 0.04
-Nodes (45): Color, FormFieldValidator, AppleSignInButton, build, isLoading, onPressed, text, build (+37 more)
+Cohesion: 0.07
+Nodes (27): Color, AppleSignInButton, build, isLoading, onPressed, text, build, GoogleSignInButton (+19 more)
 
 ### Community 74 - "Community 74"
-Cohesion: 0.09
-Nodes (22): FormState, amountController, amounts, build, capitalizeWords, cleanDateTime, createState, DepositBottomSheet (+14 more)
+Cohesion: 0.08
+Nodes (28): amountController, amounts, build, capitalizeWords, cleanDateTime, createState, DepositBottomSheet, _DepositBottomSheetState (+20 more)
 
 ### Community 75 - "Community 75"
 Cohesion: 0.06
@@ -556,15 +560,15 @@ Nodes (31): AppTextStyle, BodyTextColors, BodyTextHint, build, color, decoration
 
 ### Community 76 - "Community 76"
 Cohesion: 0.14
-Nodes (24): LocationProvider, CategoryBloc, CategoryEvent, categoryId, gender, isLoadMore, latitude, limit (+16 more)
+Nodes (23): CategoryBloc, CategoryEvent, categoryId, gender, isLoadMore, latitude, limit, LoadCategoriesEvent (+15 more)
 
 ### Community 77 - "Community 77"
-Cohesion: 0.07
-Nodes (26): id, imageUrl, label, props, CouponModel, code, CouponEntity, discountAmount (+18 more)
+Cohesion: 0.10
+Nodes (19): id, imageUrl, label, props, copyWith, currentPage, error, ExploreState (+11 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.06
-Nodes (44): CustomPainter, CouponBloc, getActiveCouponsUseCase, _mapFailureToMessage, _onGetActiveCoupons, _onRefreshCoupons, CouponEvent, GetActiveCouponsEvent (+36 more)
+Cohesion: 0.14
+Nodes (20): CouponBloc, getActiveCouponsUseCase, _mapFailureToMessage, _onGetActiveCoupons, _onRefreshCoupons, CouponEvent, GetActiveCouponsEvent, props (+12 more)
 
 ### Community 79 - "Community 79"
 Cohesion: 0.10
@@ -575,40 +579,40 @@ Cohesion: 0.13
 Nodes (14): activeServiceCategoryIndex, build, _buildDiscountSeal, _buildServiceCardWithCallback, _buildServiceGenderIcon, _buildServicesSection, _formatDiscountLabel, isDarkMode (+6 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.11
-Nodes (17): bookingData, _buildBottomBar, _buildEmptyState, _buildErrorState, _cachedSlotInterval, createState, _formatTime, _formatTimeRange (+9 more)
+Cohesion: 0.07
+Nodes (39): getSlotStatusUseCase, _onClearSelectedSlot, _onLoadSlots, _onSelectSlot, SlotBloc, ClearSelectedSlotEvent, date, LoadSlotsEvent (+31 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.08
 Nodes (23): AddPersonResult, age, _ageCtrl, build, controller, createState, dispose, _formKey (+15 more)
 
 ### Community 83 - "Community 83"
-Cohesion: 0.29
-Nodes (9): ChangeNotifier, ThemeProvider, build, ThemeImageToggle, build, ThemeToggleButton, package:flutter_svg/svg.dart, package:provider/provider.dart (+1 more)
+Cohesion: 0.09
+Nodes (22): CustomPainter, FormState, borderColor, borderRadius, build, child, _createDashedPath, createState (+14 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.22
-Nodes (13): _requestProfileIfNeeded, _requestProfileIfNeeded, GetProfileEvent, LogoutEvent, profile, ProfileEvent, props, RefreshProfileEvent (+5 more)
+Cohesion: 0.28
+Nodes (15): _requestProfileIfNeeded, _requestProfileIfNeeded, ProfileBloc, DeleteProfileEvent, GetProfileEvent, LogoutEvent, profile, ProfileEvent (+7 more)
 
 ### Community 85 - "Community 85"
-Cohesion: 0.06
-Nodes (38): getAllAppointments, CategoryRepositoryImpl, dataSource, getCategories, getCategorySalons, networkInfo, CategoryRepository, getCategories (+30 more)
+Cohesion: 0.11
+Nodes (18): FavoritesRepositoryImpl, getFavorites, networkInfo, remoteDataSource, toggleFavorite, FavoriteEntity, FavoritesRepository, getFavorites (+10 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.10
-Nodes (20): carouselBanners, carouselError, copyWith, hasAllData, hasMoreRecommended, isAnyLoading, isCarouselLoading, isLoadingMoreRecommended (+12 more)
+Cohesion: 0.09
+Nodes (21): carouselBanners, carouselError, copyWith, hasAllData, hasMoreRecommended, HomeState, isAnyLoading, isCarouselLoading (+13 more)
 
 ### Community 87 - "Community 87"
 Cohesion: 0.10
 Nodes (20): GenderTab, build, createState, _fetchCategories, initState, _isLoading, _isMenSelected, _mapItems (+12 more)
 
 ### Community 88 - "Community 88"
-Cohesion: 0.10
-Nodes (20): BookingPriceBreakdown, BookingPriceCalculator, couponDiscount, defaultGstPercentage, finalTotal, fromServices, gstAmount, gstPercentage (+12 more)
+Cohesion: 0.11
+Nodes (18): BookingPriceBreakdown, BookingPriceCalculator, couponDiscount, defaultGstPercentage, finalTotal, fromServices, gstAmount, gstPercentage (+10 more)
 
 ### Community 89 - "Community 89"
-Cohesion: 0.15
-Nodes (12): int get, GuestModel, age, gender, GuestEntity, guestId, hashCode, isActive (+4 more)
+Cohesion: 0.18
+Nodes (10): int get, age, gender, guestId, hashCode, isActive, name, operator (+2 more)
 
 ### Community 90 - "Community 90"
 Cohesion: 0.10
@@ -623,52 +627,52 @@ Cohesion: 0.10
 Nodes (20): addSuccessMessage, copyWithAdding, copyWithAddSuccess, copyWithError, copyWithLoading, copyWithSelectedGuest, copyWithSuccess, copyWithUpdateSuccess (+12 more)
 
 ### Community 93 - "Community 93"
-Cohesion: 0.07
-Nodes (31): favorites, FavoritesListModel, fromJson, message, status, success, toJson, dioClient (+23 more)
+Cohesion: 0.09
+Nodes (23): favorites, FavoritesListModel, fromJson, message, status, success, toJson, dioClient (+15 more)
 
 ### Community 94 - "Community 94"
-Cohesion: 0.40
-Nodes (5): _navigateToLogin, _navigateToNextScreen, main, RouteNames.login, RouteNames.onboarding
+Cohesion: 0.11
+Nodes (19): build, _buildIndicator, createState, _currentPage, dispose, initState, _navigateToLogin, _nextPage (+11 more)
 
 ### Community 95 - "Community 95"
 Cohesion: 0.10
 Nodes (20): addressLine1, addressLine2, city, cretaedAt, district, id, landmark, latitude (+12 more)
 
 ### Community 96 - "Community 96"
-Cohesion: 0.07
-Nodes (27): build, Cancellation, _CancellationContent, _launchWebsite, _WebsiteLinkText, build, Contact, _launchURL (+19 more)
+Cohesion: 0.09
+Nodes (23): _bookingCardShimmer, bookingListShimmer, BookingsShimmer, _serviceRowShimmer, _shimmerBox, _shimmerPill, build, Cancellation (+15 more)
 
 ### Community 97 - "Community 97"
-Cohesion: 0.18
-Nodes (16): ApplyFiltersEvent, categoryId, ClearSearchEvent, gender, latitude, limit, LoadMoreSalonsEvent, LoadNearbySalonsEvent (+8 more)
+Cohesion: 0.16
+Nodes (18): ApplyFiltersEvent, categoryId, ClearSearchEvent, gender, latitude, limit, LoadMoreSalonsEvent, LoadNearbySalonsEvent (+10 more)
 
 ### Community 98 - "Community 98"
 Cohesion: 0.11
-Nodes (18): FontWeight?, backgroundColor, borderRadius, build, disabledBackgroundColor, disabledTextColor, fontSize, fontWeight (+10 more)
+Nodes (17): backgroundColor, borderRadius, build, disabledBackgroundColor, disabledTextColor, fontSize, fontWeight, height (+9 more)
 
 ### Community 99 - "Community 99"
-Cohesion: 0.10
-Nodes (19): build, _countdownTimer, createState, dispose, initState, _isLoading, _isOtpComplete, _isResending (+11 more)
+Cohesion: 0.11
+Nodes (18): _countdownTimer, createState, dispose, _handleVerifyOtp, initState, _isLoading, _isOtpComplete, _isResending (+10 more)
 
 ### Community 100 - "Community 100"
-Cohesion: 0.09
-Nodes (20): SalonDetailEntity, getSalonDetails, build, _buildCarousel, carouselHeight, currentImageIndex, isDarkMode, isFullyExpanded (+12 more)
+Cohesion: 0.11
+Nodes (17): build, isCollapsed, isDarkMode, onShare, SalonDetailsActionBar, build, _buildCarousel, carouselHeight (+9 more)
 
 ### Community 101 - "Community 101"
 Cohesion: 0.07
-Nodes (27): getCategoriesUseCase, getSalonsUseCase, _mapFailureToMessage, _onLoadCategories, _onLoadCategorySalons, _onRefreshCategories, build, _buildCategory (+19 more)
+Nodes (26): getCategoriesUseCase, getSalonsUseCase, _mapFailureToMessage, _onLoadCategories, _onLoadCategorySalons, _onRefreshCategories, build, _buildCategory (+18 more)
 
 ### Community 102 - "Community 102"
 Cohesion: 0.11
 Nodes (18): getNearbySalonsUseCase, _lastCategoryId, _lastGender, _lastLatitude, _lastLimit, _lastLongitude, _lastQuery, _mapFailureToMessage (+10 more)
 
 ### Community 103 - "Community 103"
-Cohesion: 0.14
-Nodes (21): SearchBloc, categoryId, copyWith, currentPage, currentSalons, gender, hasMore, isSearchActive (+13 more)
+Cohesion: 0.15
+Nodes (20): SearchBloc, categoryId, copyWith, currentPage, currentSalons, gender, hasMore, isSearchActive (+12 more)
 
 ### Community 104 - "Community 104"
 Cohesion: 0.11
-Nodes (17): build, _countdownTimer, createState, dispose, _formKey, _fullPhoneNumber, _goBackToPhone, _isLoading (+9 more)
+Nodes (18): build, _countdownTimer, createState, dispose, _formKey, _fullPhoneNumber, _goBackToPhone, _isLoading (+10 more)
 
 ### Community 105 - "Community 105"
 Cohesion: 0.11
@@ -687,8 +691,8 @@ Cohesion: 0.12
 Nodes (17): DateTime, build, createState, currentMonth, dates, dispose, _generateDates, initState (+9 more)
 
 ### Community 109 - "Community 109"
-Cohesion: 0.12
-Nodes (16): _categoryExtra, extra, _firstNonEmpty, location, navigateFromData, navigateFromMessage, _NotificationRouteKind, NotificationRoutes (+8 more)
+Cohesion: 0.11
+Nodes (17): _categoryExtra, extra, _firstNonEmpty, location, navigateFromData, navigateFromMessage, _NotificationRouteKind, NotificationRoutes (+9 more)
 
 ### Community 110 - "Community 110"
 Cohesion: 0.09
@@ -719,28 +723,28 @@ Cohesion: 0.12
 Nodes (16): build, couponCode, CouponData, coupons, _CouponsBottomSheet, _CouponsBottomSheetState, createState, discountAmount (+8 more)
 
 ### Community 117 - "Community 117"
-Cohesion: 0.18
-Nodes (10): double?, build, distanceKm, isDarkMode, locationLabel, SalonLocationRow, showDistance, useTwoLines (+2 more)
+Cohesion: 0.15
+Nodes (12): addGuestUseCase, getAllGuestsUseCase, _onAddGuest, _onLoadGuests, _onSelectGuest, _onUpdateGuest, updateGuestUseCase, package:tressy/features/booking_confirmation/domain/usecases/add_guest_usecase.dart (+4 more)
 
 ### Community 118 - "Community 118"
-Cohesion: 0.23
-Nodes (19): AuthBloc, AppleSignInEvent, AuthEvent, GoogleSignInEvent, otp, phone, props, ResetAuthEvent (+11 more)
+Cohesion: 0.31
+Nodes (10): AppleSignInEvent, AuthEvent, GoogleSignInEvent, otp, phone, props, ResetAuthEvent, VerifyOtpEvent (+2 more)
 
 ### Community 119 - "Community 119"
 Cohesion: 0.12
 Nodes (16): copyWith, errorMessage, favoritesList, FavoritesListStatus, FavoritesState, FavoritesStatus, isFavorite, lastToggledStoreId (+8 more)
 
 ### Community 120 - "Community 120"
-Cohesion: 0.11
-Nodes (17): address, categories, distance, id, images, imageUrl, isFavorite, isPremium (+9 more)
+Cohesion: 0.12
+Nodes (16): address, categories, distance, id, images, imageUrl, isFavorite, isPremium (+8 more)
 
 ### Community 121 - "Community 121"
-Cohesion: 0.06
-Nodes (28): ImageType, ServiceStatus, build, buildServiceChip, createState, deleteOnTap, dummyReviews, formatDateTime (+20 more)
+Cohesion: 0.07
+Nodes (31): bool isBackButton, isClearButton,, ThemeProvider, build, buildServiceChip, createState, deleteOnTap, dummyReviews, formatDateTime (+23 more)
 
 ### Community 122 - "Community 122"
-Cohesion: 0.25
-Nodes (17): ProfileBloc, message, profile, ProfileDeleted, ProfileDeleting, ProfileError, ProfileFailure, ProfileInitial (+9 more)
+Cohesion: 0.18
+Nodes (18): ProfileModel, ProfileEntity, message, profile, ProfileDeleted, ProfileDeleting, ProfileError, ProfileFailure (+10 more)
 
 ### Community 123 - "Community 123"
 Cohesion: 0.12
@@ -751,24 +755,24 @@ Cohesion: 0.12
 Nodes (16): address, categories, displayAddress, distance, id, images, isFavorite, isPremium (+8 more)
 
 ### Community 125 - "Community 125"
-Cohesion: 0.11
-Nodes (17): build, _buildCategoryBadges, _buildLanguageBadges, categories, chipFontSize, fallbackCategories, fallbackLanguages, languageCodes (+9 more)
+Cohesion: 0.12
+Nodes (16): build, _buildCategoryBadges, _buildLanguageBadges, categories, chipFontSize, fallbackCategories, fallbackLanguages, languageCodes (+8 more)
 
 ### Community 126 - "Community 126"
-Cohesion: 0.15
-Nodes (12): dataSource, deleteProfile, getProfile, logout, networkInfo, ProfileRepositoryImpl, updateProfile, ProfileRepository (+4 more)
+Cohesion: 0.12
+Nodes (17): dataSource, deleteProfile, getProfile, logout, networkInfo, ProfileRepositoryImpl, updateProfile, deleteProfile (+9 more)
 
 ### Community 127 - "Community 127"
-Cohesion: 0.07
-Nodes (26): bool isBackButton, isClearButton,, double containerHeight,, build, child, CircleBorderContainer, CircleContainer, createState, height (+18 more)
+Cohesion: 0.10
+Nodes (20): double containerHeight,, build, child, CircleBorderContainer, CircleContainer, createState, DevInfo, _DevInfoState (+12 more)
 
 ### Community 128 - "Community 128"
 Cohesion: 0.12
 Nodes (14): EdgeInsetsGeometry?, build, onSettingsTap, onTap, padding, SearchBarWidget, showBorder, build (+6 more)
 
 ### Community 129 - "Community 129"
-Cohesion: 0.10
-Nodes (18): double activeWidth, inactiveWidth,, CustomDialogues, showCancelDialogue, showLoadingDialogue, showLocationPermissionDialogue, showNotAllowedCancelDialogue, activeColor, borderHeight (+10 more)
+Cohesion: 0.06
+Nodes (31): double activeWidth, inactiveWidth,, ImageType, ServiceStatus, CustomDialogues, showCancelDialogue, showLoadingDialogue, showLocationPermissionDialogue, showNotAllowedCancelDialogue (+23 more)
 
 ### Community 130 - "Community 130"
 Cohesion: 0.12
@@ -783,8 +787,8 @@ Cohesion: 0.20
 Nodes (15): MapMarkersBloc, clusteringEnabled, clusters, MapMarkersEmpty, MapMarkersFailure, MapMarkersInitial, MapMarkersLoaded, MapMarkersLoading (+7 more)
 
 ### Community 133 - "Community 133"
-Cohesion: 0.22
-Nodes (9): appleLogin, AuthRemoteDataSource, AuthRemoteDataSourceImpl, dioClient, googleLogin, _handleDioException, sendOtp, verifyOtp (+1 more)
+Cohesion: 0.15
+Nodes (13): build, createState, dispose, initState, SplashPage, _SplashPageState, package:firebase_messaging/firebase_messaging.dart, package:tressy/core/constants/app_images.dart (+5 more)
 
 ### Community 134 - "Community 134"
 Cohesion: 0.13
@@ -799,8 +803,8 @@ Cohesion: 0.13
 Nodes (14): double get, calculateStarCounts, getUniqueCategories, sectionKeys, serviceCount, setActiveTab, setCollapsed, setImageIndex (+6 more)
 
 ### Community 137 - "Community 137"
-Cohesion: 0.20
-Nodes (9): build, cancelText, CustomAlertDialog, description, onCancel, onSubmit, show, submitText (+1 more)
+Cohesion: 0.13
+Nodes (14): FormFieldValidator, build, color, CustomCountryPicker, CustomDropDownField, dropdownValue, hintText, icon (+6 more)
 
 ### Community 138 - "Community 138"
 Cohesion: 0.13
@@ -811,8 +815,8 @@ Cohesion: 0.13
 Nodes (14): categories, CategoryState, CategoryStatus, copyWith, currentPage, errorMessage, hasMoreSalons, isLoadingMoreSalons (+6 more)
 
 ### Community 140 - "Community 140"
-Cohesion: 0.15
-Nodes (15): Bloc, getSalonDetailsUseCase, _onLoadSalonDetail, _onToggleFavorite, SalonDetailBloc, LoadSalonDetailEvent, props, SalonDetailEvent (+7 more)
+Cohesion: 0.16
+Nodes (14): getSalonDetailsUseCase, _onLoadSalonDetail, _onToggleFavorite, SalonDetailBloc, LoadSalonDetailEvent, props, SalonDetailEvent, salonId (+6 more)
 
 ### Community 141 - "Community 141"
 Cohesion: 0.16
@@ -823,8 +827,8 @@ Cohesion: 0.13
 Nodes (13): build, _buildCheckIcon, CouponAppliedDialog, couponCode, discountAmount, onContinue, show, build (+5 more)
 
 ### Community 143 - "Community 143"
-Cohesion: 0.07
-Nodes (25): BorderRadius?, BoxFit, apiCategories, build, CategoryImage, categoryName, _fallbackAsset, fit (+17 more)
+Cohesion: 0.05
+Nodes (35): BorderRadius?, BoxFit, double?, apiCategories, build, CategoryImage, categoryName, _fallbackAsset (+27 more)
 
 ### Community 144 - "Community 144"
 Cohesion: 0.14
@@ -835,20 +839,20 @@ Cohesion: 0.14
 Nodes (13): isDarkMode, isLightMode, _loadThemeMode, setDarkTheme, setLightTheme, setSystemTheme, setThemeMode, _themeKey (+5 more)
 
 ### Community 146 - "Community 146"
-Cohesion: 0.11
-Nodes (17): build, init, initialize, initializeApp, initializeDependencies, initializeLocalNotifications, package:app_links/app_links.dart, package:tressy/core/providers/location_provider.dart (+9 more)
+Cohesion: 0.14
+Nodes (13): build, init, initialize, initializeApp, initializeDependencies, initializeLocalNotifications, package:app_links/app_links.dart, package:tressy/core/providers/location_provider.dart (+5 more)
 
 ### Community 147 - "Community 147"
 Cohesion: 0.20
 Nodes (14): RECT, OnCreate, OnDestroy, HWND, Win32Window, child_content_, GetClientArea, OnCreate (+6 more)
 
 ### Community 148 - "Community 148"
-Cohesion: 0.22
-Nodes (8): age, build, gender, isSelected, name, onEdit, onTap, ProfileCard
+Cohesion: 0.20
+Nodes (9): Dio, delete, _dio, _handleDioException, patch, post, put, package:tressy/core/network/auth_interceptor.dart (+1 more)
 
 ### Community 149 - "Community 149"
-Cohesion: 0.12
-Nodes (15): class MockServiceDiscoveryDataSource extends, ../../helpers/widget_test_helpers.dart, ServiceDiscoveryDataSource, ServiceDiscoveryDataSourceImpl, package:flutter_test/flutter_test.dart, package:tressy/core/di/injection_container.dart, package:tressy/core/utils/access_token_migration.dart, package:tressy/features/home/data/datasources/service_discovery_datasource.dart (+7 more)
+Cohesion: 0.18
+Nodes (11): class MockServiceDiscoveryDataSource extends, ServiceDiscoveryDataSource, ServiceDiscoveryDataSourceImpl, package:tressy/core/di/injection_container.dart, package:tressy/features/home/data/datasources/service_discovery_datasource.dart, package:tressy/features/home/presentation/pages/home_page.dart, homeBloc, main (+3 more)
 
 ### Community 150 - "Community 150"
 Cohesion: 0.15
@@ -859,8 +863,8 @@ Cohesion: 0.24
 Nodes (9): SendOtpModel, VerifyOtpModel, AuthEntity, message, props, SendOtpEntity, status, token (+1 more)
 
 ### Community 152 - "Community 152"
-Cohesion: 0.31
-Nodes (8): AppointmentsBloc, AppointmentsEvent, LoadAppointmentsEvent, BookingsPage, _BookingsPageState, build, initState, SingleTickerProviderStateMixin
+Cohesion: 0.17
+Nodes (12): address, build, createState, initState, latitude, LocationWidget, _LocationWidgetState, longitude (+4 more)
 
 ### Community 153 - "Community 153"
 Cohesion: 0.17
@@ -876,7 +880,7 @@ Nodes (11): dart:ui, clearCache, _createClusterIcon, createClusterMarkers, creat
 
 ### Community 156 - "Community 156"
 Cohesion: 0.17
-Nodes (12): Equatable, CarouselBannerEntity, HomeState, DeleteProfile, DeleteProfileEntity, AmbientEntity, LocationEntity, ReviewEntity (+4 more)
+Nodes (12): Equatable, CarouselBannerEntity, SalonEntity, DeleteProfile, DeleteProfileEntity, AmbientEntity, LocationEntity, ReviewEntity (+4 more)
 
 ### Community 157 - "Community 157"
 Cohesion: 0.24
@@ -907,24 +911,24 @@ Cohesion: 0.22
 Nodes (8): CustomToast, show, showError, showInfo, showSuccess, showWarning, package:fluttertoast/fluttertoast.dart, package:google_fonts/google_fonts.dart
 
 ### Community 164 - "Community 164"
-Cohesion: 0.25
-Nodes (7): getSlotStatusUseCase, _onClearSelectedSlot, _onLoadSlots, _onSelectSlot, package:tressy/features/slot_booking/domain/usecases/get_slot_status_usecase.dart, package:tressy/features/slot_booking/presentation/bloc/slot_event.dart, package:tressy/features/slot_booking/presentation/bloc/slot_state.dart
+Cohesion: 0.15
+Nodes (10): ../../helpers/widget_test_helpers.dart, package:flutter_test/flutter_test.dart, package:tressy/core/constants/cancellation_policy.dart, package:tressy/core/utils/access_token_migration.dart, package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart, package:tressy/features/widgets/custom_dialogues.dart, main, main (+2 more)
 
 ### Community 165 - "Community 165"
 Cohesion: 0.31
 Nodes (10): AuthenticationFailure, AuthorizationFailure, CacheFailure, Failure, message, NetworkFailure, NotFoundFailure, props (+2 more)
 
 ### Community 166 - "Community 166"
-Cohesion: 0.18
-Nodes (10): apiImageFromJson, CategoryImageResolver, defaultAsset, isAssetPath, isSvgAsset, localAssetForCategory, _namesMatch, networkUrlForCategory (+2 more)
+Cohesion: 0.17
+Nodes (11): apiImageFromJson, CategoryImageResolver, defaultAsset, isAssetPath, isSvgAsset, localAssetForCategory, _namesMatch, networkUrlForCategory (+3 more)
 
 ### Community 167 - "Community 167"
-Cohesion: 0.11
-Nodes (27): ReviewConfirmPage, CategoryPage, FavoritesBloc, HomePage, FilterBadges, _FilterBadgesState, MyReviews, _MyReviewsState (+19 more)
+Cohesion: 0.33
+Nodes (6): ReviewConfirmPage, CategoryPage, HomePage, SettingsView, _AddPersonBottomSheet, StatefulWidget
 
 ### Community 168 - "Community 168"
-Cohesion: 0.25
-Nodes (7): AddRatingDialogue, reviewController, reviewRating, showAddReviewDialogue, package:tressy/features/widgets/custom_text_field.dart, package:tressy/shared/widgets/primary_button.dart, TextEditingController
+Cohesion: 0.18
+Nodes (10): _ApplyToggle, build, CouponCard, couponCode, disabledReason, discountAmount, discountType, isEnabled (+2 more)
 
 ### Community 169 - "Community 169"
 Cohesion: 0.25
@@ -935,8 +939,8 @@ Cohesion: 0.18
 Nodes (10): all, discountedAmount, fromJson, id, imageUrl, name, searchCategory, ServiceCategoryModel (+2 more)
 
 ### Community 171 - "Community 171"
-Cohesion: 0.29
-Nodes (6): _bookingCardShimmer, bookingListShimmer, BookingsShimmer, _serviceRowShimmer, _shimmerBox, _shimmerPill
+Cohesion: 0.20
+Nodes (10): build, _buildPill, createState, FilterBadges, _FilterBadgesState, _filters, initialGender, initState (+2 more)
 
 ### Community 172 - "Community 172"
 Cohesion: 0.18
@@ -947,12 +951,12 @@ Cohesion: 0.18
 Nodes (10): background_color, description, display, icons, name, orientation, prefer_related_applications, short_name (+2 more)
 
 ### Community 174 - "Community 174"
-Cohesion: 0.29
-Nodes (6): build, isCollapsed, isDarkMode, onShare, SalonDetailsActionBar, package:tressy/core/constants/salon_detail_design_tokens.dart
+Cohesion: 0.25
+Nodes (7): CouponModel, code, CouponEntity, discountAmount, discountType, id, props
 
 ### Community 175 - "Community 175"
-Cohesion: 0.33
-Nodes (5): getAllAppointmentsUseCase, _onLoadAppointments, package:tressy/features/bookings/domain/usecases/get_all_appointments_usecase.dart, package:tressy/features/bookings/presentation/bloc/appointments_event.dart, package:tressy/features/bookings/presentation/bloc/appointments_state.dart
+Cohesion: 0.25
+Nodes (7): build, _buildNavItem, MainScaffold, navigationShell, _onTap, package:go_router/go_router.dart, StatefulNavigationShell
 
 ### Community 176 - "build"
 Cohesion: 0.29
@@ -963,12 +967,16 @@ Cohesion: 0.11
 Nodes (16): activeReviewFilterIndex, activeServiceCategoryIndex, activeTabIndex, copyWith, currentImageIndex, isCollapsed, props, SalonDetailsPageState (+8 more)
 
 ### Community 178 - "Community 178"
-Cohesion: 0.14
-Nodes (12): dart:io, fromEntity, fromJson, ProfileModel, toFormData, toJson, ProfileEntity, deleteProfile (+4 more)
+Cohesion: 0.33
+Nodes (5): dart:io, fromEntity, fromJson, toFormData, toJson
 
 ### Community 179 - "Community 179"
 Cohesion: 0.36
 Nodes (10): HWND, LPARAM, LRESULT, UINT, WPARAM, EnableFullDpiSupportIfAvailable(), GetHandle, GetThisFromHandle (+2 more)
+
+### Community 180 - "Community 180"
+Cohesion: 0.50
+Nodes (4): build, build, RouteNames.home, RouteNames.otp
 
 ### Community 181 - "Community 181"
 Cohesion: 0.22
@@ -1006,13 +1014,17 @@ Nodes (7): build, CustomRatingBar, iconSize, ignoreGestures, isGradient, rating,
 Cohesion: 0.38
 Nodes (5): FlutterAppDelegate, AppDelegate, AppDelegate, Bool, NSApplication
 
+### Community 193 - "Community 193"
+Cohesion: 0.29
+Nodes (6): fromJson, GuestModel, toEntity, toJson, GuestEntity, package:tressy/features/booking_confirmation/domain/entities/guest_entity.dart
+
 ### Community 195 - "Community 195"
-Cohesion: 0.25
-Nodes (7): AppointmentsState, copyWith, errorMessage, isLoading, past, upcoming, package:tressy/features/bookings/domain/entities/appointment_entity.dart
+Cohesion: 0.29
+Nodes (6): AppointmentsState, copyWith, errorMessage, isLoading, past, upcoming
 
 ### Community 196 - "Community 196"
 Cohesion: 0.29
-Nodes (6): getClusteredMarkersUseCase, _onLoadMapMarkers, package:flutter_bloc/flutter_bloc.dart, package:tressy/features/salon_search/domain/usecases/get_clustered_markers_usecase.dart, package:tressy/features/salon_search/presentation/bloc/map_markers_event.dart, package:tressy/features/salon_search/presentation/bloc/map_markers_state.dart
+Nodes (6): GetClusteredMarkersUseCase, getClusteredMarkersUseCase, _onLoadMapMarkers, package:tressy/features/salon_search/domain/usecases/get_clustered_markers_usecase.dart, package:tressy/features/salon_search/presentation/bloc/map_markers_event.dart, package:tressy/features/salon_search/presentation/bloc/map_markers_state.dart
 
 ### Community 198 - "Community 198"
 Cohesion: 0.47
@@ -1035,8 +1047,8 @@ Cohesion: 0.13
 Nodes (13): bool get, fromJson, SlotModel, toEntity, toJson, hashCode, isAvailable, isBooked (+5 more)
 
 ### Community 203 - "Community 203"
-Cohesion: 0.20
-Nodes (8): android, DefaultFirebaseOptions, ios, package:firebase_core/firebase_core.dart, package:firebase_messaging/firebase_messaging.dart, package:flutter/foundation.dart, static const FirebaseOptions, main
+Cohesion: 0.29
+Nodes (6): android, DefaultFirebaseOptions, ios, package:firebase_core/firebase_core.dart, package:flutter/foundation.dart, static const FirebaseOptions
 
 ### Community 204 - "Community 204"
 Cohesion: 0.50
@@ -1051,24 +1063,24 @@ Cohesion: 0.50
 Nodes (3): Any, Bool, UIApplication
 
 ## Knowledge Gaps
-- **3021 isolated node(s):** `GoogleMaps`, `ApiRoutes`, `_logTag`, `baseUrl`, `imageBaseUrl` (+3016 more)
+- **3019 isolated node(s):** `GoogleMaps`, `ApiRoutes`, `_logTag`, `baseUrl`, `imageBaseUrl` (+3014 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `SearchBloc` connect `Community 103` to `Community 97`, `Community 132`, `Community 102`, `Community 140`, `Community 45`, `Community 19`?**
+- **Why does `SalonDetailsPageCubit` connect `Community 34` to `Community 136`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `SearchBloc` connect `Community 103` to `Community 65`, `Community 97`, `Community 132`, `Community 102`, `Community 45`, `Community 19`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `CancelPendingOrderUseCase` connect `Community 48` to `Community 19`, `Community 68`, `Community 12`?**
-  _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `CategoryBloc` connect `Community 76` to `Community 66`, `Community 101`, `Community 41`, `Community 139`, `Community 140`, `Community 146`, `Community 19`, `Community 22`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `LocationProvider` connect `Community 46` to `Community 97`, `Community 66`, `Community 67`, `Community 103`, `Community 41`, `Community 76`, `Community 28`, `Community 45`, `Community 22`, `Community 188`, `Community 29`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
 - **What connects `GoogleMaps`, `ApiRoutes`, `_logTag` to the rest of the system?**
-  _3021 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3019 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.0196078431372549 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.023809523809523808 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.03702615339406406 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.033444816053511704 - nodes in this community are weakly interconnected._

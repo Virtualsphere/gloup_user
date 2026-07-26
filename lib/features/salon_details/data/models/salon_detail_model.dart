@@ -179,14 +179,33 @@ class ServiceModel {
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
+    double parseMoney(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is num) return value.toDouble();
+      if (value is String) {
+        return double.tryParse(
+              value.replaceAll(RegExp(r'[₹,\s]'), '').trim(),
+            ) ??
+            0.0;
+      }
+      return 0.0;
+    }
+
+    final price = parseMoney(json['price'] ?? json['amount']);
+    final originalRaw = json['originalPrice'] ?? json['mrp'];
+    final originalPrice =
+        originalRaw == null ? null : parseMoney(originalRaw);
+
     return ServiceModel(
       id: (json['id'] ?? 0) is int
           ? json['id'] ?? 0
           : int.tryParse(json['id'].toString()) ?? 0,
       name: json['name'] ?? '',
       duration: json['duration'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      originalPrice: json['originalPrice']?.toDouble(),
+      price: price,
+      originalPrice: (originalPrice != null && originalPrice > price)
+          ? originalPrice
+          : null,
       discountPercentage: json['discountPercentage'],
       isPopular: json['isPopular'] ?? false,
       category: json['category'] ?? 'Featured',

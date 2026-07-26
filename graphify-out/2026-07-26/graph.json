@@ -817,8 +817,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "static_const_map",
-      "community": 125,
-      "community_name": "Community 125",
+      "community": 109,
+      "community_name": "Community 109",
       "norm_label": "static const map"
     },
     {
@@ -1873,8 +1873,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_flutter_material_dart",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "package:flutter/material.dart"
     },
     {
@@ -1917,8 +1917,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "static_const",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 166,
+      "community_name": "Community 166",
       "norm_label": "static const"
     },
     {
@@ -4315,8 +4315,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_constants_enums",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "enums.dart"
     },
     {
@@ -4326,8 +4326,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_constants_enums_servicestatus",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "servicestatus"
     },
     {
@@ -4337,8 +4337,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_constants_enums_imagetype",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "imagetype"
     },
     {
@@ -5404,8 +5404,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "fontweight",
-      "community": 98,
-      "community_name": "Community 98",
+      "community": 24,
+      "community_name": "Community 24",
       "norm_label": "fontweight?"
     },
     {
@@ -5569,8 +5569,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "double",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "double?"
     },
     {
@@ -5822,8 +5822,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_network_auth_interceptor_dart",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "package:tressy/core/network/auth_interceptor.dart"
     },
     {
@@ -5844,8 +5844,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_network_interceptor_dart",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "package:tressy/core/network/interceptor.dart"
     },
     {
@@ -5855,8 +5855,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_network_network_info_dart",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/core/network/network_info.dart"
     },
     {
@@ -5877,8 +5877,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_auth_data_datasources_auth_remote_datasource_dart",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "package:tressy/features/auth/data/datasources/auth_remote_datasource.dart"
     },
     {
@@ -5954,8 +5954,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_category_data_datasources_category_remote_datasource_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "package:tressy/features/category/data/datasources/category_remote_datasource.dart"
     },
     {
@@ -5976,8 +5976,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_category_domain_repositories_category_repository_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "package:tressy/features/category/domain/repositories/category_repository.dart"
     },
     {
@@ -6042,8 +6042,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_profile_domain_usecases_get_profile_usecase_dart",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "package:tressy/features/profile/domain/usecases/get_profile_usecase.dart"
     },
     {
@@ -6207,8 +6207,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_salon_details_data_datasources_salon_detail_remote_datasource_dart",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/features/salon_details/data/datasources/salon_detail_remote_datasource.dart"
     },
     {
@@ -6229,8 +6229,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_salon_details_domain_repositories_salon_detail_repository_dart",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/features/salon_details/domain/repositories/salon_detail_repository.dart"
     },
     {
@@ -6361,8 +6361,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_slot_booking_domain_usecases_get_slot_status_usecase_dart",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "package:tressy/features/slot_booking/domain/usecases/get_slot_status_usecase.dart"
     },
     {
@@ -6416,8 +6416,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_domain_usecases_get_all_guests_usecase_dart",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "package:tressy/features/booking_confirmation/domain/usecases/get_all_guests_usecase.dart"
     },
     {
@@ -6427,8 +6427,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_domain_usecases_add_guest_usecase_dart",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "package:tressy/features/booking_confirmation/domain/usecases/add_guest_usecase.dart"
     },
     {
@@ -6438,8 +6438,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_domain_usecases_update_guest_usecase_dart",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "package:tressy/features/booking_confirmation/domain/usecases/update_guest_usecase.dart"
     },
     {
@@ -6581,8 +6581,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_coupons_presentation_bloc_coupon_bloc_dart",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "package:tressy/features/coupons/presentation/bloc/coupon_bloc.dart"
     },
     {
@@ -6592,8 +6592,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_data_datasources_appointments_remote_datasource_dart",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/features/bookings/data/datasources/appointments_remote_datasource.dart"
     },
     {
@@ -6614,8 +6614,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_domain_repositories_appointments_repository_dart",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/features/bookings/domain/repositories/appointments_repository.dart"
     },
     {
@@ -6625,8 +6625,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_domain_usecases_get_all_appointments_usecase_dart",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "package:tressy/features/bookings/domain/usecases/get_all_appointments_usecase.dart"
     },
     {
@@ -7417,8 +7417,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "dio_client.dart"
     },
     {
@@ -7439,8 +7439,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_dio",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "_dio"
     },
     {
@@ -7450,8 +7450,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "dio",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "dio"
     },
     {
@@ -7461,8 +7461,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_post",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "post"
     },
     {
@@ -7472,8 +7472,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_put",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "put"
     },
     {
@@ -7483,8 +7483,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_patch",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "patch"
     },
     {
@@ -7494,8 +7494,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_delete",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "delete"
     },
     {
@@ -7505,8 +7505,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_dio_client_handledioexception",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 148,
+      "community_name": "Community 148",
       "norm_label": "_handledioexception"
     },
     {
@@ -7780,8 +7780,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_repository_network_guard",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "repository_network_guard.dart"
     },
     {
@@ -7791,8 +7791,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_network_repository_network_guard_nointernetconnectionmessage",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "nointernetconnectionmessage"
     },
     {
@@ -7802,8 +7802,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_dartz_dartz_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:dartz/dartz.dart"
     },
     {
@@ -7813,8 +7813,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_error_failures_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/core/error/failures.dart"
     },
     {
@@ -7824,8 +7824,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "t",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "t"
     },
     {
@@ -7846,8 +7846,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_providers_location_provider_locationprovider",
-      "community": 76,
-      "community_name": "Community 76",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "locationprovider"
     },
     {
@@ -7857,8 +7857,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "changenotifier",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "changenotifier"
     },
     {
@@ -8253,8 +8253,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_flutter_bloc_flutter_bloc_dart",
-      "community": 196,
-      "community_name": "Community 196",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "package:flutter_bloc/flutter_bloc.dart"
     },
     {
@@ -8264,8 +8264,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_go_router_go_router_dart",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "package:go_router/go_router.dart"
     },
     {
@@ -8286,8 +8286,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_router_route_names_dart",
-      "community": 146,
-      "community_name": "Community 146",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "package:tressy/core/router/route_names.dart"
     },
     {
@@ -8297,8 +8297,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_profile_domain_entities_profile_entity_dart",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "package:tressy/features/profile/domain/entities/profile_entity.dart"
     },
     {
@@ -8792,8 +8792,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_firebase_messaging_firebase_messaging_dart",
-      "community": 203,
-      "community_name": "Community 203",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "package:firebase_messaging/firebase_messaging.dart"
     },
     {
@@ -9155,8 +9155,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "annotation_pragma",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 186,
+      "community_name": "Community 186",
       "norm_label": "@pragma"
     },
     {
@@ -9166,8 +9166,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "annotation_visiblefortesting",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 187,
+      "community_name": "Community 187",
       "norm_label": "@visiblefortesting"
     },
     {
@@ -9386,8 +9386,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_services_firebase_notification_service_firebasemessagingbackgroundhandler",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 186,
+      "community_name": "Community 186",
       "norm_label": "firebasemessagingbackgroundhandler"
     },
     {
@@ -9474,8 +9474,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_services_firebase_notification_service_resetlocalnotificationshowcallcount",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 187,
+      "community_name": "Community 187",
       "norm_label": "resetlocalnotificationshowcallcount"
     },
     {
@@ -9628,8 +9628,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_router_notification_routes_dart",
-      "community": 146,
-      "community_name": "Community 146",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "package:tressy/core/router/notification_routes.dart"
     },
     {
@@ -9738,8 +9738,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_core_theme_theme_provider_themeprovider",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "themeprovider"
     },
     {
@@ -10178,8 +10178,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_category_domain_entities_category_entity_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "package:tressy/features/category/domain/entities/category_entity.dart"
     },
     {
@@ -10794,8 +10794,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_utils_access_token_migration_dart",
-      "community": 149,
-      "community_name": "Community 149",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "package:tressy/core/utils/access_token_migration.dart"
     },
     {
@@ -11146,8 +11146,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "auth_remote_datasource.dart"
     },
     {
@@ -11157,8 +11157,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_authremotedatasource",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "authremotedatasource"
     },
     {
@@ -11168,8 +11168,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_authremotedatasourceimpl",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "authremotedatasourceimpl"
     },
     {
@@ -11179,8 +11179,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_dioclient",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "dioclient"
     },
     {
@@ -11190,8 +11190,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_sendotp",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "sendotp"
     },
     {
@@ -11201,8 +11201,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_verifyotp",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "verifyotp"
     },
     {
@@ -11212,8 +11212,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_googlelogin",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "googlelogin"
     },
     {
@@ -11223,8 +11223,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_applelogin",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "applelogin"
     },
     {
@@ -11234,8 +11234,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_datasources_auth_remote_datasource_handledioexception",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "_handledioexception"
     },
     {
@@ -11245,8 +11245,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_auth_data_models_auth_model_dart",
-      "community": 133,
-      "community_name": "Community 133",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "package:tressy/features/auth/data/models/auth_model.dart"
     },
     {
@@ -11322,8 +11322,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "auth_repository_impl.dart"
     },
     {
@@ -11344,8 +11344,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_remotedatasource",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "remotedatasource"
     },
     {
@@ -11355,8 +11355,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_networkinfo",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "networkinfo"
     },
     {
@@ -11366,8 +11366,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_sendotp",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "sendotp"
     },
     {
@@ -11377,8 +11377,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_verifyotp",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "verifyotp"
     },
     {
@@ -11388,8 +11388,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_googlelogin",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "googlelogin"
     },
     {
@@ -11399,8 +11399,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_data_repositories_auth_repository_impl_applelogin",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 64,
+      "community_name": "Community 64",
       "norm_label": "applelogin"
     },
     {
@@ -11410,8 +11410,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_network_repository_network_guard_dart",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/core/network/repository_network_guard.dart"
     },
     {
@@ -11674,8 +11674,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_bloc_auth_bloc_authbloc",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "authbloc"
     },
     {
@@ -11685,8 +11685,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "bloc",
-      "community": 140,
-      "community_name": "Community 140",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "bloc"
     },
     {
@@ -11850,8 +11850,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_bloc_auth_event_sendotpevent",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "sendotpevent"
     },
     {
@@ -12125,8 +12125,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "state",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 76,
+      "community_name": "Community 76",
       "norm_label": "state"
     },
     {
@@ -12180,8 +12180,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "texteditingcontroller",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "texteditingcontroller"
     },
     {
@@ -12202,8 +12202,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_login_page_build",
-      "community": 21,
-      "community_name": "Community 21",
+      "community": 180,
+      "community_name": "Community 180",
       "norm_label": "build"
     },
     {
@@ -12257,8 +12257,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_login_page_handlelogin",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "_handlelogin"
     },
     {
@@ -12268,8 +12268,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "route_routenames_otp",
-      "community": 21,
-      "community_name": "Community 21",
+      "community": 180,
+      "community_name": "Community 180",
       "norm_label": "routenames.otp"
     },
     {
@@ -12279,8 +12279,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "route_routenames_home",
-      "community": 99,
-      "community_name": "Community 99",
+      "community": 180,
+      "community_name": "Community 180",
       "norm_label": "routenames.home"
     },
     {
@@ -12312,8 +12312,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_app_images_dart",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "package:tressy/core/constants/app_images.dart"
     },
     {
@@ -12389,8 +12389,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_shared_widgets_custom_toast_dart",
-      "community": 99,
-      "community_name": "Community 99",
+      "community": 21,
+      "community_name": "Community 21",
       "norm_label": "package:tressy/shared/widgets/custom_toast.dart"
     },
     {
@@ -12400,8 +12400,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_shared_widgets_primary_button_dart",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "package:tressy/shared/widgets/primary_button.dart"
     },
     {
@@ -12422,8 +12422,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "formstate",
-      "community": 74,
-      "community_name": "Community 74",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "formstate"
     },
     {
@@ -12466,8 +12466,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_otp_page_otppagecontentstate",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 99,
+      "community_name": "Community 99",
       "norm_label": "_otppagecontentstate"
     },
     {
@@ -12565,8 +12565,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_otp_page_build",
-      "community": 99,
-      "community_name": "Community 99",
+      "community": 180,
+      "community_name": "Community 180",
       "norm_label": "build"
     },
     {
@@ -12631,8 +12631,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_otp_page_handleverifyotp",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 99,
+      "community_name": "Community 99",
       "norm_label": "_handleverifyotp"
     },
     {
@@ -12642,8 +12642,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_auth_presentation_pages_otp_page_handleresendotp",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "_handleresendotp"
     },
     {
@@ -12752,8 +12752,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_app_icons_dart",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "package:tressy/core/constants/app_icons.dart"
     },
     {
@@ -13467,8 +13467,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_data_models_guest_model",
-      "community": 8,
-      "community_name": "Community 8",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "guest_model.dart"
     },
     {
@@ -13478,8 +13478,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_data_models_guest_model_guestmodel",
-      "community": 89,
-      "community_name": "Community 89",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "guestmodel"
     },
     {
@@ -13489,8 +13489,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_data_models_guest_model_fromjson",
-      "community": 8,
-      "community_name": "Community 8",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "fromjson"
     },
     {
@@ -13500,8 +13500,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_data_models_guest_model_tojson",
-      "community": 8,
-      "community_name": "Community 8",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "tojson"
     },
     {
@@ -13511,8 +13511,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_data_models_guest_model_toentity",
-      "community": 8,
-      "community_name": "Community 8",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "toentity"
     },
     {
@@ -13522,8 +13522,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_domain_entities_guest_entity_dart",
-      "community": 8,
-      "community_name": "Community 8",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "package:tressy/features/booking_confirmation/domain/entities/guest_entity.dart"
     },
     {
@@ -13995,8 +13995,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_domain_entities_guest_entity_guestentity",
-      "community": 89,
-      "community_name": "Community 89",
+      "community": 193,
+      "community_name": "Community 193",
       "norm_label": "guestentity"
     },
     {
@@ -14737,28 +14737,6 @@
       "norm_label": "parsemoney"
     },
     {
-      "label": "normalizeService",
-      "file_type": "code",
-      "source_file": "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_features_booking_confirmation_domain_utils_booking_price_calculator_normalizeservice",
-      "community": 88,
-      "community_name": "Community 88",
-      "norm_label": "normalizeservice"
-    },
-    {
-      "label": "normalizeServices",
-      "file_type": "code",
-      "source_file": "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_features_booking_confirmation_domain_utils_booking_price_calculator_normalizeservices",
-      "community": 88,
-      "community_name": "Community 88",
-      "norm_label": "normalizeservices"
-    },
-    {
       "label": "sellingPriceOf",
       "file_type": "code",
       "source_file": "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart",
@@ -14798,8 +14776,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "guest_bloc.dart"
     },
     {
@@ -14820,8 +14798,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_getallguestsusecase",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "getallguestsusecase"
     },
     {
@@ -14831,8 +14809,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_addguestusecase",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "addguestusecase"
     },
     {
@@ -14842,8 +14820,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_updateguestusecase",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "updateguestusecase"
     },
     {
@@ -14853,8 +14831,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_onloadguests",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "_onloadguests"
     },
     {
@@ -14864,8 +14842,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_onselectguest",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "_onselectguest"
     },
     {
@@ -14875,8 +14853,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_onaddguest",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "_onaddguest"
     },
     {
@@ -14886,8 +14864,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_bloc_guest_bloc_onupdateguest",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "_onupdateguest"
     },
     {
@@ -14897,8 +14875,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_presentation_bloc_guest_event_dart",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart"
     },
     {
@@ -14908,8 +14886,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_presentation_bloc_guest_state_dart",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 117,
+      "community_name": "Community 117",
       "norm_label": "package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart"
     },
     {
@@ -16294,8 +16272,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_booking_confirmation_domain_utils_booking_price_calculator_dart",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart"
     },
     {
@@ -16514,8 +16492,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_presentation_bloc_appointments_event_dart",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "package:tressy/features/bookings/presentation/bloc/appointments_event.dart"
     },
     {
@@ -17097,8 +17075,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "coupon_card.dart"
     },
     {
@@ -17108,8 +17086,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_couponcard",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "couponcard"
     },
     {
@@ -17119,8 +17097,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_applytoggle",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "_applytoggle"
     },
     {
@@ -17130,8 +17108,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_discountamount",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "discountamount"
     },
     {
@@ -17141,8 +17119,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_couponcode",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "couponcode"
     },
     {
@@ -17152,8 +17130,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_discounttype",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "discounttype"
     },
     {
@@ -17163,8 +17141,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_isselected",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "isselected"
     },
     {
@@ -17174,8 +17152,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_ontap",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "ontap"
     },
     {
@@ -17185,8 +17163,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_isenabled",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "isenabled"
     },
     {
@@ -17196,8 +17174,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_disabledreason",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "disabledreason"
     },
     {
@@ -17207,8 +17185,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_coupon_card_build",
-      "community": 55,
-      "community_name": "Community 55",
+      "community": 168,
+      "community_name": "Community 168",
       "norm_label": "build"
     },
     {
@@ -17449,8 +17427,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "profile_card.dart"
     },
     {
@@ -17460,8 +17438,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_profilecard",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "profilecard"
     },
     {
@@ -17471,8 +17449,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_name",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "name"
     },
     {
@@ -17482,8 +17460,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_age",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "age"
     },
     {
@@ -17493,8 +17471,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_gender",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "gender"
     },
     {
@@ -17504,8 +17482,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_isselected",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "isselected"
     },
     {
@@ -17515,8 +17493,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_ontap",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "ontap"
     },
     {
@@ -17526,8 +17504,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_onedit",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "onedit"
     },
     {
@@ -17537,8 +17515,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_booking_confirmation_presentation_widgets_profile_card_build",
-      "community": 148,
-      "community_name": "Community 148",
+      "community": 55,
+      "community_name": "Community 55",
       "norm_label": "build"
     },
     {
@@ -18109,8 +18087,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_domain_entities_appointment_entity_dart",
-      "community": 195,
-      "community_name": "Community 195",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "package:tressy/features/bookings/domain/entities/appointment_entity.dart"
     },
     {
@@ -18120,8 +18098,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_data_repositories_appointments_repository_impl",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "appointments_repository_impl.dart"
     },
     {
@@ -18131,8 +18109,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_data_repositories_appointments_repository_impl_appointmentsrepositoryimpl",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "appointmentsrepositoryimpl"
     },
     {
@@ -18142,8 +18120,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_data_repositories_appointments_repository_impl_remotedatasource",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "remotedatasource"
     },
     {
@@ -18153,8 +18131,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_data_repositories_appointments_repository_impl_networkinfo",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "networkinfo"
     },
     {
@@ -18164,8 +18142,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_data_repositories_appointments_repository_impl_getallappointments",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getallappointments"
     },
     {
@@ -18461,8 +18439,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_repositories_appointments_repository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "appointments_repository.dart"
     },
     {
@@ -18472,8 +18450,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_repositories_appointments_repository_appointmentsrepository",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "appointmentsrepository"
     },
     {
@@ -18483,8 +18461,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_repositories_appointments_repository_getallappointments",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getallappointments"
     },
     {
@@ -18494,8 +18472,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_usecases_get_all_appointments_usecase",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "get_all_appointments_usecase.dart"
     },
     {
@@ -18505,8 +18483,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_usecases_get_all_appointments_usecase_getallappointmentsusecase",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getallappointmentsusecase"
     },
     {
@@ -18516,8 +18494,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_usecases_get_all_appointments_usecase_repository",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "repository"
     },
     {
@@ -18527,8 +18505,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_domain_usecases_get_all_appointments_usecase_call",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "call"
     },
     {
@@ -18538,8 +18516,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_bloc",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "appointments_bloc.dart"
     },
     {
@@ -18549,8 +18527,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_bloc_appointmentsbloc",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "appointmentsbloc"
     },
     {
@@ -18560,8 +18538,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_bloc_getallappointmentsusecase",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "getallappointmentsusecase"
     },
     {
@@ -18571,8 +18549,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_bloc_onloadappointments",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "_onloadappointments"
     },
     {
@@ -18582,8 +18560,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_bookings_presentation_bloc_appointments_state_dart",
-      "community": 175,
-      "community_name": "Community 175",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "package:tressy/features/bookings/presentation/bloc/appointments_state.dart"
     },
     {
@@ -18593,8 +18571,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_event",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "appointments_event.dart"
     },
     {
@@ -18604,8 +18582,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_event_appointmentsevent",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "appointmentsevent"
     },
     {
@@ -18615,8 +18593,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_bloc_appointments_event_loadappointmentsevent",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "loadappointmentsevent"
     },
     {
@@ -18714,8 +18692,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_pages_bookings_page_bookingspage",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "bookingspage"
     },
     {
@@ -18725,8 +18703,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_pages_bookings_page_bookingspagestate",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "_bookingspagestate"
     },
     {
@@ -18736,8 +18714,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "singletickerproviderstatemixin",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 34,
+      "community_name": "Community 34",
       "norm_label": "singletickerproviderstatemixin"
     },
     {
@@ -18791,8 +18769,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_pages_bookings_page_initstate",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "initstate"
     },
     {
@@ -18846,8 +18824,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_pages_bookings_page_build",
-      "community": 152,
-      "community_name": "Community 152",
+      "community": 65,
+      "community_name": "Community 65",
       "norm_label": "build"
     },
     {
@@ -18956,8 +18934,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "bookings_shimmer.dart"
     },
     {
@@ -18967,8 +18945,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_bookingsshimmer",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "bookingsshimmer"
     },
     {
@@ -18978,8 +18956,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_bookinglistshimmer",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "bookinglistshimmer"
     },
     {
@@ -18989,8 +18967,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_bookingcardshimmer",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "_bookingcardshimmer"
     },
     {
@@ -19000,8 +18978,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_servicerowshimmer",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "_servicerowshimmer"
     },
     {
@@ -19011,8 +18989,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_shimmerpill",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "_shimmerpill"
     },
     {
@@ -19022,8 +19000,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_bookings_presentation_widgets_bookings_shimmer_shimmerbox",
-      "community": 171,
-      "community_name": "Community 171",
+      "community": 96,
+      "community_name": "Community 96",
       "norm_label": "_shimmerbox"
     },
     {
@@ -19176,8 +19154,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "category_repository_impl.dart"
     },
     {
@@ -19187,8 +19165,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl_categoryrepositoryimpl",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "categoryrepositoryimpl"
     },
     {
@@ -19198,8 +19176,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl_datasource",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "datasource"
     },
     {
@@ -19209,8 +19187,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl_networkinfo",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "networkinfo"
     },
     {
@@ -19220,8 +19198,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl_getcategories",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "getcategories"
     },
     {
@@ -19231,8 +19209,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_data_repositories_category_repository_impl_getcategorysalons",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "getcategorysalons"
     },
     {
@@ -19242,8 +19220,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_shared_domain_entities_salon_entity_dart",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "package:tressy/shared/domain/entities/salon_entity.dart"
     },
     {
@@ -19319,8 +19297,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_repositories_category_repository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "category_repository.dart"
     },
     {
@@ -19330,8 +19308,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_repositories_category_repository_categoryrepository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "categoryrepository"
     },
     {
@@ -19341,8 +19319,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_repositories_category_repository_getcategories",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "getcategories"
     },
     {
@@ -19352,8 +19330,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_repositories_category_repository_getcategorysalons",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "getcategorysalons"
     },
     {
@@ -19363,8 +19341,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_usecases_get_categories_usecase",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "get_categories_usecase.dart"
     },
     {
@@ -19374,8 +19352,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_usecases_get_categories_usecase_getcategoriesusecase",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "getcategoriesusecase"
     },
     {
@@ -19385,8 +19363,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_usecases_get_categories_usecase_repository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "repository"
     },
     {
@@ -19396,8 +19374,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_domain_usecases_get_categories_usecase_call",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "call"
     },
     {
@@ -20078,8 +20056,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_category_presentation_pages_category_page_didchangedependencies",
-      "community": 41,
-      "community_name": "Community 41",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "didchangedependencies"
     },
     {
@@ -20419,8 +20397,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_data_models_coupon_model_couponmodel",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "couponmodel"
     },
     {
@@ -20518,8 +20496,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "coupon_entity.dart"
     },
     {
@@ -20529,8 +20507,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_couponentity",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "couponentity"
     },
     {
@@ -20540,8 +20518,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_id",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "id"
     },
     {
@@ -20551,8 +20529,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_code",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "code"
     },
     {
@@ -20562,8 +20540,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_discountamount",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "discountamount"
     },
     {
@@ -20573,8 +20551,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_discounttype",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "discounttype"
     },
     {
@@ -20584,8 +20562,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_entities_coupon_entity_props",
-      "community": 77,
-      "community_name": "Community 77",
+      "community": 174,
+      "community_name": "Community 174",
       "norm_label": "props"
     },
     {
@@ -20595,8 +20573,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_repositories_coupon_repository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "coupon_repository.dart"
     },
     {
@@ -20617,8 +20595,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_coupons_domain_repositories_coupon_repository_getactivecoupons",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getactivecoupons"
     },
     {
@@ -21453,8 +21431,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_flutter_svg_svg_dart",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "package:flutter_svg/svg.dart"
     },
     {
@@ -22102,8 +22080,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_favorites_presentation_bloc_favorites_bloc_favoritesbloc",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 31,
+      "community_name": "Community 31",
       "norm_label": "favoritesbloc"
     },
     {
@@ -22113,8 +22091,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "togglefavoriteevent",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 31,
+      "community_name": "Community 31",
       "norm_label": "togglefavoriteevent"
     },
     {
@@ -22619,8 +22597,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "home_datasource.dart"
     },
     {
@@ -22630,8 +22608,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_homedatasource",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "homedatasource"
     },
     {
@@ -22641,8 +22619,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_homedatasourceimpl",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "homedatasourceimpl"
     },
     {
@@ -22652,8 +22630,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_dioclient",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "dioclient"
     },
     {
@@ -22663,8 +22641,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_getcarouselbanners",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "getcarouselbanners"
     },
     {
@@ -22674,8 +22652,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_getpopularservices",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "getpopularservices"
     },
     {
@@ -22685,8 +22663,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_gettopsalons",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "gettopsalons"
     },
     {
@@ -22696,8 +22674,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_data_datasources_home_datasource_handledioexception",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "_handledioexception"
     },
     {
@@ -22707,8 +22685,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_home_data_models_home_models_dart",
-      "community": 93,
-      "community_name": "Community 93",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "package:tressy/features/home/data/models/home_models.dart"
     },
     {
@@ -23213,8 +23191,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_domain_entities_home_entity_salonentity",
-      "community": 120,
-      "community_name": "Community 120",
+      "community": 156,
+      "community_name": "Community 156",
       "norm_label": "salonentity"
     },
     {
@@ -24115,8 +24093,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_bloc_home_state_homestate",
-      "community": 156,
-      "community_name": "Community 156",
+      "community": 86,
+      "community_name": "Community 86",
       "norm_label": "homestate"
     },
     {
@@ -24632,8 +24610,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_pages_home_page_onscroll",
-      "community": 22,
-      "community_name": "Community 22",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "_onscroll"
     },
     {
@@ -24753,8 +24731,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_provider_provider_dart",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "package:provider/provider.dart"
     },
     {
@@ -25138,8 +25116,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_pages_services_at_49_page_fetchsalons",
-      "community": 29,
-      "community_name": "Community 29",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "_fetchsalons"
     },
     {
@@ -25281,8 +25259,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_category_section_categorysectionstate",
-      "community": 101,
-      "community_name": "Community 101",
+      "community": 76,
+      "community_name": "Community 76",
       "norm_label": "_categorysectionstate"
     },
     {
@@ -25479,8 +25457,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "filter_badges.dart"
     },
     {
@@ -25490,8 +25468,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_filterbadges",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "filterbadges"
     },
     {
@@ -25501,8 +25479,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_filterbadgesstate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "_filterbadgesstate"
     },
     {
@@ -25512,8 +25490,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_initialgender",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "initialgender"
     },
     {
@@ -25523,8 +25501,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_selectedfilter",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "_selectedfilter"
     },
     {
@@ -25534,8 +25512,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_filters",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "_filters"
     },
     {
@@ -25545,8 +25523,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_createstate",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "createstate"
     },
     {
@@ -25556,8 +25534,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_initstate",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "initstate"
     },
     {
@@ -25567,8 +25545,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_labelstyle",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "_labelstyle"
     },
     {
@@ -25578,8 +25556,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_buildpill",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "_buildpill"
     },
     {
@@ -25589,8 +25567,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_home_presentation_widgets_filter_badges_build",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 171,
+      "community_name": "Community 171",
       "norm_label": "build"
     },
     {
@@ -25996,8 +25974,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_enums_dart",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "package:tressy/core/constants/enums.dart"
     },
     {
@@ -28119,8 +28097,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_my_reviews_my_reviews_myreviews",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "myreviews"
     },
     {
@@ -28130,8 +28108,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_my_reviews_my_reviews_myreviewsstate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "_myreviewsstate"
     },
     {
@@ -28284,8 +28262,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_widgets_custom_dialogues_dart",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "package:tressy/features/widgets/custom_dialogues.dart"
     },
     {
@@ -28317,8 +28295,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "onboarding_page.dart"
     },
     {
@@ -28328,8 +28306,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_onboardingpage",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "onboardingpage"
     },
     {
@@ -28339,8 +28317,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_onboardingpagestate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_onboardingpagestate"
     },
     {
@@ -28350,8 +28328,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_pagecontroller",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_pagecontroller"
     },
     {
@@ -28361,8 +28339,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "pagecontroller",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "pagecontroller"
     },
     {
@@ -28372,8 +28350,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_currentpage",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_currentpage"
     },
     {
@@ -28383,8 +28361,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_onboardingbackgrounds",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_onboardingbackgrounds"
     },
     {
@@ -28394,8 +28372,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_onboardingcontent",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_onboardingcontent"
     },
     {
@@ -28405,8 +28383,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_createstate",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "createstate"
     },
     {
@@ -28416,8 +28394,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_initstate",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "initstate"
     },
     {
@@ -28427,8 +28405,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_dispose",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "dispose"
     },
     {
@@ -28438,8 +28416,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_onpagechanged",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_onpagechanged"
     },
     {
@@ -28449,8 +28427,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_nextpage",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_nextpage"
     },
     {
@@ -28482,8 +28460,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_build",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "build"
     },
     {
@@ -28493,8 +28471,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_onboarding_presentation_pages_onboarding_page_buildindicator",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 94,
+      "community_name": "Community 94",
       "norm_label": "_buildindicator"
     },
     {
@@ -28625,8 +28603,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_data_models_profile_model_profilemodel",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 122,
+      "community_name": "Community 122",
       "norm_label": "profilemodel"
     },
     {
@@ -28790,8 +28768,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_entities_profile_entity_profileentity",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 122,
+      "community_name": "Community 122",
       "norm_label": "profileentity"
     },
     {
@@ -29032,8 +29010,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_repositories_profile_repository",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "profile_repository.dart"
     },
     {
@@ -29054,8 +29032,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_repositories_profile_repository_getprofile",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "getprofile"
     },
     {
@@ -29065,8 +29043,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_repositories_profile_repository_updateprofile",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "updateprofile"
     },
     {
@@ -29076,8 +29054,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_repositories_profile_repository_deleteprofile",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "deleteprofile"
     },
     {
@@ -29087,8 +29065,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_repositories_profile_repository_logout",
-      "community": 178,
-      "community_name": "Community 178",
+      "community": 126,
+      "community_name": "Community 126",
       "norm_label": "logout"
     },
     {
@@ -29109,8 +29087,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_usecases_get_profile_usecase_getprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "getprofileusecase"
     },
     {
@@ -29120,8 +29098,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_usecases_get_profile_usecase_logoutusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "logoutusecase"
     },
     {
@@ -29131,8 +29109,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_usecases_get_profile_usecase_updateprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "updateprofileusecase"
     },
     {
@@ -29142,8 +29120,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_domain_usecases_get_profile_usecase_deleteprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "deleteprofileusecase"
     },
     {
@@ -29186,8 +29164,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_bloc_profile_bloc_profilebloc",
-      "community": 122,
-      "community_name": "Community 122",
+      "community": 84,
+      "community_name": "Community 84",
       "norm_label": "profilebloc"
     },
     {
@@ -29373,8 +29351,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_bloc_profile_event_deleteprofileevent",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 84,
+      "community_name": "Community 84",
       "norm_label": "deleteprofileevent"
     },
     {
@@ -29824,8 +29802,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "invite_and_earn.dart"
     },
     {
@@ -29835,8 +29813,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_inviteandearn",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "inviteandearn"
     },
     {
@@ -29846,8 +29824,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_inviteandearnstate",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "_inviteandearnstate"
     },
     {
@@ -29857,8 +29835,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_dottedbordercontainer",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "dottedbordercontainer"
     },
     {
@@ -29868,8 +29846,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_dottedborderpainter",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "dottedborderpainter"
     },
     {
@@ -29879,8 +29857,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "custompainter",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "custompainter"
     },
     {
@@ -29890,8 +29868,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_referralcodecontroller",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "referralcodecontroller"
     },
     {
@@ -29901,8 +29879,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_referralformkey",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "referralformkey"
     },
     {
@@ -29912,8 +29890,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_sharecode",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "sharecode"
     },
     {
@@ -29923,8 +29901,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_child",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "child"
     },
     {
@@ -29945,8 +29923,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_dashlength",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "dashlength"
     },
     {
@@ -29956,8 +29934,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_dashspace",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "dashspace"
     },
     {
@@ -29967,8 +29945,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_bordercolor",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "bordercolor"
     },
     {
@@ -29978,8 +29956,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_borderradius",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "borderradius"
     },
     {
@@ -30000,8 +29978,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_createstate",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "createstate"
     },
     {
@@ -30011,8 +29989,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_initstate",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "initstate"
     },
     {
@@ -30022,8 +30000,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_dispose",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "dispose"
     },
     {
@@ -30033,8 +30011,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_build",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "build"
     },
     {
@@ -30044,8 +30022,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_paint",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "paint"
     },
     {
@@ -30055,8 +30033,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_createdashedpath",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "_createdashedpath"
     },
     {
@@ -30066,8 +30044,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_invite_and_earn_shouldrepaint",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 83,
+      "community_name": "Community 83",
       "norm_label": "shouldrepaint"
     },
     {
@@ -30088,8 +30066,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_share_plus_share_plus_dart",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "package:share_plus/share_plus.dart"
     },
     {
@@ -30099,8 +30077,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_widgets_custom_text_field_dart",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "package:tressy/features/widgets/custom_text_field.dart"
     },
     {
@@ -30671,8 +30649,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "icondata",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "icondata?"
     },
     {
@@ -31254,8 +31232,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_cancellation_policy_dart",
-      "community": 129,
-      "community_name": "Community 129",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "package:tressy/core/constants/cancellation_policy.dart"
     },
     {
@@ -31331,8 +31309,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_support_screens_dev_info_devinfo",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 127,
+      "community_name": "Community 127",
       "norm_label": "devinfo"
     },
     {
@@ -31342,8 +31320,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_profile_presentation_pages_support_screens_dev_info_devinfostate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 127,
+      "community_name": "Community 127",
       "norm_label": "_devinfostate"
     },
     {
@@ -31474,8 +31452,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_text_styles_dart",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "package:tressy/core/constants/text_styles.dart"
     },
     {
@@ -33278,8 +33256,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_data_repositories_salon_detail_repository_impl",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "salon_detail_repository_impl.dart"
     },
     {
@@ -33289,8 +33267,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_data_repositories_salon_detail_repository_impl_salondetailrepositoryimpl",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "salondetailrepositoryimpl"
     },
     {
@@ -33300,8 +33278,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_data_repositories_salon_detail_repository_impl_remotedatasource",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "remotedatasource"
     },
     {
@@ -33311,8 +33289,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_data_repositories_salon_detail_repository_impl_networkinfo",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "networkinfo"
     },
     {
@@ -33322,8 +33300,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_data_repositories_salon_detail_repository_impl_getsalondetails",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getsalondetails"
     },
     {
@@ -33333,8 +33311,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_salon_details_domain_entities_salon_detail_entity_dart",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart"
     },
     {
@@ -33355,8 +33333,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_entities_salon_detail_entity_salondetailentity",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salondetailentity"
     },
     {
@@ -33839,8 +33817,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_repositories_salon_detail_repository",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "salon_detail_repository.dart"
     },
     {
@@ -33850,8 +33828,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_repositories_salon_detail_repository_salondetailrepository",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "salondetailrepository"
     },
     {
@@ -33861,8 +33839,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_repositories_salon_detail_repository_getsalondetails",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getsalondetails"
     },
     {
@@ -33872,8 +33850,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_usecases_get_salon_details_usecase",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "get_salon_details_usecase.dart"
     },
     {
@@ -33883,8 +33861,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_usecases_get_salon_details_usecase_getsalondetailsusecase",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "getsalondetailsusecase"
     },
     {
@@ -33894,8 +33872,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_usecases_get_salon_details_usecase_repository",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "repository"
     },
     {
@@ -33905,8 +33883,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_domain_usecases_get_salon_details_usecase_call",
-      "community": 19,
-      "community_name": "Community 19",
+      "community": 8,
+      "community_name": "Community 8",
       "norm_label": "call"
     },
     {
@@ -34675,8 +34653,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_constants_salon_detail_design_tokens_dart",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "package:tressy/core/constants/salon_detail_design_tokens.dart"
     },
     {
@@ -34840,8 +34818,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_utils_salon_share",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salon_share.dart"
     },
     {
@@ -34851,8 +34829,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_utils_salon_share_salonshare",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salonshare"
     },
     {
@@ -34862,8 +34840,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_utils_salon_share_sharesalon",
-      "community": 78,
-      "community_name": "Community 78",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "sharesalon"
     },
     {
@@ -34873,8 +34851,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_ambient_card",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "ambient_card.dart"
     },
     {
@@ -34884,8 +34862,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_ambient_card_ambientcard",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "ambientcard"
     },
     {
@@ -34895,8 +34873,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_ambient_card_icon",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "icon"
     },
     {
@@ -34906,8 +34884,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_ambient_card_label",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "label"
     },
     {
@@ -34917,8 +34895,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_ambient_card_build",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "build"
     },
     {
@@ -34928,8 +34906,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "location_widget.dart"
     },
     {
@@ -34939,8 +34917,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_locationwidget",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "locationwidget"
     },
     {
@@ -34950,8 +34928,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_locationwidgetstate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "_locationwidgetstate"
     },
     {
@@ -34961,8 +34939,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_latitude",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "latitude"
     },
     {
@@ -34972,8 +34950,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_longitude",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "longitude"
     },
     {
@@ -34983,8 +34961,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_address",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "address"
     },
     {
@@ -34994,8 +34972,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_salonname",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "salonname"
     },
     {
@@ -35005,8 +34983,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_markers",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "_markers"
     },
     {
@@ -35016,8 +34994,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "set",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "set"
     },
     {
@@ -35027,8 +35005,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_createstate",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "createstate"
     },
     {
@@ -35038,8 +35016,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_openmapsdirections",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "_openmapsdirections"
     },
     {
@@ -35049,8 +35027,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_initstate",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "initstate"
     },
     {
@@ -35060,8 +35038,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_location_widget_build",
-      "community": 96,
-      "community_name": "Community 96",
+      "community": 152,
+      "community_name": "Community 152",
       "norm_label": "build"
     },
     {
@@ -35225,8 +35203,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "salon_details_action_bar.dart"
     },
     {
@@ -35236,8 +35214,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar_salondetailsactionbar",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "salondetailsactionbar"
     },
     {
@@ -35247,8 +35225,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar_iscollapsed",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "iscollapsed"
     },
     {
@@ -35258,8 +35236,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar_isdarkmode",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "isdarkmode"
     },
     {
@@ -35269,8 +35247,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar_onshare",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "onshare"
     },
     {
@@ -35280,8 +35258,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_details_action_bar_build",
-      "community": 174,
-      "community_name": "Community 174",
+      "community": 100,
+      "community_name": "Community 100",
       "norm_label": "build"
     },
     {
@@ -36369,8 +36347,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salon_team_section.dart"
     },
     {
@@ -36380,8 +36358,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section_salonteamsection",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salonteamsection"
     },
     {
@@ -36391,8 +36369,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section_isdarkmode",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "isdarkmode"
     },
     {
@@ -36402,8 +36380,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section_salondetail",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "salondetail"
     },
     {
@@ -36413,8 +36391,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section_build",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "build"
     },
     {
@@ -36424,8 +36402,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_details_presentation_widgets_salon_team_section_buildteamsection",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "_buildteamsection"
     },
     {
@@ -36435,8 +36413,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_salon_details_presentation_widgets_team_member_card_dart",
-      "community": 100,
-      "community_name": "Community 100",
+      "community": 56,
+      "community_name": "Community 56",
       "norm_label": "package:tressy/features/salon_details/presentation/widgets/team_member_card.dart"
     },
     {
@@ -36765,8 +36743,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_search_domain_usecases_get_clustered_markers_usecase_getclusteredmarkersusecase",
-      "community": 9,
-      "community_name": "Community 9",
+      "community": 196,
+      "community_name": "Community 196",
       "norm_label": "getclusteredmarkersusecase"
     },
     {
@@ -37986,8 +37964,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_search_presentation_pages_salon_search_page_salonsearchpagecontent",
-      "community": 45,
-      "community_name": "Community 45",
+      "community": 97,
+      "community_name": "Community 97",
       "norm_label": "_salonsearchpagecontent"
     },
     {
@@ -38184,8 +38162,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_search_presentation_pages_salon_search_page_initializelocation",
-      "community": 76,
-      "community_name": "Community 76",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "_initializelocation"
     },
     {
@@ -38195,8 +38173,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_search_presentation_pages_salon_search_page_loadnearbysalons",
-      "community": 103,
-      "community_name": "Community 103",
+      "community": 97,
+      "community_name": "Community 97",
       "norm_label": "_loadnearbysalons"
     },
     {
@@ -38272,8 +38250,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_salon_search_presentation_pages_salon_search_page_getcurrentlocation",
-      "community": 76,
-      "community_name": "Community 76",
+      "community": 46,
+      "community_name": "Community 46",
       "norm_label": "_getcurrentlocation"
     },
     {
@@ -39174,8 +39152,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slot_bloc.dart"
     },
     {
@@ -39185,8 +39163,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc_slotbloc",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slotbloc"
     },
     {
@@ -39196,8 +39174,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc_getslotstatususecase",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "getslotstatususecase"
     },
     {
@@ -39207,8 +39185,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc_onloadslots",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_onloadslots"
     },
     {
@@ -39218,8 +39196,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc_onselectslot",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_onselectslot"
     },
     {
@@ -39229,8 +39207,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_bloc_onclearselectedslot",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_onclearselectedslot"
     },
     {
@@ -39240,8 +39218,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_slot_booking_presentation_bloc_slot_event_dart",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "package:tressy/features/slot_booking/presentation/bloc/slot_event.dart"
     },
     {
@@ -39251,8 +39229,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_features_slot_booking_presentation_bloc_slot_state_dart",
-      "community": 164,
-      "community_name": "Community 164",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "package:tressy/features/slot_booking/presentation/bloc/slot_state.dart"
     },
     {
@@ -39262,8 +39240,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slot_event.dart"
     },
     {
@@ -39273,8 +39251,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_slotevent",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slotevent"
     },
     {
@@ -39284,8 +39262,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_loadslotsevent",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "loadslotsevent"
     },
     {
@@ -39295,8 +39273,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_selectslotevent",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "selectslotevent"
     },
     {
@@ -39306,8 +39284,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_clearselectedslotevent",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "clearselectedslotevent"
     },
     {
@@ -39317,8 +39295,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_props",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "props"
     },
     {
@@ -39328,8 +39306,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_salonid",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "salonid"
     },
     {
@@ -39339,8 +39317,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_date",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "date"
     },
     {
@@ -39350,8 +39328,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_time",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "time"
     },
     {
@@ -39361,8 +39339,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_bloc_slot_event_slotid",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slotid"
     },
     {
@@ -39581,8 +39559,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_pages_slot_booking_page_slotbookingpage",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "slotbookingpage"
     },
     {
@@ -39592,8 +39570,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_pages_slot_booking_page_slotbookingpagestate",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_slotbookingpagestate"
     },
     {
@@ -39669,8 +39647,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_pages_slot_booking_page_loadslots",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_loadslots"
     },
     {
@@ -39724,8 +39702,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_pages_slot_booking_page_build",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "build"
     },
     {
@@ -39735,8 +39713,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_slot_booking_presentation_pages_slot_booking_page_buildslotsgrid",
-      "community": 58,
-      "community_name": "Community 58",
+      "community": 81,
+      "community_name": "Community 81",
       "norm_label": "_buildslotsgrid"
     },
     {
@@ -40065,8 +40043,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "splash_page.dart"
     },
     {
@@ -40076,8 +40054,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_splashpage",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "splashpage"
     },
     {
@@ -40087,8 +40065,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_splashpagestate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "_splashpagestate"
     },
     {
@@ -40098,8 +40076,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_createstate",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "createstate"
     },
     {
@@ -40109,8 +40087,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_initstate",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "initstate"
     },
     {
@@ -40142,8 +40120,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_dispose",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "dispose"
     },
     {
@@ -40153,8 +40131,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_splash_presentation_pages_splash_page_build",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "build"
     },
     {
@@ -40164,8 +40142,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_services_firebase_notification_service_dart",
-      "community": 146,
-      "community_name": "Community 146",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "package:tressy/core/services/firebase_notification_service.dart"
     },
     {
@@ -40175,8 +40153,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_add_rating_dialogue",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "add_rating_dialogue.dart"
     },
     {
@@ -40186,8 +40164,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_add_rating_dialogue_addratingdialogue",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "addratingdialogue"
     },
     {
@@ -40197,8 +40175,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_add_rating_dialogue_reviewcontroller",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "reviewcontroller"
     },
     {
@@ -40208,8 +40186,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_add_rating_dialogue_reviewrating",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "reviewrating"
     },
     {
@@ -40219,8 +40197,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_add_rating_dialogue_showaddreviewdialogue",
-      "community": 168,
-      "community_name": "Community 168",
+      "community": 74,
+      "community_name": "Community 74",
       "norm_label": "showaddreviewdialogue"
     },
     {
@@ -40241,8 +40219,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "custom_appbar.dart"
     },
     {
@@ -40252,8 +40230,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_actionbar",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "actionbar"
     },
     {
@@ -40263,8 +40241,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_title",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "title"
     },
     {
@@ -40274,8 +40252,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_isbackbuttondecoration",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "isbackbuttondecoration"
     },
     {
@@ -40285,8 +40263,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "bool_isbackbutton_isclearbutton",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "bool isbackbutton, isclearbutton,"
     },
     {
@@ -40296,8 +40274,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_actionwidget",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "actionwidget"
     },
     {
@@ -40307,8 +40285,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_actionbarheight",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "actionbarheight"
     },
     {
@@ -40318,8 +40296,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_appbar_build",
-      "community": 127,
-      "community_name": "Community 127",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "build"
     },
     {
@@ -40736,8 +40714,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "custom_drop_downs.dart"
     },
     {
@@ -40747,8 +40725,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_customdropdownfield",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "customdropdownfield"
     },
     {
@@ -40758,8 +40736,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_customcountrypicker",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "customcountrypicker"
     },
     {
@@ -40769,8 +40747,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_dropdownvalue",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "dropdownvalue"
     },
     {
@@ -40780,8 +40758,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_items",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "items"
     },
     {
@@ -40791,8 +40769,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_onchanged",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "onchanged"
     },
     {
@@ -40802,8 +40780,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_hinttext",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "hinttext"
     },
     {
@@ -40813,8 +40791,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_labeltext",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "labeltext"
     },
     {
@@ -40824,8 +40802,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_icon",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "icon"
     },
     {
@@ -40835,8 +40813,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_validator",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "validator"
     },
     {
@@ -40846,8 +40824,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "formfieldvalidator",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "formfieldvalidator"
     },
     {
@@ -40857,8 +40835,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_maxheight",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "maxheight"
     },
     {
@@ -40868,8 +40846,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_color",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "color"
     },
     {
@@ -40879,8 +40857,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_drop_downs_build",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "build"
     },
     {
@@ -40890,8 +40868,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_dropdown_button2_dropdown_button2_dart",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 137,
+      "community_name": "Community 137",
       "norm_label": "package:dropdown_button2/dropdown_button2.dart"
     },
     {
@@ -40901,8 +40879,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "custom_image.dart"
     },
     {
@@ -40912,8 +40890,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_customnetworkimage",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "customnetworkimage"
     },
     {
@@ -40923,8 +40901,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_customimagecropper",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "customimagecropper"
     },
     {
@@ -40934,8 +40912,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_customimagepicker",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "customimagepicker"
     },
     {
@@ -40945,8 +40923,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_imageurl",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "imageurl"
     },
     {
@@ -40956,8 +40934,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_imagetype",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "imagetype"
     },
     {
@@ -40967,8 +40945,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_placeholderheight",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "placeholderheight"
     },
     {
@@ -40978,8 +40956,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_build",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "build"
     },
     {
@@ -40989,8 +40967,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_apiimageurl",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "apiimageurl"
     },
     {
@@ -41000,8 +40978,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_cropimage",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "cropimage"
     },
     {
@@ -41011,8 +40989,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_image_showimagepicker",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "showimagepicker"
     },
     {
@@ -41022,8 +41000,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_image_cropper_image_cropper_dart",
-      "community": 121,
-      "community_name": "Community 121",
+      "community": 129,
+      "community_name": "Community 129",
       "norm_label": "package:image_cropper/image_cropper.dart"
     },
     {
@@ -41385,8 +41363,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "custom_snackbar.dart"
     },
     {
@@ -41396,8 +41374,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_customtoast",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "customtoast"
     },
     {
@@ -41407,8 +41385,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_customloadingindicator",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "customloadingindicator"
     },
     {
@@ -41418,8 +41396,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_customerrortextwidget",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "customerrortextwidget"
     },
     {
@@ -41429,8 +41407,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_nodatatext",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "nodatatext"
     },
     {
@@ -41440,8 +41418,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_nodataimagewidget",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "nodataimagewidget"
     },
     {
@@ -41451,8 +41429,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_title",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "title"
     },
     {
@@ -41462,8 +41440,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_color",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "color"
     },
     {
@@ -41473,8 +41451,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_imagesize",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "imagesize"
     },
     {
@@ -41484,8 +41462,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_top",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "top"
     },
     {
@@ -41495,8 +41473,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_show",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "show"
     },
     {
@@ -41506,8 +41484,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_features_widgets_custom_snackbar_build",
-      "community": 61,
-      "community_name": "Community 61",
+      "community": 73,
+      "community_name": "Community 73",
       "norm_label": "build"
     },
     {
@@ -42353,8 +42331,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_main_myapp",
-      "community": 22,
-      "community_name": "Community 22",
+      "community": 31,
+      "community_name": "Community 31",
       "norm_label": "myapp"
     },
     {
@@ -42452,8 +42430,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_theme_theme_provider_dart",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "package:tressy/core/theme/theme_provider.dart"
     },
     {
@@ -42892,8 +42870,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_core_utils_salon_address_formatter_dart",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "package:tressy/core/utils/salon_address_formatter.dart"
     },
     {
@@ -43156,8 +43134,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_domain_repositories_salon_repository",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "salon_repository.dart"
     },
     {
@@ -43178,8 +43156,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_domain_repositories_salon_repository_getsalons",
-      "community": 85,
-      "community_name": "Community 85",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "getsalons"
     },
     {
@@ -44344,8 +44322,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "custom_alert_dialog.dart"
     },
     {
@@ -44355,8 +44333,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_customalertdialog",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "customalertdialog"
     },
     {
@@ -44366,8 +44344,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_title",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "title"
     },
     {
@@ -44377,8 +44355,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_description",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "description"
     },
     {
@@ -44388,8 +44366,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_canceltext",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "canceltext"
     },
     {
@@ -44399,8 +44377,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_submittext",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "submittext"
     },
     {
@@ -44410,8 +44388,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_oncancel",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "oncancel"
     },
     {
@@ -44421,8 +44399,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_onsubmit",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "onsubmit"
     },
     {
@@ -44432,8 +44410,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_build",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "build"
     },
     {
@@ -44443,8 +44421,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_custom_alert_dialog_show",
-      "community": 137,
-      "community_name": "Community 137",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "show"
     },
     {
@@ -44894,8 +44872,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "empty_widget.dart"
     },
     {
@@ -44905,8 +44883,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_emptywidget",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "emptywidget"
     },
     {
@@ -44916,8 +44894,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_message",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "message"
     },
     {
@@ -44927,8 +44905,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_icon",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "icon"
     },
     {
@@ -44938,8 +44916,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_onaction",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "onaction"
     },
     {
@@ -44949,8 +44927,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_actionlabel",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "actionlabel"
     },
     {
@@ -44960,8 +44938,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_empty_widget_build",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 58,
+      "community_name": "Community 58",
       "norm_label": "build"
     },
     {
@@ -45037,8 +45015,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_explore_salon_card_exploresaloncard",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 72,
+      "community_name": "Community 72",
       "norm_label": "exploresaloncard"
     },
     {
@@ -45048,8 +45026,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_explore_salon_card_exploresaloncardstate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 72,
+      "community_name": "Community 72",
       "norm_label": "_exploresaloncardstate"
     },
     {
@@ -45268,8 +45246,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_explore_salon_card_handlefavoritetoggle",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 31,
+      "community_name": "Community 31",
       "norm_label": "_handlefavoritetoggle"
     },
     {
@@ -45323,8 +45301,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_tressy_shared_widgets_responsive_ellipsis_text_dart",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "package:tressy/shared/widgets/responsive_ellipsis_text.dart"
     },
     {
@@ -45477,8 +45455,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_login_bottom_sheet_loginbottomsheetstate",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 104,
+      "community_name": "Community 104",
       "norm_label": "_loginbottomsheetstate"
     },
     {
@@ -45642,8 +45620,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_login_bottom_sheet_handleresendotp",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "_handleresendotp"
     },
     {
@@ -45653,8 +45631,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_login_bottom_sheet_handlelogin",
-      "community": 118,
-      "community_name": "Community 118",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "_handlelogin"
     },
     {
@@ -45906,8 +45884,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "main_scaffold.dart"
     },
     {
@@ -45917,8 +45895,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold_mainscaffold",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "mainscaffold"
     },
     {
@@ -45928,8 +45906,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold_navigationshell",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "navigationshell"
     },
     {
@@ -45939,8 +45917,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "statefulnavigationshell",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "statefulnavigationshell"
     },
     {
@@ -45950,8 +45928,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold_ontap",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "_ontap"
     },
     {
@@ -45961,8 +45939,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold_build",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "build"
     },
     {
@@ -45972,8 +45950,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_main_scaffold_buildnavitem",
-      "community": 73,
-      "community_name": "Community 73",
+      "community": 175,
+      "community_name": "Community 175",
       "norm_label": "_buildnavitem"
     },
     {
@@ -46841,8 +46819,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_card_saloncard",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 57,
+      "community_name": "Community 57",
       "norm_label": "saloncard"
     },
     {
@@ -46852,8 +46830,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_card_saloncardstate",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 57,
+      "community_name": "Community 57",
       "norm_label": "_saloncardstate"
     },
     {
@@ -47105,8 +47083,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_card_handlefavoritetoggle",
-      "community": 167,
-      "community_name": "Community 167",
+      "community": 31,
+      "community_name": "Community 31",
       "norm_label": "_handlefavoritetoggle"
     },
     {
@@ -47292,8 +47270,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "salon_location_row.dart"
     },
     {
@@ -47303,8 +47281,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_salonlocationrow",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "salonlocationrow"
     },
     {
@@ -47314,8 +47292,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_locationlabel",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "locationlabel"
     },
     {
@@ -47325,8 +47303,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_distancekm",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "distancekm"
     },
     {
@@ -47336,8 +47314,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_showdistance",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "showdistance"
     },
     {
@@ -47347,8 +47325,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_isdarkmode",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "isdarkmode"
     },
     {
@@ -47358,8 +47336,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_usetwolines",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "usetwolines"
     },
     {
@@ -47369,8 +47347,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_salon_location_row_build",
-      "community": 117,
-      "community_name": "Community 117",
+      "community": 143,
+      "community_name": "Community 143",
       "norm_label": "build"
     },
     {
@@ -47611,8 +47589,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_image_toggle",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "theme_image_toggle.dart"
     },
     {
@@ -47622,8 +47600,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_image_toggle_themeimagetoggle",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "themeimagetoggle"
     },
     {
@@ -47633,8 +47611,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_image_toggle_build",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "build"
     },
     {
@@ -47644,8 +47622,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_toggle_button",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "theme_toggle_button.dart"
     },
     {
@@ -47655,8 +47633,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_toggle_button_themetogglebutton",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "themetogglebutton"
     },
     {
@@ -47666,8 +47644,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "lib_shared_widgets_theme_toggle_button_build",
-      "community": 83,
-      "community_name": "Community 83",
+      "community": 121,
+      "community_name": "Community 121",
       "norm_label": "build"
     },
     {
@@ -48401,8 +48379,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_constants_cancellation_policy_test",
-      "community": 129,
-      "community_name": "Community 129",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "cancellation_policy_test.dart"
     },
     {
@@ -48412,8 +48390,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_constants_cancellation_policy_test_main",
-      "community": 129,
-      "community_name": "Community 129",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "main"
     },
     {
@@ -48423,8 +48401,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_flutter_test_flutter_test_dart",
-      "community": 149,
-      "community_name": "Community 149",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "package:flutter_test/flutter_test.dart"
     },
     {
@@ -48478,8 +48456,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_router_notification_routes_test",
-      "community": 146,
-      "community_name": "Community 146",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "notification_routes_test.dart"
     },
     {
@@ -48489,8 +48467,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_router_notification_routes_test_main",
-      "community": 146,
-      "community_name": "Community 146",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "main"
     },
     {
@@ -48500,8 +48478,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_services_firebase_notification_service_test",
-      "community": 203,
-      "community_name": "Community 203",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "firebase_notification_service_test.dart"
     },
     {
@@ -48511,8 +48489,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_services_firebase_notification_service_test_main",
-      "community": 203,
-      "community_name": "Community 203",
+      "community": 133,
+      "community_name": "Community 133",
       "norm_label": "main"
     },
     {
@@ -48522,8 +48500,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_utils_access_token_migration_test",
-      "community": 149,
-      "community_name": "Community 149",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "access_token_migration_test.dart"
     },
     {
@@ -48533,8 +48511,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_core_utils_access_token_migration_test_main",
-      "community": 149,
-      "community_name": "Community 149",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "main"
     },
     {
@@ -48676,8 +48654,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_bloc_test_bloc_test_dart",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 27,
+      "community_name": "Community 27",
       "norm_label": "package:bloc_test/bloc_test.dart"
     },
     {
@@ -48687,8 +48665,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_mocktail_mocktail_dart",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 48,
+      "community_name": "Community 48",
       "norm_label": "package:mocktail/mocktail.dart"
     },
     {
@@ -48698,8 +48676,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "helpers_test_fixtures_dart",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "../../helpers/test_fixtures.dart"
     },
     {
@@ -48742,8 +48720,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_auth_login_page_test_main",
-      "community": 27,
-      "community_name": "Community 27",
+      "community": 35,
+      "community_name": "Community 35",
       "norm_label": "main"
     },
     {
@@ -48775,8 +48753,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "helpers_widget_test_helpers_dart",
-      "community": 149,
-      "community_name": "Community 149",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "../../helpers/widget_test_helpers.dart"
     },
     {
@@ -48786,8 +48764,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_booking_confirmation_domain_utils_booking_price_calculator_test",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "booking_price_calculator_test.dart"
     },
     {
@@ -48797,8 +48775,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_booking_confirmation_domain_utils_booking_price_calculator_test_main",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "main"
     },
     {
@@ -49006,8 +48984,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "profile_bloc_test.dart"
     },
     {
@@ -49017,8 +48995,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_mockgetprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "mockgetprofileusecase"
     },
     {
@@ -49028,8 +49006,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_mockupdateprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "mockupdateprofileusecase"
     },
     {
@@ -49039,8 +49017,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_mocklogoutusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "mocklogoutusecase"
     },
     {
@@ -49050,8 +49028,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_mockdeleteprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "mockdeleteprofileusecase"
     },
     {
@@ -49061,8 +49039,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_getprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "getprofileusecase"
     },
     {
@@ -49072,8 +49050,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_updateprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "updateprofileusecase"
     },
     {
@@ -49083,8 +49061,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_logoutusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "logoutusecase"
     },
     {
@@ -49094,8 +49072,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_deleteprofileusecase",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "deleteprofileusecase"
     },
     {
@@ -49116,8 +49094,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_profile_profile_bloc_test_buildbloc",
-      "community": 66,
-      "community_name": "Community 66",
+      "community": 37,
+      "community_name": "Community 37",
       "norm_label": "buildbloc"
     },
     {
@@ -49127,8 +49105,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_widgets_cancellation_dialog_test",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "cancellation_dialog_test.dart"
     },
     {
@@ -49138,8 +49116,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "test_features_widgets_cancellation_dialog_test_main",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 164,
+      "community_name": "Community 164",
       "norm_label": "main"
     },
     {
@@ -86446,28 +86424,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "lib_features_booking_confirmation_domain_utils_booking_price_calculator",
-      "target": "lib_features_booking_confirmation_domain_utils_booking_price_calculator_normalizeservice"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "lib_features_booking_confirmation_domain_utils_booking_price_calculator",
-      "target": "lib_features_booking_confirmation_domain_utils_booking_price_calculator_normalizeservices"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/booking_confirmation/domain/utils/booking_price_calculator.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "lib_features_booking_confirmation_domain_utils_booking_price_calculator",
       "target": "lib_features_booking_confirmation_domain_utils_booking_price_calculator_parsemoney"
     },
     {
@@ -89375,17 +89331,6 @@
       "_origin": "ast",
       "source": "lib_features_booking_confirmation_presentation_pages_review_confirm_page_buildbottomconfirmbutton",
       "target": "lib_features_profile_presentation_bloc_profile_bloc_profilebloc"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/booking_confirmation/presentation/widgets/selected_services_card.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "lib_features_booking_confirmation_presentation_widgets_selected_services_card",
-      "target": "package_tressy_features_booking_confirmation_domain_utils_booking_price_calculator_dart"
     },
     {
       "relation": "imports",
@@ -131294,5 +131239,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9ab9e31f34100b6ffb98f5010e2537f4fbe97f99"
+  "built_at_commit": "19e202c46f40003344d9f83d264fab455fc6041b"
 }

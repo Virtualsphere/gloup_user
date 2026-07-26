@@ -151,7 +151,12 @@ class SalonDetailsBottomBar extends StatelessWidget {
                                       'id': service.id,
                                       'name': service.name,
                                       'price': service.price,
-                                      'originalPrice': service.originalPrice,
+                                      'originalPrice':
+                                          (service.originalPrice != null &&
+                                                  service.originalPrice! >
+                                                      service.price)
+                                              ? service.originalPrice
+                                              : null,
                                       'duration': service.duration,
                                       'discountPercentage':
                                           service.discountPercentage,
@@ -163,7 +168,12 @@ class SalonDetailsBottomBar extends StatelessWidget {
                                       'id': service.id,
                                       'name': service.name,
                                       'price': service.price,
-                                      'originalPrice': service.originalPrice,
+                                      'originalPrice':
+                                          (service.originalPrice != null &&
+                                                  service.originalPrice! >
+                                                      service.price)
+                                              ? service.originalPrice
+                                              : null,
                                       'duration': service.duration,
                                       'discountPercentage':
                                           service.discountPercentage,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class SelectedServicesCard extends StatelessWidget {
@@ -66,18 +67,14 @@ class SelectedServicesCard extends StatelessWidget {
     Map<String, dynamic> service,
     bool isDarkMode,
   ) {
-    // print('service: $service');
     final name = service['name'] as String? ?? 'N/A';
     final duration = service['duration'] as String? ?? 'N/A';
-    final originalPrice = service['originalPrice'] as double? ?? 0.0;
-    final price = service['price'] as double? ?? 0.0;
+    final price = BookingPriceCalculator.sellingPriceOf(service);
+    final originalPrice = BookingPriceCalculator.listPriceOf(service);
     final discountPercentage = service['discountPercentage'] as String? ?? '';
     final isPopular = service['isPopular'] as bool? ?? false;
 
-    // Calculate discounted price if discount exists
-    final hasDiscount = discountPercentage.isNotEmpty &&
-        discountPercentage != '0%' &&
-        discountPercentage != '0';
+    final hasDiscount = originalPrice > price;
 
     // double? discountedPrice;
     // if (hasDiscount) {
@@ -229,7 +226,7 @@ class SelectedServicesCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '$discountPercentage Off',
+                      '${discountPercentage.isNotEmpty ? discountPercentage : '${(((originalPrice - price) / originalPrice) * 100).round()}%'} Off',
                       style: context.textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,

@@ -62,5 +62,56 @@ void main() {
       expect(breakdown.gstAmount, closeTo(7.5, 0.01));
       expect(breakdown.finalTotal, closeTo(147.5, 0.01));
     });
+
+    test('handles int prices from JSON/route extras (device variance)', () {
+      final breakdown = BookingPriceCalculator.fromServices([
+        {'id': 1, 'price': 1699, 'originalPrice': null},
+      ]);
+
+      expect(breakdown.payableSubtotal, 1699.0);
+      expect(breakdown.finalTotal, closeTo(1699.0 * 1.05, 0.01));
+      expect(breakdown.finalTotal.toStringAsFixed(0), isNot('0'));
+    });
+
+    test('falls back to amount key when price is missing', () {
+      final breakdown = BookingPriceCalculator.fromServices([
+        {'id': 1, 'amount': 1699},
+      ]);
+
+      expect(breakdown.payableSubtotal, 1699.0);
+      expect(breakdown.listAmount, 1699.0);
+    });
+
+    test('falls back to originalPrice when payable price is zero', () {
+      final breakdown = BookingPriceCalculator.fromServices([
+        {'id': 1, 'price': 0, 'originalPrice': 1699},
+      ]);
+
+      expect(breakdown.payableSubtotal, 1699.0);
+      expect(breakdown.finalTotal, greaterThan(0));
+    });
+
+    test('parses currency strings', () {
+      final breakdown = BookingPriceCalculator.fromServices([
+        {'id': 1, 'price': '₹1,699'},
+      ]);
+
+      expect(breakdown.payableSubtotal, 1699.0);
+    });
+
+    test('normalizeServices tolerates loosely typed maps', () {
+      final services = BookingPriceCalculator.normalizeServices([
+        <dynamic, dynamic>{'id': 1, 'price': 1699, 'name': 'Cut'},
+        null,
+        'bad',
+      ]);
+
+      expect(services.length, 1);
+      expect(services.first['price'], 1699.0);
+      expect(
+        BookingPriceCalculator.fromServices(services).payableSubtotal,
+        1699.0,
+      );
+    });
   });
 }

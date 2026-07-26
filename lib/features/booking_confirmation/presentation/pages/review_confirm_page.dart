@@ -277,11 +277,12 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   }
 
   List<Map<String, dynamic>> get _allSelectedServices {
-    final selectedServices =
-        widget.bookingData?['selectedServices'] as List? ?? const [];
+    final selectedServices = widget.bookingData?['selectedServices'];
     return [
-      ...selectedServices.map((s) => Map<String, dynamic>.from(s as Map)),
-      ...addedServices,
+      ...BookingPriceCalculator.normalizeServices(
+        selectedServices is List ? selectedServices : null,
+      ),
+      ...BookingPriceCalculator.normalizeServices(addedServices),
     ];
   }
 
@@ -423,13 +424,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               ),
                               // Selected services card (including added services)
                               SelectedServicesCard(
-                                services: [
-                                  ...((widget.bookingData!['selectedServices']
-                                              as List?)
-                                          ?.cast<Map<String, dynamic>>() ??
-                                      []),
-                                  ...addedServices,
-                                ],
+                                services: _allSelectedServices,
                               ),
                               SizedBox(height: AppSizes.spaceM),
                               // Who is this booking for section - Only show if logged in
@@ -1319,13 +1314,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                           orderState.isVerifyingPayment)
                       ? null
                       : () async {
-                          final allSelectedServices = [
-                            ...((widget.bookingData!['selectedServices']
-                                        as List?)
-                                    ?.cast<Map<String, dynamic>>() ??
-                                []),
-                            ...addedServices,
-                          ];
+                          final allSelectedServices = _allSelectedServices;
 
                           final servicesPayload = allSelectedServices
                               .map((s) => {'service_id': s['id']})
