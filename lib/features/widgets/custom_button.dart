@@ -217,11 +217,11 @@ class CustomPopupMenuButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
-            color: isDarkMode ? AppColors.black : AppColors.borderColor,
+            color: isDarkMode ? AppColors.borderDark : AppColors.borderColor,
             width: 1,
           ),
         ),
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         color: backgroundColor,
         position: PopupMenuPosition.under,
         iconColor: iconColor,
@@ -286,22 +286,23 @@ class CustomPopupMenuButtonDelete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return PopupMenuTheme(
       data: PopupMenuThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
-            color: AppColors.borderColor,
+            color: isDarkMode ? AppColors.borderDark : AppColors.borderColor,
             width: 1,
           ),
         ),
-        surfaceTintColor: AppColors.white,
-        color: AppColors.white,
+        surfaceTintColor: Colors.transparent,
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
         position: PopupMenuPosition.under,
       ),
       child: PopupMenuButton(
-        color: AppColors.background,
+        color: isDarkMode ? AppColors.surfaceDark : AppColors.background,
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints.tightFor(height: 48, width: 160),
         itemBuilder: (BuildContext bc) {

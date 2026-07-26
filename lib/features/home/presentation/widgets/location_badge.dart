@@ -17,6 +17,9 @@ class LocationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final foregroundColor =
+        isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
@@ -34,7 +37,7 @@ class LocationBadge extends StatelessWidget {
           children: [
             Icon(
               Icons.location_on,
-              color: AppColors.primary,
+              color: foregroundColor,
               size: AppSizes.iconM,
             ),
             SizedBox(width: 6),
@@ -48,13 +51,13 @@ class LocationBadge extends StatelessWidget {
                       location,
                       style: context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                        color: foregroundColor,
                       ),
                     ),
                     SizedBox(width: 4),
                     Icon(
                       Icons.keyboard_arrow_down,
-                      color: AppColors.primary,
+                      color: foregroundColor,
                       size: AppSizes.iconS,
                     ),
                   ],
@@ -63,7 +66,7 @@ class LocationBadge extends StatelessWidget {
                   Text(
                     addressLine2!,
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.primary.withValues(alpha: 0.8),
+                      color: foregroundColor.withValues(alpha: 0.8),
                       fontSize: AppSizes.fontXS,
                     ),
                   ),

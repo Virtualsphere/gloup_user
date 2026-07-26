@@ -23,9 +23,13 @@ class ActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final foregroundColor =
+        isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary;
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: AppColors.background,
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDark : AppColors.background,
       centerTitle: true,
       elevation: 0,
       leading: isBackButton
@@ -39,21 +43,17 @@ class ActionBar extends StatelessWidget {
                   width: 37,
                   decoration: isBackButtonDecoration
                       ? BoxDecoration(
-                          color: AppColors.white,
+                          color: isDarkMode
+                              ? AppColors.surfaceDark
+                              : AppColors.white,
                           borderRadius: BorderRadius.circular(10),
-                          /*boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: .2),
-                              blurRadius: 10,
-                            )
-                          ],*/
                         )
                       : const BoxDecoration(),
                   child: Center(
                     child: SvgPicture.asset(
                       AppIcons.arrowBack,
                       colorFilter: ColorFilter.mode(
-                        AppColors.primary,
+                        foregroundColor,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -65,7 +65,7 @@ class ActionBar extends StatelessWidget {
       title: BodyTextColors(
         title: title,
         fontSize: 20,
-        color: AppColors.primary,
+        color: foregroundColor,
         isBodoniModa: false,
       ),
       actions: actionWidget != null

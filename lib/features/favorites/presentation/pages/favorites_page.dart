@@ -71,7 +71,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             toolbarHeight: AppSizes.appBarHeight,
             shape: Border(
               bottom: BorderSide(
-                color: AppColors.border,
+                color: isDarkMode ? AppColors.borderDark : AppColors.border,
                 width: AppSizes.borderWidthThin,
               ),
             ),

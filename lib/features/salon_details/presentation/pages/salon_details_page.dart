@@ -167,7 +167,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
                         shape: pageState.isCollapsed
                             ? Border(
                                 bottom: BorderSide(
-                                  color: AppColors.border,
+                                  color: isDarkMode
+                                      ? AppColors.borderDark
+                                      : AppColors.border,
                                   width: AppSizes.borderWidthThin,
                                 ),
                               )

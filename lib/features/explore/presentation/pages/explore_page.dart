@@ -169,7 +169,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
         toolbarHeight: AppSizes.appBarHeight,
         shape: Border(
           bottom: BorderSide(
-            color: AppColors.border,
+            color: isDarkMode ? AppColors.borderDark : AppColors.border,
             width: AppSizes.borderWidthThin,
           ),
         ),

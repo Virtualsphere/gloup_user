@@ -50,20 +50,25 @@ class LocationPermissionDialog extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.12),
+                    color: (isDarkMode
+                            ? AppColors.primaryDarkTheme
+                            : AppColors.primary)
+                        .withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                 ),
                 Container(
                   width: 56,
                   height: 56,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? AppColors.primaryDarkTheme
+                        : AppColors.primary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.location_on,
-                    color: AppColors.white,
+                    color: isDarkMode ? AppColors.black : AppColors.white,
                     size: 32,
                   ),
                 ),

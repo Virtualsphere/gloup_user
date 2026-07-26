@@ -17,11 +17,20 @@ class CustomToast {
     FToast fToast = FToast();
     fToast.init(context);
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    // Inverted surface so the toast stands out on both themes.
+    final backgroundColor = isError
+        ? (isDarkMode ? AppColors.borderDark : AppColors.border)
+        : (isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary);
+    final foregroundColor = isError
+        ? (isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary)
+        : (isDarkMode ? AppColors.black : AppColors.white);
+
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(35.0),
-        color: isError ? AppColors.border : AppColors.primary,
+        color: backgroundColor,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -29,7 +38,7 @@ class CustomToast {
           if (!isError)
             Icon(
               Icons.check,
-              color: isError ? AppColors.primary : AppColors.white,
+              color: foregroundColor,
               size: 18,
             ),
           SizedBox(width: 12.0),
@@ -39,7 +48,7 @@ class CustomToast {
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
-                color: isError ? AppColors.primary : AppColors.white,
+                color: foregroundColor,
               ),
             ),
           ),
@@ -62,7 +71,7 @@ class CustomLoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-        color: AppColors.primary,
+        color: context.colorScheme.primary,
       ),
     );
   }
@@ -76,13 +85,15 @@ class CustomErrorTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.theme.brightness == Brightness.dark;
     return Center(
       child: BodyTextColors(
         title: title,
         fontSize: 15,
         fontWeight: FontWeight.w400,
         isBodoniModa: false,
-        color: AppColors.primaryLight,
+        color: color ??
+            (isDarkMode ? AppColors.textPrimaryDark : AppColors.primaryLight),
         textAlign: TextAlign.center,
       ),
     );

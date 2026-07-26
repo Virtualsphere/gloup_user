@@ -31,12 +31,15 @@ class CustomSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor =
+        isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary;
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: controller,
       builder: (context, value, child) {
         return TextFormField(
           controller: controller,
-          cursorColor: AppColors.primary,
+          cursorColor: textColor,
           keyboardType: inputType,
           textInputAction: inputAction,
           textCapitalization: TextCapitalization.sentences,
@@ -47,7 +50,7 @@ class CustomSearchField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: AppColors.primary,
+            color: textColor,
           ),
           decoration: InputDecoration(
             hintText: hintText,

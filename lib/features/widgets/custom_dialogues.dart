@@ -21,6 +21,7 @@ class CustomDialogues {
       useRootNavigator: false,
       barrierDismissible: false,
       builder: (context) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         if (Platform.isIOS) {
           return CupertinoAlertDialog(
             title: HeaderTextBlack(
@@ -42,7 +43,9 @@ class CustomDialogues {
                 child: BodyTextColors(
                   title: 'Submit',
                   fontSize: 16,
-                  color: AppColors.primary,
+                  color: isDarkMode
+                      ? AppColors.primaryDarkTheme
+                      : AppColors.primary,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -50,7 +53,9 @@ class CustomDialogues {
           );
         } else {
           return Dialog(
-            backgroundColor: AppColors.scaffoldBackground,
+            backgroundColor: isDarkMode
+                ? AppColors.surfaceDark
+                : AppColors.scaffoldBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -70,7 +75,11 @@ class CustomDialogues {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Divider(color: AppColors.borderColor),
+                      child: Divider(
+                        color: isDarkMode
+                            ? AppColors.dividerDark
+                            : AppColors.borderColor,
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,7 +89,9 @@ class CustomDialogues {
                             onTap: () => Navigator.pop(context),
                             child: Container(
                               height: 56,
-                              decoration: Themes.borderDecoration(),
+                              decoration: Themes.borderDecoration(
+                                isDark: isDarkMode,
+                              ),
                               child: Center(
                                 child: HeaderTextBlack(
                                   title: 'Not Now',
@@ -119,6 +130,10 @@ class CustomDialogues {
       useRootNavigator: false,
       barrierDismissible: false,
       builder: (context) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        final messageColor = isDarkMode
+            ? AppColors.textSecondaryDark
+            : AppColors.textSecondary;
         if (Platform.isIOS) {
           return CupertinoAlertDialog(
             content: Container(
@@ -138,7 +153,7 @@ class CustomDialogues {
                         title: CancellationPolicy.cancellationDeadlineMessage,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
-                        color: AppColors.circleGreyColor,
+                        color: messageColor,
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -149,7 +164,8 @@ class CustomDialogues {
           );
         } else {
           return Dialog(
-            backgroundColor: AppColors.background,
+            backgroundColor:
+                isDarkMode ? AppColors.surfaceDark : AppColors.background,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -171,7 +187,7 @@ class CustomDialogues {
                         title: CancellationPolicy.cancellationDeadlineMessage,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
-                        color: AppColors.circleGreyColor,
+                        color: messageColor,
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -191,11 +207,13 @@ class CustomDialogues {
       useRootNavigator: false,
       barrierDismissible: false,
       builder: (context) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         if (Platform.isIOS) {
           return CupertinoAlertDialog(
             content: CupertinoActivityIndicator(
               radius: 15,
-              color: AppColors.primary,
+              color:
+                  isDarkMode ? AppColors.primaryDarkTheme : AppColors.primary,
             ),
           );
         } else {
@@ -220,6 +238,10 @@ class CustomDialogues {
       useRootNavigator: false,
       barrierDismissible: true,
       builder: (context) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        final messageColor = isDarkMode
+            ? AppColors.textSecondaryDark
+            : AppColors.textSecondary;
         if (Platform.isIOS) {
           return CupertinoAlertDialog(
             title: HeaderTextBlack(
@@ -234,7 +256,7 @@ class CustomDialogues {
                     'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
-                color: AppColors.circleGreyColor,
+                color: messageColor,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -255,7 +277,9 @@ class CustomDialogues {
                 child: BodyTextColors(
                   title: 'Open Settings',
                   fontSize: 16,
-                  color: AppColors.primary,
+                  color: isDarkMode
+                      ? AppColors.primaryDarkTheme
+                      : AppColors.primary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -263,7 +287,8 @@ class CustomDialogues {
           );
         } else {
           return Dialog(
-            backgroundColor: AppColors.background,
+            backgroundColor:
+                isDarkMode ? AppColors.surfaceDark : AppColors.background,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -288,12 +313,16 @@ class CustomDialogues {
                           'To find nearby salons and provide personalized recommendations, please enable location access in Settings.',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.circleGreyColor,
+                      color: messageColor,
                       textAlign: TextAlign.center,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Divider(color: AppColors.borderColor),
+                      child: Divider(
+                        color: isDarkMode
+                            ? AppColors.dividerDark
+                            : AppColors.borderColor,
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -303,7 +332,9 @@ class CustomDialogues {
                             onTap: () => Navigator.pop(context),
                             child: Container(
                               height: 56,
-                              decoration: Themes.borderDecoration(),
+                              decoration: Themes.borderDecoration(
+                                isDark: isDarkMode,
+                              ),
                               child: Center(
                                 child: HeaderTextBlack(
                                   title: 'Cancel',

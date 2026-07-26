@@ -820,10 +820,10 @@ packages:
     dependency: "direct overridden"
     description:
       name: google_maps_flutter_android
-      sha256: "3fa9a96b89bac3aecd06788b13247a2f059e282b4d1eb7fe5fbddff4d939889f"
+      sha256: a404c67d460f64b8bdc48aa5e39c81aa13505552d8783ae68f9aeef074913286
       url: "https://pub.dev"
     source: hosted
-    version: "2.14.1"
+    version: "2.19.12"
   google_maps_flutter_ios:
     dependency: transitive
     description:

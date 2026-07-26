@@ -182,8 +182,8 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.primaryDarkTheme,
+        foregroundColor: AppColors.onPrimaryDarkTheme,
         elevation: 2,
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
@@ -200,8 +200,9 @@ class AppTheme {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        side: BorderSide(color: AppColors.primary, width: AppSizes.borderWidth),
+        foregroundColor: AppColors.primaryDarkTheme,
+        side: BorderSide(
+            color: AppColors.primaryDarkTheme, width: AppSizes.borderWidth),
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingXL,
           vertical: AppSizes.paddingM,
@@ -217,7 +218,7 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.primary,
+        foregroundColor: AppColors.primaryDarkTheme,
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingL,
           vertical: AppSizes.paddingS,
@@ -243,7 +244,8 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         borderSide: BorderSide(
-            color: AppColors.primary, width: AppSizes.borderWidthThick),
+            color: AppColors.primaryDarkTheme,
+            width: AppSizes.borderWidthThick),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.radiusM),

@@ -118,6 +118,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             // Title
                             Text(
                               _onboardingContent[index]['title']!,
+                              // Fixed color: rendered over a light onboarding image
                               style: context.textTheme.headlineMedium?.copyWith(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,

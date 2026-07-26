@@ -27,7 +27,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       shape: Border(
         bottom: BorderSide(
-          color: AppColors.border,
+          color: isDarkMode ? AppColors.borderDark : AppColors.border,
           width: AppSizes.borderWidthThin,
         ),
       ),

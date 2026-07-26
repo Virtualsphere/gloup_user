@@ -59,16 +59,20 @@ class SalonInfoCard extends StatelessWidget {
                             memCacheWidth: 240,
                             memCacheHeight: 160,
                             errorWidget: (context, url, error) {
+                              final placeholderColor = isDarkMode
+                                  ? AppColors.primaryDarkTheme
+                                  : AppColors.primary;
                               return Container(
                                 width: 120,
                                 height: 80,
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color:
+                                    placeholderColor.withValues(alpha: 0.1),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.content_cut,
-                                      color: AppColors.primary
+                                      color: placeholderColor
                                           .withValues(alpha: 0.3),
                                       size: 36,
                                     ),
@@ -77,7 +81,7 @@ class SalonInfoCard extends StatelessWidget {
                                       'Image not available',
                                       style:
                                           context.textTheme.bodySmall?.copyWith(
-                                        color: AppColors.primary
+                                        color: placeholderColor
                                             .withValues(alpha: 0.4),
                                         fontSize: 11,
                                       ),
@@ -90,10 +94,15 @@ class SalonInfoCard extends StatelessWidget {
                         : Container(
                             width: 120,
                             height: 80,
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            child: const Icon(
+                            color: (isDarkMode
+                                    ? AppColors.primaryDarkTheme
+                                    : AppColors.primary)
+                                .withValues(alpha: 0.1),
+                            child: Icon(
                               Icons.image,
-                              color: AppColors.primary,
+                              color: isDarkMode
+                                  ? AppColors.primaryDarkTheme
+                                  : AppColors.primary,
                               size: 40,
                             ),
                           ),

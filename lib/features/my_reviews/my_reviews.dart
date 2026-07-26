@@ -109,7 +109,7 @@ class MyReviewContainer extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-          color: isDarkMode ? AppColors.black : AppColors.white,
+          color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
           borderRadius: BorderRadius.circular(10.0)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -198,7 +198,9 @@ class MyReviewContainer extends StatelessWidget {
             child: SizedBox(
               height: 2.0,
               child: Divider(
-                color: isDarkMode ? AppColors.white : AppColors.disabledColor,
+                color: isDarkMode
+                    ? AppColors.dividerDark
+                    : AppColors.disabledColor,
                 thickness: 1.5,
               ),
             ),
@@ -300,10 +302,12 @@ class MyReviewContainer extends StatelessWidget {
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color: isDarkMode ? AppColors.white : AppColors.borderColor,
+                    color: isDarkMode
+                        ? AppColors.backgroundDark
+                        : AppColors.borderColor,
                     border: Border.all(
                         color: isDarkMode
-                            ? AppColors.white
+                            ? AppColors.borderDark
                             : AppColors.borderColor)),
                 child: Row(
                   children: [
@@ -327,8 +331,11 @@ class MyReviewContainer extends StatelessWidget {
                       },
                       child: SvgPicture.asset(
                         AppIcons.edit,
-                        colorFilter: const ColorFilter.mode(
-                            AppColors.black, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                            isDarkMode
+                                ? AppColors.textPrimaryDark
+                                : AppColors.black,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ],

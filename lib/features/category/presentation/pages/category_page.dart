@@ -307,7 +307,7 @@ class _CategoryPageState extends State<CategoryPage> {
           elevation: 0,
           shape: Border(
             bottom: BorderSide(
-              color: AppColors.border,
+              color: isDarkMode ? AppColors.borderDark : AppColors.border,
               width: AppSizes.borderWidthThin,
             ),
           ),

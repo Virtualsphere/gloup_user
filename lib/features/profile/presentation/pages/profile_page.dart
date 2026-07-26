@@ -171,12 +171,16 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                                       )
                                     : Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.grey.shade200,
+                                          color: isDarkMode
+                                              ? AppColors.borderDark
+                                              : Colors.grey.shade200,
                                           shape: BoxShape.circle,
                                         ),
                                         child: Icon(
                                           Icons.person_outline,
-                                          color: Colors.grey,
+                                          color: isDarkMode
+                                              ? AppColors.textSecondaryDark
+                                              : Colors.grey,
                                           size: 28,
                                         ),
                                       ),
@@ -451,7 +455,8 @@ class _MenuCard extends StatelessWidget {
                 Divider(
                   height: 1,
                   thickness: 1,
-                  color: AppColors.divider,
+                  color:
+                      isDarkMode ? AppColors.dividerDark : AppColors.divider,
                   indent: 56,
                 ),
             ],

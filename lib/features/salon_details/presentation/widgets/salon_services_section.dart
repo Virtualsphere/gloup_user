@@ -122,7 +122,7 @@ class SalonServicesSection extends StatelessWidget {
                       category,
                       style: GoogleFonts.inter(
                         color: isActive
-                            ? Colors.white
+                            ? (isDarkMode ? AppColors.black : Colors.white)
                             : (isDarkMode
                                 ? AppColors.textSecondaryDark
                                 : SalonDetailDesignTokens.chipCategoryText),
@@ -248,7 +248,7 @@ class SalonServicesSection extends StatelessWidget {
         border: Border.all(
           color: isSelected
               ? SalonDetailDesignTokens.accentBlue.withValues(alpha: 0.4)
-              : const Color(0xFFE6E6E6),
+              : (isDarkMode ? AppColors.borderDark : const Color(0xFFE6E6E6)),
           width: 1,
         ),
       ),
@@ -406,14 +406,18 @@ class SalonServicesSection extends StatelessWidget {
                     ? (isDarkMode
                         ? AppColors.borderDark.withValues(alpha: 0.6)
                         : SalonDetailDesignTokens.addedButtonBg)
-                    : const Color(0xFF171717),
+                    : (isDarkMode
+                        ? AppColors.primaryDarkTheme
+                        : const Color(0xFF171717)),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected
                       ? (isDarkMode
                           ? AppColors.borderDark
                           : SalonDetailDesignTokens.addedButtonBorder)
-                      : const Color(0xFF171717),
+                      : (isDarkMode
+                          ? AppColors.primaryDarkTheme
+                          : const Color(0xFF171717)),
                   width: 1,
                 ),
               ),
@@ -421,12 +425,14 @@ class SalonServicesSection extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (!isSelected) ...[
-                    const Icon(Icons.add, color: Colors.white, size: 14),
+                    Icon(Icons.add,
+                        color: isDarkMode ? AppColors.black : Colors.white,
+                        size: 14),
                     const SizedBox(width: 6),
                     Text(
                       'Add',
                       style: GoogleFonts.inter(
-                        color: Colors.white,
+                        color: isDarkMode ? AppColors.black : Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         height: 16 / 12,

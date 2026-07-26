@@ -10,6 +10,7 @@ import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
+import 'package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_state.dart';
@@ -275,70 +276,34 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     }).fold<int>(0, (max, discount) => discount > max ? discount : max);
   }
 
-  // Calculate total service amount from selected services (original prices)
-  double get _totalServiceAmount {
-    if (widget.bookingData == null) return 0.0;
-
-    final selectedServices = widget.bookingData!['selectedServices'] as List?;
-    if (selectedServices == null || selectedServices.isEmpty) return 0.0;
-
-    // Combine original selected services and added services
-    final allServices = [...selectedServices, ...addedServices];
-
-    return allServices.fold<double>(0.0, (total, service) {
-      final price = service['originalPrice'];
-      if (price == null) return total;
-
-      // 'price' field contains the ORIGINAL price (before discount)
-      // Handle both String and numeric types
-      if (price is num) {
-        return total + price.toDouble();
-      } else if (price is String) {
-        // Remove ₹ symbol and parse
-        final parsedPrice =
-            double.tryParse(price.replaceAll('₹', '').trim()) ?? 0.0;
-        return total + parsedPrice;
-      }
-      return total;
-    });
+  List<Map<String, dynamic>> get _allSelectedServices {
+    final selectedServices =
+        widget.bookingData?['selectedServices'] as List? ?? const [];
+    return [
+      ...selectedServices.map((s) => Map<String, dynamic>.from(s as Map)),
+      ...addedServices,
+    ];
   }
 
-  // Calculate total service discount from selected services
-  // Discount = originalPrice - price (server-provided values, no percentage calc)
-  double get _totalServiceDiscount {
-    if (widget.bookingData == null) return 0.0;
+  /// MRP / list total shown as "Amount" (falls back to selling price per line).
+  double get _totalServiceAmount =>
+      BookingPriceCalculator.fromServices(_allSelectedServices).listAmount;
 
-    final selectedServices = widget.bookingData!['selectedServices'] as List?;
-    if (selectedServices == null || selectedServices.isEmpty) return 0.0;
+  /// Sum of (MRP − selling) for discounted lines only.
+  double get _totalServiceDiscount =>
+      BookingPriceCalculator.fromServices(_allSelectedServices).serviceDiscount;
 
-    // Combine original selected services and added services
-    final allServices = [...selectedServices, ...addedServices];
-
-    return allServices.fold<double>(0.0, (total, service) {
-      final originalPriceValue = service['originalPrice'];
-      final priceValue = service['price'];
-
-      if (originalPriceValue == null || priceValue == null) return total;
-
-      double originalPrice = 0.0;
-      if (originalPriceValue is num) {
-        originalPrice = originalPriceValue.toDouble();
-      } else if (originalPriceValue is String) {
-        originalPrice =
-            double.tryParse(originalPriceValue.replaceAll('₹', '').trim()) ??
-                0.0;
-      }
-
-      double price = 0.0;
-      if (priceValue is num) {
-        price = priceValue.toDouble();
-      } else if (priceValue is String) {
-        price = double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
-      }
-
-      final discount = originalPrice - price;
-      return total + (discount > 0 ? discount : 0.0);
-    });
+  BookingPriceBreakdown _billingBreakdown({
+    double couponDiscount = 0.0,
+    double platformFee = 0.0,
+    double walletAmountUsed = 0.0,
+  }) {
+    return BookingPriceCalculator.fromServices(
+      _allSelectedServices,
+      couponDiscount: couponDiscount,
+      platformFee: platformFee,
+      walletAmountUsed: walletAmountUsed,
+    );
   }
 
   @override
@@ -707,7 +672,11 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                     width: 36,
                                                     height: 36,
                                                     decoration: BoxDecoration(
-                                                      color: (AppColors.primary)
+                                                      color: (isDarkMode
+                                                              ? AppColors
+                                                                  .primaryDarkTheme
+                                                              : AppColors
+                                                                  .primary)
                                                           .withValues(
                                                               alpha: 0.1),
                                                       shape: BoxShape.circle,
@@ -1267,40 +1236,33 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     }
 
     // Calculate final total from billing summary
-    final serviceAmount = _totalServiceAmount;
     final couponDiscount = selectedCouponCode != null
         ? _resolveDiscount(
             availableCoupons
                 .firstWhere((c) => c.couponCode == selectedCouponCode),
-            serviceAmount - _totalServiceDiscount)
+            _totalServiceAmount - _totalServiceDiscount)
         : 0.0;
     final couponId = selectedCouponCode != null
         ? availableCoupons
             .firstWhere((c) => c.couponCode == selectedCouponCode)
             .id
         : null;
+    final serviceAmount = _totalServiceAmount;
     final serviceDiscount = _totalServiceDiscount;
-
-    // Calculate subtotal (after service discount and coupon)
-    double subtotal = serviceAmount - serviceDiscount;
-    if (couponDiscount > 0) {
-      subtotal -= couponDiscount;
-    }
-
-    // Calculate GST
-    final gst = (subtotal * 5.0) / 100;
 
     // Platform fee (waived)
     final platformFee = 0.0;
 
-    // Total before Gloup Cash
-    final totalBeforeGloupCash = subtotal + gst + platformFee;
-
     // Gloup Cash (only if checkbox is checked)
     final gloupCash = useGloupCash ? 70.0 : 0.0;
 
-    // Final total
-    final finalTotal = totalBeforeGloupCash - gloupCash;
+    final billing = _billingBreakdown(
+      couponDiscount: couponDiscount,
+      platformFee: platformFee,
+      walletAmountUsed: gloupCash,
+    );
+    final gst = billing.gstAmount;
+    final finalTotal = billing.finalTotal;
 
     return Container(
       padding: EdgeInsets.all(AppSizes.paddingM),
@@ -1636,19 +1598,16 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         itemBuilder: (context, index) {
           final service = recommendedServices[index];
           final name = service['name'] as String? ?? 'N/A';
-          final originalPrice = service['originalPrice'] as double? ?? 0.0;
           final duration = service['duration'] as String? ?? 'N/A';
-          final priceValue = service['price'];
+          final price = BookingPriceCalculator.sellingPriceOf(
+            Map<String, dynamic>.from(service),
+          );
+          final listPrice = BookingPriceCalculator.listPriceOf(
+            Map<String, dynamic>.from(service),
+          );
+          final hasMrp = listPrice > price;
+          final originalPrice = hasMrp ? listPrice : price;
           final discountPercentage = service['discountPercentage'] as String?;
-
-          // Parse price
-          double price = 0.0;
-          if (priceValue is num) {
-            price = priceValue.toDouble();
-          } else if (priceValue is String) {
-            price =
-                double.tryParse(priceValue.replaceAll('₹', '').trim()) ?? 0.0;
-          }
 
           final serviceId = service['id'] as int? ?? name;
           final isAdded =
@@ -1668,12 +1627,12 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                   addedServices
                       .removeWhere((s) => (s['id'] ?? s['name']) == serviceId);
                 } else {
-                  // Add service
+                  // Add service — keep originalPrice null when there is no MRP
                   addedServices.add({
                     'id': serviceId,
                     'name': name,
                     'price': price,
-                    'originalPrice': originalPrice,
+                    'originalPrice': hasMrp ? listPrice : null,
                     'duration': duration,
                     'discountPercentage': discountPercentage,
                     'isPopular': service['isPopular'] ?? false,

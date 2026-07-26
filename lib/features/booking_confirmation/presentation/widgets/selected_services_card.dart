@@ -118,7 +118,10 @@ class SelectedServicesCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: (isDarkMode
+                                ? AppColors.primaryDarkTheme
+                                : AppColors.primary)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppSizes.radiusS),
                       ),
                       child: Text(
@@ -126,7 +129,9 @@ class SelectedServicesCard extends StatelessWidget {
                         style: context.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
+                          color: isDarkMode
+                              ? AppColors.primaryDarkTheme
+                              : AppColors.primary,
                         ),
                       ),
                     ),

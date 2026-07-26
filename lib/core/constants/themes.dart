@@ -32,12 +32,12 @@ class Themes {
     );
   }
 
-  static BoxDecoration borderDecoration({double radius = 15}) {
+  static BoxDecoration borderDecoration({double radius = 15, bool isDark = false}) {
     return BoxDecoration(
-      color: AppColors.white,
+      color: isDark ? AppColors.surfaceDark : AppColors.white,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: AppColors.borderColor,
+        color: isDark ? AppColors.borderDark : AppColors.borderColor,
       ),
     );
   }

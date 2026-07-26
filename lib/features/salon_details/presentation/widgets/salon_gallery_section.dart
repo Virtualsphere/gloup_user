@@ -70,14 +70,20 @@ class SalonGallerySection extends StatelessWidget {
                             memCacheWidth: 800,
                             memCacheHeight: 800,
                             errorWidget: (context, url, error) {
+                              final isDark = Theme.of(context).brightness ==
+                                  Brightness.dark;
+                              final placeholderColor = isDark
+                                  ? AppColors.primaryDarkTheme
+                                  : AppColors.primary;
                               return Container(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color:
+                                    placeholderColor.withValues(alpha: 0.1),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.content_cut,
-                                      color: AppColors.primary
+                                      color: placeholderColor
                                           .withValues(alpha: 0.3),
                                       size: 48,
                                     ),
@@ -86,7 +92,7 @@ class SalonGallerySection extends StatelessWidget {
                                       'Image not available',
                                       style:
                                           context.textTheme.bodySmall?.copyWith(
-                                        color: AppColors.primary
+                                        color: placeholderColor
                                             .withValues(alpha: 0.4),
                                         fontSize: 11,
                                       ),

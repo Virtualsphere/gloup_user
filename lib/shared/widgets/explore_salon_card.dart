@@ -196,22 +196,25 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                         memCacheWidth: 260,
                         memCacheHeight: 300,
                         errorWidget: (context, url, error) {
+                          final placeholderColor = isDarkMode
+                              ? AppColors.primaryDarkTheme
+                              : AppColors.primary;
                           return Container(
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: placeholderColor.withValues(alpha: 0.1),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.content_cut,
                                   color:
-                                      AppColors.primary.withValues(alpha: 0.3),
+                                      placeholderColor.withValues(alpha: 0.3),
                                   size: 32.w,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'No image',
                                   style: context.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.primary
+                                    color: placeholderColor
                                         .withValues(alpha: 0.4),
                                     fontSize: 9.sp,
                                   ),

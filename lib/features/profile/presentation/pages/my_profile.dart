@@ -591,10 +591,20 @@ class _MyProfileState extends State<MyProfile> {
                                     width: 30,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: AppColors.primary,
+                                      color: isDarkMode
+                                          ? AppColors.primaryDarkTheme
+                                          : AppColors.primary,
                                     ),
                                     child: Center(
-                                      child: SvgPicture.asset(AppIcons.edit),
+                                      child: SvgPicture.asset(
+                                        AppIcons.edit,
+                                        colorFilter: isDarkMode
+                                            ? const ColorFilter.mode(
+                                                AppColors.black,
+                                                BlendMode.srcIn,
+                                              )
+                                            : null,
+                                      ),
                                     ),
                                   ),
                                 ),

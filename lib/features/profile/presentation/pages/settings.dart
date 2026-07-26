@@ -328,13 +328,17 @@ class ProfileDeleteCard extends StatelessWidget {
                   width: 65,
                   height: 65,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: isDarkMode
+                        ? AppColors.borderDark
+                        : Colors.grey.shade200,
                     shape: BoxShape.circle,
                   ),
                   child: imageUrl == null || imageUrl!.isEmpty
-                      ? const Icon(
+                      ? Icon(
                           Icons.image_outlined,
-                          color: Colors.grey,
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : Colors.grey,
                           size: 28,
                         )
                       : ClipOval(
@@ -346,9 +350,11 @@ class ProfileDeleteCard extends StatelessWidget {
                             memCacheWidth: 130,
                             memCacheHeight: 130,
                             errorWidget: (context, url, error) {
-                              return const Icon(
+                              return Icon(
                                 Icons.image_outlined,
-                                color: AppColors.border,
+                                color: isDarkMode
+                                    ? AppColors.borderDark
+                                    : AppColors.border,
                                 size: 28.0,
                               );
                             },

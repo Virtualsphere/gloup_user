@@ -367,7 +367,9 @@ class _HomePageState extends State<HomePage> {
                     shape: _isCollapsed
                         ? Border(
                             bottom: BorderSide(
-                              color: AppColors.border,
+                              color: isDarkMode
+                                  ? AppColors.borderDark
+                                  : AppColors.border,
                               width: AppSizes.borderWidthThin,
                             ),
                           )

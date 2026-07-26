@@ -114,7 +114,7 @@ class _BookingsPageState extends State<BookingsPage>
         toolbarHeight: AppSizes.appBarHeight,
         shape: Border(
           bottom: BorderSide(
-            color: AppColors.border,
+            color: isDarkMode ? AppColors.borderDark : AppColors.border,
             width: AppSizes.borderWidthThin,
           ),
         ),

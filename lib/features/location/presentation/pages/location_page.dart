@@ -406,7 +406,7 @@ class _LocationPageState extends State<LocationPage> {
         color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(
-          color: AppColors.border,
+          color: isDarkMode ? AppColors.borderDark : AppColors.border,
           width: 1,
         ),
       ),
@@ -420,7 +420,7 @@ class _LocationPageState extends State<LocationPage> {
                   : AppColors.surface.withValues(alpha: 0.8),
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.border,
+                color: isDarkMode ? AppColors.borderDark : AppColors.border,
               ),
             ),
             child: Icon(
@@ -497,7 +497,7 @@ class _LocationPageState extends State<LocationPage> {
         ),
         shape: Border(
           bottom: BorderSide(
-            color: AppColors.border,
+            color: isDarkMode ? AppColors.borderDark : AppColors.border,
             width: AppSizes.borderWidthThin,
           ),
         ),
@@ -549,7 +549,7 @@ class _LocationPageState extends State<LocationPage> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   borderSide: BorderSide(
-                    color: AppColors.border,
+                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
                     width: AppSizes.borderWidthThin,
                   ),
                 ),
@@ -733,7 +733,7 @@ class _LocationPageState extends State<LocationPage> {
             color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSizes.radiusM),
             border: Border.all(
-              color: AppColors.border,
+              color: isDarkMode ? AppColors.borderDark : AppColors.border,
               width: 1,
             ),
           ),
@@ -746,7 +746,9 @@ class _LocationPageState extends State<LocationPage> {
                       ? AppColors.surfaceDark.withValues(alpha: 0.5)
                       : AppColors.surface.withValues(alpha: 0.8),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(
+                      color:
+                          isDarkMode ? AppColors.borderDark : AppColors.border),
                 ),
                 child: Icon(
                   Icons.location_on,

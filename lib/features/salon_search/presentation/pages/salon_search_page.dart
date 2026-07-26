@@ -82,6 +82,9 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
     _markerManager.dispose();
     _searchController.dispose();
     _mapController?.dispose();
+    // Null out so in-flight camera callbacks bail instead of touching a
+    // disposed platform view (causes a native hang on back navigation).
+    _mapController = null;
     super.dispose();
   }
 
@@ -117,20 +120,23 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
 
   /// Called when camera movement stops
   void _onCameraIdle() {
+    if (!mounted) return;
     // Ensure we load markers when camera is idle
     _loadMapMarkersForCurrentView();
   }
 
   /// Load map markers for current visible region
   Future<void> _loadMapMarkersForCurrentView() async {
-    if (_mapController == null || _isLoadingMarkers) return;
+    if (!mounted || _mapController == null || _isLoadingMarkers) return;
 
     try {
       _isLoadingMarkers = true;
 
       // Get visible region
       final bounds = await _mapController!.getVisibleRegion();
+      if (!mounted || _mapController == null) return;
       final zoom = await _mapController!.getZoomLevel();
+      if (!mounted) return;
 
       // Only load markers if zoom level is reasonable (not too far out)
       if (zoom < 8) {

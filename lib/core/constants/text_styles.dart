@@ -26,23 +26,16 @@ class HeaderTextBlack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       title,
       overflow: overflow,
       maxLines: maxLines,
       textAlign: textAlign,
-      style:
-          // isBodoniModa
-          //     ? GoogleFonts.bodoniModa(
-          //         fontSize: fontSize,
-          //         fontWeight: fontWeight,
-          //         color: AppColors.primary,
-          //       )
-          //     :
-          GoogleFonts.inter(
+      style: GoogleFonts.inter(
         fontSize: fontSize,
         fontWeight: fontWeight,
-        color: AppColors.primary,
+        color: isDark ? AppColors.primaryDarkTheme : AppColors.primary,
         decoration: textDecoration,
       ),
     );
@@ -68,6 +61,7 @@ class BodyTextHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       title,
       overflow: overflow,
@@ -75,7 +69,9 @@ class BodyTextHint extends StatelessWidget {
       style: GoogleFonts.inter(
         fontSize: fontSize,
         fontWeight: fontWeight,
-        color: isSecondary ? AppColors.secondary : AppColors.textSecondaryDark,
+        color: isSecondary
+            ? AppColors.secondary
+            : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
       ),
     );
   }

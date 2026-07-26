@@ -45,7 +45,11 @@ class AddRatingDialogue {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(color: AppColors.borderColor),
+                      child: Divider(
+                        color: isDarkMode
+                            ? AppColors.dividerDark
+                            : AppColors.borderColor,
+                      ),
                     ),
                     BodyTextHint(
                       title: 'How’s our Service?',
@@ -71,7 +75,9 @@ class AddRatingDialogue {
                       style: AppTextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.primary,
+                        color: isDarkMode
+                            ? AppColors.primaryDarkTheme
+                            : AppColors.primary,
                       ).textStyle,
                       placeholderStyle: AppTextStyle(
                         fontSize: 14,
@@ -82,7 +88,9 @@ class AddRatingDialogue {
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.transparent,
                         border: Border.all(
-                          color: AppColors.borderColor,
+                          color: isDarkMode
+                              ? AppColors.borderDark
+                              : AppColors.borderColor,
                         ),
                       ),
                       maxLines: 5,
@@ -103,7 +111,9 @@ class AddRatingDialogue {
                     child: BodyTextColors(
                       title: 'Submit',
                       fontSize: 16,
-                      color: AppColors.primary,
+                      color: isDarkMode
+                          ? AppColors.primaryDarkTheme
+                          : AppColors.primary,
                       fontWeight: FontWeight.w400,
                     ),
                   ),

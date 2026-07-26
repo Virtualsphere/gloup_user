@@ -59,8 +59,9 @@ class CreateOrderRequest {
       'amount': finalAmount,
       'payment_status': 'pending',
       'status': 'pending',
-      'is_discounted': serviceDiscount > 0,
-      'discounted_amount': serviceDiscount,
+      // Coupon flag only — line-item promos are already baked into DB prices.
+      'is_discounted': couponId != null,
+      'discounted_amount': couponDiscount ?? 0,
       'discount_id': couponId,
       'wallet_amount_used': walletAmountUsed,
       'is_wallet': walletAmountUsed > 0,

@@ -83,12 +83,12 @@ class SalonNetworkImage extends StatelessWidget {
 
   Widget _errorPlaceholder(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final placeholderColor =
+        isDark ? AppColors.primaryDarkTheme : AppColors.primary;
     return Container(
       width: width,
       height: height,
-      color: isDark
-          ? AppColors.primaryDark.withValues(alpha: 0.1)
-          : AppColors.primary.withValues(alpha: 0.1),
+      color: placeholderColor.withValues(alpha: 0.1),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -97,7 +97,7 @@ class SalonNetworkImage extends StatelessWidget {
             width: placeholderIconSize * 0.6,
             height: placeholderIconSize * 0.6,
             colorFilter: ColorFilter.mode(
-              AppColors.primary.withValues(alpha: 0.35),
+              placeholderColor.withValues(alpha: 0.35),
               BlendMode.srcIn,
             ),
           ),
@@ -106,7 +106,7 @@ class SalonNetworkImage extends StatelessWidget {
             Text(
               'Image not available',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.primary.withValues(alpha: 0.45),
+                    color: placeholderColor.withValues(alpha: 0.45),
                     fontSize: 11,
                   ),
               textAlign: TextAlign.center,

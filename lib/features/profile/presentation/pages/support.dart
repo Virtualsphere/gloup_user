@@ -32,7 +32,7 @@ class Support extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: 16.0, top: 10.0, bottom: 10.0),
                 decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.black : AppColors.white,
+                    color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
                     borderRadius: BorderRadius.circular(10.0)),
                 margin: EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
@@ -47,7 +47,9 @@ class Support extends StatelessWidget {
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey.shade100,
+                      color: isDarkMode
+                          ? AppColors.dividerDark
+                          : Colors.grey.shade100,
                       indent: 56,
                     ),
                     ProfileListTile(
@@ -60,7 +62,9 @@ class Support extends StatelessWidget {
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey.shade100,
+                      color: isDarkMode
+                          ? AppColors.dividerDark
+                          : Colors.grey.shade100,
                       indent: 56,
                     ),
                     ProfileListTile(
@@ -73,7 +77,9 @@ class Support extends StatelessWidget {
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey.shade100,
+                      color: isDarkMode
+                          ? AppColors.dividerDark
+                          : Colors.grey.shade100,
                       indent: 56,
                     ),
                     ProfileListTile(
@@ -86,7 +92,9 @@ class Support extends StatelessWidget {
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey.shade100,
+                      color: isDarkMode
+                          ? AppColors.dividerDark
+                          : Colors.grey.shade100,
                       indent: 56,
                     ),
                     ProfileListTile(
@@ -125,20 +133,20 @@ class ProfileListTile extends StatelessWidget {
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
       visualDensity: VisualDensity(vertical: -2),
-      tileColor: isDarkMode ? Colors.grey.shade900 : AppColors.white,
+      tileColor: isDarkMode ? AppColors.surfaceDark : AppColors.white,
       leading: SvgPicture.asset(
         icon,
         height: 24,
         width: 24,
         colorFilter: ColorFilter.mode(
-          isDarkMode ? AppColors.white : AppColors.black,
+          isDarkMode ? AppColors.textPrimaryDark : AppColors.black,
           BlendMode.srcIn,
         ),
       ),
       title: Text(
         title.capitalize(),
         style: context.textTheme.bodySmall?.copyWith(
-          color: isDarkMode ? AppColors.white : AppColors.black,
+          color: isDarkMode ? AppColors.textPrimaryDark : AppColors.black,
           fontSize: 16,
           fontWeight: FontWeight.w300,
         ),
