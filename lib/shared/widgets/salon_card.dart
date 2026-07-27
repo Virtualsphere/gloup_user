@@ -191,6 +191,8 @@ class _SalonCardState extends State<SalonCard> {
                           child: SalonNetworkImage(
                             imageUrl: imageUrl,
                             height: SalonCard.imageHeight.h,
+                            cacheLogicalWidth:
+                                widget.isFullWidth ? null : 310.w,
                             logTag: 'SalonCard',
                           ),
                         );

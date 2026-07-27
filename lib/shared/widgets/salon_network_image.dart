@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/utils/app_logger.dart';
 import 'package:tressy/core/utils/image_url_resolver.dart';
+import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 
 /// Network image for salon cards and lists with loading + error states.
 class SalonNetworkImage extends StatelessWidget {
@@ -14,6 +14,7 @@ class SalonNetworkImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.width,
     this.height,
+    this.cacheLogicalWidth,
     this.borderRadius,
     this.placeholderIconSize = 48,
     this.showErrorLabel = true,
@@ -24,6 +25,8 @@ class SalonNetworkImage extends StatelessWidget {
   final BoxFit fit;
   final double? width;
   final double? height;
+  /// Decode width when layout width is unbounded (horizontal salon cards).
+  final double? cacheLogicalWidth;
   final BorderRadius? borderRadius;
   final double placeholderIconSize;
   final bool showErrorLabel;
@@ -40,13 +43,16 @@ class SalonNetworkImage extends StatelessWidget {
       return _errorPlaceholder(context);
     }
 
-    final image = CachedNetworkImage(
+    final decodeWidth =
+        cacheLogicalWidth ?? width ?? MediaQuery.sizeOf(context).width;
+
+    final image = HdCachedNetworkImage(
       imageUrl: imageUrl.trim(),
       fit: fit,
       width: width,
       height: height,
-      memCacheWidth: width != null ? (width! * 2).toInt() : 400,
-      memCacheHeight: height != null ? (height! * 2).toInt() : 400,
+      cacheLogicalWidth: decodeWidth,
+      cacheLogicalHeight: height,
       placeholder: (_, __) => _loadingPlaceholder(context),
       errorWidget: (_, url, error) {
         AppLogger.warning(

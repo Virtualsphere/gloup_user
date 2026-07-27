@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/utils/category_image_resolver.dart';
 import 'package:tressy/features/category/domain/entities/category_entity.dart';
+import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 
 /// Category thumbnail: CDN URL when available, else bundled PNG/SVG.
 class CategoryImage extends StatelessWidget {
@@ -60,13 +60,11 @@ class CategoryImage extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: CachedNetworkImage(
+      child: HdCachedNetworkImage(
         imageUrl: resolved,
         width: width,
         height: height,
         fit: fit,
-        memCacheWidth: width != null ? (width! * 2).toInt() : 200,
-        memCacheHeight: height != null ? (height! * 2).toInt() : 200,
         placeholder: (_, __) => _placeholder(),
         errorWidget: (_, __, ___) => _fallbackAsset(),
       ),

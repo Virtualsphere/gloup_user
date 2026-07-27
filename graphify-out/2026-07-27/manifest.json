@@ -840,8 +840,8 @@
     "semantic_hash": "156d1a0d5990c7546885ea999d3d3a99"
   },
   "lib/features/home/presentation/pages/home_page.dart": {
-    "mtime": 1785150422.3644912,
-    "ast_hash": "fd7b25254954434f03004c66a6143180",
+    "mtime": 1784447655.7098255,
+    "ast_hash": "9c91ea0168e8f61645c271a9f2afc100",
     "semantic_hash": ""
   },
   "lib/features/home/presentation/pages/services_at_49_page.dart": {
@@ -890,9 +890,9 @@
     "semantic_hash": "68cca45802ec65245ac81a6a3f2786c8"
   },
   "lib/features/home/presentation/widgets/service_item_widget.dart": {
-    "mtime": 1785150423.3803859,
-    "ast_hash": "39423d127e7d5b13eb808451a34c2c69",
-    "semantic_hash": ""
+    "mtime": 1784438708.3427505,
+    "ast_hash": "da28a964f1d3124a095a2e63ca0872ad",
+    "semantic_hash": "da28a964f1d3124a095a2e63ca0872ad"
   },
   "lib/features/home/presentation/widgets/services_at_49_section.dart": {
     "mtime": 1784438708.3427505,
@@ -1340,9 +1340,9 @@
     "semantic_hash": "c0009c4a56970a631d1762a6f1a5f0fd"
   },
   "lib/features/widgets/custom_image.dart": {
-    "mtime": 1785150425.3501818,
-    "ast_hash": "fde461793f95acd929c756612579fa99",
-    "semantic_hash": ""
+    "mtime": 1784438708.3477502,
+    "ast_hash": "46b00883bdf0718d6ae5262903e874d7",
+    "semantic_hash": "46b00883bdf0718d6ae5262903e874d7"
   },
   "lib/features/widgets/custom_indicator.dart": {
     "mtime": 1784438708.3477502,
@@ -1445,9 +1445,9 @@
     "semantic_hash": "e82c732ed011fb8c6e0fdf4b80e835f3"
   },
   "lib/shared/widgets/category_image.dart": {
-    "mtime": 1785150416.2281277,
-    "ast_hash": "8eb4690c5795b3ab20462981ab377575",
-    "semantic_hash": ""
+    "mtime": 1784438708.34875,
+    "ast_hash": "680842a9b09fefc7b69fa0313f972475",
+    "semantic_hash": "680842a9b09fefc7b69fa0313f972475"
   },
   "lib/shared/widgets/coupon_applied_dialog.dart": {
     "mtime": 1784438708.34875,
@@ -1550,9 +1550,9 @@
     "semantic_hash": "82c4d478fd4a7a2035b81f64925697ae"
   },
   "lib/shared/widgets/salon_card.dart": {
-    "mtime": 1785150422.8854373,
-    "ast_hash": "5b62f5f774fd68e9f078ec0426d86ce3",
-    "semantic_hash": ""
+    "mtime": 1784438708.34875,
+    "ast_hash": "155adab33202e78179a4e42697c77a9a",
+    "semantic_hash": "155adab33202e78179a4e42697c77a9a"
   },
   "lib/shared/widgets/salon_info_card.dart": {
     "mtime": 1784448976.9329581,
@@ -1565,8 +1565,8 @@
     "semantic_hash": "e9439fcb05c568e34742af2800cde9c7"
   },
   "lib/shared/widgets/salon_network_image.dart": {
-    "mtime": 1785150415.2012343,
-    "ast_hash": "79707b49f9ce27b5b96d827bde4407d8",
+    "mtime": 1784448867.7748606,
+    "ast_hash": "38b9d6c3782da08134d657cb0896a753",
     "semantic_hash": ""
   },
   "lib/shared/widgets/section_header.dart": {
@@ -3057,16 +3057,6 @@
   "test/features/booking_confirmation/domain/utils/booking_price_calculator_test.dart": {
     "mtime": 1785089197.5447192,
     "ast_hash": "d146ad742569d4dfcf5db57a7939f2f3",
-    "semantic_hash": ""
-  },
-  "lib/core/utils/image_cache_dimensions.dart": {
-    "mtime": 1785150404.5683393,
-    "ast_hash": "674db072578a19bda39a0e46a577a2d0",
-    "semantic_hash": ""
-  },
-  "lib/shared/widgets/hd_cached_network_image.dart": {
-    "mtime": 1785150412.1315532,
-    "ast_hash": "64ffcc78f166d089bd3d66760e82a371",
     "semantic_hash": ""
   }
 }

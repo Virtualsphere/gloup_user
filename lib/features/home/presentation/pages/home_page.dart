@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +29,7 @@ import 'package:tressy/shared/widgets/location_permission_dialog.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
+import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 
@@ -424,18 +424,17 @@ class _HomePageState extends State<HomePage> {
                                               width: double.infinity,
                                               child: Stack(
                                                 children: [
-                                                  Positioned(
-                                                    top: 0,
-                                                    bottom: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    child: CachedNetworkImage(
+                                                  Positioned.fill(
+                                                    child: HdCachedNetworkImage(
                                                       imageUrl: banner.imageUrl,
-                                                      fit: BoxFit.fill,
+                                                      fit: BoxFit.cover,
                                                       width: double.infinity,
                                                       height: double.infinity,
-                                                      memCacheWidth: 800,
-                                                      memCacheHeight: 800,
+                                                      cacheLogicalWidth:
+                                                          screenWidth,
+                                                      cacheLogicalHeight:
+                                                          carouselHeight,
+                                                      fullResolution: true,
                                                       errorWidget: (context,
                                                           url, error) {
                                                         return Container(

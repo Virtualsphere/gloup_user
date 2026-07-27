@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -11,6 +10,7 @@ import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/constants/text_styles.dart';
 import 'package:tressy/core/constants/themes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 
 class CustomNetworkImage extends StatelessWidget {
   const CustomNetworkImage({
@@ -26,7 +26,7 @@ class CustomNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
+    return HdCachedNetworkImage(
       imageUrl: apiImageUrl(
         imageType: imageType,
         imageUrl: imageUrl,
@@ -34,8 +34,8 @@ class CustomNetworkImage extends StatelessWidget {
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
-      memCacheWidth: 400,
-      memCacheHeight: 400,
+      cacheLogicalWidth: 40,
+      cacheLogicalHeight: 40,
       placeholder: (context, child) {
         return Container(
           decoration: BoxDecoration(

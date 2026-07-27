@@ -48,16 +48,13 @@ class ServiceItemWidget extends StatelessWidget {
                 child: SizedBox(
                   width: imageSize,
                   height: imageSize,
-                  child: Transform.scale(
-                    scale: 1.25,
-                    child: CategoryImage(
-                      categoryName: title,
-                      imageUrl: imageUrl,
-                      width: imageSize,
-                      height: imageSize,
-                      fit: BoxFit.cover,
-                      isDarkMode: isDarkMode,
-                    ),
+                  child: CategoryImage(
+                    categoryName: title,
+                    imageUrl: imageUrl,
+                    width: imageSize,
+                    height: imageSize,
+                    fit: BoxFit.cover,
+                    isDarkMode: isDarkMode,
                   ),
                 ),
               ),
