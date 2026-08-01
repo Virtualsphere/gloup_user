@@ -36,22 +36,34 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     _loadSlots();
   }
 
-  void _loadSlots() {
+  int? _resolveSalonId() {
     final salonIdValue = widget.bookingData?['salonId'];
-    int? salonId;
+    if (salonIdValue is int) return salonIdValue;
+    if (salonIdValue is String) return int.tryParse(salonIdValue);
+    return null;
+  }
 
-    if (salonIdValue is int) {
-      salonId = salonIdValue;
-    } else if (salonIdValue is String) {
-      salonId = int.tryParse(salonIdValue);
-    }
-
+  void _loadSlots([DateTime? date]) {
+    final salonId = _resolveSalonId();
     if (salonId != null) {
-      final dateStr = DateFormat('yyyy-MM-dd').format(selectedDate);
+      final dateStr =
+          DateFormat('yyyy-MM-dd').format(date ?? selectedDate);
       context.read<SlotBloc>().add(
             LoadSlotsEvent(salonId: salonId, date: dateStr),
           );
     }
+  }
+
+  void _loadHolidaysForMonth(DateTime monthStart, DateTime monthEnd) {
+    final salonId = _resolveSalonId();
+    if (salonId == null) return;
+    context.read<SlotBloc>().add(
+          LoadHolidaysEvent(
+            salonId: salonId,
+            from: DateFormat('yyyy-MM-dd').format(monthStart),
+            to: DateFormat('yyyy-MM-dd').format(monthEnd),
+          ),
+        );
   }
 
   // Format time from 24-hour to 12-hour format
@@ -233,6 +245,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
                       // Calendar widget
                       ScrollableCalendar(
+                        holidayDates: state.holidayDates,
+                        onMonthChanged: _loadHolidaysForMonth,
                         onDateSelected: (date) {
                           setState(() {
                             selectedDate = date;
@@ -240,7 +254,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                           context
                               .read<SlotBloc>()
                               .add(const ClearSelectedSlotEvent());
-                          _loadSlots();
+                          _loadSlots(date);
                         },
                       ),
 
@@ -272,6 +286,13 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
                         SlotShimmers.slotGridShimmer(context)
                       else if (state.errorMessage != null)
                         _buildErrorState(isDarkMode, state.errorMessage!)
+                      else if (state.isHoliday)
+                        _buildHolidayState(
+                          isDarkMode,
+                          state.holidayReason,
+                          weekdayName: state.weekdayName,
+                          holidayType: state.holidayType,
+                        )
                       else if (state.slots.isEmpty)
                         _buildEmptyState(isDarkMode)
                       else
@@ -321,7 +342,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
         itemBuilder: (context, index) {
           final slot = state.slots[index];
           final isSelected = state.selectedSlotTime == slot.time;
-          final isBooked = slot.isBooked;
+          final isBooked = slot.isBooked || slot.isBlocked;
           final isPast = _isSlotPast(slot.time);
 
           return GestureDetector(
@@ -378,6 +399,61 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildHolidayState(
+    bool isDarkMode,
+    String? reason, {
+    String? weekdayName,
+    String? holidayType,
+  }) {
+    final title = holidayType == 'weekly' && weekdayName != null
+        ? 'Salon is closed every $weekdayName'
+        : 'Salon is closed on this day';
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppSizes.paddingXL),
+        child: Column(
+          children: [
+            Icon(
+              Icons.event_busy,
+              size: 64,
+              color: isDarkMode
+                  ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                  : AppColors.textSecondary.withValues(alpha: 0.5),
+            ),
+            SizedBox(height: AppSizes.spaceM),
+            Text(
+              title,
+              style: context.textTheme.titleMedium,
+            ),
+            if (reason != null && reason.isNotEmpty) ...[
+              SizedBox(height: AppSizes.spaceS),
+              Text(
+                reason,
+                textAlign: TextAlign.center,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ],
+            SizedBox(height: AppSizes.spaceS),
+            Text(
+              'Please select another date',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

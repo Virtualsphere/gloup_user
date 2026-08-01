@@ -21,6 +21,22 @@ class LoadSlotsEvent extends SlotEvent {
   List<Object?> get props => [salonId, date];
 }
 
+/// Load holiday dates for a visible month range
+class LoadHolidaysEvent extends SlotEvent {
+  final int salonId;
+  final String from;
+  final String to;
+
+  const LoadHolidaysEvent({
+    required this.salonId,
+    required this.from,
+    required this.to,
+  });
+
+  @override
+  List<Object?> get props => [salonId, from, to];
+}
+
 /// Event to select a slot
 class SelectSlotEvent extends SlotEvent {
   final String time;

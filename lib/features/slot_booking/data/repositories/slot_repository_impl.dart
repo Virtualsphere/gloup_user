@@ -4,7 +4,7 @@ import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/network_info.dart';
 import 'package:tressy/core/network/repository_network_guard.dart';
 import 'package:tressy/features/slot_booking/data/datasources/slot_remote_datasource.dart';
-import 'package:tressy/features/slot_booking/domain/entities/slot_entity.dart';
+import 'package:tressy/features/slot_booking/domain/entities/slot_day_result.dart';
 import 'package:tressy/features/slot_booking/domain/repositories/slot_repository.dart';
 
 class SlotRepositoryImpl implements SlotRepository {
@@ -16,33 +16,56 @@ class SlotRepositoryImpl implements SlotRepository {
     required this.networkInfo,
   });
 
+  Either<Failure, T>? _mapException<T>(Object e) {
+    if (e is NetworkException) return Left(NetworkFailure(e.message));
+    if (e is ServerException) return Left(ServerFailure(e.message));
+    if (e is TimeoutException) return Left(NetworkFailure(e.message));
+    if (e is UnauthorizedException) {
+      return Left(AuthenticationFailure(e.message));
+    }
+    if (e is ApiException) return Left(ServerFailure(e.message));
+    return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+  }
+
   @override
-  Future<Either<Failure, List<SlotEntity>>> getSlotStatus({
+  Future<Either<Failure, SlotDayResult>> getSlotStatus({
     required int salonId,
     required String date,
   }) async {
     final disconnected =
-        await leftIfDisconnected<List<SlotEntity>>(networkInfo);
+        await leftIfDisconnected<SlotDayResult>(networkInfo);
     if (disconnected != null) return disconnected;
 
     try {
-      final slots = await remoteDataSource.getSlotStatus(
+      final result = await remoteDataSource.getSlotStatus(
         salonId: salonId,
         date: date,
       );
-      return Right(slots.map((model) => model.toEntity()).toList());
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on TimeoutException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } on UnauthorizedException catch (e) {
-      return Left(AuthenticationFailure(e.message));
-    } on ApiException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Right(result);
     } catch (e) {
-      return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+      return _mapException<SlotDayResult>(e)!;
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<String>>> getStoreHolidays({
+    required int salonId,
+    required String from,
+    required String to,
+  }) async {
+    final disconnected =
+        await leftIfDisconnected<List<String>>(networkInfo);
+    if (disconnected != null) return disconnected;
+
+    try {
+      final dates = await remoteDataSource.getStoreHolidays(
+        salonId: salonId,
+        from: from,
+        to: to,
+      );
+      return Right(dates);
+    } catch (e) {
+      return _mapException<List<String>>(e)!;
     }
   }
 }

@@ -5,11 +5,14 @@ import 'package:tressy/features/slot_booking/presentation/bloc/slot_state.dart';
 
 class SlotBloc extends Bloc<SlotEvent, SlotState> {
   final GetSlotStatusUseCase getSlotStatusUseCase;
+  final GetStoreHolidaysUseCase getStoreHolidaysUseCase;
 
   SlotBloc({
     required this.getSlotStatusUseCase,
+    required this.getStoreHolidaysUseCase,
   }) : super(SlotState.initial()) {
     on<LoadSlotsEvent>(_onLoadSlots);
+    on<LoadHolidaysEvent>(_onLoadHolidays);
     on<SelectSlotEvent>(_onSelectSlot);
     on<ClearSelectedSlotEvent>(_onClearSelectedSlot);
   }
@@ -27,11 +30,30 @@ class SlotBloc extends Bloc<SlotEvent, SlotState> {
 
     result.fold(
       (failure) => emit(state.copyWithError(failure.message)),
-      (slots) => emit(state.copyWithSuccess(
-        slots: slots,
+      (day) => emit(state.copyWithSuccess(
+        slots: day.slots,
         date: event.date,
         salonId: event.salonId,
+        isHoliday: day.isHoliday,
+        holidayReason: day.holidayReason,
+        holidayType: day.holidayType,
+        weekdayName: day.weekdayName,
       )),
+    );
+  }
+
+  Future<void> _onLoadHolidays(
+    LoadHolidaysEvent event,
+    Emitter<SlotState> emit,
+  ) async {
+    final result = await getStoreHolidaysUseCase(
+      salonId: event.salonId,
+      from: event.from,
+      to: event.to,
+    );
+    result.fold(
+      (_) {},
+      (dates) => emit(state.copyWithHolidays(dates.toSet())),
     );
   }
 

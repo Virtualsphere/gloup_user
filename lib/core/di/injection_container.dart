@@ -278,11 +278,15 @@ Future<void> initializeDependencies() async {
   // BLoC - Factory for new instance each time
   sl.registerFactory<SlotBloc>(() => SlotBloc(
         getSlotStatusUseCase: sl(),
+        getStoreHolidaysUseCase: sl(),
       ));
 
   // Use Cases
   sl.registerLazySingleton<GetSlotStatusUseCase>(
     () => GetSlotStatusUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetStoreHolidaysUseCase>(
+    () => GetStoreHolidaysUseCase(sl()),
   );
 
   // Repository

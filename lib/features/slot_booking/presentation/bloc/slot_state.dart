@@ -9,6 +9,11 @@ class SlotState extends Equatable {
   final String? errorMessage;
   final String? currentDate;
   final int? currentSalonId;
+  final bool isHoliday;
+  final String? holidayReason;
+  final String? holidayType;
+  final String? weekdayName;
+  final Set<String> holidayDates;
 
   const SlotState({
     this.isLoading = false,
@@ -18,14 +23,15 @@ class SlotState extends Equatable {
     this.errorMessage,
     this.currentDate,
     this.currentSalonId,
+    this.isHoliday = false,
+    this.holidayReason,
+    this.holidayType,
+    this.weekdayName,
+    this.holidayDates = const {},
   });
 
-  /// Initial state
-  factory SlotState.initial() {
-    return const SlotState();
-  }
+  factory SlotState.initial() => const SlotState();
 
-  /// Loading state
   SlotState copyWithLoading() {
     return SlotState(
       isLoading: true,
@@ -34,14 +40,22 @@ class SlotState extends Equatable {
       selectedSlotId: selectedSlotId,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
+      isHoliday: isHoliday,
+      holidayReason: holidayReason,
+      holidayType: holidayType,
+      weekdayName: weekdayName,
+      holidayDates: holidayDates,
     );
   }
 
-  /// Success state
   SlotState copyWithSuccess({
     required List<SlotEntity> slots,
     required String date,
     required int salonId,
+    bool isHoliday = false,
+    String? holidayReason,
+    String? holidayType,
+    String? weekdayName,
   }) {
     return SlotState(
       isLoading: false,
@@ -50,10 +64,31 @@ class SlotState extends Equatable {
       selectedSlotId: selectedSlotId,
       currentDate: date,
       currentSalonId: salonId,
+      isHoliday: isHoliday,
+      holidayReason: holidayReason,
+      holidayType: holidayType,
+      weekdayName: weekdayName,
+      holidayDates: holidayDates,
     );
   }
 
-  /// Error state
+  SlotState copyWithHolidays(Set<String> dates) {
+    return SlotState(
+      isLoading: isLoading,
+      slots: slots,
+      selectedSlotTime: selectedSlotTime,
+      selectedSlotId: selectedSlotId,
+      errorMessage: errorMessage,
+      currentDate: currentDate,
+      currentSalonId: currentSalonId,
+      isHoliday: isHoliday,
+      holidayReason: holidayReason,
+      holidayType: holidayType,
+      weekdayName: weekdayName,
+      holidayDates: dates,
+    );
+  }
+
   SlotState copyWithError(String message) {
     return SlotState(
       isLoading: false,
@@ -63,10 +98,14 @@ class SlotState extends Equatable {
       errorMessage: message,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
+      isHoliday: isHoliday,
+      holidayReason: holidayReason,
+      holidayType: holidayType,
+      weekdayName: weekdayName,
+      holidayDates: holidayDates,
     );
   }
 
-  /// Update selected slot
   SlotState copyWithSelectedSlot(String? time, int? slotId) {
     return SlotState(
       isLoading: isLoading,
@@ -76,18 +115,20 @@ class SlotState extends Equatable {
       errorMessage: errorMessage,
       currentDate: currentDate,
       currentSalonId: currentSalonId,
+      isHoliday: isHoliday,
+      holidayReason: holidayReason,
+      holidayType: holidayType,
+      weekdayName: weekdayName,
+      holidayDates: holidayDates,
     );
   }
 
-  /// Get available slots only
   List<SlotEntity> get availableSlots =>
       slots.where((slot) => slot.isAvailable).toList();
 
-  /// Get booked slots only
   List<SlotEntity> get bookedSlots =>
       slots.where((slot) => slot.isBooked).toList();
 
-  /// Check if a slot is selected
   bool get hasSelectedSlot => selectedSlotTime != null;
 
   @override
@@ -99,5 +140,10 @@ class SlotState extends Equatable {
         errorMessage,
         currentDate,
         currentSalonId,
+        isHoliday,
+        holidayReason,
+        holidayType,
+        weekdayName,
+        holidayDates,
       ];
 }

@@ -2,7 +2,7 @@
 class SlotEntity {
   final int salonId;
   final String time;
-  final String status; // "available" or "booked"
+  final String status; // "available", "booked", or "blocked"
 
   const SlotEntity({
     required this.salonId,
@@ -15,6 +15,9 @@ class SlotEntity {
 
   /// Check if slot is booked
   bool get isBooked => status.toLowerCase() == 'booked';
+
+  /// Check if slot is blocked (partner block or holiday)
+  bool get isBlocked => status.toLowerCase() == 'blocked';
 
   @override
   bool operator ==(Object other) =>

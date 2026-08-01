@@ -50,6 +50,7 @@ class ApiRoutes {
 
   // Slot Booking Endpoints
   static const String getSlotStatus = '$baseUrl/user/app/v2/getslotstatus';
+  static const String storeHolidays = '$baseUrl/user/app/v2/store/holidays';
 
   // Guest Endpoints
   static const String getAllGuests = '$baseUrl/user/app/v2/guest/all';
@@ -105,6 +106,7 @@ class ApiRoutes {
     'mapMarkersClustered': mapMarkersClustered,
     // Booking
     'getSlotStatus': getSlotStatus,
+    'storeHolidays': storeHolidays,
     'getAllGuests': getAllGuests,
     'addGuest': addGuest,
     'updateGuest': updateGuest,

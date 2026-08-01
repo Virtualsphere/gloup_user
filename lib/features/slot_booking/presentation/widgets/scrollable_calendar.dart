@@ -9,9 +9,15 @@ class ScrollableCalendar extends StatefulWidget {
   const ScrollableCalendar({
     super.key,
     this.onDateSelected,
+    this.onMonthChanged,
+    this.holidayDates = const {},
   });
 
   final Function(DateTime)? onDateSelected;
+  /// Called when the visible month changes (including initial).
+  final void Function(DateTime monthStart, DateTime monthEnd)? onMonthChanged;
+  /// Holiday dates as YYYY-MM-DD — greyed out and non-tappable.
+  final Set<String> holidayDates;
 
   @override
   State<ScrollableCalendar> createState() => _ScrollableCalendarState();
@@ -31,6 +37,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToCurrentDate();
+      _notifyMonthChanged();
     });
   }
 
@@ -42,6 +49,16 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
     for (int i = 0; i < lastDay.day; i++) {
       dates.add(firstDay.add(Duration(days: i)));
     }
+  }
+
+  String _ymd(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  bool _isHoliday(DateTime d) => widget.holidayDates.contains(_ymd(d));
+
+  void _notifyMonthChanged() {
+    if (dates.isEmpty) return;
+    widget.onMonthChanged?.call(dates.first, dates.last);
   }
 
   void _scrollToCurrentDate() {
@@ -78,6 +95,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
       currentMonth = DateTime(currentMonth.year, currentMonth.month - 1);
       _generateDates();
     });
+    _notifyMonthChanged();
   }
 
   void _nextMonth() {
@@ -85,16 +103,17 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
       currentMonth = DateTime(currentMonth.year, currentMonth.month + 1);
       _generateDates();
     });
+    _notifyMonthChanged();
   }
 
   void _selectDate(DateTime date) {
-    // Don't allow selecting past dates
+    // Don't allow selecting past dates or holidays
     final today = DateTime.now();
     final todayDate = DateTime(today.year, today.month, today.day);
     final selectedDateOnly = DateTime(date.year, date.month, date.day);
 
-    if (selectedDateOnly.isBefore(todayDate)) {
-      return; // Don't select past dates
+    if (selectedDateOnly.isBefore(todayDate) || _isHoliday(date)) {
+      return;
     }
 
     setState(() {
@@ -233,16 +252,18 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                 final todayDate = DateTime(today.year, today.month, today.day);
                 final currentDate = DateTime(date.year, date.month, date.day);
                 final isPastDate = currentDate.isBefore(todayDate);
+                final isHoliday = _isHoliday(date);
+                final isDisabled = isPastDate || isHoliday;
 
                 return GestureDetector(
-                  onTap: isPastDate ? null : () => _selectDate(date),
+                  onTap: isDisabled ? null : () => _selectDate(date),
                   child: Container(
                     width: 55,
                     margin: EdgeInsets.only(right: AppSizes.spaceS),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? context.primaryFill
-                          : isPastDate
+                          : isDisabled
                               ? isDarkMode
                                   ? AppColors.textSecondaryDark
                                       .withValues(alpha: 0.3)
@@ -253,7 +274,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                                       .withValues(alpha: 0.5)
                                   : AppColors.background),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                      border: !isSelected || isPastDate
+                      border: !isSelected || isDisabled
                           ? Border.all(
                               color: isDarkMode
                                   ? AppColors.borderDark
@@ -273,7 +294,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                             fontWeight: FontWeight.w400,
                             color: isSelected
                                 ? context.onPrimaryFill
-                                : isPastDate
+                                : isDisabled
                                     ? (isDarkMode
                                         ? AppColors.textSecondaryDark
                                         : AppColors.textSecondary)
@@ -291,7 +312,7 @@ class _ScrollableCalendarState extends State<ScrollableCalendar> {
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? context.onPrimaryFill
-                                : isPastDate
+                                : isDisabled
                                     ? (isDarkMode
                                         ? AppColors.textPrimaryDark
                                             .withValues(alpha: 0.7)
