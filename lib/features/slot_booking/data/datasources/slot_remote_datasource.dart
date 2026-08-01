@@ -4,6 +4,7 @@ import 'package:tressy/core/network/api_exception.dart';
 import 'package:tressy/core/network/dio_client.dart';
 import 'package:tressy/features/slot_booking/data/models/slot_model.dart';
 import 'package:tressy/features/slot_booking/domain/entities/slot_day_result.dart';
+import 'package:tressy/features/slot_booking/domain/entities/slot_entity.dart';
 
 abstract class SlotRemoteDataSource {
   Future<SlotDayResult> getSlotStatus({
@@ -41,16 +42,13 @@ class SlotRemoteDataSourceImpl implements SlotRemoteDataSource {
         final data = response.data['data'];
 
         // New shape: { is_holiday, holiday_reason, slots }
-        if (data is Map) {
-          final isHoliday = data['is_holiday'] == true;
-          final reason = data['holiday_reason']?.toString();
-          final holidayType = data['holiday_type']?.toString();
-          final weekdayName = data['weekday_name']?.toString();
-          final list = (data['slots'] as List<dynamic>? ?? []);
-          final slots = list
-              .map((json) => SlotModel.fromJson(json as Map<String, dynamic>))
-              .map((m) => m.toEntity())
-              .toList();
+        final dataMap = _asStringKeyedMap(data);
+        if (dataMap != null) {
+          final isHoliday = dataMap['is_holiday'] == true;
+          final reason = dataMap['holiday_reason']?.toString();
+          final holidayType = dataMap['holiday_type']?.toString();
+          final weekdayName = dataMap['weekday_name']?.toString();
+          final slots = _parseSlots(dataMap['slots']);
           return SlotDayResult(
             isHoliday: isHoliday,
             holidayReason: reason,
@@ -61,12 +59,7 @@ class SlotRemoteDataSourceImpl implements SlotRemoteDataSource {
         }
 
         // Legacy shape: List of slots
-        final list = data as List<dynamic>? ?? [];
-        final slots = list
-            .map((json) => SlotModel.fromJson(json as Map<String, dynamic>))
-            .map((m) => m.toEntity())
-            .toList();
-        return SlotDayResult(isHoliday: false, slots: slots);
+        return SlotDayResult(isHoliday: false, slots: _parseSlots(data));
       } else {
         throw ApiException(
           message: response.data['message'] ?? 'Failed to fetch slot status',
@@ -99,8 +92,8 @@ class SlotRemoteDataSourceImpl implements SlotRemoteDataSource {
 
       if (response.data['success'] == true) {
         final data = response.data['data'];
-        final dates = (data is Map ? data['dates'] : null) as List<dynamic>? ??
-            <dynamic>[];
+        final dataMap = _asStringKeyedMap(data);
+        final dates = _asList(dataMap != null ? dataMap['dates'] : data);
         return dates
             .map((d) {
               final s = d.toString();
@@ -116,6 +109,31 @@ class SlotRemoteDataSourceImpl implements SlotRemoteDataSource {
       if (e is ApiException) rethrow;
       throw ApiException(message: 'Unexpected error: ${e.toString()}');
     }
+  }
+
+  /// Avoids `as List` crashes when APIs return `{}` or object-encoded arrays.
+  List<dynamic> _asList(dynamic value) {
+    if (value == null) return const [];
+    if (value is List) return value;
+    if (value is Map) return value.values.toList();
+    return const [];
+  }
+
+  Map<String, dynamic>? _asStringKeyedMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return null;
+  }
+
+  List<SlotEntity> _parseSlots(dynamic raw) {
+    return _asList(raw)
+        .map((json) {
+          final map = _asStringKeyedMap(json);
+          if (map == null) return null;
+          return SlotModel.fromJson(map).toEntity();
+        })
+        .whereType<SlotEntity>()
+        .toList();
   }
 
   ApiException _handleDioException(DioException e) {

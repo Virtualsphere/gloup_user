@@ -8,6 +8,7 @@ import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/network/auth_session_manager.dart';
 import 'package:tressy/core/router/app_router.dart';
 import 'package:tressy/core/services/firebase_notification_service.dart';
+import 'package:tressy/core/services/force_update_service.dart';
 import 'package:tressy/core/theme/app_theme.dart';
 import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -53,8 +54,35 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ForceUpdateService.checkAndForceUpdate();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ForceUpdateService.checkAndForceUpdate();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +127,11 @@ class MyApp extends StatelessWidget {
                   themeMode: themeProvider.themeMode,
                   routerConfig: AppRouter.router,
                   builder: (context, child) {
+                    final content = child ?? const SizedBox.shrink();
+                    // Dart-only forced update dialog. Required for older Play
+                    // builds (e.g. 2.8.8) that lack the native in_app_update
+                    // plugin — Shorebird can still patch this path. Newer
+                    // builds also get Play Immediate via ForceUpdateService.
                     return UpgradeAlert(
                       showIgnore: false,
                       showLater: false,
@@ -106,12 +139,9 @@ class MyApp extends StatelessWidget {
                       shouldPopScope: () => false,
                       dialogStyle: UpgradeDialogStyle.cupertino,
                       upgrader: Upgrader(
-                        debugLogging:
-                            true, // Enables logs to debug why it might not be showing
-                        durationUntilAlertAgain: Duration
-                            .zero, // Ignores the default 3-day wait period
+                        durationUntilAlertAgain: Duration.zero,
                       ),
-                      child: child ?? const SizedBox.shrink(),
+                      child: content,
                     );
                   },
                 );
