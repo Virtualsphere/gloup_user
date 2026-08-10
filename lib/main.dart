@@ -9,6 +9,7 @@ import 'package:tressy/core/network/auth_session_manager.dart';
 import 'package:tressy/core/router/app_router.dart';
 import 'package:tressy/core/services/firebase_notification_service.dart';
 import 'package:tressy/core/services/force_update_service.dart';
+import 'package:tressy/core/services/presence_heartbeat_service.dart';
 import 'package:tressy/core/theme/app_theme.dart';
 import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -41,6 +42,9 @@ void main() async {
 
   // Initialize dependencies (must be before FirebaseNotificationService so DioClient is registered)
   await initializeDependencies();
+
+  // Real-time presence for admin live stats
+  await PresenceHeartbeatService.initialize();
 
   // Initialize Firebase Cloud Messaging (non-blocking token fetch runs in bg)
   await FirebaseNotificationService.initialize();

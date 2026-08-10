@@ -7,6 +7,7 @@ import 'package:pinput/pinput.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/services/presence_heartbeat_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/auth/domain/entities/auth_entity.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
@@ -147,6 +148,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           if (authEntity is VerifyOtpEntity) {
             LocalStorageService.setAccessToken(authEntity.token);
             LocalStorageService.setLoggedIn(true);
+            PresenceHeartbeatService.onUserLogin();
           }
 
           CustomToast.showSuccess(context, 'Login successful!');
@@ -154,6 +156,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
         } else if (state is SocialAuthSuccess) {
           LocalStorageService.setAccessToken(state.token);
           LocalStorageService.setLoggedIn(true);
+          PresenceHeartbeatService.onUserLogin();
           CustomToast.showSuccess(context, 'Login successful!');
           Navigator.pop(context);
         } else if (state is AuthFailure) {

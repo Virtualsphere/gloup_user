@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/network/auth_session_manager.dart';
+import 'package:tressy/core/services/presence_heartbeat_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 
 /// Injects the `userauth` header and forces logout on 401 for protected routes.
@@ -22,6 +23,7 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (_shouldForceLogout(err)) {
+      unawaited(PresenceHeartbeatService.instance.stop(markOffline: false));
       unawaited(AuthSessionManager.handleSessionExpired());
     }
     handler.next(err);

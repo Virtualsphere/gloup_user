@@ -30,6 +30,9 @@ class ApiRoutes {
   static const String appleLogin = '$baseUrl/user/auth/appleLogin';
   static const String logout = '$baseUrl/user/auth/logout';
 
+  /// Presence ping for admin live active-user counts
+  static const String heartbeat = '$baseUrl/user/app/v2/heartbeat';
+
   // Home Endpoints
   static const String getBanners = '$baseUrl/user/app/v2/getbanner';
   static const String getCategories = '$baseUrl/user/app/v2/getallcategory';
