@@ -126,6 +126,7 @@ class SalonDetailsBottomBar extends StatelessWidget {
                                 ? profile!.phone.toString()
                                 : null,
                             initialEmail: profile?.email,
+                            submitButtonText: 'Continue',
                           );
                           if (contact == null || !context.mounted) return;
 

@@ -24,6 +24,7 @@ Future<BookingContactDetails?> showBookingDetailsBottomSheet(
   String? initialName,
   String? initialPhone,
   String? initialEmail,
+  String submitButtonText = 'Continue',
 }) {
   return showModalBottomSheet<BookingContactDetails>(
     context: context,
@@ -37,6 +38,7 @@ Future<BookingContactDetails?> showBookingDetailsBottomSheet(
           initialName: initialName,
           initialPhone: initialPhone,
           initialEmail: initialEmail,
+          submitButtonText: submitButtonText,
         ),
       );
     },
@@ -47,11 +49,13 @@ class _BookingDetailsBottomSheet extends StatefulWidget {
   final String? initialName;
   final String? initialPhone;
   final String? initialEmail;
+  final String submitButtonText;
 
   const _BookingDetailsBottomSheet({
     this.initialName,
     this.initialPhone,
     this.initialEmail,
+    this.submitButtonText = 'Continue',
   });
 
   @override
@@ -214,7 +218,7 @@ class _BookingDetailsBottomSheetState
                 ),
                 SizedBox(height: AppSizes.spaceXL),
                 PrimaryButton(
-                  text: 'Continue to Payment',
+                  text: widget.submitButtonText,
                   onPressed: _submit,
                 ),
               ],

@@ -87,6 +87,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    _contactDetails = _contactFromBookingData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _requestProfileIfNeeded();
     });
@@ -121,12 +122,38 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   /// Contact details collected by the "Book Now" bottom sheet, carried
   /// through the slot-booking flow inside [ReviewConfirmPage.bookingData].
   BookingContactDetails? _contactFromBookingData() {
-    final name = widget.bookingData?['customerName'] as String?;
-    final phone = widget.bookingData?['customerPhone'] as String?;
-    final email = widget.bookingData?['customerEmail'] as String?;
-    if (name == null || phone == null || email == null) return null;
+    final name = (widget.bookingData?['customerName'] as String?)?.trim();
+    final phone = (widget.bookingData?['customerPhone'] as String?)?.trim();
+    final email = (widget.bookingData?['customerEmail'] as String?)?.trim();
+    if (name == null ||
+        name.isEmpty ||
+        phone == null ||
+        phone.isEmpty ||
+        email == null ||
+        email.isEmpty) {
+      return null;
+    }
 
     return BookingContactDetails(name: name, phone: phone, email: email);
+  }
+
+  BookingContactDetails? _effectiveContact() =>
+      _contactDetails ?? _contactFromBookingData();
+
+  Future<BookingContactDetails?> _promptForContactDetails() async {
+    final profile = _profileFromState(context.read<ProfileBloc>().state);
+    final contact = await showBookingDetailsBottomSheet(
+      context,
+      initialName: _effectiveContact()?.name ?? profile?.fullName,
+      initialPhone: _effectiveContact()?.phone ??
+          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
+      initialEmail: _effectiveContact()?.email ?? profile?.email,
+      submitButtonText: 'Save details',
+    );
+    if (contact == null || !mounted) return null;
+
+    setState(() => _contactDetails = contact);
+    return contact;
   }
 
   @override
@@ -418,14 +445,18 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                         false,
                                 selectedDate: widget
                                     .bookingData!['selectedDate'] as String?,
-                                selectedTimeSlot:
-                                    widget.bookingData!['selectedTimeSlot']
-                                        as String?,
+                                selectedTimeSlot: (widget
+                                            .bookingData!['selectedTimeSlot'] ??
+                                        widget.bookingData![
+                                            'selectedTimeFormatted'])
+                                    as String?,
                               ),
                               // Selected services card (including added services)
                               SelectedServicesCard(
                                 services: _allSelectedServices,
                               ),
+                              SizedBox(height: AppSizes.spaceM),
+                              _buildContactDetailsSection(context, isDarkMode),
                               SizedBox(height: AppSizes.spaceM),
                               // Who is this booking for section - Only show if logged in
                               if (isLoggedIn) ...[
@@ -1198,6 +1229,122 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     );
   }
 
+  Widget _buildContactDetailsSection(BuildContext context, bool isDarkMode) {
+    final contact = _effectiveContact();
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Your contact details',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isDarkMode
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimary,
+                      ),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await _promptForContactDetails();
+                },
+                child: Text(contact == null ? 'Add' : 'Edit'),
+              ),
+            ],
+          ),
+          SizedBox(height: AppSizes.spaceS),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppSizes.paddingM),
+            decoration: BoxDecoration(
+              color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+              border: Border.all(
+                color: isDarkMode ? AppColors.borderDark : AppColors.border,
+              ),
+            ),
+            child: contact == null
+                ? Text(
+                    'Name, phone number, and email are required to complete your booking.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isDarkMode
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildContactDetailRow(
+                        context,
+                        isDarkMode,
+                        'Name',
+                        contact.name,
+                      ),
+                      SizedBox(height: AppSizes.spaceS),
+                      _buildContactDetailRow(
+                        context,
+                        isDarkMode,
+                        'Phone',
+                        '+91 ${contact.phone}',
+                      ),
+                      SizedBox(height: AppSizes.spaceS),
+                      _buildContactDetailRow(
+                        context,
+                        isDarkMode,
+                        'Email',
+                        contact.email,
+                      ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactDetailRow(
+    BuildContext context,
+    bool isDarkMode,
+    String label,
+    String value,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 56,
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDarkMode
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBottomConfirmButton(
       BuildContext context, bool isDarkMode, bool isLoggedIn) {
     // If not logged in, show "Login to Continue" button
@@ -1329,21 +1476,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                   ? guestState.guests[selectedSomeoneElseIndex!]
                                   : null;
 
-                          // Contact details are collected via the bottom
-                          // sheet when the user taps "Book Now"; fall back
-                          // to showing it here only if they are missing.
-                          var contact = _contactFromBookingData();
+                          // Contact details are required before payment.
+                          var contact = _effectiveContact();
                           if (contact == null) {
-                            final profile = _profileFromState(
-                                context.read<ProfileBloc>().state);
-                            contact = await showBookingDetailsBottomSheet(
-                              context,
-                              initialName: profile?.fullName,
-                              initialPhone: (profile?.phone ?? 0) > 0
-                                  ? profile!.phone.toString()
-                                  : null,
-                              initialEmail: profile?.email,
-                            );
+                            contact = await _promptForContactDetails();
                             if (contact == null || !context.mounted) return;
                           }
                           _contactDetails = contact;

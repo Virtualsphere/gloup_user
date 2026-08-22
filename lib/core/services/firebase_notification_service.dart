@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart' hide Priority;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/di/injection_container.dart';
@@ -30,8 +33,12 @@ Future<void> handleRemoteMessage(
   RemoteMessage message, {
   required bool isBackground,
 }) async {
+  final imageUrl = message.notification?.android?.imageUrl ??
+      message.data['image']?.toString();
+
   if (message.notification != null) {
-    // Background/killed: Android and iOS already show notification payloads.
+    // Background/killed: Android and iOS already show notification payloads
+    // (including imageUrl when set by FCM).
     if (isBackground) {
       return;
     }
@@ -43,6 +50,7 @@ Future<void> handleRemoteMessage(
     await _showLocalNotification(
       title: message.notification!.title,
       body: message.notification!.body,
+      imageUrl: imageUrl,
       payload: _encodeNotificationPayload(message.data),
       id: message.hashCode,
     );
@@ -59,6 +67,7 @@ Future<void> handleRemoteMessage(
   await _showLocalNotification(
     title: title,
     body: body,
+    imageUrl: imageUrl,
     payload: _encodeNotificationPayload(message.data),
     id: message.hashCode,
   );
@@ -104,6 +113,7 @@ int localNotificationShowCallCount = 0;
 Future<void> Function({
   required String? title,
   required String? body,
+  String? imageUrl,
   required String? payload,
   required int id,
 })? showLocalNotificationOverride;
@@ -118,6 +128,7 @@ void resetLocalNotificationShowCallCount() {
 Future<void> _showLocalNotification({
   required String? title,
   required String? body,
+  String? imageUrl,
   required String? payload,
   required int id,
 }) async {
@@ -130,19 +141,49 @@ Future<void> _showLocalNotification({
     await showLocalNotificationOverride!(
       title: title,
       body: body,
+      imageUrl: imageUrl,
       payload: payload,
       id: id,
     );
     return;
   }
 
-  const androidDetails = AndroidNotificationDetails(
+  // Download image for BigPictureStyle when a URL is provided.
+  StyleInformation? styleInformation;
+  FilePathAndroidBitmap? largeIconBitmap;
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    try {
+      final response = await http
+          .get(Uri.parse(imageUrl))
+          .timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        final dir = await getTemporaryDirectory();
+        final ext = imageUrl.toLowerCase().endsWith('.png') ? 'png' : 'jpg';
+        final file = File('${dir.path}/notif_img_$id.$ext');
+        await file.writeAsBytes(response.bodyBytes);
+        largeIconBitmap = FilePathAndroidBitmap(file.path);
+        styleInformation = BigPictureStyleInformation(
+          largeIconBitmap,
+          largeIcon: largeIconBitmap,
+          contentTitle: title,
+          summaryText: body,
+          hideExpandedLargeIcon: false,
+        );
+      }
+    } catch (_) {
+      // Image download failed — fall back to plain text notification.
+    }
+  }
+
+  final androidDetails = AndroidNotificationDetails(
     'gloup_default_channel',
     'General Notifications',
     channelDescription: 'For showing app notifications',
     importance: Importance.max,
     priority: Priority.high,
     icon: '@mipmap/ic_launcher',
+    styleInformation: styleInformation,
+    largeIcon: largeIconBitmap,
   );
 
   const darwinDetails = DarwinNotificationDetails(
@@ -151,7 +192,7 @@ Future<void> _showLocalNotification({
     presentSound: true,
   );
 
-  const platformDetails = NotificationDetails(
+  final platformDetails = NotificationDetails(
     android: androidDetails,
     iOS: darwinDetails,
   );

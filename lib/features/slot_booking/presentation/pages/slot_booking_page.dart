@@ -5,6 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
+import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_event.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_state.dart';
@@ -64,6 +68,52 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
             to: DateFormat('yyyy-MM-dd').format(monthEnd),
           ),
         );
+  }
+
+  ProfileEntity? _profileFromState(ProfileState state) {
+    if (state is ProfileLoaded) return state.profile;
+    if (state is ProfileUpdating) return state.profile;
+    if (state is ProfileUpdateSuccess) return state.profile;
+    if (state is ProfileUpdateFailure) return state.profile;
+    return null;
+  }
+
+  bool _hasValidContact(Map<String, dynamic>? data) {
+    final name = (data?['customerName'] as String?)?.trim();
+    final phone = (data?['customerPhone'] as String?)?.trim();
+    final email = (data?['customerEmail'] as String?)?.trim();
+    return name != null &&
+        name.isNotEmpty &&
+        phone != null &&
+        phone.isNotEmpty &&
+        email != null &&
+        email.isNotEmpty;
+  }
+
+  Future<Map<String, dynamic>?> _ensureContactDetails(
+    Map<String, dynamic>? data,
+  ) async {
+    if (_hasValidContact(data)) return data;
+
+    final profile =
+        _profileFromState(context.read<ProfileBloc>().state);
+    final contact = await showBookingDetailsBottomSheet(
+      context,
+      initialName: profile?.fullName,
+      initialPhone: (profile?.phone ?? 0) > 0
+          ? profile!.phone.toString()
+          : null,
+      initialEmail: profile?.email,
+      submitButtonText: 'Continue',
+    );
+    if (contact == null || !mounted) return null;
+
+    return {
+      ...?data,
+      'customerName': contact.name,
+      'customerPhone': contact.phone,
+      'customerEmail': contact.email,
+    };
   }
 
   // Format time from 24-hour to 12-hour format
@@ -588,17 +638,22 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
           SizedBox(width: AppSizes.spaceM),
           PrimaryButton(
             text: 'Continue',
-            onPressed: () {
-              // Navigate to booking confirmation
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              final bookingWithContact =
+                  await _ensureContactDetails(widget.bookingData);
+              if (bookingWithContact == null || !mounted) return;
+
               final updatedBookingData = {
-                ...?widget.bookingData,
+                ...bookingWithContact,
                 'selectedDate': DateFormat('yyyy-MM-dd').format(selectedDate),
                 'selectedTime': selectedTime,
                 'selectedTimeFormatted': _formatTimeRange(selectedTime),
+                'selectedTimeSlot': _formatTimeRange(selectedTime),
                 'slotId': selectedSlotId,
               };
 
-              GoRouter.of(context).push(
+              router.push(
                 RouteNames.reviewConfirm,
                 extra: updatedBookingData,
               );
