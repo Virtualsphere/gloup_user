@@ -80,6 +80,14 @@ class ApiRoutes {
   static const String getActiveCoupons =
       '$baseUrl/user/app/v2/get/activecoupons';
 
+  // Reviews
+  static const String addReview = '$baseUrl/user/app/addreview';
+  static const String pendingReviews = '$baseUrl/user/app/v2/pending-reviews';
+  static const String getReviewsV2 = '$baseUrl/user/app/v2/reviews';
+
+  static String reviewV2ById(int reviewId) =>
+      '$baseUrl/user/app/v2/reviews?id=$reviewId';
+
   // Map Markers (Clustered)
   static const String mapMarkersClustered =
       '$baseUrl/user/app/v2/salons/map-markers-clustered';
@@ -122,6 +130,9 @@ class ApiRoutes {
     // Appointments & coupons
     'getAllAppointments': getAllAppointments,
     'getActiveCoupons': getActiveCoupons,
+    'addReview': addReview,
+    'pendingReviews': pendingReviews,
+    'getReviewsV2': getReviewsV2,
   };
 
   /// External APIs used outside Dio (e.g. Google Places).

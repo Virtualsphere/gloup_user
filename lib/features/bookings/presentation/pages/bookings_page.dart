@@ -6,11 +6,14 @@ import 'package:tressy/shared/widgets/salon_network_image.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/services/review_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/bookings/domain/entities/appointment_entity.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_event.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_state.dart';
+import 'package:tressy/features/profile/presentation/model/review_data.dart';
+import 'package:tressy/features/widgets/add_rating_dialogue.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/bookings/presentation/widgets/bookings_shimmer.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
@@ -28,6 +31,14 @@ class _BookingsPageState extends State<BookingsPage>
   late TabController _tabController;
   late AppointmentsBloc _appointmentsBloc;
 
+  /// Store IDs that still need a review (from pending-reviews API).
+  final Set<int> _pendingReviewStoreIds = {};
+
+  /// Store IDs reviewed in this session (hides the button immediately).
+  final Set<int> _reviewedStoreIds = {};
+
+  bool _pendingReviewsLoaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +48,66 @@ class _BookingsPageState extends State<BookingsPage>
         LocalStorageService.accessToken!.isNotEmpty;
     if (isAuthenticated) {
       _appointmentsBloc.add(const LoadAppointmentsEvent());
+      _loadPendingReviews();
+    }
+  }
+
+  Future<void> _loadPendingReviews() async {
+    final pending = await ReviewService.fetchPendingReviews();
+    if (!mounted) return;
+    setState(() {
+      _pendingReviewStoreIds
+        ..clear()
+        ..addAll(pending.map((e) => e.storeId));
+      _pendingReviewsLoaded = true;
+    });
+  }
+
+  bool _canRateBooking(AppointmentEntity appointment, String tabStatus) {
+    if (tabStatus != 'completed' && tabStatus != 'past') return false;
+    if (_reviewedStoreIds.contains(appointment.storeId)) return false;
+    if (_pendingReviewsLoaded) {
+      return _pendingReviewStoreIds.contains(appointment.storeId);
+    }
+    // While pending list loads, show for completed bookings.
+    return appointment.appointmentStatus.toLowerCase() == 'completed' ||
+        tabStatus == 'completed';
+  }
+
+  Future<void> _openRateReviewDialog(AppointmentEntity appointment) async {
+    final submitted = await AddRatingDialogue().showAddReviewDialogue(
+      context: context,
+      reviewData: ReviewData(
+        storeId: appointment.storeId,
+        storeName: appointment.salonName,
+        rating: 0,
+        reviewDescription: '',
+      ),
+      isEditReview: false,
+      onSubmit: (rating, description) async {
+        return ReviewService.submitReview(
+          storeId: appointment.storeId,
+          rating: rating,
+          description: description,
+        );
+      },
+    );
+
+    if (!mounted) return;
+    if (submitted == true) {
+      setState(() {
+        _reviewedStoreIds.add(appointment.storeId);
+        _pendingReviewStoreIds.remove(appointment.storeId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Thanks for your review!')),
+      );
+    } else if (submitted == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not submit review. Please try again.'),
+        ),
+      );
     }
   }
 
@@ -91,6 +162,7 @@ class _BookingsPageState extends State<BookingsPage>
       showBrowseAsGuest: false,
       onLoginSuccess: () {
         _appointmentsBloc.add(const LoadAppointmentsEvent());
+        _loadPendingReviews();
       },
       child: BlocProvider<AppointmentsBloc>.value(
         value: _appointmentsBloc,
@@ -200,8 +272,11 @@ class _BookingsPageState extends State<BookingsPage>
                         ),
                         SizedBox(height: AppSizes.spaceL),
                         ElevatedButton(
-                          onPressed: () => _appointmentsBloc
-                              .add(const LoadAppointmentsEvent()),
+                          onPressed: () {
+                            _appointmentsBloc
+                                .add(const LoadAppointmentsEvent());
+                            _loadPendingReviews();
+                          },
                           child: const Text('Retry'),
                         ),
                       ],
@@ -614,33 +689,63 @@ class _BookingsPageState extends State<BookingsPage>
               ),
             ),
 
-            // ── Directions button ──
+            // ── Actions ──
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () => _openMapsDirections(
-                    appointment.latitude,
-                    appointment.longitude,
-                    appointment.salonName,
-                  ),
-                  icon: const Icon(Icons.directions_outlined, size: 18),
-                  label: const Text('Get Directions'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.primaryFill,
-                    foregroundColor: context.onPrimaryFill,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              child: Column(
+                children: [
+                  if (_canRateBooking(appointment, tabStatus)) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openRateReviewDialog(appointment),
+                        icon: const Icon(Icons.star_outline_rounded, size: 18),
+                        label: const Text('Rate & Review'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDarkMode
+                              ? AppColors.primaryDark
+                              : AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                    const SizedBox(height: 8),
+                  ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _openMapsDirections(
+                        appointment.latitude,
+                        appointment.longitude,
+                        appointment.salonName,
+                      ),
+                      icon: const Icon(Icons.directions_outlined, size: 18),
+                      label: const Text('Get Directions'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.primaryFill,
+                        foregroundColor: context.onPrimaryFill,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

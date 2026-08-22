@@ -32,6 +32,9 @@ import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
+import 'package:tressy/core/services/review_service.dart';
+import 'package:tressy/features/profile/presentation/model/review_data.dart';
+import 'package:tressy/features/widgets/add_rating_dialogue.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,6 +51,7 @@ class _HomePageState extends State<HomePage> {
   bool _isLoadingLocation = true;
   bool _profileRequested = false;
   bool _homeDataRequested = false;
+  bool _pendingReviewChecked = false;
   LocationProvider? _locationProvider;
 
   @override
@@ -55,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _getCurrentLocation();
+    _checkPendingReviews();
   }
 
   @override
@@ -106,6 +111,38 @@ class _HomePageState extends State<HomePage> {
 
     _profileRequested = true;
     context.read<ProfileBloc>().add(const GetProfileEvent());
+  }
+
+  Future<void> _checkPendingReviews() async {
+    if (_pendingReviewChecked) return;
+    if (!LocalStorageService.isLoggedIn) return;
+    _pendingReviewChecked = true;
+
+    // Small delay so the home page renders first
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    final pending = await ReviewService.fetchPendingReviews();
+    if (pending.isEmpty || !mounted) return;
+
+    final item = pending.first;
+    AddRatingDialogue().showAddReviewDialogue(
+      context: context,
+      reviewData: ReviewData(
+        storeId: item.storeId,
+        storeName: item.storeName,
+        rating: 0,
+        reviewDescription: '',
+      ),
+      isEditReview: false,
+      onSubmit: (rating, description) async {
+        return ReviewService.submitReview(
+          storeId: item.storeId,
+          rating: rating,
+          description: description,
+        );
+      },
+    );
   }
 
   void _onLocationToastChanged() {

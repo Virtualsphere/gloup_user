@@ -13,11 +13,15 @@ import 'package:tressy/shared/widgets/primary_button.dart';
 class AddRatingDialogue {
   late TextEditingController reviewController;
   double reviewRating = 1.0;
+  bool _isSubmitting = false;
 
+  /// Shows the review dialog and calls [onSubmit] with rating and description.
+  /// Returns the result of [onSubmit] or null if dismissed.
   Future<dynamic> showAddReviewDialogue({
     required BuildContext context,
     required ReviewData reviewData,
     required bool isEditReview,
+    Future<bool> Function(double rating, String description)? onSubmit,
   }) async {
     reviewController =
         TextEditingController(text: reviewData.reviewDescription);
@@ -26,9 +30,29 @@ class AddRatingDialogue {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            Future<void> handleSubmit() async {
+              if (_isSubmitting) return;
+              setState(() => _isSubmitting = true);
+              try {
+                final success = await onSubmit?.call(
+                      reviewRating,
+                      reviewController.text.trim(),
+                    ) ??
+                    true;
+                if (success && context.mounted) {
+                  Navigator.pop(context, true);
+                }
+              } finally {
+                if (context.mounted) {
+                  setState(() => _isSubmitting = false);
+                }
+              }
+            }
+
             if (Platform.isIOS) {
               return CupertinoAlertDialog(
                 insetAnimationCurve: Curves.decelerate,
@@ -52,7 +76,7 @@ class AddRatingDialogue {
                       ),
                     ),
                     BodyTextHint(
-                      title: 'How’s our Service?',
+                      title: 'How\'s our Service?',
                       fontSize: 14,
                       fontWeight: FontWeight.w300,
                     ),
@@ -107,15 +131,17 @@ class AddRatingDialogue {
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoButton(
-                    onPressed: () {},
-                    child: BodyTextColors(
-                      title: 'Submit',
-                      fontSize: 16,
-                      color: isDarkMode
-                          ? AppColors.primaryDarkTheme
-                          : AppColors.primary,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    onPressed: _isSubmitting ? null : handleSubmit,
+                    child: _isSubmitting
+                        ? const CupertinoActivityIndicator()
+                        : BodyTextColors(
+                            title: 'Submit',
+                            fontSize: 16,
+                            color: isDarkMode
+                                ? AppColors.primaryDarkTheme
+                                : AppColors.primary,
+                            fontWeight: FontWeight.w400,
+                          ),
                   ),
                 ],
               );
@@ -149,7 +175,7 @@ class AddRatingDialogue {
                         ),
                       ),
                       Text(
-                        'How’s our Service?',
+                        'How\'s our Service?',
                         style: context.textTheme.displaySmall?.copyWith(
                           color: context.colorScheme.onSurface,
                           fontSize: 14.0,
@@ -214,8 +240,8 @@ class AddRatingDialogue {
                           Expanded(
                             child: PrimaryButton(
                               text: 'Submit',
-                              isLoading: false,
-                              onPressed: () {},
+                              isLoading: _isSubmitting,
+                              onPressed: handleSubmit,
                             ),
                           ),
                         ],
