@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # for android build-number
 # version: 2.8.11+71
 # for ios build-number 
-version: 2.9.10+71
+version: 2.9.11+72
 
 environment:
   sdk: ^3.6.0
