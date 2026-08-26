@@ -87,7 +87,11 @@
                 <data
                     android:scheme="https"
                     android:host="api.v1.gloup.in"
-                    android:pathPrefix="/download"/>
+                    android:path="/download"/>
+                <data
+                    android:scheme="https"
+                    android:host="api.v1.gloup.in"
+                    android:path="/download/"/>
             </intent-filter>
         </activity>
 
