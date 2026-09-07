@@ -58,7 +58,7 @@ const testCreateOrderRequest = CreateOrderRequest(
   bookingFor: 'myself',
   storeId: 5,
   gst: 0,
-  platformFee: 0,
+  platformFee: 3,
   serviceAmount: 499,
   serviceDiscount: 0,
   walletAmountUsed: 0,

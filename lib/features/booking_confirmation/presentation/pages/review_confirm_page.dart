@@ -1042,8 +1042,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                 appliedCouponCode: selectedCouponCode,
                                 serviceDiscount: _totalServiceDiscount,
                                 gstPercentage: 5.0,
-                                platformFee: 7.0,
-                                isPlatformFeeWaived: true,
+                                platformFee: 3.0,
+                                isPlatformFeeWaived: false,
                                 gloupCash: useGloupCash ? 70.0 : 0.0,
                               ),
                               SizedBox(height: AppSizes.spaceL),
@@ -1392,8 +1392,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final serviceAmount = _totalServiceAmount;
     final serviceDiscount = _totalServiceDiscount;
 
-    // Platform fee (waived)
-    final platformFee = 0.0;
+    // Platform fee (₹3 charged)
+    final platformFee = 3.0;
 
     // Gloup Cash (only if checkbox is checked)
     final gloupCash = useGloupCash ? 70.0 : 0.0;

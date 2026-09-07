@@ -125,8 +125,19 @@ class _HomePageState extends State<HomePage> {
     final pending = await ReviewService.fetchPendingReviews();
     if (pending.isEmpty || !mounted) return;
 
-    final item = pending.first;
-    AddRatingDialogue().showAddReviewDialogue(
+    // Skip appointments the user already dismissed with "Not Now"
+    final dismissed =
+        LocalStorageService.getDismissedPendingReviewAppointmentIds();
+    PendingReview? item;
+    for (final p in pending) {
+      if (!dismissed.contains(p.appointmentId)) {
+        item = p;
+        break;
+      }
+    }
+    if (item == null || !mounted) return;
+
+    await AddRatingDialogue().showAddReviewDialogue(
       context: context,
       reviewData: ReviewData(
         storeId: item.storeId,
@@ -137,11 +148,18 @@ class _HomePageState extends State<HomePage> {
       isEditReview: false,
       onSubmit: (rating, description) async {
         return ReviewService.submitReview(
-          storeId: item.storeId,
+          storeId: item!.storeId,
           rating: rating,
           description: description,
         );
       },
+    );
+
+    if (!mounted) return;
+
+    // After submit or "Not Now" → never prompt again for this booking
+    await LocalStorageService.dismissPendingReviewAppointment(
+      item.appointmentId,
     );
   }
 

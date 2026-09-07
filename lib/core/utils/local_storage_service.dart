@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tressy/core/utils/access_token_migration.dart';
@@ -115,6 +117,37 @@ class LocalStorageService {
 
   static Future<void> remove(String key) async {
     await _prefs.remove(key);
+  }
+
+  /// Appointment IDs for which the home review prompt was dismissed ("Not Now").
+  static const String _keyDismissedPendingReviews =
+      'dismissed_pending_review_appointment_ids';
+
+  static Set<int> getDismissedPendingReviewAppointmentIds() {
+    final raw = _prefs.getString(_keyDismissedPendingReviews);
+    if (raw == null || raw.isEmpty) return <int>{};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return <int>{};
+      return decoded
+          .map((e) => e is num ? e.toInt() : int.tryParse(e.toString()))
+          .whereType<int>()
+          .toSet();
+    } catch (_) {
+      return <int>{};
+    }
+  }
+
+  static Future<void> dismissPendingReviewAppointment(int appointmentId) async {
+    final ids = getDismissedPendingReviewAppointmentIds()..add(appointmentId);
+    await _prefs.setString(
+      _keyDismissedPendingReviews,
+      jsonEncode(ids.toList()),
+    );
+  }
+
+  static Future<void> clearDismissedPendingReviews() async {
+    await _prefs.remove(_keyDismissedPendingReviews);
   }
 
   static Future<void> _migrateLegacyAccessTokenIfNeeded() async {

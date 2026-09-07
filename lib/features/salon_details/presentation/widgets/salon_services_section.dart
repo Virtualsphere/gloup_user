@@ -152,13 +152,24 @@ class SalonServicesSection extends StatelessWidget {
     );
   }
 
+  bool _isUnisexSalon(String salonGender) {
+    return salonGender.toLowerCase().trim().contains('unisex');
+  }
+
+  /// male | female | unisex — unisex shows both icons (same as salon header).
   String _resolveServiceGender(ServiceEntity service, String salonGender) {
     final raw = service.serviceFor?.toLowerCase().trim();
     if (raw != null && raw.isNotEmpty) {
+      if (raw.contains('unisex') || raw == 'both' || raw == 'all') {
+        return 'unisex';
+      }
       if (raw.contains('female') || raw == 'women' || raw == 'f') {
         return 'female';
       }
-      if (raw.contains('male') || raw == 'men' || raw == 'm') {
+      // "male" must not match inside "female"
+      if ((raw.contains('male') && !raw.contains('female')) ||
+          raw == 'men' ||
+          raw == 'm') {
         return 'male';
       }
     }
@@ -172,13 +183,16 @@ class SalonServicesSection extends StatelessWidget {
     }
 
     final salon = salonGender.toLowerCase();
+    if (salon.contains('unisex')) return 'unisex';
     if (salon.contains('women') || salon.contains('female')) {
       return 'female';
     }
-    if (salon.contains('men') || salon.contains('male')) {
+    if ((salon.contains('men') || salon.contains('male')) &&
+        !salon.contains('women') &&
+        !salon.contains('female')) {
       return 'male';
     }
-    return 'male';
+    return 'unisex';
   }
 
   String _formatDiscountLabel(String? raw) {
@@ -188,12 +202,24 @@ class SalonServicesSection extends StatelessWidget {
     return '$cleaned% off';
   }
 
-  Widget _buildServiceGenderIcon(String gender) {
-    return SvgPicture.asset(
-      gender == 'female' ? AppIcons.icFemale : AppIcons.icMale,
-      height: 18,
-      fit: BoxFit.fitHeight,
-    );
+  Widget _buildServiceGenderIcons(String gender) {
+    final icons = <Widget>[];
+    if (gender == 'unisex' || gender == 'male') {
+      icons.add(SvgPicture.asset(
+        AppIcons.icMale,
+        height: 18,
+        fit: BoxFit.fitHeight,
+      ));
+    }
+    if (gender == 'unisex' || gender == 'female') {
+      if (icons.isNotEmpty) icons.add(const SizedBox(width: 4));
+      icons.add(SvgPicture.asset(
+        AppIcons.icFemale,
+        height: 18,
+        fit: BoxFit.fitHeight,
+      ));
+    }
+    return Row(mainAxisSize: MainAxisSize.min, children: icons);
   }
 
   Widget _buildDiscountSeal() {
@@ -263,8 +289,8 @@ class SalonServicesSection extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (salonGender.toLowerCase() == 'unisex') ...[
-                      _buildServiceGenderIcon(gender),
+                    if (_isUnisexSalon(salonGender)) ...[
+                      _buildServiceGenderIcons(gender),
                       const SizedBox(width: 8),
                     ],
                     Flexible(

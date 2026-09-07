@@ -19,8 +19,8 @@ class BillingSummaryCard extends StatelessWidget {
     this.appliedCouponCode,
     this.serviceDiscount = 0,
     this.gstPercentage = 5.0,
-    this.platformFee = 7.0,
-    this.isPlatformFeeWaived = true,
+    this.platformFee = 3.0,
+    this.isPlatformFeeWaived = false,
     this.gloupCash = 70.0,
   });
 
