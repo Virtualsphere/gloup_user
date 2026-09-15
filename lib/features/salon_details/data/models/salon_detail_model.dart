@@ -192,9 +192,30 @@ class ServiceModel {
     }
 
     final price = parseMoney(json['price'] ?? json['amount']);
-    final originalRaw = json['originalPrice'] ?? json['mrp'];
-    final originalPrice =
-        originalRaw == null ? null : parseMoney(originalRaw);
+
+    // Strikethrough: fakePrice if present, else originalPrice/mrp from API.
+    final fakeRaw = json['fakePrice'] ?? json['fake_price'];
+    final fallbackRaw = json['originalPrice'] ?? json['mrp'];
+    final fakePrice = fakeRaw == null ? null : parseMoney(fakeRaw);
+    final fallbackOriginal =
+        fallbackRaw == null ? null : parseMoney(fallbackRaw);
+
+    double? originalPrice;
+    if (fakePrice != null && fakePrice > price) {
+      originalPrice = fakePrice;
+    } else if (fallbackOriginal != null && fallbackOriginal > price) {
+      originalPrice = fallbackOriginal;
+    }
+
+    String? discountPercentage = json['discountPercentage']?.toString();
+    // Keep % in sync with the price we actually strike through.
+    if (originalPrice != null &&
+        originalPrice > price &&
+        fakePrice != null &&
+        fakePrice > price) {
+      discountPercentage =
+          '${((originalPrice - price) / originalPrice * 100).round()}%';
+    }
 
     return ServiceModel(
       id: (json['id'] ?? 0) is int
@@ -203,10 +224,8 @@ class ServiceModel {
       name: json['name'] ?? '',
       duration: json['duration'] ?? '',
       price: price,
-      originalPrice: (originalPrice != null && originalPrice > price)
-          ? originalPrice
-          : null,
-      discountPercentage: json['discountPercentage'],
+      originalPrice: originalPrice,
+      discountPercentage: discountPercentage,
       isPopular: json['isPopular'] ?? false,
       category: json['category'] ?? 'Featured',
       serviceFor: _parseServiceFor(json),

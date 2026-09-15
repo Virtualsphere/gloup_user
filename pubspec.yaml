@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # for android build-number
-version: 2.8.13+72
+version: 2.8.14+73
 # for ios build-number 
 # version: 2.9.11+72
 
@@ -141,7 +141,9 @@ dependency_overrides:
   # 2.14.x has a known main-thread hang/crash when the map's platform view is
   # destroyed during back navigation; fixed in later releases.
   google_maps_flutter_android: ^2.19.12
-  package_info_plus: ^10.1.0
+  # Pin exact: 10.2.x (Kotlin/AGP changes) fails compileReleaseJavaWithJavac
+  # with "cannot find symbol PackageInfoPlugin" during Shorebird patch builds.
+  package_info_plus: 10.1.0
 
 dev_dependencies:
   flutter_test:
