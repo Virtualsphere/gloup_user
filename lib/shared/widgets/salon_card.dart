@@ -433,8 +433,9 @@ class _SalonCardState extends State<SalonCard> {
           child: ResponsiveEllipsisText(
             text: widget.salonName,
             maxLines: 2,
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
+              fontSize: 14,
               color: context.onSurfaceEmphasis,
               height: 1.3,
             ),
