@@ -461,7 +461,7 @@ class _SalonCardState extends State<SalonCard> {
             ),
             const SizedBox(width: 2),
             Text(
-              '(${widget.reviewCount})',
+              '(${widget.reviewCount} ${widget.reviewCount == 1 ? 'review' : 'reviews'})',
               style: context.textTheme.bodySmall?.copyWith(
                 color: isDarkMode
                     ? AppColors.textSecondaryDark
