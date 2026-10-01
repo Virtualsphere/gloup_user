@@ -44,8 +44,8 @@ class SalonGallerySection extends StatelessWidget {
             options: CarouselOptions(
               height: double.infinity,
               viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              autoPlay: isFullyExpanded,
+              enableInfiniteScroll: images.length > 1,
+              autoPlay: images.length > 1,
               autoPlayInterval: const Duration(seconds: 3),
               autoPlayAnimationDuration: const Duration(milliseconds: 800),
               onPageChanged: (index, reason) => onImageChanged(index),
@@ -116,9 +116,11 @@ class SalonGallerySection extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: -SalonDetailDesignTokens.infoSheetTopRadius,
-          child: const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: SalonDetailDesignTokens.carouselGradient,
+          child: IgnorePointer(
+            child: const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: SalonDetailDesignTokens.carouselGradient,
+              ),
             ),
           ),
         ),
