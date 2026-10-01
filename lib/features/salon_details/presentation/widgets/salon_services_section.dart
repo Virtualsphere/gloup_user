@@ -8,6 +8,7 @@ import 'package:tressy/core/constants/salon_detail_design_tokens.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/presentation/cubit/salon_details_page_cubit.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/extensions/string_extensions.dart';
 
 class SalonServicesSection extends StatelessWidget {
   final bool isDarkMode;
@@ -344,7 +345,7 @@ class SalonServicesSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      service.duration,
+                      service.duration.formattedDuration,
                       style: GoogleFonts.inter(
                         color: secondaryText,
                         fontSize: 12,

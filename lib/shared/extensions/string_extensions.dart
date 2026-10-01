@@ -50,6 +50,18 @@ extension StringExtensions on String {
 
   /// Check if string contains only numbers
   bool get isNumeric => double.tryParse(this) != null;
+
+  /// Format duration like "01:00:00" or "1:00:00 hrs" to "1:00 hrs"
+  String get formattedDuration {
+    String str = toLowerCase().replaceAll(RegExp(r'\s*(hrs|hr|mins|min)'), '').trim();
+    final parts = str.split(':');
+    if (parts.length >= 2) {
+      int h = int.tryParse(parts[0]) ?? 0;
+      int m = int.tryParse(parts[1]) ?? 0;
+      return '$h:${m.toString().padLeft(2, '0')} hrs';
+    }
+    return this;
+  }
 }
 
 /// Extension for nullable strings
