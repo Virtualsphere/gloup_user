@@ -11,7 +11,7 @@ import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/favorites/presentation/widgets/favorites_shimmers.dart';
-import 'package:tressy/shared/widgets/explore_salon_card.dart';
+import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/login_required_widget.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -258,7 +258,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               return Padding(
                                 padding:
                                     EdgeInsets.only(bottom: AppSizes.paddingM),
-                                child: ExploreSalonCard(
+                                child: SalonCard(
                                   storeId: int.tryParse(salon.id) ?? 0,
                                   salonName: salon.salonName,
                                   salonImage: salon.salonImage,
@@ -270,10 +270,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   isFavorite: salon.isFavorite,
                                   serviceName: salon.serviceName,
                                   servicePrice: salon.servicePrice,
+                                  dynamicServices: salon.dynamicServices,
                                   address: salon.displayAddress,
                                   categories: salon.categories,
                                   languageCodes: salon.languageCodes,
-                                  showDistance: false,
+                                  isFullWidth: true,
                                   onTap: () {
                                     GoRouter.of(context).push(
                                       RouteNames.salonDetails,
