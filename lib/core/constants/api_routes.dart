@@ -9,7 +9,7 @@ class ApiRoutes {
   /// Override at build/run time: `--dart-define=API_BASE_URL=https://your-api`
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.v1.gloup.in',
+    defaultValue: kDebugMode ? 'http://169.58.105.116:5678' : 'https://api.v1.gloup.in',
   );
 
   // Image Base URL - For appending to image paths from API
