@@ -3,6 +3,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/extensions/string_extensions.dart';
 
 class SelectedServicesCard extends StatelessWidget {
   final List<Map<String, dynamic>> services;
@@ -148,7 +149,7 @@ class SelectedServicesCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    duration,
+                    duration.formattedDuration,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: AppSizes.fontS,
                       color: isDarkMode

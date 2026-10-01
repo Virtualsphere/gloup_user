@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/string_extensions.dart';
 
 class RecommendedServiceCard extends StatelessWidget {
   final String name;
@@ -70,7 +71,7 @@ class RecommendedServiceCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                duration,
+                duration.formattedDuration,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: isDarkMode
                           ? AppColors.textSecondaryDark
