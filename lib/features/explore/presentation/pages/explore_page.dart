@@ -12,7 +12,7 @@ import 'package:tressy/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:tressy/features/explore/presentation/bloc/explore_event.dart';
 import 'package:tressy/features/explore/presentation/bloc/explore_state.dart';
 import 'package:tressy/features/explore/presentation/widgets/explore_shimmers.dart';
-import 'package:tressy/shared/widgets/explore_salon_card.dart';
+import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class ExplorePage extends StatelessWidget {
@@ -361,7 +361,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                           final salon = state.salons[index];
                           return Padding(
                             padding: EdgeInsets.only(bottom: AppSizes.paddingM),
-                            child: ExploreSalonCard(
+                            child: SalonCard(
                               storeId: int.tryParse(salon.id) ?? 0,
                               salonName: salon.salonName,
                               salonImage: salon.salonImage,
@@ -373,9 +373,11 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                               isFavorite: salon.isFavorite,
                               serviceName: salon.serviceName,
                               servicePrice: salon.servicePrice,
+                              dynamicServices: salon.dynamicServices,
                               address: salon.displayAddress,
                               categories: salon.categories,
                               languageCodes: salon.languageCodes,
+                              isFullWidth: true,
                               onTap: () {
                                 GoRouter.of(context).push(
                                   RouteNames.salonDetails,

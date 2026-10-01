@@ -3,6 +3,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 
 /// Shimmer loading widgets for Explore screen
 class ExploreShimmers {
@@ -30,127 +31,8 @@ class ExploreShimmers {
 
   /// Shimmer for a single explore salon card
   static Widget _exploreSalonCardShimmer(bool isDarkMode) {
-    return Container(
-      height: 140,
-      decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-      ),
-      child: Row(
-        children: [
-          // Image shimmer
-          Container(
-            width: 120,
-            height: 140,
-            decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppSizes.radiusM),
-                bottomLeft: Radius.circular(AppSizes.radiusM),
-              ),
-            ),
-          ),
-
-          SizedBox(width: AppSizes.spaceM),
-
-          // Content shimmer
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Container(
-                    width: double.infinity,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : AppColors.divider,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-
-                  SizedBox(height: AppSizes.spaceS),
-
-                  // Rating row
-                  Row(
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.surfaceDark
-                              : AppColors.divider,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      SizedBox(width: AppSizes.spaceS),
-                      Container(
-                        width: 40,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.surfaceDark
-                              : AppColors.divider,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: AppSizes.spaceS),
-
-                  // Address
-                  Container(
-                    width: 120,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : AppColors.divider,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  // Service and price row
-                  Row(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.surfaceDark
-                              : AppColors.divider,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: 60,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.surfaceDark
-                              : AppColors.divider,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(width: AppSizes.spaceM),
-        ],
-      ),
+    return Builder(
+      builder: (context) => HomeShimmers.buildVerticalSalonCardShimmer(context),
     );
   }
 
