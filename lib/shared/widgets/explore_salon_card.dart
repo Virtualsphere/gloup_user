@@ -171,7 +171,8 @@ class _ExploreSalonCardState extends State<ExploreSalonCard> {
                 height: double.infinity,
                 viewportFraction: 1.0,
                 enableInfiniteScroll: widget.images.length > 1,
-                autoPlay: false,
+                autoPlay: widget.images.length > 1,
+                autoPlayInterval: const Duration(seconds: 4),
                 onPageChanged: (index, reason) {
                   setState(() {
                     _currentImageIndex = index;

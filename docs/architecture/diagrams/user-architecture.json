@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "GloUp User App Architecture",
+    "output": "user-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "booking-path",
+        "label": "Booking path",
+        "focus": [
+          "salon",
+          "slot",
+          "confirm",
+          "razorpay",
+          "backend"
+        ],
+        "note": "Primary customer journey from salon details to a paid booking on the backend."
+      },
+      {
+        "id": "clean-layers",
+        "label": "Clean architecture layers",
+        "focus": [
+          "confirm",
+          "usecases",
+          "data",
+          "storage",
+          "backend"
+        ],
+        "note": "BLoC calls use cases, repositories call the API through Dio + AuthInterceptor, tokens live in secure storage."
+      },
+      {
+        "id": "platform-services",
+        "label": "Platform services",
+        "focus": [
+          "router",
+          "fcm",
+          "shorebird",
+          "maps",
+          "cdn",
+          "signin",
+          "backend"
+        ],
+        "note": "Third-party services the app depends on outside the booking path."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "fcm",
+      "type": "cloud",
+      "label": "Firebase FCM",
+      "sublabel": "push notifications",
+      "pos": [
+        40,
+        100
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "maps",
+      "type": "external",
+      "label": "Google Maps",
+      "sublabel": "Maps + Places",
+      "pos": [
+        230,
+        100
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "router",
+      "type": "frontend",
+      "label": "GoRouter",
+      "sublabel": "routes + deep links",
+      "pos": [
+        40,
+        250
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "salon",
+      "type": "frontend",
+      "label": "Salon Details",
+      "sublabel": "SalonDetailBloc",
+      "pos": [
+        230,
+        250
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "slot",
+      "type": "frontend",
+      "label": "Slot Booking",
+      "sublabel": "SlotBloc",
+      "pos": [
+        420,
+        250
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "confirm",
+      "type": "frontend",
+      "label": "Booking Confirmation",
+      "sublabel": "OrderBloc",
+      "pos": [
+        610,
+        250
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "razorpay",
+      "type": "external",
+      "label": "Razorpay",
+      "sublabel": "checkout SDK",
+      "pos": [
+        820,
+        250
+      ],
+      "size": [
+        130,
+        60
+      ],
+      "tag": "signed payment"
+    },
+    {
+      "id": "backend",
+      "type": "cloud",
+      "label": "GloUp Backend API",
+      "sublabel": "api.v1.gloup.in",
+      "pos": [
+        1010,
+        250
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "shorebird",
+      "type": "cloud",
+      "label": "Shorebird",
+      "sublabel": "code push",
+      "pos": [
+        40,
+        400
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "cdn",
+      "type": "cloud",
+      "label": "Image CDN",
+      "sublabel": "GCS gloup-images",
+      "pos": [
+        230,
+        400
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "usecases",
+      "type": "backend",
+      "label": "Domain Use Cases",
+      "sublabel": "CreateOrder / VerifyPayment",
+      "pos": [
+        610,
+        400
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "data",
+      "type": "backend",
+      "label": "Repositories + Dio",
+      "sublabel": "DioClient",
+      "pos": [
+        1010,
+        400
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "tag": "AuthInterceptor"
+    },
+    {
+      "id": "signin",
+      "type": "security",
+      "label": "Google / Apple Sign-In",
+      "sublabel": "ID token verified",
+      "pos": [
+        1010,
+        100
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Local Storage",
+      "sublabel": "SecureStorage + Prefs",
+      "pos": [
+        1010,
+        550
+      ],
+      "size": [
+        150,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "router-to-salon",
+      "from": "router",
+      "to": "salon",
+      "label": "navigate",
+      "labelDy": -24
+    },
+    {
+      "id": "salon-to-slot",
+      "from": "salon",
+      "to": "slot",
+      "label": "pick service",
+      "variant": "emphasis",
+      "labelDy": -24
+    },
+    {
+      "id": "slot-to-confirm",
+      "from": "slot",
+      "to": "confirm",
+      "label": "pick slot",
+      "variant": "emphasis",
+      "labelDy": -24
+    },
+    {
+      "id": "confirm-to-razorpay",
+      "from": "confirm",
+      "to": "razorpay",
+      "label": "open checkout",
+      "variant": "emphasis",
+      "labelDy": -24
+    },
+    {
+      "id": "razorpay-to-backend",
+      "from": "razorpay",
+      "to": "backend",
+      "label": "verify signature",
+      "variant": "emphasis",
+      "labelDy": -24
+    },
+    {
+      "id": "confirm-to-usecases",
+      "from": "confirm",
+      "to": "usecases",
+      "label": "events",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        685,
+        355
+      ]
+    },
+    {
+      "id": "usecases-to-data",
+      "from": "usecases",
+      "to": "data",
+      "label": "Either<Failure, T>",
+      "labelDy": -24
+    },
+    {
+      "id": "data-to-backend",
+      "from": "data",
+      "to": "backend",
+      "label": "HTTPS + Bearer",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "data-to-storage",
+      "from": "data",
+      "to": "storage",
+      "label": "access token",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        1085,
+        505
+      ]
+    },
+    {
+      "id": "fcm-to-router",
+      "from": "fcm",
+      "to": "router",
+      "label": "tap to route",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        105,
+        205
+      ]
+    },
+    {
+      "id": "maps-to-salon",
+      "from": "maps",
+      "to": "salon",
+      "label": "location map",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        295,
+        205
+      ]
+    },
+    {
+      "id": "cdn-to-salon",
+      "from": "cdn",
+      "to": "salon",
+      "label": "images",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "shorebird-to-router",
+      "from": "shorebird",
+      "to": "router",
+      "label": "OTA patch",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "backend-to-signin",
+      "from": "backend",
+      "to": "signin",
+      "label": "verify ID token",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        1085,
+        205
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Layers",
+      "items": [
+        "BLoC → use cases → repositories (Either<Failure, T>)",
+        "Dio + AuthInterceptor; token in secure storage"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Payments",
+      "items": [
+        "Backend creates the Razorpay order",
+        "App relays payment id + signature to paymentsuccess"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Delivery",
+      "items": [
+        "Shorebird OTA Dart patches",
+        "Images from the gloup-images GCS bucket"
+      ]
+    }
+  ]
+}

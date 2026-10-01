@@ -50,6 +50,7 @@ class SalonModel {
   final bool isFavorite;
   final String? serviceName;
   final double? servicePrice;
+  final List<Map<String, dynamic>>? dynamicServices;
   final List<String> categories;
   final List<String> languageCodes;
 
@@ -67,6 +68,7 @@ class SalonModel {
     this.isFavorite = false,
     this.serviceName,
     this.servicePrice,
+    this.dynamicServices,
     required this.categories,
     required this.languageCodes,
   });
@@ -116,6 +118,9 @@ class SalonModel {
       isFavorite: json['isFavorite'] ?? false,
       serviceName: json['serviceName'],
       servicePrice: (json['servicePrice'] as num?)?.toDouble(),
+      dynamicServices: json['dynamicServices'] != null 
+          ? List<Map<String, dynamic>>.from(json['dynamicServices']) 
+          : null,
       address: rawAddress.isNotEmpty ? rawAddress : 'Not available',
       displayAddress: displayAddress,
       categories: List<String>.from(json['categories'] ?? []),
@@ -158,6 +163,7 @@ class SalonModel {
       isFavorite: isFavorite,
       serviceName: serviceName,
       servicePrice: servicePrice,
+      dynamicServices: dynamicServices,
       categories: categories,
       languageCodes: languageCodes,
     );
@@ -176,6 +182,7 @@ class SalonModel {
       'isFavorite': isFavorite,
       'serviceName': serviceName,
       'servicePrice': servicePrice,
+      'dynamicServices': dynamicServices,
       'address': address,
       'displayAddress': displayAddress,
       'categories': categories,

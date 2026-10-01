@@ -15,6 +15,7 @@ import 'package:tressy/shared/widgets/responsive_ellipsis_text.dart';
 import 'package:tressy/shared/widgets/salon_badges_row.dart';
 import 'package:tressy/shared/widgets/salon_location_row.dart';
 import 'package:tressy/shared/widgets/salon_network_image.dart';
+import 'package:tressy/shared/widgets/service_ticker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SalonCard extends StatefulWidget {
@@ -29,6 +30,8 @@ class SalonCard extends StatefulWidget {
   final bool isFavorite;
   final String? serviceName;
   final double? servicePrice;
+  final double? serviceDiscountedPrice;
+  final List<Map<String, dynamic>>? dynamicServices;
   final String? address;
   final List<String>? categories;
   final List<String>? languageCodes;
@@ -50,6 +53,8 @@ class SalonCard extends StatefulWidget {
     this.isFavorite = false,
     this.serviceName,
     this.servicePrice,
+    this.serviceDiscountedPrice,
+    this.dynamicServices,
     this.address,
     this.categories,
     this.languageCodes,
@@ -175,7 +180,8 @@ class _SalonCardState extends State<SalonCard> {
                     height: SalonCard.imageHeight.h,
                     viewportFraction: 1.0,
                     enableInfiniteScroll: images.length > 1,
-                    autoPlay: false,
+                    autoPlay: images.length > 1,
+                    autoPlayInterval: const Duration(seconds: 4),
                     onPageChanged: (index, reason) {
                       setState(() {
                         _currentImageIndex = index;
@@ -314,73 +320,51 @@ class _SalonCardState extends State<SalonCard> {
             ),
           ),
         // Service badge (right side)
-        if (widget.serviceName != null && widget.servicePrice != null)
-          Positioned(
-            bottom: AppSizes.paddingS,
-            right: AppSizes.paddingS,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingS,
-                vertical: AppSizes.paddingXS,
-              ),
-              decoration: BoxDecoration(
-                color: widget.isOfferCard
-                    ? const Color(0xFF1ECB5D)
-                    : AppColors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusS),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    constraints: BoxConstraints(maxWidth: 200.w),
-                    child: Text(
-                      widget.serviceName!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11.sp,
-                        color: widget.isOfferCard
-                            ? Colors.white
-                            : AppColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Container(
-                      width: 3.w,
-                      height: 3.h,
-                      decoration: BoxDecoration(
-                        color: widget.isOfferCard
-                            ? Colors.white
-                            : AppColors.textSecondary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '₹${widget.servicePrice!.toInt()}',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11.sp,
-                      color:
-                          widget.isOfferCard ? Colors.white : AppColors.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        _buildDynamicServiceBadge(),
       ],
+    );
+  }
+
+  Widget _buildDynamicServiceBadge() {
+    List<Map<String, dynamic>> services = [];
+    if (widget.dynamicServices != null && widget.dynamicServices!.isNotEmpty) {
+      services = widget.dynamicServices!;
+    } else if (widget.serviceName != null && widget.servicePrice != null) {
+      services = [
+        {
+          'name': widget.serviceName,
+          'price': widget.servicePrice,
+          'discountedPrice': widget.serviceDiscountedPrice,
+        }
+      ];
+    }
+
+    if (services.isEmpty) return const SizedBox.shrink();
+
+    return Positioned(
+      bottom: AppSizes.paddingS,
+      right: AppSizes.paddingS,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingS,
+          vertical: AppSizes.paddingXS,
+        ),
+        decoration: BoxDecoration(
+          color: widget.isOfferCard ? const Color(0xFF1ECB5D) : AppColors.white,
+          borderRadius: BorderRadius.circular(AppSizes.radiusS),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ServiceTicker(
+          services: services,
+          isOfferCard: widget.isOfferCard,
+        ),
+      ),
     );
   }
 

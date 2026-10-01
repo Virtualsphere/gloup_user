@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "GloUp Booking + Payment Sequence",
+    "output": "user-booking-sequence.html",
+    "viewBox": [
+      1080,
+      591
+    ],
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "create-order",
+        "label": "Create order",
+        "focus": [
+          "user",
+          "confirm",
+          "backend",
+          "razorpay"
+        ],
+        "note": "Pay now creates a pending appointment and a server-side Razorpay order."
+      },
+      {
+        "id": "pay-and-verify",
+        "label": "Pay and verify",
+        "focus": [
+          "confirm",
+          "backend",
+          "razorpay",
+          "bookings"
+        ],
+        "note": "Checkout returns a signed payment that the backend verifies before the user lands on Bookings."
+      },
+      {
+        "id": "failure-and-cancel",
+        "label": "Failure and cancel",
+        "focus": [
+          "user",
+          "confirm",
+          "backend",
+          "razorpay"
+        ],
+        "note": "A failed or dismissed checkout cancels the pending order and releases the slot."
+      }
+    ]
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "customer"
+    },
+    {
+      "id": "confirm",
+      "type": "frontend",
+      "label": "BookingConfirmation",
+      "sublabel": "page + OrderBloc"
+    },
+    {
+      "id": "backend",
+      "type": "backend",
+      "label": "GloUp API",
+      "sublabel": "/user/app/v2"
+    },
+    {
+      "id": "razorpay",
+      "type": "external",
+      "label": "Razorpay",
+      "sublabel": "orders + checkout"
+    },
+    {
+      "id": "bookings",
+      "type": "frontend",
+      "label": "Bookings",
+      "sublabel": "appointments tab"
+    }
+  ],
+  "segments": [
+    {
+      "from": 153,
+      "to": 232,
+      "label": "Create order"
+    },
+    {
+      "from": 237,
+      "to": 316,
+      "label": "Checkout"
+    },
+    {
+      "from": 321,
+      "to": 400,
+      "label": "Verify"
+    },
+    {
+      "from": 405,
+      "to": 512,
+      "label": "Failure / cancel"
+    }
+  ],
+  "messages": [
+    {
+      "id": "tap-pay",
+      "from": "user",
+      "to": "confirm",
+      "y": 165,
+      "label": "Pay now",
+      "variant": "default"
+    },
+    {
+      "id": "create-order-api",
+      "from": "confirm",
+      "to": "backend",
+      "y": 193,
+      "label": "POST createorder",
+      "variant": "emphasis"
+    },
+    {
+      "id": "order-created",
+      "from": "backend",
+      "to": "confirm",
+      "y": 221,
+      "label": "Razorpay order, payment pending",
+      "variant": "return"
+    },
+    {
+      "id": "open-checkout",
+      "from": "confirm",
+      "to": "razorpay",
+      "y": 249,
+      "label": "open checkout",
+      "variant": "emphasis"
+    },
+    {
+      "id": "user-pays",
+      "from": "user",
+      "to": "razorpay",
+      "y": 277,
+      "label": "pay (UPI / card)",
+      "variant": "default"
+    },
+    {
+      "id": "payment-success",
+      "from": "razorpay",
+      "to": "confirm",
+      "y": 305,
+      "label": "PAYMENT_SUCCESS + signature",
+      "variant": "return"
+    },
+    {
+      "id": "payment-success-api",
+      "from": "confirm",
+      "to": "backend",
+      "y": 333,
+      "label": "POST paymentsuccess",
+      "variant": "security"
+    },
+    {
+      "id": "payment-verified",
+      "from": "backend",
+      "to": "confirm",
+      "y": 361,
+      "label": "verified (idempotent)",
+      "variant": "return"
+    },
+    {
+      "id": "go-bookings",
+      "from": "confirm",
+      "to": "bookings",
+      "y": 389,
+      "label": "go(bookings)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "payment-error",
+      "from": "razorpay",
+      "to": "confirm",
+      "y": 417,
+      "label": "PAYMENT_ERROR / dismissed",
+      "variant": "dashed"
+    },
+    {
+      "id": "cancel-pending-api",
+      "from": "confirm",
+      "to": "backend",
+      "y": 445,
+      "label": "POST cancel-pending-order",
+      "variant": "dashed"
+    },
+    {
+      "id": "slot-released",
+      "from": "backend",
+      "to": "confirm",
+      "y": 473,
+      "label": "cancelled, slot released",
+      "variant": "return"
+    },
+    {
+      "id": "failed-dialog",
+      "from": "confirm",
+      "to": "user",
+      "y": 501,
+      "label": "failed dialog + retry",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "confirm",
+      "from": 165,
+      "to": 507,
+      "type": "frontend"
+    },
+    {
+      "participant": "backend",
+      "from": 193,
+      "to": 227,
+      "type": "backend"
+    },
+    {
+      "participant": "razorpay",
+      "from": 249,
+      "to": 311,
+      "type": "external"
+    },
+    {
+      "participant": "backend",
+      "from": 333,
+      "to": 367,
+      "type": "backend"
+    },
+    {
+      "participant": "bookings",
+      "from": 389,
+      "to": 409,
+      "type": "frontend"
+    },
+    {
+      "participant": "backend",
+      "from": 445,
+      "to": 479,
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Happy path",
+      "items": [
+        "OrderBloc: CreateOrderEvent, then VerifyPaymentEvent",
+        "paymentsuccess verifies the signature; Bookings reloads"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Failure + cancel",
+      "items": [
+        "PaymentFailedEvent or leaving the page cancels the order",
+        "Unpaid bookings also expire after 5 minutes"
+      ]
+    }
+  ]
+}

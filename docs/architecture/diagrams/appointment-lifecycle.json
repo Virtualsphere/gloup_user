@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "GloUp Appointment Lifecycle",
+    "output": "appointment-lifecycle.html",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "main-lifecycle",
+        "label": "Main lifecycle",
+        "focus": [
+          "pending",
+          "booked",
+          "confirmed",
+          "completed",
+          "reviewed",
+          "review-pending"
+        ],
+        "note": "From a pending Razorpay order to a reviewed visit."
+      },
+      {
+        "id": "cancellation",
+        "label": "Cancellation",
+        "focus": [
+          "pending",
+          "booked",
+          "confirmed",
+          "cancelled"
+        ],
+        "note": "Failed or expired payments and salon/admin cancellations end in Cancelled."
+      },
+      {
+        "id": "refund",
+        "label": "Refund",
+        "focus": [
+          "completed",
+          "refunded"
+        ],
+        "note": "Only a completed, successfully paid appointment can be refunded by admin."
+      }
+    ],
+    "viewBox": [
+      1030,
+      630
+    ]
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Appointment status"
+    },
+    {
+      "id": "waiting",
+      "label": "Review prompt"
+    },
+    {
+      "id": "terminal",
+      "label": "Terminal exits"
+    }
+  ],
+  "states": [
+    {
+      "id": "pending",
+      "type": "start",
+      "label": "Payment Pending",
+      "sublabel": "booked, unpaid",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "createorder"
+    },
+    {
+      "id": "booked",
+      "type": "active",
+      "label": "Booked",
+      "sublabel": "payment success",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "paid"
+    },
+    {
+      "id": "confirmed",
+      "type": "active",
+      "label": "Confirmed",
+      "sublabel": "status update",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "admin"
+    },
+    {
+      "id": "completed",
+      "type": "active",
+      "label": "Completed",
+      "sublabel": "service done",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "review due"
+    },
+    {
+      "id": "reviewed",
+      "type": "success",
+      "label": "Reviewed",
+      "sublabel": "review submitted",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "derived"
+    },
+    {
+      "id": "review-pending",
+      "type": "waiting",
+      "label": "Review Pending",
+      "sublabel": "pending-reviews popup",
+      "lane": "waiting",
+      "col": 2,
+      "tag": "not now"
+    },
+    {
+      "id": "cancelled",
+      "type": "failure",
+      "label": "Cancelled",
+      "sublabel": "slot + coupon released",
+      "lane": "terminal",
+      "col": 0,
+      "tag": "terminal"
+    },
+    {
+      "id": "refunded",
+      "type": "failure",
+      "label": "Refunded",
+      "sublabel": "admin refund",
+      "lane": "terminal",
+      "col": 1,
+      "tag": "terminal"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "payment-verified",
+      "from": "pending",
+      "to": "booked",
+      "variant": "emphasis"
+    },
+    {
+      "id": "salon-confirms",
+      "from": "booked",
+      "to": "confirmed",
+      "variant": "default"
+    },
+    {
+      "id": "service-done",
+      "from": "confirmed",
+      "to": "completed",
+      "variant": "default"
+    },
+    {
+      "id": "review-added",
+      "from": "completed",
+      "to": "reviewed",
+      "variant": "emphasis"
+    },
+    {
+      "id": "payment-failed-or-expired",
+      "from": "pending",
+      "to": "cancelled",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "route": "bottom-channel"
+    },
+    {
+      "id": "booked-cancelled",
+      "from": "booked",
+      "to": "cancelled",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "route": "auto"
+    },
+    {
+      "id": "confirmed-cancelled",
+      "from": "confirmed",
+      "to": "cancelled",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "completed-refunded",
+      "from": "completed",
+      "to": "refunded",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "review-due",
+      "from": "completed",
+      "to": "review-pending",
+      "variant": "dashed",
+      "route": "drop"
+    },
+    {
+      "id": "review-from-prompt",
+      "from": "review-pending",
+      "to": "reviewed",
+      "variant": "emphasis",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "route": "straight"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Main path",
+      "items": [
+        "createorder books unpaid; paymentsuccess marks it paid",
+        "Completed visits wait in pending-reviews until addreview"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Terminal exits",
+      "items": [
+        "Failed, abandoned or 5-min expired payments cancel",
+        "Refund only from completed + payment success"
+      ]
+    }
+  ]
+}

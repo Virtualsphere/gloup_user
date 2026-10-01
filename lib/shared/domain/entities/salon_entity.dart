@@ -18,6 +18,7 @@ class SalonEntity extends Equatable {
   final bool isFavorite;
   final String? serviceName;
   final double? servicePrice;
+  final List<Map<String, dynamic>>? dynamicServices;
   final List<String> categories;
   final List<String> languageCodes;
 
@@ -35,6 +36,7 @@ class SalonEntity extends Equatable {
     required this.isFavorite,
     this.serviceName,
     this.servicePrice,
+    this.dynamicServices,
     required this.categories,
     required this.languageCodes,
   });
@@ -54,6 +56,7 @@ class SalonEntity extends Equatable {
         isFavorite,
         serviceName,
         servicePrice,
+        dynamicServices,
         categories,
         languageCodes,
       ];

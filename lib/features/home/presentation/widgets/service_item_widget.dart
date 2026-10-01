@@ -41,7 +41,16 @@ class ServiceItemWidget extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
+                color: isDarkMode ? AppColors.surfaceDark : Colors.white,
                 borderRadius: BorderRadius.circular(imageRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    spreadRadius: 0,
+                    blurRadius: 12,
+                    offset: const Offset(0, 6), // Focuses the shadow at the bottom
+                  ),
+                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(imageRadius),
