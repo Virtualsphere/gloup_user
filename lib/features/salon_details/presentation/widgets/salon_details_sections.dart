@@ -203,25 +203,6 @@ class SalonDetailsSections extends StatelessWidget {
       );
     }
 
-    IconData getIconData(String iconName) {
-      switch (iconName) {
-        case 'wifi':
-          return Icons.wifi;
-        case 'ac_unit':
-          return Icons.ac_unit;
-        case 'local_parking':
-          return Icons.local_parking;
-        case 'credit_card':
-          return Icons.credit_card;
-        case 'wheelchair_pickup':
-          return Icons.wheelchair_pickup;
-        case 'coffee':
-          return Icons.coffee;
-        default:
-          return Icons.check_circle;
-      }
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final cardWidth = (constraints.maxWidth - (AppSizes.paddingM * 2)) / 3;
@@ -233,7 +214,7 @@ class SalonDetailsSections extends StatelessWidget {
             return SizedBox(
               width: cardWidth,
               child: AmbientCard(
-                icon: getIconData(ambient.icon),
+                icon: ambient.icon,
                 label: ambient.label,
               ),
             );
