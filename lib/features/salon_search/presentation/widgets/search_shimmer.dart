@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 
 class SearchShimmer extends StatelessWidget {
   final bool isDarkMode;
@@ -23,96 +22,11 @@ class SearchShimmer extends StatelessWidget {
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
-          padding: EdgeInsets.only(bottom: AppSizes.paddingS),
-          child: Shimmer.fromColors(
-            baseColor: isDarkMode ? AppColors.surfaceDark : AppColors.divider,
-            highlightColor:
-                isDarkMode ? AppColors.borderDark : AppColors.background,
-            child: Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.surfaceDark : AppColors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-              ),
-              child: Row(
-                children: [
-                  // Image placeholder
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color:
-                          isDarkMode ? AppColors.borderDark : AppColors.divider,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(AppSizes.radiusM),
-                        bottomLeft: Radius.circular(AppSizes.radiusM),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: AppSizes.paddingM),
-                  // Content placeholder
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Title
-                        Container(
-                          width: double.infinity,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.borderDark
-                                : AppColors.divider,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Subtitle
-                        Container(
-                          width: 120,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.borderDark
-                                : AppColors.divider,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Distance
-                        Container(
-                          width: 80,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.borderDark
-                                : AppColors.divider,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Price
-                        Container(
-                          width: 60,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.borderDark
-                                : AppColors.divider,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: AppSizes.paddingM),
-                ],
-              ),
-            ),
-          ),
+          padding: EdgeInsets.only(bottom: AppSizes.paddingM),
+          child: HomeShimmers.buildVerticalSalonCardShimmer(context),
         );
       },
     );
   }
 }
+

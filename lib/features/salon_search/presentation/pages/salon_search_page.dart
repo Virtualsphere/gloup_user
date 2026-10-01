@@ -13,7 +13,7 @@ import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
-import 'package:tressy/features/salon_search/presentation/widgets/salon_search_card.dart';
+import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/features/salon_search/presentation/widgets/search_shimmer.dart';
 import 'package:tressy/features/salon_search/presentation/widgets/map_marker_manager.dart';
 import 'package:tressy/features/salon_search/presentation/bloc/search_bloc.dart';
@@ -533,34 +533,40 @@ class _SalonSearchPageContentState extends State<_SalonSearchPageContent> {
         itemCount: state.salons.length,
         itemBuilder: (context, index) {
           final salon = state.salons[index];
-          return SalonSearchCard(
-            salonName: salon.salonName,
-            salonImage: salon.salonImage,
-            imageUrl: salon.images.first,
-            rating: salon.rating,
-            reviewCount: salon.reviewCount,
-            distance: salon.distance,
-            isPremium: salon.isPremium,
-            isFavorite: salon.isFavorite,
-            serviceName: salon.serviceName,
-            servicePrice: salon.servicePrice,
-            address: salon.displayAddress,
-            categories: salon.categories,
-            languageCodes: salon.languageCodes,
-            onTap: () {
-              GoRouter.of(context).push(
-                RouteNames.salonDetails,
-                extra: {
-                  'salonId': salon.id,
-                  'salonName': salon.salonName,
-                },
-              );
-              // Navigate to salon details
-            },
-            onFavoriteToggle: () {
-              // Handle favorite toggle
-              debugPrint('Toggled favorite for ${salon.salonName}');
-            },
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSizes.paddingM),
+            child: SalonCard(
+              storeId: int.tryParse(salon.id) ?? 0,
+              salonName: salon.salonName,
+              salonImage: salon.salonImage,
+              images: salon.images,
+              rating: salon.rating,
+              reviewCount: salon.reviewCount,
+              distance: salon.distance,
+              isPremium: salon.isPremium,
+              isFavorite: salon.isFavorite,
+              serviceName: salon.serviceName,
+              servicePrice: salon.servicePrice,
+              dynamicServices: salon.dynamicServices,
+              address: salon.displayAddress,
+              categories: salon.categories,
+              languageCodes: salon.languageCodes,
+              isFullWidth: true,
+              onTap: () {
+                GoRouter.of(context).push(
+                  RouteNames.salonDetails,
+                  extra: {
+                    'salonId': salon.id,
+                    'salonName': salon.salonName,
+                  },
+                );
+                // Navigate to salon details
+              },
+              onFavoriteToggle: () {
+                // Handle favorite toggle
+                debugPrint('Toggled favorite for ${salon.salonName}');
+              },
+            ),
           );
         },
       );
