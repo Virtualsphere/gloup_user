@@ -1,3 +1,4 @@
+import 'package:tressy/features/profile/presentation/widgets/contact_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -86,7 +87,7 @@ class Support extends StatelessWidget {
                       title: 'Contact',
                       icon: AppImages.call,
                       onTap: () {
-                        context.pushNamed(RouteNames.contact);
+                        ContactBottomSheet.show(context);
                       },
                     ),
                     Divider(

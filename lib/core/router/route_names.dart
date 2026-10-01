@@ -33,7 +33,6 @@ class RouteNames {
   //support
   static String support = 'support';
   static String devInfo = 'dev_info';
-  static String contact = 'contact';
   static String privacyPolicy = 'privacy_policy';
   static String termsConditions = 'terms_conditions';
   static String cancellation = 'cancellation';

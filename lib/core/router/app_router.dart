@@ -20,7 +20,6 @@ import 'package:tressy/features/profile/presentation/pages/profile_page.dart';
 import 'package:tressy/features/profile/presentation/pages/settings.dart';
 import 'package:tressy/features/profile/presentation/pages/support.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/cancellation.dart';
-import 'package:tressy/features/profile/presentation/pages/support_screens/contact.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/dev_info.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/faq.dart';
 import 'package:tressy/features/profile/presentation/pages/support_screens/privacy_policy.dart';
@@ -223,11 +222,6 @@ class AppRouter {
           path: 'dev_info',
           name: RouteNames.devInfo,
           builder: (context, state) => DevInfo(),
-        ),
-        GoRoute(
-          path: 'contact',
-          name: RouteNames.contact,
-          builder: (context, state) => Contact(),
         ),
         GoRoute(
           path: 'faqs',
