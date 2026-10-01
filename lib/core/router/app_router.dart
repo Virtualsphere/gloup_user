@@ -181,6 +181,7 @@ class AppRouter {
         return CategoryPage(
           categoryName: categoryData?['categoryName'] as String?,
           categoryIndex: categoryData?['categoryIndex'] as int?,
+          categoryId: categoryData?['categoryId'] as String?,
         );
       },
     ),

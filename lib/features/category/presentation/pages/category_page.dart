@@ -20,11 +20,13 @@ import 'package:tressy/shared/extensions/context_extensions.dart';
 class CategoryPage extends StatefulWidget {
   final String? categoryName;
   final int? categoryIndex;
+  final String? categoryId;
 
   const CategoryPage({
     super.key,
     this.categoryName,
     this.categoryIndex,
+    this.categoryId,
   });
 
   @override
@@ -52,7 +54,7 @@ class _CategoryPageState extends State<CategoryPage> {
     super.initState();
     _selectedCategoryIndex = widget.categoryIndex ?? 1;
     _selectedCategoryName = widget.categoryName ?? 'Haircut';
-    // Don't set _selectedCategoryId here - will be set from CategoryBloc
+    _selectedCategoryId = widget.categoryId;
     _scrollController.addListener(_onScroll);
     _searchController.addListener(_onSearchChanged);
 
@@ -160,13 +162,17 @@ class _CategoryPageState extends State<CategoryPage> {
   void _loadInitialCategorySalons() {
     final locationProvider = context.read<LocationProvider>();
 
-    // Get category ID from CategoryBloc state
-    final categoryState = context.read<CategoryBloc>().state;
-    if (categoryState.categories.isNotEmpty &&
-        _selectedCategoryIndex < categoryState.categories.length) {
-      final category = categoryState.categories[_selectedCategoryIndex];
-      _selectedCategoryId = category.id;
+    if (_selectedCategoryId == null) {
+      // Get category ID from CategoryBloc state if not passed from Home
+      final categoryState = context.read<CategoryBloc>().state;
+      if (categoryState.categories.isNotEmpty &&
+          _selectedCategoryIndex < categoryState.categories.length) {
+        final category = categoryState.categories[_selectedCategoryIndex];
+        _selectedCategoryId = category.id;
+      }
+    }
 
+    if (_selectedCategoryId != null) {
       // Load salons for the initial category
       context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
             latitude: locationProvider.latitude,
