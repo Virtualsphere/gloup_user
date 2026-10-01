@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/core/utils/image_url_resolver.dart';
 
 class AmbientCard extends StatelessWidget {
   final String icon;
@@ -23,7 +24,10 @@ class AmbientCard extends StatelessWidget {
     // Resolve full URL
     final String fullIconUrl = icon.startsWith('http') 
         ? icon 
-        : ApiRoutes.getImageUrl(icon);
+        : ImageUrlResolver.resolveCdnAsset(
+            path: icon, 
+            imageBaseUrl: ApiRoutes.imageBaseUrl,
+          );
         
     final bool isSvg = icon.toLowerCase().endsWith('.svg');
 
