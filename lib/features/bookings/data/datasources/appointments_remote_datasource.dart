@@ -24,11 +24,15 @@ class AppointmentsRemoteDataSourceImpl implements AppointmentsRemoteDataSource {
           .map((e) => AppointmentModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      final past = (data['past'] as List<dynamic>? ?? [])
+      final completed = (data['completed'] as List<dynamic>? ?? [])
           .map((e) => AppointmentModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      return {'upcoming': upcoming, 'past': past};
+      final cancelled = (data['cancelled'] as List<dynamic>? ?? [])
+          .map((e) => AppointmentModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return {'upcoming': upcoming, 'completed': completed, 'cancelled': cancelled};
     } on DioException catch (e) {
       throw _handleDioException(e);
     } catch (e) {

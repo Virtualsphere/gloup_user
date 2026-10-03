@@ -23,7 +23,8 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
       (data) => emit(state.copyWith(
         isLoading: false,
         upcoming: data['upcoming'] ?? [],
-        past: data['past'] ?? [],
+        completed: data['completed'] ?? [],
+        cancelled: data['cancelled'] ?? [],
       )),
     );
   }

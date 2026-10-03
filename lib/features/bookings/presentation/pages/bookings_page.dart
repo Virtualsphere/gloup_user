@@ -64,7 +64,7 @@ class _BookingsPageState extends State<BookingsPage>
   }
 
   bool _canRateBooking(AppointmentEntity appointment, String tabStatus) {
-    if (tabStatus != 'completed' && tabStatus != 'past') return false;
+    if (tabStatus != 'completed') return false;
     if (_reviewedStoreIds.contains(appointment.storeId)) return false;
     if (_pendingReviewsLoaded) {
       return _pendingReviewStoreIds.contains(appointment.storeId);
@@ -236,7 +236,7 @@ class _BookingsPageState extends State<BookingsPage>
               tabs: const [
                 Tab(text: 'Upcoming'),
                 Tab(text: 'Completed'),
-                Tab(text: 'Past'),
+                Tab(text: 'Cancelled'),
               ],
             ),
           ),
@@ -284,20 +284,12 @@ class _BookingsPageState extends State<BookingsPage>
                   );
                 }
 
-                final booked = state.upcoming
-                    .where((a) => a.appointmentStatus.toLowerCase() == 'booked')
-                    .toList();
-                final completed = state.upcoming
-                    .where(
-                        (a) => a.appointmentStatus.toLowerCase() == 'completed')
-                    .toList();
-
                 return TabBarView(
                   controller: _tabController,
                   children: [
-                    _buildList(booked, 'upcoming', isDarkMode),
-                    _buildList(completed, 'completed', isDarkMode),
-                    _buildList(state.past, 'past', isDarkMode),
+                    _buildList(state.upcoming, 'upcoming', isDarkMode),
+                    _buildList(state.completed, 'completed', isDarkMode),
+                    _buildList(state.cancelled, 'cancelled', isDarkMode),
                   ],
                 );
               },
@@ -354,7 +346,7 @@ class _BookingsPageState extends State<BookingsPage>
     switch (tabStatus) {
       case 'upcoming':
         statusColor = AppColors.white;
-        statusBgColor = AppColors.info;
+        statusBgColor = AppColors.warning;
         statusText = 'Upcoming';
         break;
       case 'completed':
@@ -362,7 +354,12 @@ class _BookingsPageState extends State<BookingsPage>
         statusBgColor = AppColors.success;
         statusText = 'Completed';
         break;
-      default: // past
+      case 'cancelled':
+        statusColor = AppColors.white;
+        statusBgColor = AppColors.error;
+        statusText = 'Cancelled';
+        break;
+      default:
         statusColor = AppColors.white;
         statusBgColor = AppColors.textSecondary;
         statusText = 'Past';

@@ -28,7 +28,8 @@ class AppointmentsRepositoryImpl implements AppointmentsRepository {
       final result = await remoteDataSource.getAllAppointments();
       return Right({
         'upcoming': result['upcoming']!.map((m) => m.toEntity()).toList(),
-        'past': result['past']!.map((m) => m.toEntity()).toList(),
+        'completed': result['completed']!.map((m) => m.toEntity()).toList(),
+        'cancelled': result['cancelled']!.map((m) => m.toEntity()).toList(),
       });
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
