@@ -125,16 +125,26 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final name = (widget.bookingData?['customerName'] as String?)?.trim();
     final phone = (widget.bookingData?['customerPhone'] as String?)?.trim();
     final email = (widget.bookingData?['customerEmail'] as String?)?.trim();
+    final profile = _profileFromState(context.read<ProfileBloc>().state);
+    final gender = profile?.gender;
+
     if (name == null ||
         name.isEmpty ||
         phone == null ||
         phone.isEmpty ||
         email == null ||
-        email.isEmpty) {
+        email.isEmpty ||
+        gender == null ||
+        gender.isEmpty) {
       return null;
     }
 
-    return BookingContactDetails(name: name, phone: phone, email: email);
+    return BookingContactDetails(
+      name: name,
+      phone: phone,
+      email: email,
+      gender: gender,
+    );
   }
 
   BookingContactDetails? _effectiveContact() =>
@@ -148,9 +158,26 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       initialPhone: _effectiveContact()?.phone ??
           ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
       initialEmail: _effectiveContact()?.email ?? profile?.email,
+      initialGender: _effectiveContact()?.gender ?? profile?.gender,
       submitButtonText: 'Save details',
     );
     if (contact == null || !mounted) return null;
+
+    // Update profile permanently if possible
+    if (profile != null) {
+      final names = contact.name.split(' ');
+      final firstName = names.first;
+      final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
+      
+      final updatedProfile = profile.copyWith(
+        firstname: firstName,
+        lastname: lastName,
+        phone: int.tryParse(contact.phone) ?? profile.phone,
+        email: contact.email,
+        gender: contact.gender,
+      );
+      context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
+    }
 
     setState(() => _contactDetails = contact);
     return contact;

@@ -9,21 +9,24 @@ class BookingContactDetails {
   final String name;
   final String phone;
   final String email;
+  final String gender;
 
   const BookingContactDetails({
     required this.name,
     required this.phone,
     required this.email,
+    required this.gender,
   });
 }
 
-/// Bottom sheet that collects the booker's name, phone number, and email
+/// Bottom sheet that collects the booker's name, phone number, email, and gender
 /// before creating an order. Returns null when dismissed without confirming.
 Future<BookingContactDetails?> showBookingDetailsBottomSheet(
   BuildContext context, {
   String? initialName,
   String? initialPhone,
   String? initialEmail,
+  String? initialGender,
   String submitButtonText = 'Continue',
 }) {
   return showModalBottomSheet<BookingContactDetails>(
@@ -38,6 +41,7 @@ Future<BookingContactDetails?> showBookingDetailsBottomSheet(
           initialName: initialName,
           initialPhone: initialPhone,
           initialEmail: initialEmail,
+          initialGender: initialGender,
           submitButtonText: submitButtonText,
         ),
       );
@@ -49,12 +53,14 @@ class _BookingDetailsBottomSheet extends StatefulWidget {
   final String? initialName;
   final String? initialPhone;
   final String? initialEmail;
+  final String? initialGender;
   final String submitButtonText;
 
   const _BookingDetailsBottomSheet({
     this.initialName,
     this.initialPhone,
     this.initialEmail,
+    this.initialGender,
     this.submitButtonText = 'Continue',
   });
 
@@ -69,6 +75,7 @@ class _BookingDetailsBottomSheetState
   late final TextEditingController _nameCtrl;
   late final TextEditingController _phoneCtrl;
   late final TextEditingController _emailCtrl;
+  String? _selectedGender;
 
   bool _showErrors = false;
 
@@ -81,6 +88,7 @@ class _BookingDetailsBottomSheetState
     _nameCtrl = TextEditingController(text: widget.initialName ?? '');
     _phoneCtrl = TextEditingController(text: widget.initialPhone ?? '');
     _emailCtrl = TextEditingController(text: widget.initialEmail ?? '');
+    _selectedGender = widget.initialGender;
   }
 
   @override
@@ -115,13 +123,82 @@ class _BookingDetailsBottomSheetState
   void _submit() {
     setState(() => _showErrors = true);
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    
+    if (_selectedGender == null || _selectedGender!.isEmpty) {
+      return; // Will be handled by the UI error display
+    }
 
     Navigator.of(context).pop(
       BookingContactDetails(
         name: _nameCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim().toLowerCase(),
+        gender: _selectedGender!,
       ),
+    );
+  }
+
+  Widget _buildGenderDropdown(BuildContext context, bool isDarkMode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Gender',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: isDarkMode
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+        SizedBox(height: AppSizes.spaceS),
+        Container(
+          decoration: BoxDecoration(
+            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+            border: Border.all(
+              color: isDarkMode ? AppColors.borderDark : AppColors.border,
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingM,
+            vertical: 4, // Dropdown has its own padding
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedGender,
+              isExpanded: true,
+              hint: Text('Select gender'),
+              dropdownColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
+              items: const [
+                DropdownMenuItem(value: 'Male', child: Text('Male')),
+                DropdownMenuItem(value: 'Female', child: Text('Female')),
+                DropdownMenuItem(value: 'Other', child: Text('Other')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedGender = value;
+                });
+              },
+            ),
+          ),
+        ),
+        if (_showErrors && (_selectedGender == null || _selectedGender!.isEmpty))
+          Padding(
+            padding: EdgeInsets.only(
+              top: AppSizes.spaceXS,
+              left: AppSizes.paddingS,
+            ),
+            child: Text(
+              'Gender is required',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.error,
+                    fontSize: 12,
+                  ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -216,6 +293,8 @@ class _BookingDetailsBottomSheetState
                   showErrors: _showErrors,
                   validator: _validateEmail,
                 ),
+                SizedBox(height: AppSizes.space),
+                _buildGenderDropdown(context, isDarkMode),
                 SizedBox(height: AppSizes.spaceXL),
                 PrimaryButton(
                   text: widget.submitButtonText,

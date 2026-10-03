@@ -9,6 +9,7 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/bookin
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_event.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_state.dart';
@@ -78,25 +79,29 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     return null;
   }
 
-  bool _hasValidContact(Map<String, dynamic>? data) {
-    final name = (data?['customerName'] as String?)?.trim();
-    final phone = (data?['customerPhone'] as String?)?.trim();
-    final email = (data?['customerEmail'] as String?)?.trim();
+  bool _hasValidContact(Map<String, dynamic>? data, ProfileEntity? profile) {
+    final name = (data?['customerName'] as String?)?.trim() ?? profile?.fullName;
+    final phone = (data?['customerPhone'] as String?)?.trim() ?? (profile != null && profile.phone > 0 ? profile.phone.toString() : null);
+    final email = (data?['customerEmail'] as String?)?.trim() ?? profile?.email;
+    final gender = profile?.gender;
     return name != null &&
         name.isNotEmpty &&
         phone != null &&
         phone.isNotEmpty &&
         email != null &&
-        email.isNotEmpty;
+        email.isNotEmpty &&
+        gender != null &&
+        gender.isNotEmpty;
   }
 
   Future<Map<String, dynamic>?> _ensureContactDetails(
     Map<String, dynamic>? data,
   ) async {
-    if (_hasValidContact(data)) return data;
-
     final profile =
         _profileFromState(context.read<ProfileBloc>().state);
+        
+    if (_hasValidContact(data, profile)) return data;
+
     final contact = await showBookingDetailsBottomSheet(
       context,
       initialName: profile?.fullName,
@@ -104,15 +109,33 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
           ? profile!.phone.toString()
           : null,
       initialEmail: profile?.email,
+      initialGender: profile?.gender,
       submitButtonText: 'Continue',
     );
     if (contact == null || !mounted) return null;
+
+    // Update profile permanently if possible
+    if (profile != null) {
+      final names = contact.name.split(' ');
+      final firstName = names.first;
+      final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
+      
+      final updatedProfile = profile.copyWith(
+        firstname: firstName,
+        lastname: lastName,
+        phone: int.tryParse(contact.phone) ?? profile.phone,
+        email: contact.email,
+        gender: contact.gender,
+      );
+      context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
+    }
 
     return {
       ...?data,
       'customerName': contact.name,
       'customerPhone': contact.phone,
       'customerEmail': contact.email,
+      'customerGender': contact.gender,
     };
   }
 

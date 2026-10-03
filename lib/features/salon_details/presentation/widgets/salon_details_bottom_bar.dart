@@ -8,6 +8,7 @@ import 'package:tressy/features/booking_confirmation/presentation/widgets/bookin
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
+import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_state.dart';
@@ -116,24 +117,56 @@ class SalonDetailsBottomBar extends StatelessWidget {
                         text: 'Book Now',
                         onPressed: () async {
                           // Collect the booker's contact details up front,
-                          // prefilled from the profile when available.
                           final profile = _profileFromState(
                               context.read<ProfileBloc>().state);
-                          final contact = await showBookingDetailsBottomSheet(
-                            context,
-                            initialName: profile?.fullName,
-                            initialPhone: (profile?.phone ?? 0) > 0
-                                ? profile!.phone.toString()
-                                : null,
-                            initialEmail: profile?.email,
-                            submitButtonText: 'Continue',
-                          );
-                          if (contact == null || !context.mounted) return;
+                              
+                          String? customerName = profile?.fullName;
+                          String? customerPhone = (profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null;
+                          String? customerEmail = profile?.email;
+                          String? customerGender = profile?.gender;
+
+                          if (customerName == null || customerName.isEmpty ||
+                              customerPhone == null || customerPhone.isEmpty ||
+                              customerEmail == null || customerEmail.isEmpty ||
+                              customerGender == null || customerGender.isEmpty) {
+                            
+                            final contact = await showBookingDetailsBottomSheet(
+                              context,
+                              initialName: customerName,
+                              initialPhone: customerPhone,
+                              initialEmail: customerEmail,
+                              initialGender: customerGender,
+                              submitButtonText: 'Continue',
+                            );
+                            if (contact == null || !context.mounted) return;
+                            
+                            customerName = contact.name;
+                            customerPhone = contact.phone;
+                            customerEmail = contact.email;
+                            customerGender = contact.gender;
+
+                            // Update profile permanently if possible
+                            if (profile != null) {
+                              final names = customerName.split(' ');
+                              final firstName = names.first;
+                              final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
+                              
+                              final updatedProfile = profile.copyWith(
+                                firstname: firstName,
+                                lastname: lastName,
+                                phone: int.tryParse(customerPhone) ?? profile.phone,
+                                email: customerEmail,
+                                gender: customerGender,
+                              );
+                              context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
+                            }
+                          }
 
                           final salonData = {
-                            'customerName': contact.name,
-                            'customerPhone': contact.phone,
-                            'customerEmail': contact.email,
+                            'customerName': customerName,
+                            'customerPhone': customerPhone,
+                            'customerEmail': customerEmail,
+                            'customerGender': customerGender,
                             'salonId': salonId,
                             'salonName': state.salonDetail?.name,
                             'salonImage':
