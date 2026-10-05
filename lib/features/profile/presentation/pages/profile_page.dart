@@ -277,33 +277,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                         ),
 
                         SizedBox(height: AppSizes.paddingL),
-                        
-                        // ── Contact Info Footer ──────────────────────────────
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                'Need Help? Contact Us',
-                                style: context.textTheme.bodyMedium?.copyWith(
-                                  color: isDarkMode 
-                                      ? Colors.white70 
-                                      : Colors.black54,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                '+91 75388 08796 | contact@gloup.in',
-                                style: context.textTheme.bodyMedium?.copyWith(
-                                  color: isDarkMode 
-                                      ? Colors.white 
-                                      : Colors.black87,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(height: AppSizes.paddingL),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
