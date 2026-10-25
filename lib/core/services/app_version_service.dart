@@ -5,7 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 class AppVersionService {
   AppVersionService._();
 
-  static String _version = '2.8.14';
+  static String _version = '2.8.15';
   static bool _initialized = false;
 
   static String get appVersion => _version;
