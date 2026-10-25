@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:tressy/core/constants/api_routes.dart';
@@ -88,7 +89,10 @@ class PresenceHeartbeatService with WidgetsBindingObserver {
     try {
       await sl<DioClient>().post(
         ApiRoutes.heartbeat,
-        data: {'online': online},
+        data: {
+          'online': online,
+          'platform': Platform.isIOS ? 'ios' : 'android',
+        },
       );
     } catch (e) {
       debugPrint('[Presence] Heartbeat failed (online=$online): $e');

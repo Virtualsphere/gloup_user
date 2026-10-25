@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/enums.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
@@ -139,7 +140,7 @@ class _MyProfileState extends State<MyProfile> {
     return firstNameController.text.isNotEmpty &&
         lastNameController.text.isNotEmpty &&
         emailController.text.isNotEmpty &&
-        _selectedGender != 'Not Selected';
+        Validators.isValidGender(_selectedGender);
   }
 
   @override
@@ -316,20 +317,24 @@ class _MyProfileState extends State<MyProfile> {
                                 ),
                                 child: CustomDropDownField(
                                   labelText: 'Gender',
-                                  dropdownValue: _selectedGender,
-                                  items: ['Not Selected', 'Male', 'Female'],
+                                  dropdownValue: _selectedGender == 'Not Selected'
+                                      ? null
+                                      : _selectedGender,
+                                  items: const ['Male', 'Female'],
                                   onChanged: (value) {
                                     setState(() => _selectedGender =
                                         value ?? 'Not Selected');
                                   },
-                                  hintText: 'Select gender',
+                                  hintText: 'Select Male or Female',
                                   color: isDarkMode
                                       ? AppColors.white
                                       : AppColors.borderColor,
                                   validator: (value) {
                                     if (value == null ||
-                                        value == 'Not Selected') {
-                                      return 'Please select gender';
+                                        value == 'Not Selected' ||
+                                        (value != 'Male' &&
+                                            value != 'Female')) {
+                                      return 'Please select Male or Female';
                                     }
                                     return null;
                                   },
@@ -655,6 +660,17 @@ class _MyProfileState extends State<MyProfile> {
     }
 
     if (currentProfile != null) {
+      final gender = Validators.normalizeGender(_selectedGender);
+      if (gender == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select Male or Female'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final updatedProfile = currentProfile.copyWith(
         firstname: firstNameController.text.trim(),
         lastname: lastNameController.text.trim(),
@@ -664,7 +680,7 @@ class _MyProfileState extends State<MyProfile> {
         dateOfBirth: dateOfBirthController.text.trim(),
         country: countryController.text.trim(),
         city: cityController.text.trim(),
-        gender: _selectedGender,
+        gender: gender,
         profilePic:
             profileImageNotifier.value?.path ?? currentProfile.profilePic,
       );

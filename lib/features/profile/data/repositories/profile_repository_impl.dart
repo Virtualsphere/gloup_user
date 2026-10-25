@@ -79,13 +79,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, DeleteProfileEntity>> deleteProfile() async {
+  Future<Either<Failure, DeleteProfileEntity>> deleteProfile({
+    String? reason,
+    String? note,
+  }) async {
     final disconnected =
         await leftIfDisconnected<DeleteProfileEntity>(networkInfo);
     if (disconnected != null) return disconnected;
 
     try {
-      final model = await dataSource.deleteProfile();
+      final model = await dataSource.deleteProfile(reason: reason, note: note);
       return Right(model);
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

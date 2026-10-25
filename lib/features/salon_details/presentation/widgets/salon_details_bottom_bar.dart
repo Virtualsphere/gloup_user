@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
@@ -116,20 +118,28 @@ class SalonDetailsBottomBar extends StatelessWidget {
                       child: PrimaryButton(
                         text: 'Book Now',
                         onPressed: () async {
+                          AppAnalyticsService.instance.trackTap('book_now', screen: 'salon_details');
                           // Collect the booker's contact details up front,
                           final profile = _profileFromState(
                               context.read<ProfileBloc>().state);
                               
                           String? customerName = profile?.fullName;
-                          String? customerPhone = (profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null;
+                          String? customerPhone = (profile?.phone ?? 0) > 0
+                              ? profile!.phone.toString()
+                              : null;
                           String? customerEmail = profile?.email;
-                          String? customerGender = profile?.gender;
+                          String? customerGender =
+                              Validators.normalizeGender(profile?.gender);
 
-                          if (customerName == null || customerName.isEmpty ||
-                              customerPhone == null || customerPhone.isEmpty ||
-                              customerEmail == null || customerEmail.isEmpty ||
-                              customerGender == null || customerGender.isEmpty) {
-                            
+                          final needsContact = customerName == null ||
+                              customerName.isEmpty ||
+                              customerPhone == null ||
+                              customerPhone.isEmpty ||
+                              customerEmail == null ||
+                              customerEmail.isEmpty ||
+                              customerGender == null;
+
+                          if (needsContact) {
                             final contact = await showBookingDetailsBottomSheet(
                               context,
                               initialName: customerName,
@@ -139,26 +149,33 @@ class SalonDetailsBottomBar extends StatelessWidget {
                               submitButtonText: 'Continue',
                             );
                             if (contact == null || !context.mounted) return;
-                            
+
                             customerName = contact.name;
                             customerPhone = contact.phone;
                             customerEmail = contact.email;
-                            customerGender = contact.gender;
+                            customerGender =
+                                Validators.normalizeGender(contact.gender);
+                            if (customerGender == null) return;
 
-                            // Update profile permanently if possible
+                            // Persist gender (and contact) on profile.
                             if (profile != null) {
                               final names = customerName.split(' ');
                               final firstName = names.first;
-                              final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
-                              
+                              final lastName = names.length > 1
+                                  ? names.sublist(1).join(' ')
+                                  : '';
+
                               final updatedProfile = profile.copyWith(
                                 firstname: firstName,
                                 lastname: lastName,
-                                phone: int.tryParse(customerPhone) ?? profile.phone,
+                                phone: int.tryParse(customerPhone) ??
+                                    profile.phone,
                                 email: customerEmail,
                                 gender: customerGender,
                               );
-                              context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
+                              context
+                                  .read<ProfileBloc>()
+                                  .add(UpdateProfileEvent(updatedProfile));
                             }
                           }
 

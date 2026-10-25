@@ -19,20 +19,27 @@ class ServiceTicker extends StatefulWidget {
 }
 
 class _ServiceTickerState extends State<ServiceTicker> {
+  static const Color _badgeTextColor = Color(0xFF212121);
+
   int _currentIndex = 0;
   Timer? _timer;
+  List<Map<String, dynamic>> _services = const [];
 
   @override
   void initState() {
     super.initState();
-    if (widget.services.length > 1) {
-      _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-        if (mounted) {
-          setState(() {
-            _currentIndex = (_currentIndex + 1) % widget.services.length;
-          });
-        }
-      });
+    _services = _normalize(widget.services);
+    _startTicker();
+  }
+
+  @override
+  void didUpdateWidget(covariant ServiceTicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final next = _normalize(widget.services);
+    if (!_sameServices(_services, next)) {
+      _services = next;
+      _currentIndex = 0;
+      _startTicker();
     }
   }
 
@@ -42,36 +49,112 @@ class _ServiceTickerState extends State<ServiceTicker> {
     super.dispose();
   }
 
+  List<Map<String, dynamic>> _normalize(List<Map<String, dynamic>> input) {
+    final out = <Map<String, dynamic>>[];
+    final seen = <String>{};
+
+    for (final item in input) {
+      final name = item['name']?.toString().trim() ?? '';
+      if (name.isEmpty) continue;
+
+      final discounted = item['discountedPrice'] ?? item['discounted_price'];
+      final price = item['price'] ?? item['amount'];
+      if (discounted == null && price == null) continue;
+
+      final key = '$name|${discounted ?? price}';
+      if (!seen.add(key)) continue;
+
+      out.add({
+        'name': name,
+        'price': price,
+        'discountedPrice': discounted ?? price,
+      });
+      if (out.length >= 5) break;
+    }
+    return out;
+  }
+
+  bool _sameServices(
+    List<Map<String, dynamic>> a,
+    List<Map<String, dynamic>> b,
+  ) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i]['name'] != b[i]['name'] ||
+          a[i]['price'] != b[i]['price'] ||
+          a[i]['discountedPrice'] != b[i]['discountedPrice']) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _startTicker() {
+    _timer?.cancel();
+    if (_services.length <= 1) return;
+
+    _timer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (!mounted || _services.length <= 1) return;
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % _services.length;
+      });
+    });
+  }
+
+  double? _asDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString());
+  }
+
+  double _exactPrice(Map<String, dynamic> srv) {
+    return _asDouble(srv['discountedPrice']) ?? _asDouble(srv['price']) ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.services.isEmpty) return const SizedBox.shrink();
+    if (_services.isEmpty) return const SizedBox.shrink();
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.0, 0.5),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: _buildItem(widget.services[_currentIndex], _currentIndex),
+    final index = _currentIndex % _services.length;
+    final textColor =
+        widget.isOfferCard ? Colors.white : _badgeTextColor;
+
+    return ClipRect(
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        layoutBuilder: (currentChild, previousChildren) {
+          return Stack(
+            alignment: Alignment.centerRight,
+            children: <Widget>[
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          final slide = Tween<Offset>(
+            begin: const Offset(0, 0.7),
+            end: Offset.zero,
+          ).animate(animation);
+
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(position: slide, child: child),
+          );
+        },
+        child: _buildItem(_services[index], index, textColor),
+      ),
     );
   }
 
-  Widget _buildItem(Map<String, dynamic> srv, int index) {
-    final double? discountedPrice = (srv['discountedPrice'] as num?)?.toDouble();
-    final double? originalPrice = (srv['price'] as num?)?.toDouble();
-    final double displayPrice = discountedPrice ?? originalPrice ?? 0;
-    final bool hasDiscount = discountedPrice != null && originalPrice != null && originalPrice > discountedPrice;
+  Widget _buildItem(Map<String, dynamic> srv, int index, Color textColor) {
+    final displayPrice = _exactPrice(srv);
 
     return Row(
-      key: ValueKey<int>(index),
+      key: ValueKey<String>('${srv['name']}-$index'),
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
@@ -83,7 +166,7 @@ class _ServiceTickerState extends State<ServiceTicker> {
             style: context.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 11.sp,
-              color: widget.isOfferCard ? Colors.white : AppColors.textPrimary,
+              color: textColor,
             ),
           ),
         ),
@@ -93,7 +176,9 @@ class _ServiceTickerState extends State<ServiceTicker> {
             width: 3.w,
             height: 3.h,
             decoration: BoxDecoration(
-              color: widget.isOfferCard ? Colors.white : AppColors.textSecondary,
+              color: widget.isOfferCard
+                  ? Colors.white
+                  : AppColors.textSecondary,
               shape: BoxShape.circle,
             ),
           ),
@@ -103,23 +188,9 @@ class _ServiceTickerState extends State<ServiceTicker> {
           style: context.textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 11.sp,
-            color: widget.isOfferCard
-                ? Colors.white
-                : const Color(0xFF1ECB5D), // Green highlighted price
+            color: textColor,
           ),
         ),
-        if (hasDiscount && !widget.isOfferCard) ...[
-          SizedBox(width: 4.w),
-          Text(
-            '₹${originalPrice.toInt()}',
-            style: context.textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: 9.sp,
-              decoration: TextDecoration.lineThrough,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
       ],
     );
   }

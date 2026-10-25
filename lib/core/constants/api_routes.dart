@@ -33,6 +33,18 @@ class ApiRoutes {
   /// Presence ping for admin live active-user counts
   static const String heartbeat = '$baseUrl/user/app/v2/heartbeat';
 
+  /// Latest user location for admin analytics (booking attach is server-side)
+  static const String userLocation = '$baseUrl/user/app/v2/location';
+
+  /// Batch app events (screens, taps, rage taps, gestures, searches, filters, cart, checkout)
+  static const String appEvents = '$baseUrl/user/app/v2/events';
+
+  /// Install source attribution (Play Install Referrer / UTM link)
+  static const String attribution = '$baseUrl/user/app/v2/attribution';
+
+  /// Reason prompts (checkout exit, cancel booking, feedback)
+  static const String feedback = '$baseUrl/user/app/v2/feedback';
+
   // Home Endpoints
   static const String getBanners = '$baseUrl/user/app/v2/getbanner';
   static const String getCategories = '$baseUrl/user/app/v2/getallcategory';
@@ -79,6 +91,7 @@ class ApiRoutes {
   // Coupons
   static const String getActiveCoupons =
       '$baseUrl/user/app/v2/get/activecoupons';
+  static const String validateCoupon = '$baseUrl/user/app/validatecoupon';
 
   // Reviews
   static const String addReview = '$baseUrl/user/app/addreview';
@@ -101,6 +114,11 @@ class ApiRoutes {
     'googleLogin': googleLogin,
     'appleLogin': appleLogin,
     'logout': logout,
+    'heartbeat': heartbeat,
+    'userLocation': userLocation,
+    'appEvents': appEvents,
+    'attribution': attribution,
+    'feedback': feedback,
     // Home & discovery
     'getBanners': getBanners,
     'getCategories': getCategories,
@@ -130,6 +148,7 @@ class ApiRoutes {
     // Appointments & coupons
     'getAllAppointments': getAllAppointments,
     'getActiveCoupons': getActiveCoupons,
+    'validateCoupon': validateCoupon,
     'addReview': addReview,
     'pendingReviews': pendingReviews,
     'getReviewsV2': getReviewsV2,
@@ -153,14 +172,58 @@ class ApiRoutes {
     '/user/auth/appleLogin',
   ];
 
+  /// Tracking paths: never force logout, never block or show errors.
+  static const List<String> _trackingPathSuffixes = [
+    '/user/app/v2/heartbeat',
+    '/user/app/v2/location',
+    '/user/app/v2/events',
+    '/user/app/v2/attribution',
+    '/user/app/v2/feedback',
+  ];
+
+  /// Paths that also work logged out (backend reads userauth if present).
+  /// A 401 on these must never force user logout.
+  static const List<String> _publicDiscoveryPathSuffixes = [
+    '/user/app/v2/getbanner',
+    '/user/app/v2/getallcategory',
+    '/user/app/v2/store/nearby',
+    '/user/app/v2/get-all-stores',
+    '/user/app/v2/salons/top',
+    '/user/app/v2/services/top-categories',
+    '/user/app/v2/stores/by-category',
+    '/user/app/v2/store/details',
+    '/user/app/v2/getslotstatus',
+    '/user/app/v2/store/holidays',
+    '/user/app/v2/salons/map-markers-clustered',
+    '/user/app/v2/get/activecoupons',
+    '/user/app/validatecoupon',
+  ];
+
   /// Whether [uri] is a public auth endpoint (no token header).
   static bool isPublicAuthEndpoint(Uri uri) {
     final path = uri.path;
     return _publicAuthPathSuffixes.any(path.endsWith);
   }
 
-  /// Whether [uri] should attach auth and trigger session expiry on 401.
-  static bool requiresAuth(Uri uri) => !isPublicAuthEndpoint(uri);
+  /// Whether [uri] is an analytics/tracking endpoint.
+  static bool isTrackingEndpoint(Uri uri) {
+    final path = uri.path;
+    return _trackingPathSuffixes.any(path.endsWith);
+  }
+
+  /// Whether [uri] is a public discovery endpoint (works logged out).
+  static bool isPublicDiscoveryEndpoint(Uri uri) {
+    final path = uri.path;
+    return _publicDiscoveryPathSuffixes.any(path.endsWith);
+  }
+
+  /// Whether [uri] strictly requires auth and should trigger session expiry on 401.
+  static bool requiresAuth(Uri uri) {
+    if (isPublicAuthEndpoint(uri)) return false;
+    if (isTrackingEndpoint(uri)) return false;
+    if (isPublicDiscoveryEndpoint(uri)) return false;
+    return true;
+  }
 
   /// Resolves a friendly endpoint name from a request URL (ignores query string).
   static String? nameForUrl(String url) {

@@ -1,4 +1,5 @@
 import 'package:tressy/core/utils/image_url_resolver.dart';
+import 'package:tressy/core/utils/salon_address_formatter.dart';
 
 class SalonDetailModel {
   final int id;
@@ -69,7 +70,11 @@ class SalonDetailModel {
       rating: double.tryParse(data['rating']?.toString() ?? '0') ?? 0.0,
       reviewCount: data['reviewCount'] ?? 0,
       gender: data['gender'] ?? 'Unisex',
-      address: data['location']?['address'] ?? data['address'] ?? '',
+      address: SalonAddressFormatter.dedupeFullAddress(
+        data['location']?['address']?.toString() ??
+            data['address']?.toString() ??
+            '',
+      ),
       isOpen: data['isOpen'] ?? false,
       openingTime: data['openingTime'] ?? '',
       closingTime: data['closingTime'] ?? '',
@@ -378,7 +383,9 @@ class LocationModel {
     return LocationModel(
       latitude: double.tryParse(json['latitude']?.toString() ?? '0') ?? 0.0,
       longitude: double.tryParse(json['longitude']?.toString() ?? '0') ?? 0.0,
-      address: json['address'] ?? '',
+      address: SalonAddressFormatter.dedupeFullAddress(
+        json['address']?.toString() ?? '',
+      ),
     );
   }
 

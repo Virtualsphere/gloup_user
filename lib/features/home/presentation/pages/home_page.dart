@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/providers/location_provider.dart';
+import 'package:tressy/core/services/user_location_sync_service.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:tressy/features/home/presentation/bloc/home_event.dart';
@@ -637,20 +640,30 @@ class _HomePageState extends State<HomePage> {
                                                     if (result != null &&
                                                         result is Map<String,
                                                             dynamic>) {
+                                                      final pickedLat =
+                                                          (result['latitude']
+                                                                  as num)
+                                                              .toDouble();
+                                                      final pickedLng =
+                                                          (result['longitude']
+                                                                  as num)
+                                                              .toDouble();
                                                       await locationProvider
                                                           .updateLocation(
-                                                        latitude:
-                                                            (result['latitude']
-                                                                    as num)
-                                                                .toDouble(),
-                                                        longitude:
-                                                            (result['longitude']
-                                                                    as num)
-                                                                .toDouble(),
+                                                        latitude: pickedLat,
+                                                        longitude: pickedLng,
                                                         city: result['city']
                                                             ?.toString(),
                                                         area: result['area']
                                                             ?.toString(),
+                                                      );
+                                                      unawaited(
+                                                        UserLocationSyncService
+                                                            .instance
+                                                            .reportManual(
+                                                          lat: pickedLat,
+                                                          lng: pickedLng,
+                                                        ),
                                                       );
 
                                                       if (!mounted) return;

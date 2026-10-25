@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class MainScaffold extends StatelessWidget {
@@ -12,6 +13,15 @@ class MainScaffold extends StatelessWidget {
   const MainScaffold({super.key, required this.navigationShell});
 
   void _onTap(int index) {
+    const navElements = [
+      'bottom_nav_home',
+      'bottom_nav_explore',
+      'bottom_nav_favorites',
+      'bottom_nav_bookings',
+    ];
+    if (index >= 0 && index < navElements.length) {
+      AppAnalyticsService.instance.trackTap(navElements[index]);
+    }
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,

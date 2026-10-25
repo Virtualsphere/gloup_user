@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
@@ -80,18 +82,24 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
   }
 
   bool _hasValidContact(Map<String, dynamic>? data, ProfileEntity? profile) {
-    final name = (data?['customerName'] as String?)?.trim() ?? profile?.fullName;
-    final phone = (data?['customerPhone'] as String?)?.trim() ?? (profile != null && profile.phone > 0 ? profile.phone.toString() : null);
-    final email = (data?['customerEmail'] as String?)?.trim() ?? profile?.email;
-    final gender = profile?.gender;
+    final name =
+        (data?['customerName'] as String?)?.trim() ?? profile?.fullName;
+    final phone = (data?['customerPhone'] as String?)?.trim() ??
+        (profile != null && profile.phone > 0
+            ? profile.phone.toString()
+            : null);
+    final email =
+        (data?['customerEmail'] as String?)?.trim() ?? profile?.email;
+    final gender = Validators.normalizeGender(
+      (data?['customerGender'] as String?) ?? profile?.gender,
+    );
     return name != null &&
         name.isNotEmpty &&
         phone != null &&
         phone.isNotEmpty &&
         email != null &&
         email.isNotEmpty &&
-        gender != null &&
-        gender.isNotEmpty;
+        gender != null;
   }
 
   Future<Map<String, dynamic>?> _ensureContactDetails(
@@ -104,28 +112,33 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
     final contact = await showBookingDetailsBottomSheet(
       context,
-      initialName: profile?.fullName,
-      initialPhone: (profile?.phone ?? 0) > 0
-          ? profile!.phone.toString()
-          : null,
-      initialEmail: profile?.email,
-      initialGender: profile?.gender,
+      initialName: (data?['customerName'] as String?) ?? profile?.fullName,
+      initialPhone: (data?['customerPhone'] as String?) ??
+          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
+      initialEmail: (data?['customerEmail'] as String?) ?? profile?.email,
+      initialGender: Validators.normalizeGender(
+        (data?['customerGender'] as String?) ?? profile?.gender,
+      ),
       submitButtonText: 'Continue',
     );
     if (contact == null || !mounted) return null;
 
-    // Update profile permanently if possible
+    final gender = Validators.normalizeGender(contact.gender);
+    if (gender == null) return null;
+
+    // Persist gender (and contact) on profile.
     if (profile != null) {
       final names = contact.name.split(' ');
       final firstName = names.first;
-      final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
-      
+      final lastName =
+          names.length > 1 ? names.sublist(1).join(' ') : '';
+
       final updatedProfile = profile.copyWith(
         firstname: firstName,
         lastname: lastName,
         phone: int.tryParse(contact.phone) ?? profile.phone,
         email: contact.email,
-        gender: contact.gender,
+        gender: gender,
       );
       context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
     }
@@ -135,7 +148,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       'customerName': contact.name,
       'customerPhone': contact.phone,
       'customerEmail': contact.email,
-      'customerGender': contact.gender,
+      'customerGender': gender,
     };
   }
 
@@ -662,6 +675,7 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
           PrimaryButton(
             text: 'Continue',
             onPressed: () async {
+              AppAnalyticsService.instance.trackCheckoutStep('select_slot');
               final router = GoRouter.of(context);
               final bookingWithContact =
                   await _ensureContactDetails(widget.bookingData);

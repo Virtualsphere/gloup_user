@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 
 /// Contact details collected from the user right before an order is created.
@@ -88,7 +90,7 @@ class _BookingDetailsBottomSheetState
     _nameCtrl = TextEditingController(text: widget.initialName ?? '');
     _phoneCtrl = TextEditingController(text: widget.initialPhone ?? '');
     _emailCtrl = TextEditingController(text: widget.initialEmail ?? '');
-    _selectedGender = widget.initialGender;
+    _selectedGender = Validators.normalizeGender(widget.initialGender);
   }
 
   @override
@@ -123,22 +125,25 @@ class _BookingDetailsBottomSheetState
   void _submit() {
     setState(() => _showErrors = true);
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    
-    if (_selectedGender == null || _selectedGender!.isEmpty) {
-      return; // Will be handled by the UI error display
-    }
 
+    final gender = Validators.normalizeGender(_selectedGender);
+    if (gender == null) return;
+
+    AppAnalyticsService.instance.trackCheckoutStep('enter_details');
     Navigator.of(context).pop(
       BookingContactDetails(
         name: _nameCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim().toLowerCase(),
-        gender: _selectedGender!,
+        gender: gender,
       ),
     );
   }
 
-  Widget _buildGenderDropdown(BuildContext context, bool isDarkMode) {
+  Widget _buildGenderSelector(BuildContext context, bool isDarkMode) {
+    final hasError =
+        _showErrors && !Validators.isValidGender(_selectedGender);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,46 +157,31 @@ class _BookingDetailsBottomSheetState
               ),
         ),
         SizedBox(height: AppSizes.spaceS),
-        Container(
-          decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            border: Border.all(
-              color: isDarkMode ? AppColors.borderDark : AppColors.border,
-              width: 1,
-            ),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingM,
-            vertical: 4, // Dropdown has its own padding
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedGender,
-              isExpanded: true,
-              hint: Text('Select gender'),
-              dropdownColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-              items: const [
-                DropdownMenuItem(value: 'Male', child: Text('Male')),
-                DropdownMenuItem(value: 'Female', child: Text('Female')),
-                DropdownMenuItem(value: 'Other', child: Text('Other')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedGender = value;
-                });
-              },
-            ),
-          ),
+        Row(
+          children: [
+            for (final option in Validators.genders) ...[
+              if (option != Validators.genders.first)
+                SizedBox(width: AppSizes.spaceM),
+              Expanded(
+                child: _GenderOptionChip(
+                  label: option,
+                  selected: _selectedGender == option,
+                  isDarkMode: isDarkMode,
+                  hasError: hasError,
+                  onTap: () => setState(() => _selectedGender = option),
+                ),
+              ),
+            ],
+          ],
         ),
-        if (_showErrors && (_selectedGender == null || _selectedGender!.isEmpty))
+        if (hasError)
           Padding(
             padding: EdgeInsets.only(
               top: AppSizes.spaceXS,
               left: AppSizes.paddingS,
             ),
             child: Text(
-              'Gender is required',
+              'Please select Male or Female',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.error,
                     fontSize: 12,
@@ -251,7 +241,7 @@ class _BookingDetailsBottomSheetState
                 ),
                 SizedBox(height: AppSizes.spaceS),
                 Text(
-                  'We use these details for booking updates and receipts.',
+                  'Gender is required before booking. Choose Male or Female.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: isDarkMode
                             ? AppColors.textSecondaryDark
@@ -294,7 +284,7 @@ class _BookingDetailsBottomSheetState
                   validator: _validateEmail,
                 ),
                 SizedBox(height: AppSizes.space),
-                _buildGenderDropdown(context, isDarkMode),
+                _buildGenderSelector(context, isDarkMode),
                 SizedBox(height: AppSizes.spaceXL),
                 PrimaryButton(
                   text: widget.submitButtonText,
@@ -303,6 +293,61 @@ class _BookingDetailsBottomSheetState
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GenderOptionChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final bool isDarkMode;
+  final bool hasError;
+  final VoidCallback onTap;
+
+  const _GenderOptionChip({
+    required this.label,
+    required this.selected,
+    required this.isDarkMode,
+    required this.hasError,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final borderColor = selected
+        ? AppColors.primary
+        : hasError
+            ? AppColors.error
+            : (isDarkMode ? AppColors.borderDark : AppColors.border);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingM,
+          vertical: AppSizes.paddingM,
+        ),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.08)
+              : (isDarkMode ? AppColors.surfaceDark : AppColors.surface),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(color: borderColor, width: selected ? 1.5 : 1),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: selected
+                    ? AppColors.primary
+                    : (isDarkMode
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary),
+              ),
         ),
       ),
     );
@@ -374,7 +419,6 @@ class _LabeledTextField extends StatelessWidget {
               focusedErrorBorder: InputBorder.none,
               contentPadding: EdgeInsets.zero,
               isDense: true,
-              // Errors render below the field container instead.
               errorStyle: const TextStyle(height: 0, fontSize: 0),
             ),
             keyboardType: keyboardType,

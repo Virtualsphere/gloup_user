@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_event.dart';
@@ -121,7 +122,10 @@ class _SalonCardState extends State<SalonCard> {
             favoritesState.lastToggledStoreId == widget.storeId;
 
         return InkWell(
-          onTap: widget.onTap,
+          onTap: () {
+            AppAnalyticsService.instance.trackTap('salon_card');
+            widget.onTap?.call();
+          },
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           child: Container(
             width: widget.isFullWidth ? double.infinity : 310.w,
@@ -361,6 +365,9 @@ class _SalonCardState extends State<SalonCard> {
           ],
         ),
         child: ServiceTicker(
+          key: ValueKey(
+            'service-ticker-${widget.storeId}-${services.length}',
+          ),
           services: services,
           isOfferCard: widget.isOfferCard,
         ),

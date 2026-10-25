@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/core/services/presence_heartbeat_service.dart';
+import 'package:tressy/core/services/user_location_sync_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
@@ -79,7 +81,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> _onLogout(LogoutEvent event, Emitter<ProfileState> emit) async {
     emit(const ProfileLoggingOut());
+    await AppAnalyticsService.instance.flush();
     await PresenceHeartbeatService.onUserLogout();
+    await UserLocationSyncService.onUserLogout();
     final result = await logoutUseCase();
     if (result.isLeft()) {
       final failure = result.fold((f) => f, (_) => null)!;
@@ -98,7 +102,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileDeleting());
 
-    final result = await deleteProfileUseCase();
+    final result = await deleteProfileUseCase(
+      reason: event.reason,
+      note: event.note,
+    );
 
     await result.fold(
       (failure) async {
@@ -107,6 +114,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       (response) async {
         if (response.success == true) {
           await PresenceHeartbeatService.onUserLogout();
+          await UserLocationSyncService.onUserLogout();
           await LocalStorageService.clearAll();
           await LocalStorageService.setOnboardingCompleted(true);
 

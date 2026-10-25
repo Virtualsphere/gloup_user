@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:tressy/core/services/user_location_sync_service.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 
 /// Global Location Provider
@@ -118,6 +120,12 @@ class LocationProvider extends ChangeNotifier {
         _locationJustUpdated = true;
         _lastUpdateMessage = 'Location updated to $_city';
       }
+
+      // Report manual location change to analytics backend
+      unawaited(UserLocationSyncService.instance.reportManual(
+        lat: latitude,
+        lng: longitude,
+      ));
 
       debugPrint(
           'LocationProvider: Updated location - $_city, $_area ($_latitude, $_longitude)');

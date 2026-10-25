@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tressy/core/constants/app_icons.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -23,7 +24,10 @@ class SearchBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        AppAnalyticsService.instance.trackTap('search_bar', screen: 'home');
+        onTap?.call();
+      },
       borderRadius: BorderRadius.circular(AppSizes.radiusM),
       child: Container(
         padding: padding ??

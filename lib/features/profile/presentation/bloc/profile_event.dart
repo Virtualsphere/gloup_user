@@ -30,5 +30,11 @@ class LogoutEvent extends ProfileEvent {
 }
 
 class DeleteProfileEvent extends ProfileEvent {
-  const DeleteProfileEvent();
+  final String? reason;
+  final String? note;
+
+  const DeleteProfileEvent({this.reason, this.note});
+
+  @override
+  List<Object?> get props => [reason, note];
 }

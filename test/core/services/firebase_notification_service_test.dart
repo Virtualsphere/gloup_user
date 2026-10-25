@@ -11,6 +11,7 @@ void main() {
       required body,
       required payload,
       required id,
+      imageUrl,
     }) async {};
   });
 

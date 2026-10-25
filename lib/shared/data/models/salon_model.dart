@@ -118,14 +118,42 @@ class SalonModel {
       isFavorite: json['isFavorite'] ?? false,
       serviceName: json['serviceName'],
       servicePrice: (json['servicePrice'] as num?)?.toDouble(),
-      dynamicServices: json['dynamicServices'] != null 
-          ? List<Map<String, dynamic>>.from(json['dynamicServices']) 
-          : null,
+      dynamicServices: _parseDynamicServices(json['dynamicServices']),
       address: rawAddress.isNotEmpty ? rawAddress : 'Not available',
       displayAddress: displayAddress,
       categories: List<String>.from(json['categories'] ?? []),
       languageCodes: List<String>.from(json['languageCodes'] ?? []),
     );
+  }
+
+  /// Highlighted services badge payload: [{name, price, discountedPrice}, ...]
+  static List<Map<String, dynamic>>? _parseDynamicServices(dynamic raw) {
+    if (raw is! List || raw.isEmpty) return null;
+
+    final services = <Map<String, dynamic>>[];
+    final seen = <String>{};
+
+    for (final item in raw) {
+      if (item is! Map) continue;
+      final map = Map<String, dynamic>.from(item);
+      final name = map['name']?.toString().trim() ?? '';
+      if (name.isEmpty) continue;
+
+      final discounted = map['discountedPrice'] ?? map['discounted_price'];
+      final price = map['price'] ?? map['amount'];
+      if (discounted == null && price == null) continue;
+
+      final key = '$name|${discounted ?? price}';
+      if (!seen.add(key)) continue;
+
+      services.add({
+        'name': name,
+        'price': price,
+        'discountedPrice': discounted ?? price,
+      });
+    }
+
+    return services.isEmpty ? null : services;
   }
 
   static String _resolveDisplayAddress({

@@ -29,6 +29,39 @@ class SalonAddressFormatter {
     return parse(rawAddress).singleLine;
   }
 
+  /// Cleans a full salon address by removing duplicate area/city segments
+  /// (e.g. `Gachibowli, Hyderabad, Gachibowli, Hyderabad - 500032`).
+  static String dedupeFullAddress(String? rawAddress) {
+    if (rawAddress == null || rawAddress.trim().isEmpty) return '';
+
+    final zipMatch = RegExp(r'[-–]?\s*(\d{5,6})\s*$').firstMatch(rawAddress.trim());
+    final zip = zipMatch?.group(1);
+    final withoutZip = rawAddress
+        .trim()
+        .replaceAll(RegExp(r'\s*[-–]?\s*\d{5,6}\s*$'), '')
+        .trim();
+
+    final parts = <String>[];
+    final seen = <String>{};
+
+    for (final raw in withoutZip.split(',')) {
+      final part = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
+      if (part.isEmpty) continue;
+      final key = part.toLowerCase();
+      if (!seen.add(key)) continue;
+      parts.add(part);
+    }
+
+    if (parts.isEmpty) {
+      return zip ?? '';
+    }
+
+    final joined = parts.join(', ');
+    if (zip == null || zip.isEmpty) return joined;
+    if (joined.contains(zip)) return joined;
+    return '$joined - $zip';
+  }
+
   /// Splits an address into area + city for multi-line card layouts.
   static SalonLocationParts parse(String? rawAddress) {
     if (rawAddress == null || rawAddress.trim().isEmpty) {

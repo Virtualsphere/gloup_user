@@ -10,6 +10,7 @@ import 'package:tressy/core/router/app_router.dart';
 import 'package:tressy/core/services/firebase_notification_service.dart';
 import 'package:tressy/core/services/force_update_service.dart';
 import 'package:tressy/core/services/presence_heartbeat_service.dart';
+import 'package:tressy/core/services/user_location_sync_service.dart';
 import 'package:tressy/core/theme/app_theme.dart';
 import 'package:tressy/core/theme/theme_provider.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -23,6 +24,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:app_links/app_links.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/services/analytics_tap_tracker.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/services/app_version_service.dart';
+import 'package:tressy/core/services/attribution_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,11 +45,19 @@ void main() async {
   // Initialize local notifications (must be before Firebase messaging setup)
   await initializeLocalNotifications();
 
+  // Read app version for backend headers
+  await AppVersionService.initialize();
+
   // Initialize dependencies (must be before FirebaseNotificationService so DioClient is registered)
   await initializeDependencies();
 
   // Real-time presence for admin live stats
   await PresenceHeartbeatService.initialize();
+  await UserLocationSyncService.initialize();
+
+  // App analytics and install source attribution
+  await AppAnalyticsService.initialize();
+  await AttributionService.initialize();
 
   // Initialize Firebase Cloud Messaging (non-blocking token fetch runs in bg)
   await FirebaseNotificationService.initialize();
@@ -136,16 +149,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     // builds (e.g. 2.8.8) that lack the native in_app_update
                     // plugin — Shorebird can still patch this path. Newer
                     // builds also get Play Immediate via ForceUpdateService.
-                    return UpgradeAlert(
-                      showIgnore: false,
-                      showLater: false,
-                      barrierDismissible: false,
-                      shouldPopScope: () => false,
-                      dialogStyle: UpgradeDialogStyle.cupertino,
-                      upgrader: Upgrader(
-                        durationUntilAlertAgain: Duration.zero,
+                    return AnalyticsTapTracker(
+                      child: UpgradeAlert(
+                        showIgnore: false,
+                        showLater: false,
+                        barrierDismissible: false,
+                        shouldPopScope: () => false,
+                        dialogStyle: UpgradeDialogStyle.cupertino,
+                        upgrader: Upgrader(
+                          durationUntilAlertAgain: Duration.zero,
+                        ),
+                        child: content,
                       ),
-                      child: content,
                     );
                   },
                 );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_event.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
@@ -10,7 +11,7 @@ import 'package:tressy/shared/widgets/primary_button.dart';
 class AddPersonResult {
   final String fullName;
   final int age;
-  final String gender; // 'Male' | 'Female' | 'Other'
+  final String gender; // 'Male' | 'Female'
   final String? phone; // will include +91 prefix if provided
 
   AddPersonResult({
@@ -79,11 +80,14 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
     final String phone = phoneText.isEmpty ? '' : phoneText;
     final String name = _nameCtrl.text.trim();
 
+    final gender = Validators.normalizeGender(_gender);
+    if (gender == null) return;
+
     // Trigger API call via BLoC
     context.read<GuestBloc>().add(
           AddGuestEvent(
             name: name,
-            gender: _gender,
+            gender: gender,
             age: age,
             phone: phone,
           ),
@@ -214,14 +218,6 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                             label: 'Female',
                             selected: _gender == 'Female',
                             onTap: () => setState(() => _gender = 'Female'),
-                          ),
-                        ),
-                        SizedBox(width: AppSizes.spaceM),
-                        Expanded(
-                          child: _GenderChip(
-                            label: 'Other',
-                            selected: _gender == 'Other',
-                            onTap: () => setState(() => _gender = 'Other'),
                           ),
                         ),
                       ],

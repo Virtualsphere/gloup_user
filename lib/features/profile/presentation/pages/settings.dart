@@ -21,6 +21,7 @@ import 'package:tressy/shared/widgets/edit_person_bottom_sheet.dart';
 import 'package:tressy/features/profile/presentation/pages/support.dart';
 import 'package:tressy/features/widgets/custom_button.dart';
 import 'package:tressy/features/widgets/custom_dialogues.dart';
+import 'package:tressy/shared/widgets/reason_prompt_sheet.dart';
 
 class Settings extends StatelessWidget {
   final ProfileEntity profile;
@@ -131,14 +132,33 @@ class _SettingsViewState extends State<SettingsView> {
                 child: ProfileListTile(
                   title: 'Delete Account',
                   icon: AppIcons.delete,
-                  onTap: () {
+                  onTap: () async {
+                    const deleteReasons = [
+                      ReasonOption(code: 'not_using', label: 'Not using the app anymore'),
+                      ReasonOption(code: 'too_expensive', label: 'Services are too expensive'),
+                      ReasonOption(code: 'too_many_notifications', label: 'Too many notifications'),
+                      ReasonOption(code: 'app_issues', label: 'Encountered app issues or bugs'),
+                      ReasonOption(code: 'privacy', label: 'Privacy concerns'),
+                      ReasonOption(code: 'other', label: 'Other reason'),
+                    ];
+
+                    final reason = await ReasonPromptSheet.show(
+                      context,
+                      title: 'Delete Account',
+                      subtitle: 'Please let us know why you are leaving (optional)',
+                      reasons: deleteReasons,
+                      skipButtonText: 'Skip',
+                    );
+
+                    if (!context.mounted) return;
+
                     CustomDialogues.showCancelDialogue(
                       context,
                       title: 'Delete Account',
                       submitOnTap: () async {
                         Navigator.of(context).pop();
                         context.read<ProfileBloc>().add(
-                              const DeleteProfileEvent(),
+                              DeleteProfileEvent(reason: reason),
                             );
                       },
                     );

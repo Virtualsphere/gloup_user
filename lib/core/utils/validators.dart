@@ -164,4 +164,33 @@ class Validators {
 
     return null;
   }
+
+  /// Allowed user / guest genders for booking.
+  static const List<String> genders = ['Male', 'Female'];
+
+  /// Returns `Male` or `Female` when [value] is a valid gender; otherwise null.
+  /// Rejects empty, "Not Selected", "Other", and unknown values.
+  static String? normalizeGender(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+
+    final lower = trimmed.toLowerCase();
+    if (lower == 'male' || lower == 'm' || lower == 'men') return 'Male';
+    if (lower == 'female' || lower == 'f' || lower == 'women') {
+      return 'Female';
+    }
+    return null;
+  }
+
+  /// True when [value] is Male or Female (any common casing).
+  static bool isValidGender(String? value) => normalizeGender(value) != null;
+
+  /// Form validator for required Male / Female gender.
+  static String? gender(String? value) {
+    if (!isValidGender(value)) {
+      return 'Please select Male or Female';
+    }
+    return null;
+  }
 }

@@ -4,6 +4,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/constants/salon_detail_design_tokens.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/features/salon_details/domain/entities/salon_detail_entity.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_bloc.dart';
 import 'package:tressy/features/salon_details/presentation/bloc/salon_detail_event.dart';
@@ -102,8 +103,21 @@ class _SalonDetailsPageState extends State<SalonDetailsPage>
 
   void _toggleService(ServiceEntity service) {
     final cubit = context.read<SalonDetailsPageCubit>();
+    final isAlreadySelected = cubit.state.selectedServices.containsKey(service.id);
     final wasEmpty = cubit.serviceCount == 0;
     cubit.toggleService(service);
+
+    final storeId = int.tryParse(widget.salonId ?? '') ?? 0;
+    AppAnalyticsService.instance.trackCart(
+      screen: 'salon_details',
+      action: isAlreadySelected ? 'remove' : 'add',
+      storeId: storeId,
+      serviceId: service.id,
+    );
+    AppAnalyticsService.instance.trackTap(
+      isAlreadySelected ? 'remove_from_cart' : 'add_to_cart',
+      screen: 'salon_details',
+    );
 
     if (wasEmpty && cubit.serviceCount > 0) {
       _bottomNavController.forward();

@@ -8,6 +8,7 @@ import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
 import 'package:tressy/features/booking_confirmation/domain/usecases/cancel_pending_order_usecase.dart';
 import 'package:tressy/features/booking_confirmation/domain/utils/booking_price_calculator.dart';
@@ -44,6 +45,10 @@ import 'package:tressy/shared/widgets/login_bottom_sheet.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tressy/core/constants/api_routes.dart';
+import 'package:tressy/core/network/dio_client.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/services/feedback_service.dart';
+import 'package:tressy/shared/widgets/reason_prompt_sheet.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_bloc.dart';
 import 'package:tressy/features/bookings/presentation/bloc/appointments_event.dart';
 import 'package:tressy/shared/widgets/payment_success_dialog.dart';
@@ -75,8 +80,68 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   String? _lastCreateOrderFingerprint;
   CreateOrderRequest? _lastPaymentRequest;
   BookingContactDetails? _contactDetails;
+  bool _paymentCompleted = false;
   late Razorpay _razorpay;
   late OrderBloc _orderBloc;
+
+  static const List<ReasonOption> _checkoutExitReasons = [
+    ReasonOption(code: 'price_too_high', label: 'Price is too high'),
+    ReasonOption(code: 'found_better_offer', label: 'Found a better offer'),
+    ReasonOption(code: 'no_suitable_slot', label: 'No suitable slot available'),
+    ReasonOption(code: 'payment_issue', label: 'Payment issue / method not available'),
+    ReasonOption(code: 'will_book_later', label: 'Decided to book later'),
+    ReasonOption(code: 'other', label: 'Other reason'),
+  ];
+
+  Future<bool> _handleExitPrompt() async {
+    if (_paymentCompleted) return true;
+
+    final selectedReason = await ReasonPromptSheet.show(
+      context,
+      title: 'Wait, before you leave...',
+      subtitle: 'Let us know why you are leaving checkout',
+      reasons: _checkoutExitReasons,
+      skipButtonText: 'Leave anyway',
+    );
+
+    int? storeId;
+    final rawId = widget.bookingData?['salonId'];
+    if (rawId is int) {
+      storeId = rawId;
+    } else if (rawId is String) {
+      storeId = int.tryParse(rawId);
+    }
+
+    if (selectedReason != null && selectedReason.isNotEmpty) {
+      unawaited(FeedbackService.sendFeedback(
+        type: 'checkout_exit',
+        reason: selectedReason,
+        storeId: storeId,
+      ));
+    }
+
+    return true;
+  }
+
+  Future<bool> _validateCouponWithBackend(String code) async {
+    try {
+      final response = await sl<DioClient>().post(
+        ApiRoutes.validateCoupon,
+        data: {'code': code},
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is Map && data['success'] == true) {
+          AppAnalyticsService.instance.trackCheckoutStep('apply_coupon');
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[Coupon] Validation failed: $e');
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -126,7 +191,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     final phone = (widget.bookingData?['customerPhone'] as String?)?.trim();
     final email = (widget.bookingData?['customerEmail'] as String?)?.trim();
     final profile = _profileFromState(context.read<ProfileBloc>().state);
-    final gender = profile?.gender;
+    final gender = Validators.normalizeGender(
+      (widget.bookingData?['customerGender'] as String?) ?? profile?.gender,
+    );
 
     if (name == null ||
         name.isEmpty ||
@@ -134,8 +201,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         phone.isEmpty ||
         email == null ||
         email.isEmpty ||
-        gender == null ||
-        gender.isEmpty) {
+        gender == null) {
       return null;
     }
 
@@ -158,29 +224,42 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       initialPhone: _effectiveContact()?.phone ??
           ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
       initialEmail: _effectiveContact()?.email ?? profile?.email,
-      initialGender: _effectiveContact()?.gender ?? profile?.gender,
+      initialGender: Validators.normalizeGender(
+        _effectiveContact()?.gender ?? profile?.gender,
+      ),
       submitButtonText: 'Save details',
     );
     if (contact == null || !mounted) return null;
 
-    // Update profile permanently if possible
+    final gender = Validators.normalizeGender(contact.gender);
+    if (gender == null) return null;
+
+    final normalized = BookingContactDetails(
+      name: contact.name,
+      phone: contact.phone,
+      email: contact.email,
+      gender: gender,
+    );
+
+    // Persist gender (and contact) on profile.
     if (profile != null) {
-      final names = contact.name.split(' ');
+      final names = normalized.name.split(' ');
       final firstName = names.first;
-      final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
-      
+      final lastName =
+          names.length > 1 ? names.sublist(1).join(' ') : '';
+
       final updatedProfile = profile.copyWith(
         firstname: firstName,
         lastname: lastName,
-        phone: int.tryParse(contact.phone) ?? profile.phone,
-        email: contact.email,
-        gender: contact.gender,
+        phone: int.tryParse(normalized.phone) ?? profile.phone,
+        email: normalized.email,
+        gender: gender,
       );
       context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
     }
 
-    setState(() => _contactDetails = contact);
-    return contact;
+    setState(() => _contactDetails = normalized);
+    return normalized;
   }
 
   @override
@@ -385,8 +464,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
             _openRazorpay(order.razorpayOrderId, order.amount, salonName);
             _orderBloc.add(const RazorpayOpenedEvent());
           } else if (orderState.isPaymentVerified) {
+            _paymentCompleted = true;
             _pendingOrderFingerprint = null;
             _lastCreateOrderFingerprint = null;
+            AppAnalyticsService.instance.trackCheckoutStep('payment_success', screen: 'payment_success');
             PaymentSuccessDialog.show(
               context,
               paymentId: _lastPaymentId ?? '',
@@ -412,23 +493,39 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
         child: BlocBuilder<OrderBloc, OrderState>(
           builder: (context, orderState) => Stack(
             children: [
-              Scaffold(
-                backgroundColor: isDarkMode
-                    ? AppColors.backgroundDark
-                    : AppColors.background,
-                appBar: AppBar(
+              PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (didPop) return;
+                  final nav = Navigator.of(context);
+                  final allow = await _handleExitPrompt();
+                  if (allow && mounted) {
+                    nav.pop();
+                  }
+                },
+                child: Scaffold(
                   backgroundColor: isDarkMode
                       ? AppColors.backgroundDark
                       : AppColors.background,
-                  elevation: 0,
-                  surfaceTintColor: Colors.transparent,
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: isDarkMode ? Colors.white : Colors.black,
+                  appBar: AppBar(
+                    backgroundColor: isDarkMode
+                        ? AppColors.backgroundDark
+                        : AppColors.background,
+                    elevation: 0,
+                    surfaceTintColor: Colors.transparent,
+                    leading: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      onPressed: () async {
+                        final nav = Navigator.of(context);
+                        final allow = await _handleExitPrompt();
+                        if (allow && mounted) {
+                          nav.pop();
+                        }
+                      },
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
                   title: Text('Review & Confirm',
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -535,7 +632,10 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                     final userName =
                                         profile?.fullName ?? 'User';
                                     final userGender =
-                                        profile?.gender ?? 'Not Selected';
+                                        Validators.normalizeGender(
+                                              profile?.gender,
+                                            ) ??
+                                            'Not Selected';
                                     // Calculate age from date of birth if available
                                     int? userAge;
                                     if (profile?.dateOfBirth != null &&
@@ -954,6 +1054,15 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
 
                                               // Show success dialog when applying a coupon
                                               if (newSelection != null) {
+                                                final valid = await _validateCouponWithBackend(displayCoupon.couponCode);
+                                                if (!valid) {
+                                                  if (mounted && context.mounted) {
+                                                    setState(() => selectedCouponCode = null);
+                                                    CustomToast.showError(context, 'The coupon is invalid or has expired');
+                                                  }
+                                                  return;
+                                                }
+                                                if (!mounted || !context.mounted) return;
                                                 await CouponAppliedDialog.show(
                                                   context,
                                                   couponCode:
@@ -991,6 +1100,13 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                                 if (result != null &&
                                                     result !=
                                                         selectedCouponCode) {
+                                                  final valid = await _validateCouponWithBackend(result);
+                                                  if (!valid) {
+                                                    if (mounted && context.mounted) {
+                                                      CustomToast.showError(context, 'The coupon is invalid or has expired');
+                                                    }
+                                                    return;
+                                                  }
                                                   setState(() {
                                                     selectedCouponCode = result;
                                                   });
@@ -1094,6 +1210,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                     _buildBottomConfirmButton(context, isDarkMode, isLoggedIn),
                   ],
                 ),
+              ),
               ),
               if (orderState.isVerifyingPayment)
                 Container(
@@ -1488,6 +1605,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                           orderState.isVerifyingPayment)
                       ? null
                       : () async {
+                          AppAnalyticsService.instance.trackTap('pay_button', screen: 'checkout');
+                          AppAnalyticsService.instance.trackCheckoutStep('payment_page');
                           final allSelectedServices = _allSelectedServices;
 
                           final servicesPayload = allSelectedServices
@@ -1503,9 +1622,28 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                                   ? guestState.guests[selectedSomeoneElseIndex!]
                                   : null;
 
-                          // Contact details are required before payment.
+                          if (selectedBookingFor == 'someone_else') {
+                            if (selectedGuest == null) {
+                              CustomToast.showError(
+                                context,
+                                'Please select who you are booking for',
+                              );
+                              return;
+                            }
+                            if (!Validators.isValidGender(
+                                selectedGuest.gender)) {
+                              CustomToast.showError(
+                                context,
+                                'Guest gender must be Male or Female. Please edit the guest.',
+                              );
+                              return;
+                            }
+                          }
+
+                          // Contact details + valid Male/Female gender required.
                           var contact = _effectiveContact();
-                          if (contact == null) {
+                          if (contact == null ||
+                              !Validators.isValidGender(contact.gender)) {
                             contact = await _promptForContactDetails();
                             if (contact == null || !context.mounted) return;
                           }

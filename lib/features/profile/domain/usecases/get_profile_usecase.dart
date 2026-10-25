@@ -42,7 +42,10 @@ class DeleteProfileUseCase {
 
   DeleteProfileUseCase(this.repository);
 
-  Future<Either<Failure, DeleteProfileEntity>> call() async {
-    return await repository.deleteProfile();
+  Future<Either<Failure, DeleteProfileEntity>> call({
+    String? reason,
+    String? note,
+  }) async {
+    return await repository.deleteProfile(reason: reason, note: note);
   }
 }

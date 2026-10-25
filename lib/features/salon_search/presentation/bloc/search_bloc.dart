@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/error/failures.dart';
+import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/features/salon_search/domain/usecases/get_nearby_salons_usecase.dart';
 import 'package:tressy/features/salon_search/domain/usecases/search_salons_usecase.dart';
 import 'package:tressy/features/salon_search/presentation/bloc/search_event.dart';
@@ -100,6 +101,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     result.fold(
       (failure) => emit(SearchFailure(_mapFailureToMessage(failure))),
       (salons) {
+        if (event.query.isNotEmpty) {
+          AppAnalyticsService.instance.trackSearch(
+            event.query,
+            salons.length,
+            screen: 'search',
+          );
+        }
         if (salons.isEmpty) {
           emit(SearchEmpty('No salons found for "${event.query}"'));
         } else {
@@ -145,6 +153,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     result.fold(
       (failure) => emit(SearchFailure(_mapFailureToMessage(failure))),
       (salons) {
+        AppAnalyticsService.instance.trackFilter(
+          screen: 'salon_list',
+          category: event.categoryId,
+        );
         if (salons.isEmpty) {
           emit(const SearchEmpty('No salons found with selected filters'));
         } else {

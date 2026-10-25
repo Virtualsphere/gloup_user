@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/services/analytics_route_observer.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
@@ -39,6 +40,7 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
+    observers: [AnalyticsRouteObserver()],
     routes: _routes,
     errorBuilder: (context, state) => _ErrorPage(error: state.error),
     redirect: (context, state) {

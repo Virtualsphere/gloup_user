@@ -8,7 +8,7 @@ import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> getProfile();
   Future<ProfileModel> updateProfile(ProfileEntity profile);
-  Future<DeleteProfile> deleteProfile();
+  Future<DeleteProfile> deleteProfile({String? reason, String? note});
   Future<void> logout();
 }
 
@@ -81,9 +81,24 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   ///Delete Profile:-
   @override
-  Future<DeleteProfile> deleteProfile() async {
+  Future<DeleteProfile> deleteProfile({String? reason, String? note}) async {
     try {
-      final response = await dioClient.delete(ApiRoutes.deleteProfile);
+      final queryParams = <String, dynamic>{};
+      final body = <String, dynamic>{};
+      if (reason != null && reason.trim().isNotEmpty) {
+        queryParams['reason'] = reason.trim().toLowerCase();
+        body['reason'] = reason.trim().toLowerCase();
+      }
+      if (note != null && note.trim().isNotEmpty) {
+        queryParams['note'] = note.trim();
+        body['note'] = note.trim();
+      }
+
+      final response = await dioClient.delete(
+        ApiRoutes.deleteProfile,
+        data: body.isNotEmpty ? body : null,
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
 
       if (response.statusCode == 200) {
         return DeleteProfile.fromJson(response.data);

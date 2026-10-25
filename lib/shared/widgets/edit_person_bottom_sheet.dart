@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/shared/widgets/primary_button.dart';
 
 class EditPersonResult {
@@ -73,7 +74,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
     super.initState();
     _nameCtrl = TextEditingController(text: widget.initialName);
     _ageCtrl = TextEditingController(text: widget.initialAge.toString());
-    _gender = widget.initialGender;
+    _gender = Validators.normalizeGender(widget.initialGender) ?? 'Male';
 
     // Remove +91 prefix if present for editing
     String phoneNumber = widget.initialPhone ?? '';
@@ -104,11 +105,14 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
     final phoneText = _phoneCtrl.text.trim();
     final String? phone = phoneText.isEmpty ? null : '+91$phoneText';
 
+    final gender = Validators.normalizeGender(_gender);
+    if (gender == null) return;
+
     Navigator.of(context).pop(
       EditPersonResult(
         fullName: _nameCtrl.text.trim(),
         age: age,
-        gender: _gender,
+        gender: gender,
         phone: phone,
       ),
     );
@@ -222,14 +226,6 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             label: 'Female',
                             selected: _gender == 'Female',
                             onTap: () => setState(() => _gender = 'Female'),
-                          ),
-                        ),
-                        SizedBox(width: AppSizes.spaceS),
-                        Expanded(
-                          child: _GenderChip(
-                            label: 'Other',
-                            selected: _gender == 'Other',
-                            onTap: () => setState(() => _gender = 'Other'),
                           ),
                         ),
                       ],
