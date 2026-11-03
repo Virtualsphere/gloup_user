@@ -5,6 +5,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/app_analytics_service.dart';
+import 'package:tressy/core/utils/booking_location_validator.dart';
 import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/presentation/widgets/booking_details_bottom_sheet.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
@@ -119,6 +120,13 @@ class SalonDetailsBottomBar extends StatelessWidget {
                         text: 'Book Now',
                         onPressed: () async {
                           AppAnalyticsService.instance.trackTap('book_now', screen: 'salon_details');
+
+                          // Check whether device location is enabled before allowing a booking.
+                          final position =
+                              await BookingLocationValidator.ensureLocationEnabled(
+                                  context);
+                          if (position == null || !context.mounted) return;
+
                           // Collect the booker's contact details up front,
                           final profile = _profileFromState(
                               context.read<ProfileBloc>().state);

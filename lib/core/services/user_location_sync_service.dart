@@ -81,6 +81,20 @@ class UserLocationSyncService with WidgetsBindingObserver {
     await _post(lat: lat, lng: lng, source: 'manual');
   }
 
+  /// (3) Fresh live location right before a booking is confirmed.
+  Future<void> reportLiveLocation({
+    required double lat,
+    required double lng,
+  }) async {
+    if (!_canPost()) return;
+    await _post(
+      lat: lat,
+      lng: lng,
+      source: 'live',
+      recordAsLive: true,
+    );
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!LocalStorageService.isLoggedIn && !_started) return;

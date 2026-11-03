@@ -7,6 +7,7 @@ import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
+import 'package:tressy/core/utils/booking_location_validator.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
 import 'package:tressy/core/utils/validators.dart';
 import 'package:tressy/features/booking_confirmation/data/models/order_model.dart';
@@ -1719,6 +1720,13 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                           }
                           _contactDetails = contact;
 
+                          // Check whether device location is enabled before allowing a booking.
+                          // Prevents bookings from using an incorrect or outdated location.
+                          final position =
+                              await BookingLocationValidator.ensureLocationEnabled(
+                                  context);
+                          if (position == null || !context.mounted) return;
+
                           final request = CreateOrderRequest(
                             bookingDate:
                                 widget.bookingData!['selectedDate'] ?? '',
@@ -1743,6 +1751,8 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             customerName: contact.name,
                             customerPhone: cleanCustomerPhone,
                             customerEmail: contact.email,
+                            lat: position.latitude,
+                            lng: position.longitude,
                           );
 
                           _initiateOrResumePayment(context, request);

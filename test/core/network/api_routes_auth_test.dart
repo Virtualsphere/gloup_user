@@ -28,7 +28,7 @@ void main() {
         isTrue,
       );
       expect(
-        ApiRoutes.requiresAuth(Uri.parse(ApiRoutes.getBanners)),
+        ApiRoutes.requiresAuth(Uri.parse(ApiRoutes.createOrder)),
         isTrue,
       );
       expect(
