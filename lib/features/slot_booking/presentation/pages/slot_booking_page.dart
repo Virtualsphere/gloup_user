@@ -83,20 +83,21 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
   bool _hasValidContact(Map<String, dynamic>? data, ProfileEntity? profile) {
     final name =
-        (data?['customerName'] as String?)?.trim() ?? profile?.fullName;
-    final phone = (data?['customerPhone'] as String?)?.trim() ??
+        (data?['customerName'] as String?)?.trim() ?? profile?.fullName.trim();
+    final rawPhone = (data?['customerPhone'] as String?)?.trim() ??
         (profile != null && profile.phone > 0
             ? profile.phone.toString()
             : null);
+    final phone = Validators.normalizeIndianMobile(rawPhone);
     final email =
-        (data?['customerEmail'] as String?)?.trim() ?? profile?.email;
+        (data?['customerEmail'] as String?)?.trim() ?? profile?.email.trim();
     final gender = Validators.normalizeGender(
       (data?['customerGender'] as String?) ?? profile?.gender,
     );
     return name != null &&
         name.isNotEmpty &&
         phone != null &&
-        phone.isNotEmpty &&
+        Validators.isValidIndianMobile(phone) &&
         email != null &&
         email.isNotEmpty &&
         gender != null;
@@ -110,11 +111,15 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
         
     if (_hasValidContact(data, profile)) return data;
 
+    final initialPhone = Validators.normalizeIndianMobile(
+      (data?['customerPhone'] as String?) ??
+          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
+    );
+
     final contact = await showBookingDetailsBottomSheet(
       context,
       initialName: (data?['customerName'] as String?) ?? profile?.fullName,
-      initialPhone: (data?['customerPhone'] as String?) ??
-          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
+      initialPhone: initialPhone,
       initialEmail: (data?['customerEmail'] as String?) ?? profile?.email,
       initialGender: Validators.normalizeGender(
         (data?['customerGender'] as String?) ?? profile?.gender,
@@ -123,12 +128,15 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
     );
     if (contact == null || !mounted) return null;
 
+    final cleanPhone = Validators.normalizeIndianMobile(contact.phone);
+    if (cleanPhone == null) return null;
+
     final gender = Validators.normalizeGender(contact.gender);
     if (gender == null) return null;
 
     // Persist gender (and contact) on profile.
     if (profile != null) {
-      final names = contact.name.split(' ');
+      final names = contact.name.trim().split(' ');
       final firstName = names.first;
       final lastName =
           names.length > 1 ? names.sublist(1).join(' ') : '';
@@ -136,8 +144,8 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
       final updatedProfile = profile.copyWith(
         firstname: firstName,
         lastname: lastName,
-        phone: int.tryParse(contact.phone) ?? profile.phone,
-        email: contact.email,
+        phone: int.tryParse(cleanPhone) ?? profile.phone,
+        email: contact.email.trim().toLowerCase(),
         gender: gender,
       );
       context.read<ProfileBloc>().add(UpdateProfileEvent(updatedProfile));
@@ -145,9 +153,9 @@ class _SlotBookingPageState extends State<SlotBookingPage> {
 
     return {
       ...?data,
-      'customerName': contact.name,
-      'customerPhone': contact.phone,
-      'customerEmail': contact.email,
+      'customerName': contact.name.trim(),
+      'customerPhone': cleanPhone,
+      'customerEmail': contact.email.trim().toLowerCase(),
       'customerGender': gender,
     };
   }

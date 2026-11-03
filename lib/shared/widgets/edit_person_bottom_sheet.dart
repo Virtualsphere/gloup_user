@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/utils/validators.dart';
@@ -76,10 +77,13 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
     _ageCtrl = TextEditingController(text: widget.initialAge.toString());
     _gender = Validators.normalizeGender(widget.initialGender) ?? 'Male';
 
-    // Remove +91 prefix if present for editing
+    // Remove +91 prefix / normalize for editing
     String phoneNumber = widget.initialPhone ?? '';
-    if (phoneNumber.startsWith('+91')) {
-      phoneNumber = phoneNumber.substring(3);
+    final cleanInitialPhone = Validators.normalizeIndianMobile(phoneNumber);
+    if (cleanInitialPhone != null) {
+      phoneNumber = cleanInitialPhone;
+    } else if (phoneNumber.startsWith('+91')) {
+      phoneNumber = phoneNumber.substring(3).trim();
     }
     _phoneCtrl = TextEditingController(text: phoneNumber);
   }
@@ -103,7 +107,8 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
     final int age = int.parse(ageText);
 
     final phoneText = _phoneCtrl.text.trim();
-    final String? phone = phoneText.isEmpty ? null : '+91$phoneText';
+    final cleanPhone = Validators.normalizeIndianMobile(phoneText);
+    if (cleanPhone == null) return;
 
     final gender = Validators.normalizeGender(_gender);
     if (gender == null) return;
@@ -113,7 +118,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
         fullName: _nameCtrl.text.trim(),
         age: age,
         gender: gender,
-        phone: phone,
+        phone: cleanPhone,
       ),
     );
   }
@@ -238,7 +243,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Phone number (optional)',
+                          'Phone number',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: isDarkMode
@@ -295,7 +300,7 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                                 child: TextFormField(
                                   controller: _phoneCtrl,
                                   decoration: const InputDecoration(
-                                    hintText: 'Phone number',
+                                    hintText: '10-digit mobile number',
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
@@ -305,13 +310,19 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                                         TextStyle(height: 0, fontSize: 0),
                                     contentPadding: EdgeInsets.zero,
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.phone,
                                   textInputAction: TextInputAction.done,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
                                   validator: (v) {
                                     final t = (v ?? '').trim();
-                                    if (t.isEmpty) return null;
-                                    if (t.length < 10 || t.length > 15) {
-                                      return 'Enter a valid phone number';
+                                    if (t.isEmpty) {
+                                      return 'Phone number is required';
+                                    }
+                                    if (!Validators.isValidIndianMobile(t)) {
+                                      return 'Enter a valid 10-digit mobile number';
                                     }
                                     return null;
                                   },
@@ -325,25 +336,27 @@ class _EditPersonBottomSheetState extends State<_EditPersonBottomSheet> {
                             valueListenable: _phoneCtrl,
                             builder: (context, value, child) {
                               final t = value.text.trim();
-                              if (t.isEmpty) return const SizedBox.shrink();
-                              if (t.length < 10 || t.length > 15) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      top: AppSizes.spaceXS,
-                                      left: AppSizes.paddingS),
-                                  child: Text(
-                                    'Enter a valid phone number',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          color: AppColors.error,
-                                          fontSize: 12,
-                                        ),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
+                              final err = t.isEmpty
+                                  ? 'Phone number is required'
+                                  : (!Validators.isValidIndianMobile(t)
+                                      ? 'Enter a valid 10-digit mobile number'
+                                      : null);
+                              if (err == null) return const SizedBox.shrink();
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                    top: AppSizes.spaceXS,
+                                    left: AppSizes.paddingS),
+                                child: Text(
+                                  err,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: AppColors.error,
+                                        fontSize: 12,
+                                      ),
+                                ),
+                              );
                             },
                           ),
                       ],

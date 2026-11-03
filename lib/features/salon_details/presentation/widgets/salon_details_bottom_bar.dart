@@ -123,18 +123,20 @@ class SalonDetailsBottomBar extends StatelessWidget {
                           final profile = _profileFromState(
                               context.read<ProfileBloc>().state);
                               
-                          String? customerName = profile?.fullName;
-                          String? customerPhone = (profile?.phone ?? 0) > 0
-                              ? profile!.phone.toString()
-                              : null;
-                          String? customerEmail = profile?.email;
+                          String? customerName = profile?.fullName.trim();
+                          String? customerPhone = Validators.normalizeIndianMobile(
+                            (profile?.phone ?? 0) > 0
+                                ? profile!.phone.toString()
+                                : null,
+                          );
+                          String? customerEmail = profile?.email.trim();
                           String? customerGender =
                               Validators.normalizeGender(profile?.gender);
 
                           final needsContact = customerName == null ||
                               customerName.isEmpty ||
                               customerPhone == null ||
-                              customerPhone.isEmpty ||
+                              !Validators.isValidIndianMobile(customerPhone) ||
                               customerEmail == null ||
                               customerEmail.isEmpty ||
                               customerGender == null;
@@ -150,9 +152,13 @@ class SalonDetailsBottomBar extends StatelessWidget {
                             );
                             if (contact == null || !context.mounted) return;
 
-                            customerName = contact.name;
-                            customerPhone = contact.phone;
-                            customerEmail = contact.email;
+                            final cleanPhone =
+                                Validators.normalizeIndianMobile(contact.phone);
+                            if (cleanPhone == null) return;
+
+                            customerName = contact.name.trim();
+                            customerPhone = cleanPhone;
+                            customerEmail = contact.email.trim().toLowerCase();
                             customerGender =
                                 Validators.normalizeGender(contact.gender);
                             if (customerGender == null) return;
@@ -168,7 +174,7 @@ class SalonDetailsBottomBar extends StatelessWidget {
                               final updatedProfile = profile.copyWith(
                                 firstname: firstName,
                                 lastname: lastName,
-                                phone: int.tryParse(customerPhone) ??
+                                phone: int.tryParse(cleanPhone) ??
                                     profile.phone,
                                 email: customerEmail,
                                 gender: customerGender,

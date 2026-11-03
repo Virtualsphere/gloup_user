@@ -187,10 +187,14 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
   /// Contact details collected by the "Book Now" bottom sheet, carried
   /// through the slot-booking flow inside [ReviewConfirmPage.bookingData].
   BookingContactDetails? _contactFromBookingData() {
-    final name = (widget.bookingData?['customerName'] as String?)?.trim();
-    final phone = (widget.bookingData?['customerPhone'] as String?)?.trim();
-    final email = (widget.bookingData?['customerEmail'] as String?)?.trim();
     final profile = _profileFromState(context.read<ProfileBloc>().state);
+    final name = ((widget.bookingData?['customerName'] as String?)?.trim() ??
+        profile?.fullName.trim())?.trim();
+    final rawPhone = (widget.bookingData?['customerPhone'] as String?)?.trim() ??
+        (profile != null && profile.phone > 0 ? profile.phone.toString() : null);
+    final phone = Validators.normalizeIndianMobile(rawPhone);
+    final email = ((widget.bookingData?['customerEmail'] as String?)?.trim() ??
+        profile?.email.trim())?.trim();
     final gender = Validators.normalizeGender(
       (widget.bookingData?['customerGender'] as String?) ?? profile?.gender,
     );
@@ -198,7 +202,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     if (name == null ||
         name.isEmpty ||
         phone == null ||
-        phone.isEmpty ||
+        !Validators.isValidIndianMobile(phone) ||
         email == null ||
         email.isEmpty ||
         gender == null) {
@@ -213,31 +217,51 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
     );
   }
 
-  BookingContactDetails? _effectiveContact() =>
-      _contactDetails ?? _contactFromBookingData();
+  BookingContactDetails? _effectiveContact() {
+    final explicit = _contactDetails;
+    if (explicit != null &&
+        Validators.isValidIndianMobile(explicit.phone) &&
+        Validators.isValidGender(explicit.gender)) {
+      return explicit;
+    }
+    return _contactFromBookingData();
+  }
 
   Future<BookingContactDetails?> _promptForContactDetails() async {
     final profile = _profileFromState(context.read<ProfileBloc>().state);
+    final current = _effectiveContact();
+    final initialPhone = Validators.normalizeIndianMobile(
+      current?.phone ??
+          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
+    );
     final contact = await showBookingDetailsBottomSheet(
       context,
-      initialName: _effectiveContact()?.name ?? profile?.fullName,
-      initialPhone: _effectiveContact()?.phone ??
-          ((profile?.phone ?? 0) > 0 ? profile!.phone.toString() : null),
-      initialEmail: _effectiveContact()?.email ?? profile?.email,
+      initialName: current?.name ?? profile?.fullName,
+      initialPhone: initialPhone,
+      initialEmail: current?.email ?? profile?.email,
       initialGender: Validators.normalizeGender(
-        _effectiveContact()?.gender ?? profile?.gender,
+        current?.gender ?? profile?.gender,
       ),
       submitButtonText: 'Save details',
     );
     if (contact == null || !mounted) return null;
 
+    final cleanPhone = Validators.normalizeIndianMobile(contact.phone);
+    if (cleanPhone == null) {
+      CustomToast.showError(
+        context,
+        'Please enter a valid 10-digit mobile number',
+      );
+      return null;
+    }
+
     final gender = Validators.normalizeGender(contact.gender);
     if (gender == null) return null;
 
     final normalized = BookingContactDetails(
-      name: contact.name,
-      phone: contact.phone,
-      email: contact.email,
+      name: contact.name.trim(),
+      phone: cleanPhone,
+      email: contact.email.trim().toLowerCase(),
       gender: gender,
     );
 
@@ -251,7 +275,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
       final updatedProfile = profile.copyWith(
         firstname: firstName,
         lastname: lastName,
-        phone: int.tryParse(normalized.phone) ?? profile.phone,
+        phone: int.tryParse(cleanPhone) ?? profile.phone,
         email: normalized.email,
         gender: gender,
       );
@@ -1375,6 +1399,9 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
 
   Widget _buildContactDetailsSection(BuildContext context, bool isDarkMode) {
     final contact = _effectiveContact();
+    final bool hasValidContact = contact != null &&
+        Validators.isValidIndianMobile(contact.phone) &&
+        Validators.isValidGender(contact.gender);
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
@@ -1398,7 +1425,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                 onPressed: () async {
                   await _promptForContactDetails();
                 },
-                child: Text(contact == null ? 'Add' : 'Edit'),
+                child: Text(!hasValidContact ? 'Add' : 'Edit'),
               ),
             ],
           ),
@@ -1410,17 +1437,37 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
               color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               border: Border.all(
-                color: isDarkMode ? AppColors.borderDark : AppColors.border,
+                color: !hasValidContact
+                    ? AppColors.error
+                    : (isDarkMode ? AppColors.borderDark : AppColors.border),
+                width: !hasValidContact ? 1.2 : 1,
               ),
             ),
-            child: contact == null
-                ? Text(
-                    'Name, phone number, and email are required to complete your booking.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
+            child: !hasValidContact
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'A valid 10-digit mobile number and contact details are required to complete your booking.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: isDarkMode
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondary,
+                            ),
+                      ),
+                      SizedBox(height: AppSizes.spaceS),
+                      InkWell(
+                        onTap: () => _promptForContactDetails(),
+                        child: Text(
+                          'Tap here to enter your details',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
+                      ),
+                    ],
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1638,14 +1685,37 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                               );
                               return;
                             }
+                            if (!Validators.isValidIndianMobile(
+                                selectedGuest.phone)) {
+                              CustomToast.showError(
+                                context,
+                                'A valid 10-digit mobile number is required for the guest. Please edit the guest.',
+                              );
+                              return;
+                            }
                           }
 
-                          // Contact details + valid Male/Female gender required.
+                          // Contact details: valid 10-digit mobile number + valid Male/Female gender required.
                           var contact = _effectiveContact();
                           if (contact == null ||
+                              !Validators.isValidIndianMobile(contact.phone) ||
                               !Validators.isValidGender(contact.gender)) {
                             contact = await _promptForContactDetails();
                             if (contact == null || !context.mounted) return;
+                          }
+
+                          var cleanCustomerPhone =
+                              Validators.normalizeIndianMobile(contact.phone);
+                          if (cleanCustomerPhone == null) {
+                            CustomToast.showError(
+                              context,
+                              'A valid 10-digit mobile number is required before confirming your booking.',
+                            );
+                            contact = await _promptForContactDetails();
+                            if (contact == null || !context.mounted) return;
+                            cleanCustomerPhone =
+                                Validators.normalizeIndianMobile(contact.phone);
+                            if (cleanCustomerPhone == null) return;
                           }
                           _contactDetails = contact;
 
@@ -1671,7 +1741,7 @@ class _ReviewConfirmPageState extends State<ReviewConfirmPage>
                             walletAmountUsed: gloupCash,
                             finalAmount: finalTotal,
                             customerName: contact.name,
-                            customerPhone: contact.phone,
+                            customerPhone: cleanCustomerPhone,
                             customerEmail: contact.email,
                           );
 
