@@ -115,7 +115,7 @@ class SalonDetailsBottomBar extends StatelessWidget {
                     ),
                     AppSizes.widthM,
                     SizedBox(
-                      width: 150,
+                      width: 160,
                       child: PrimaryButton(
                         text: 'Book Now',
                         onPressed: () async {

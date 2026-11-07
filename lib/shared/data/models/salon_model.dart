@@ -118,7 +118,9 @@ class SalonModel {
       isFavorite: json['isFavorite'] ?? false,
       serviceName: json['serviceName'],
       servicePrice: (json['servicePrice'] as num?)?.toDouble(),
-      dynamicServices: _parseDynamicServices(json['dynamicServices']),
+      dynamicServices: _parseDynamicServices(json['dynamicServices'] ??
+          json['dynamic_services'] ??
+          json['highlightedServices']),
       address: rawAddress.isNotEmpty ? rawAddress : 'Not available',
       displayAddress: displayAddress,
       categories: List<String>.from(json['categories'] ?? []),

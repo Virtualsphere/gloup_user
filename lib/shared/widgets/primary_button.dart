@@ -71,7 +71,9 @@ class PrimaryButton extends StatelessWidget {
           disabledForegroundColor: txtColor,
           padding: padding ??
               EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingXL,
+                // Fixed-width buttons get less padding so labels aren't clipped.
+                horizontal:
+                    width != null ? AppSizes.paddingS : AppSizes.paddingXL,
                 vertical: AppSizes.paddingM,
               ),
           shape: RoundedRectangleBorder(
@@ -99,15 +101,18 @@ class PrimaryButton extends StatelessWidget {
                     SizedBox(width: AppSizes.spaceM),
                   ],
                   Flexible(
-                    child: Text(
-                      text,
-                      style: context.textTheme.labelLarge?.copyWith(
-                        color: txtColor,
-                        fontSize: fontSize ?? 16,
-                        fontWeight: fontWeight ?? FontWeight.w600,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        text,
+                        style: context.textTheme.labelLarge?.copyWith(
+                          color: txtColor,
+                          fontSize: fontSize ?? 16,
+                          fontWeight: fontWeight ?? FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        softWrap: false,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
                     ),
                   ),
                 ],
