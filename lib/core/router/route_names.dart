@@ -5,6 +5,13 @@ class RouteNames {
   static const String splash = '/';
   static const String onboarding = '/onboarding';
 
+  // App Launch Flow preview routes
+  static const String launchFirstOpen = '/launch/first-open';
+  static const String launchChairLoader = '/launch/chair-loader';
+  static const String launchSlowNetwork = '/launch/slow-network';
+  static const String launchFailure = '/launch/failure';
+  static const String launchHomeSkeleton = '/launch/home-skeleton';
+
   // Auth
   static const String login = '/login';
   static const String otp = '/otp';

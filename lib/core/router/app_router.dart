@@ -30,7 +30,8 @@ import 'package:tressy/features/salon_details/presentation/pages/salon_details_p
 import 'package:tressy/features/slot_booking/presentation/pages/slot_booking_page.dart';
 import 'package:tressy/features/booking_confirmation/presentation/pages/review_confirm_page.dart';
 import 'package:tressy/features/salon_search/presentation/pages/salon_search_page.dart';
-import 'package:tressy/features/splash/presentation/pages/splash_page.dart';
+import 'package:tressy/features/app_launch/domain/entities/app_launch_status.dart';
+import 'package:tressy/features/app_launch/presentation/pages/app_launch_flow_page.dart';
 import 'package:tressy/features/category/presentation/pages/category_page.dart';
 import 'package:tressy/shared/widgets/main_scaffold.dart';
 
@@ -50,11 +51,47 @@ class AppRouter {
   );
 
   static final List<RouteBase> _routes = [
-    // Splash route
+    // Splash / App Launch Flow
     GoRoute(
       path: RouteNames.splash,
       name: RouteNames.splash,
-      builder: (context, state) => const SplashPage(),
+      builder: (context, state) => const AppLaunchFlowPage(),
+    ),
+    // Preview routes for individual launch screens
+    GoRoute(
+      path: RouteNames.launchFirstOpen,
+      name: RouteNames.launchFirstOpen,
+      builder: (context, state) => const AppLaunchFlowPage(
+        forcedPhase: AppLaunchPhase.firstOpen,
+      ),
+    ),
+    GoRoute(
+      path: RouteNames.launchChairLoader,
+      name: RouteNames.launchChairLoader,
+      builder: (context, state) => const AppLaunchFlowPage(
+        forcedPhase: AppLaunchPhase.chairLoading,
+      ),
+    ),
+    GoRoute(
+      path: RouteNames.launchSlowNetwork,
+      name: RouteNames.launchSlowNetwork,
+      builder: (context, state) => const AppLaunchFlowPage(
+        forcedPhase: AppLaunchPhase.slowNetwork,
+      ),
+    ),
+    GoRoute(
+      path: RouteNames.launchFailure,
+      name: RouteNames.launchFailure,
+      builder: (context, state) => const AppLaunchFlowPage(
+        forcedPhase: AppLaunchPhase.failure,
+      ),
+    ),
+    GoRoute(
+      path: RouteNames.launchHomeSkeleton,
+      name: RouteNames.launchHomeSkeleton,
+      builder: (context, state) => const AppLaunchFlowPage(
+        forcedPhase: AppLaunchPhase.homeSkeleton,
+      ),
     ),
     // Onboarding route
     GoRoute(

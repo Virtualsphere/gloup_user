@@ -28,6 +28,11 @@ class AppIcons {
   static const icMoon = 'assets/icons/ic_moon.svg';
   static const icSun = 'assets/icons/ic_sun.svg';
 
+  // App Launch Feature Perk Icons
+  static const icDealPercent = 'assets/icons/ic_deal_percent.svg';
+  static const icInstantSlot = 'assets/icons/ic_instant_slot.svg';
+  static const icVerifiedShield = 'assets/icons/ic_verified_shield.svg';
+
   // Language icons
   static const icTamil = 'assets/icons/ic_ta.svg';
   static const icMalayalam = 'assets/icons/ic_ml.svg';
@@ -66,4 +71,6 @@ class AppIcons {
   static const String dropDownArrow = 'assets/images/svg/drop_down_arrow.svg';
   static const String search = 'assets/images/svg/search.svg';
   static const String edit = 'assets/images/svg/edit.svg';
+  static const String star = 'assets/images/svg/star.svg';
+  static const String profile = 'assets/images/svg/profile.svg';
 }

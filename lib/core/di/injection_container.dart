@@ -103,6 +103,14 @@ import 'package:tressy/features/salon_search/presentation/bloc/search_bloc.dart'
 import 'package:tressy/features/salon_search/domain/usecases/get_clustered_markers_usecase.dart';
 import 'package:tressy/features/salon_search/presentation/bloc/map_markers_bloc.dart';
 
+// App Launch Feature
+import 'package:tressy/features/app_launch/data/datasources/app_launch_local_datasource.dart';
+import 'package:tressy/features/app_launch/data/repositories/app_launch_repository_impl.dart';
+import 'package:tressy/features/app_launch/domain/repositories/app_launch_repository.dart';
+import 'package:tressy/features/app_launch/domain/usecases/check_launch_status_usecase.dart';
+import 'package:tressy/features/app_launch/domain/usecases/resolve_launch_area_usecase.dart';
+import 'package:tressy/features/app_launch/presentation/bloc/app_launch_bloc.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize dependencies
@@ -460,5 +468,29 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<AppointmentsRemoteDataSource>(
     () => AppointmentsRemoteDataSourceImpl(sl()),
+  );
+
+  // App Launch Feature
+  sl.registerFactory<AppLaunchBloc>(
+    () => AppLaunchBloc(
+      checkLaunchStatusUseCase: sl(),
+      resolveLaunchAreaUseCase: sl(),
+      repository: sl(),
+    ),
+  );
+  sl.registerLazySingleton<CheckLaunchStatusUseCase>(
+    () => CheckLaunchStatusUseCase(sl()),
+  );
+  sl.registerLazySingleton<ResolveLaunchAreaUseCase>(
+    () => ResolveLaunchAreaUseCase(sl()),
+  );
+  sl.registerLazySingleton<AppLaunchRepository>(
+    () => AppLaunchRepositoryImpl(
+      localDataSource: sl(),
+      connectivity: sl(),
+    ),
+  );
+  sl.registerLazySingleton<AppLaunchLocalDataSource>(
+    () => AppLaunchLocalDataSourceImpl(),
   );
 }

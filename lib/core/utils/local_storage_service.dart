@@ -12,6 +12,7 @@ class LocalStorageService {
   LocalStorageService._();
 
   static const String _keyOnboardingCompleted = 'onboarding_completed';
+  static const String _keyFirstOpenCompleted = 'first_open_completed';
   static const String _keyIsLoggedIn = 'is_logged_in';
   static const String _legacyAccessTokenKey = 'access_token';
   static const String _secureAccessTokenKey = 'access_token';
@@ -45,6 +46,14 @@ class LocalStorageService {
 
   static Future<void> setOnboardingCompleted(bool value) async {
     await _prefs.setBool(_keyOnboardingCompleted, value);
+  }
+
+  // First open launch
+  static bool get hasCompletedFirstOpen =>
+      _prefs.getBool(_keyFirstOpenCompleted) ?? false;
+
+  static Future<void> setFirstOpenCompleted(bool value) async {
+    await _prefs.setBool(_keyFirstOpenCompleted, value);
   }
 
   // Authentication
