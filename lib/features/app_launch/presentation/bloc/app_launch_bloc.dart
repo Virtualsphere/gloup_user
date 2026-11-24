@@ -13,15 +13,27 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
   final AppLaunchRepository repository;
   final int minAnimationMs;
 
+  /// How long to keep retrying the server check before giving up. The tick
+  /// timer shows the slow-network screen at 6 s and fails at 15 s (Figma
+  /// 01d / 01e), so this only needs to cover that window.
+  final Duration serverRetryWindow;
+  final Duration serverRetryInterval;
+
   Timer? _timer;
   int _seconds = 0;
   bool _bootstrapInProgress = false;
+
+  /// User tapped "Keep waiting": stay on the chair loader until success or the
+  /// 15 s failure instead of re-showing the slow-network screen.
+  bool _keepWaiting = false;
 
   AppLaunchBloc({
     required this.checkLaunchStatusUseCase,
     required this.resolveLaunchAreaUseCase,
     required this.repository,
     this.minAnimationMs = 1200,
+    this.serverRetryWindow = const Duration(seconds: 15),
+    this.serverRetryInterval = const Duration(seconds: 2),
   }) : super(AppLaunchState.initial()) {
     on<StartAppLaunchFlow>(_onStartAppLaunchFlow);
     on<ProceedFromFirstOpen>(_onProceedFromFirstOpen);
@@ -112,6 +124,7 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     Emitter<AppLaunchState> emit,
   ) async {
     _bootstrapInProgress = true;
+    _keepWaiting = false;
     _seconds = 0;
     emit(state.copyWith(
       phase: AppLaunchPhase.chairLoading,
@@ -138,8 +151,15 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
       return;
     }
 
-    // 2. Check backend server reachability
-    final serverOk = await repository.checkServerReachability();
+    // 2. Check backend server reachability, retrying a slow / flaky server
+    // until it answers or the 15 s tick timeout fails the launch.
+    var serverOk = await repository.checkServerReachability();
+    while (!serverOk &&
+        stopwatch.elapsed + serverRetryInterval < serverRetryWindow) {
+      await Future.delayed(serverRetryInterval);
+      if (isClosed || !_bootstrapInProgress) return;
+      serverOk = await repository.checkServerReachability();
+    }
 
     // Enforce smooth minimum animation duration
     final elapsedMs = stopwatch.elapsedMilliseconds;
@@ -222,7 +242,9 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     }
 
     // After 6 seconds -> Slow network
-    if (event.second >= 6 && state.phase == AppLaunchPhase.chairLoading) {
+    if (event.second >= 6 &&
+        !_keepWaiting &&
+        state.phase == AppLaunchPhase.chairLoading) {
       emit(state.copyWith(
         phase: AppLaunchPhase.slowNetwork,
         elapsedSeconds: event.second,
@@ -237,8 +259,11 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     KeepWaitingTriggered event,
     Emitter<AppLaunchState> emit,
   ) {
+    // Back to the chair loader; the bootstrap keeps running and the 15 s
+    // timeout still applies.
+    _keepWaiting = true;
     emit(state.copyWith(
-      phase: AppLaunchPhase.slowNetwork,
+      phase: AppLaunchPhase.chairLoading,
     ));
   }
 
@@ -283,4 +308,3 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     return super.close();
   }
 }
-

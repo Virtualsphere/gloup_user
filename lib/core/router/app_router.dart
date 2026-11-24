@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/analytics_route_observer.dart';
 import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/auth/presentation/pages/about_you_page.dart';
+import 'package:tressy/features/auth/presentation/pages/confirm_location_page.dart';
 import 'package:tressy/features/auth/presentation/pages/location_access_page.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
 import 'package:tressy/features/auth/presentation/pages/otp_page.dart';
@@ -128,6 +130,22 @@ class AppRouter {
       path: RouteNames.locationAccess,
       name: RouteNames.locationAccess,
       builder: (context, state) => const LocationAccessPage(),
+    ),
+    GoRoute(
+      path: RouteNames.confirmLocation,
+      name: RouteNames.confirmLocation,
+      builder: (context, state) {
+        // extra: {'latitude': double, 'longitude': double}; falls back to the
+        // stored app location (Chennai by default).
+        final extra = state.extra is Map ? state.extra as Map : const {};
+        final provider = context.read<LocationProvider>();
+        return ConfirmLocationPage(
+          latitude:
+              (extra['latitude'] as num?)?.toDouble() ?? provider.latitude,
+          longitude:
+              (extra['longitude'] as num?)?.toDouble() ?? provider.longitude,
+        );
+      },
     ),
 
     // Main app with bottom navigation

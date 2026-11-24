@@ -11,7 +11,7 @@ class AppLaunchState extends Equatable {
 
   const AppLaunchState({
     required this.phase,
-    this.localityName = 'Anna Nagar',
+    this.localityName = '',
     this.elapsedSeconds = 0,
     this.errorMessage,
     this.errorCode,
@@ -21,7 +21,7 @@ class AppLaunchState extends Equatable {
   factory AppLaunchState.initial() {
     return const AppLaunchState(
       phase: AppLaunchPhase.chairLoading,
-      localityName: 'Anna Nagar',
+      localityName: '',
       elapsedSeconds: 0,
       isOfflineReady: true,
     );
@@ -55,4 +55,3 @@ class AppLaunchState extends Equatable {
         isOfflineReady,
       ];
 }
-

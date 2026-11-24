@@ -249,8 +249,11 @@ class FirebaseNotificationService {
   }
 
   static Future<void> initialize() async {
-    // Request notification permission
-    await requestPermission();
+    // First-time users get the in-app soft prompt on the home screen
+    // (NotificationPermissionSheet) before the OS dialog.
+    if (LocalStorageService.getBool(_permissionPromptShownKey) ?? false) {
+      await requestPermission();
+    }
 
     // Register background handler
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -321,6 +324,28 @@ class FirebaseNotificationService {
       await _fetchFCMTokenWithRetry();
     }
   }
+
+  static const String _permissionPromptShownKey =
+      'notification_permission_prompt_shown';
+
+  /// Whether the in-app notification soft prompt should be shown: never shown
+  /// before and notifications aren't already allowed.
+  static Future<bool> shouldShowPermissionPrompt() async {
+    if (LocalStorageService.getBool(_permissionPromptShownKey) ?? false) {
+      return false;
+    }
+    final settings = await _messaging.getNotificationSettings();
+    final status = settings.authorizationStatus;
+    if (status == AuthorizationStatus.authorized ||
+        status == AuthorizationStatus.provisional) {
+      await markPermissionPromptShown();
+      return false;
+    }
+    return true;
+  }
+
+  static Future<void> markPermissionPromptShown() =>
+      LocalStorageService.setBool(_permissionPromptShownKey, true);
 
   /// Requests notification permission (call from home screen, not at startup).
   static Future<bool> requestPermission() async {

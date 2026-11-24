@@ -5,12 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_images.dart';
-import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/user_location_sync_service.dart';
-import 'package:tressy/features/location/presentation/pages/location_page.dart';
 
 class LocationAccessPage extends StatefulWidget {
   const LocationAccessPage({super.key});
@@ -29,6 +26,7 @@ class _LocationAccessPageState extends State<LocationAccessPage> {
       _isLoading = true;
     });
 
+    Position? position;
     try {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -38,90 +36,47 @@ class _LocationAccessPageState extends State<LocationAccessPage> {
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         try {
-          Position? position;
-          try {
-            position = await Geolocator.getLastKnownPosition();
-          } catch (_) {}
+          position = await Geolocator.getLastKnownPosition();
+        } catch (_) {}
 
-          position ??= await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.medium,
-              timeLimit: Duration(seconds: 5),
-            ),
-          );
-
-          if (mounted) {
-            try {
-              final locationProvider = context.read<LocationProvider?>();
-              await locationProvider?.updateLocation(
-                latitude: position.latitude,
-                longitude: position.longitude,
-                silent: true,
-              );
-            } catch (_) {}
-          }
-
-          unawaited(UserLocationSyncService.instance.reportOpenOrLogin());
-        } catch (e) {
-          debugPrint('[LocationAccessPage] GPS read error: $e');
-        }
+        position ??= await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 5),
+          ),
+        );
+        unawaited(UserLocationSyncService.instance.reportOpenOrLogin());
       }
     } catch (e) {
-      debugPrint('[LocationAccessPage] Permission error: $e');
+      debugPrint('[LocationAccessPage] Location error: $e');
     } finally {
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        _navigateToHome();
       }
+    }
+
+    // Granted -> confirm the GPS spot; denied / failed -> confirm manually
+    // starting from the stored app location (Figma 21, node 58-2).
+    if (mounted) {
+      _goToConfirmLocation(position?.latitude, position?.longitude);
     }
   }
 
-  Future<void> _handleEnterManually() async {
+  void _handleEnterManually() {
     if (_isLoading) return;
-
-    try {
-      final result = await Navigator.push<Map<String, dynamic>>(
-        context,
-        MaterialPageRoute(builder: (context) => const LocationPage()),
-      );
-
-      if (result != null && mounted) {
-        final lat = (result['latitude'] as num?)?.toDouble();
-        final lng = (result['longitude'] as num?)?.toDouble();
-        final city = result['city'] as String?;
-        final area = result['area'] as String?;
-
-        if (lat != null && lng != null) {
-          try {
-            final locationProvider = context.read<LocationProvider?>();
-            await locationProvider?.updateLocation(
-              latitude: lat,
-              longitude: lng,
-              city: city,
-              area: area,
-            );
-          } catch (_) {}
-        }
-      }
-    } catch (e) {
-      debugPrint('[LocationAccessPage] Manual location error: $e');
-    } finally {
-      if (mounted) {
-        _navigateToHome();
-      }
-    }
+    _goToConfirmLocation(null, null);
   }
 
-  void _navigateToHome() {
-    try {
-      context.go(RouteNames.home);
-    } catch (_) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    }
+  void _goToConfirmLocation(double? latitude, double? longitude) {
+    context.push(
+      RouteNames.confirmLocation,
+      extra: {
+        if (latitude != null) 'latitude': latitude,
+        if (longitude != null) 'longitude': longitude,
+      },
+    );
   }
 
   @override

@@ -8,19 +8,42 @@ import 'package:http/http.dart' as http;
 import 'package:tressy/core/constants/api_routes.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/utils/app_logger.dart';
+import 'package:tressy/features/location/data/saved_address.dart';
+import 'package:tressy/features/location/presentation/pages/add_address_page.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/location_required_dialog.dart';
+import 'package:tressy/shared/widgets/permission_bottom_sheet.dart';
+
+/// Why "Use current location" is unavailable (Figma 21d).
+enum _LocationIssue {
+  none,
+  serviceOff,
+  lookupFailed,
+  permissionDenied,
+  permissionBlocked,
+}
 
 class LocationPage extends StatefulWidget {
-  const LocationPage({super.key});
+  /// Hide "Add address" and saved addresses (used when picking an area from
+  /// the add-address screen itself).
+  final bool showSavedAddresses;
+
+  const LocationPage({super.key, this.showSavedAddresses = true});
 
   @override
   State<LocationPage> createState() => _LocationPageState();
 }
 
-class _LocationPageState extends State<LocationPage> {
+class _LocationPageState extends State<LocationPage>
+    with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   bool _isLoadingLocation = false;
+  _LocationIssue _issue = _LocationIssue.none;
   String _currentCity = '';
   String _currentArea = '';
   String _currentFullAddress = '';
@@ -29,6 +52,8 @@ class _LocationPageState extends State<LocationPage> {
 
   // Nearby locations
   List<Map<String, dynamic>> _nearbyLocations = [];
+
+  List<SavedAddress> _savedAddresses = [];
 
   // Autocomplete predictions
   List<Map<String, dynamic>> _predictions = [];
@@ -47,6 +72,10 @@ class _LocationPageState extends State<LocationPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (widget.showSavedAddresses) {
+      _savedAddresses = SavedAddressStore.load();
+    }
     _getCurrentLocation();
     _searchController.addListener(() {
       setState(() {});
@@ -55,49 +84,66 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _debounceTimer?.cancel();
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
-  Future<void> _getCurrentLocation() async {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-check after the user returns from device / app settings.
+    if (state == AppLifecycleState.resumed &&
+        (_issue == _LocationIssue.serviceOff ||
+            _issue == _LocationIssue.permissionBlocked)) {
+      _getCurrentLocation(requestIfDenied: false);
+    }
+  }
+
+  void _setIssue(_LocationIssue issue) {
+    if (!mounted) return;
+    setState(() {
+      _issue = issue;
+      _isLoadingLocation = false;
+    });
+  }
+
+  Future<void> _getCurrentLocation({bool requestIfDenied = true}) async {
     setState(() {
       _isLoadingLocation = true;
+      _issue = _LocationIssue.none;
     });
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
+        _setIssue(_LocationIssue.serviceOff);
         return;
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
+      if (permission == LocationPermission.denied && requestIfDenied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          setState(() {
-            _isLoadingLocation = false;
-          });
-          return;
-        }
+      }
+      if (permission == LocationPermission.denied) {
+        _setIssue(_LocationIssue.permissionDenied);
+        return;
       }
 
       if (permission == LocationPermission.deniedForever) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
+        _setIssue(_LocationIssue.permissionBlocked);
         return;
       }
 
       Position position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
         ),
       );
 
+      if (!mounted) return;
       setState(() {
         _currentLatitude = position.latitude;
         _currentLongitude = position.longitude;
@@ -130,6 +176,7 @@ class _LocationPageState extends State<LocationPage> {
             fullAddress += ' - ${place.postalCode!}';
           }
 
+          if (!mounted) return;
           setState(() {
             _currentCity =
                 place.locality ?? place.administrativeArea ?? 'Unknown';
@@ -141,19 +188,13 @@ class _LocationPageState extends State<LocationPage> {
 
           _loadNearbyLocations(position.latitude, position.longitude);
         } else {
-          setState(() {
-            _isLoadingLocation = false;
-          });
+          _setIssue(_LocationIssue.lookupFailed);
         }
       } catch (e) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
+        _setIssue(_LocationIssue.lookupFailed);
       }
     } catch (e) {
-      setState(() {
-        _isLoadingLocation = false;
-      });
+      _setIssue(_LocationIssue.lookupFailed);
     }
   }
 
@@ -269,6 +310,7 @@ class _LocationPageState extends State<LocationPage> {
                 : ', ${place.administrativeArea!}';
           }
 
+          if (!mounted) return;
           setState(() {
             _nearbyLocations[i]['name'] = place.subLocality ??
                 place.locality ??
@@ -393,143 +435,178 @@ class _LocationPageState extends State<LocationPage> {
     return parts.first.trim();
   }
 
-  Widget _buildPredictionCard(
-      BuildContext context, Map<String, dynamic> prediction, bool isDarkMode) {
-    final description = prediction['description'] as String? ?? '';
-    final mainText =
-        (prediction['structured_formatting']?['main_text'] as String?) ??
-            _extractMainName(description);
+  void _useCurrentLocation() {
+    if (_isLoadingLocation ||
+        _currentLatitude == null ||
+        _currentLongitude == null) {
+      return;
+    }
+    Navigator.pop(context, {
+      'city': _currentCity,
+      'area': _currentArea,
+      'latitude': _currentLatitude,
+      'longitude': _currentLongitude,
+    });
+  }
 
-    return Container(
-      padding: EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(
-          color: isDarkMode ? AppColors.borderDark : AppColors.border,
-          width: 1,
+  Future<void> _openAddressEditor([SavedAddress? existing]) async {
+    final provider = context.read<LocationProvider>();
+    final saved = await Navigator.push<SavedAddress>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddAddressPage(
+          existing: existing,
+          initialLatitude: _currentLatitude ?? provider.latitude,
+          initialLongitude: _currentLongitude ?? provider.longitude,
         ),
       ),
-      child: Row(
+    );
+    if (saved != null && mounted) {
+      setState(() => _savedAddresses = SavedAddressStore.load());
+    }
+  }
+
+  /// "Pin on map" (Figma 21d): pick a spot on the map and return it.
+  Future<void> _pinOnMap() async {
+    final provider = context.read<LocationProvider>();
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddAddressPage(
+          pickOnly: true,
+          initialLatitude: _currentLatitude ?? provider.latitude,
+          initialLongitude: _currentLongitude ?? provider.longitude,
+        ),
+      ),
+    );
+    if (result is Map<String, dynamic> && mounted) {
+      Navigator.pop(context, result);
+    }
+  }
+
+  Future<void> _deleteAddress(SavedAddress address) async {
+    final list = await SavedAddressStore.remove(address.id);
+    if (!mounted) return;
+    setState(() => _savedAddresses = list);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text('${address.title} address deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () async {
+            final restored = await SavedAddressStore.upsert(address);
+            if (mounted) setState(() => _savedAddresses = restored);
+          },
+        ),
+      ));
+  }
+
+  Future<void> _shareAddress(SavedAddress address) async {
+    final mapsUrl = 'https://maps.google.com/?q='
+        '${address.latitude},${address.longitude}';
+    await SharePlus.instance.share(ShareParams(
+      text: '${address.title}\n${address.fullLine}\n$mapsUrl',
+    ));
+  }
+
+  Future<void> _openBlockedPermissionSheet() async {
+    final openSettings = await LocationRequiredDialog.show(
+      context,
+      type: LocationRequiredDialogType.permissionDeniedForever,
+    );
+    if (openSettings == true) {
+      await Geolocator.openAppSettings();
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // UI (Figma 21b "Select location" / 21d "GPS off & lookup failed")
+  // ---------------------------------------------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.theme.brightness == Brightness.dark;
+    final isSearching = _searchController.text.isNotEmpty;
+
+    return Scaffold(
+      backgroundColor: PermissionColors.page(isDark),
+      body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(AppSizes.paddingS),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.surfaceDark.withValues(alpha: 0.5)
-                  : AppColors.surface.withValues(alpha: 0.8),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isDarkMode ? AppColors.borderDark : AppColors.border,
-              ),
-            ),
-            child: Icon(
-              Icons.location_on,
-              color: isDarkMode
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
-              size: 20,
-            ),
-          ),
-          SizedBox(width: AppSizes.spaceM),
+          _buildHeader(isDark),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  mainText,
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                AppSizes.padding,
+                AppSizes.padding,
+                AppSizes.padding,
+                AppSizes.padding + MediaQuery.of(context).padding.bottom,
+              ),
+              children: isSearching
+                  ? _buildSearchResults(isDark)
+                  : _buildDefaultContent(isDark),
             ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: isDarkMode
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-    final isSearching = _searchController.text.isNotEmpty;
+  Widget _buildHeader(bool isDark) {
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final border = isDark ? AppColors.borderDark : AppColors.border;
 
-    return Scaffold(
-      backgroundColor: context.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: context.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color:
-                isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimary,
-          ),
-        ),
-        title: Text(
-          'Select Location',
-          style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        shape: Border(
-          bottom: BorderSide(
-            color: isDarkMode ? AppColors.borderDark : AppColors.border,
-            width: AppSizes.borderWidthThin,
-          ),
-        ),
+    return Container(
+      color: isDark ? AppColors.surfaceDark : AppColors.surface,
+      padding: EdgeInsets.fromLTRB(
+        AppSizes.paddingS,
+        MediaQuery.of(context).padding.top + AppSizes.paddingS,
+        AppSizes.padding,
+        AppSizes.paddingM,
       ),
-      body: Column(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search Field
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.keyboard_arrow_down_rounded,
+                    color: textPrimary, size: 28),
+                tooltip: 'Close',
+              ),
+              Expanded(
+                child: Text(
+                  'Select a location',
+                  style: context.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppSizes.spaceS),
           Padding(
-            padding: EdgeInsets.all(AppSizes.paddingL),
+            padding: EdgeInsets.only(left: AppSizes.paddingS),
             child: TextField(
               controller: _searchController,
+              focusNode: _searchFocusNode,
               onChanged: _onSearchChanged,
+              textInputAction: TextInputAction.search,
+              style: context.textTheme.bodyMedium?.copyWith(color: textPrimary),
               decoration: InputDecoration(
-                hintText: 'Search for area, street name...',
+                hintText: 'Search area, street or locality',
                 hintStyle: context.textTheme.bodyMedium?.copyWith(
-                  color:
-                      isDarkMode ? AppColors.textHintDark : AppColors.textHint,
+                  color: isDark ? AppColors.textHintDark : AppColors.textHint,
                 ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                ),
-                suffixIcon: isSearching
+                prefixIcon: Icon(Icons.search, color: textSecondary, size: 20),
+                suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
-                        ),
+                        icon: Icon(Icons.close, color: textSecondary, size: 20),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {
@@ -538,289 +615,745 @@ class _LocationPageState extends State<LocationPage> {
                         },
                       )
                     : null,
+                isDense: true,
                 filled: true,
-                fillColor: isDarkMode
-                    ? AppColors.surfaceDark
-                    : AppColors.surface.withValues(alpha: 0.5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  borderSide: BorderSide(
-                    color: isDarkMode ? AppColors.borderDark : AppColors.border,
-                    width: AppSizes.borderWidthThin,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  borderSide: BorderSide(
-                    color: context.onSurfaceEmphasis,
-                    width: 2,
-                  ),
-                ),
+                fillColor: isDark ? AppColors.surfaceDark : AppColors.surface,
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingM,
                   vertical: AppSizes.paddingM,
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                  borderSide: BorderSide(color: border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                  borderSide: BorderSide(color: textPrimary, width: 1.5),
+                ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          // Search results
-          if (isSearching) ...[
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-                itemCount: _predictions.length + 1,
-                separatorBuilder: (_, __) => SizedBox(height: AppSizes.spaceS),
-                itemBuilder: (context, index) {
-                  // First item: "Use current location"
-                  if (index == 0) {
-                    return InkWell(
-                      onTap: _isLoadingLocation
-                          ? null
-                          : () {
-                              if (_currentLatitude != null &&
-                                  _currentLongitude != null) {
-                                Navigator.pop(context, {
-                                  'city': _currentCity,
-                                  'area': _currentArea,
-                                  'latitude': _currentLatitude,
-                                  'longitude': _currentLongitude,
-                                });
-                              }
-                            },
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                      child: _buildCurrentLocationCard(context, isDarkMode),
-                    );
-                  }
+  List<Widget> _buildDefaultContent(bool isDark) {
+    return [
+      if (_issue == _LocationIssue.none)
+        _Card(
+          isDark: isDark,
+          child: Column(
+            children: [
+              _buildCurrentLocationRow(isDark),
+              if (widget.showSavedAddresses) ...[
+                _divider(isDark),
+                _buildAddAddressRow(isDark),
+              ],
+            ],
+          ),
+        )
+      else ...[
+        _buildIssueCard(isDark),
+        if (widget.showSavedAddresses) ...[
+          SizedBox(height: AppSizes.spaceM),
+          _Card(isDark: isDark, child: _buildAddAddressRow(isDark)),
+        ],
+      ],
+      if (_savedAddresses.isNotEmpty) ...[
+        SizedBox(height: AppSizes.spaceL),
+        _SectionLabel(text: 'Saved addresses', isDark: isDark),
+        SizedBox(height: AppSizes.spaceS),
+        for (final address in _savedAddresses) ...[
+          _buildSavedAddressCard(address, isDark),
+          SizedBox(height: AppSizes.spaceS),
+        ],
+      ],
+      if (_nearbyLocations.isNotEmpty) ...[
+        SizedBox(height: AppSizes.spaceL),
+        _SectionLabel(text: 'Nearby localities', isDark: isDark),
+        SizedBox(height: AppSizes.spaceS),
+        _Card(
+          isDark: isDark,
+          child: Column(
+            children: [
+              for (var i = 0; i < _nearbyLocations.length; i++) ...[
+                if (i > 0) _divider(isDark),
+                _buildLocalityRow(_nearbyLocations[i], isDark),
+              ],
+            ],
+          ),
+        ),
+      ],
+    ];
+  }
 
-                  final prediction = _predictions[index - 1];
-                  return InkWell(
-                    onTap: () => _handlePredictionTap(prediction),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                    child:
-                        _buildPredictionCard(context, prediction, isDarkMode),
-                  );
-                },
-              ),
-            ),
-          ] else ...[
-            // Current Location Card
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-              child: InkWell(
-                onTap: _isLoadingLocation
-                    ? null
-                    : () {
-                        if (_currentLatitude != null &&
-                            _currentLongitude != null) {
-                          Navigator.pop(context, {
-                            'city': _currentCity,
-                            'area': _currentArea,
-                            'latitude': _currentLatitude,
-                            'longitude': _currentLongitude,
-                          });
-                        }
-                      },
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                child: _buildCurrentLocationCard(context, isDarkMode),
-              ),
-            ),
-
-            SizedBox(height: AppSizes.spaceL),
-
-            // Nearby Locations
-            if (_nearbyLocations.isNotEmpty) ...[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-                child: Text(
-                  'Nearby Locations',
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: AppSizes.spaceM),
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingL),
-                  itemCount: _nearbyLocations.length,
-                  itemBuilder: (context, index) {
-                    final location = _nearbyLocations[index];
-                    return _buildLocationCard(context, location, isDarkMode);
-                  },
-                ),
-              ),
+  List<Widget> _buildSearchResults(bool isDark) {
+    return [
+      _Card(
+        isDark: isDark,
+        child: Column(
+          children: [
+            if (_issue == _LocationIssue.none) ...[
+              _buildCurrentLocationRow(isDark),
+              if (_predictions.isNotEmpty) _divider(isDark),
+            ],
+            for (var i = 0; i < _predictions.length; i++) ...[
+              if (i > 0) _divider(isDark),
+              _buildPredictionRow(_predictions[i], isDark),
             ],
           ],
-        ],
+        ),
       ),
+    ];
+  }
+
+  Widget _buildAddAddressRow(bool isDark) {
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    return _Row(
+      isDark: isDark,
+      onTap: () => _openAddressEditor(),
+      leading: _IconTile(
+        icon: Icons.add,
+        color: textPrimary,
+        background: PermissionColors.page(isDark),
+      ),
+      title: 'Add address',
     );
   }
 
-  Widget _buildCurrentLocationCard(BuildContext context, bool isDarkMode) {
+  Widget _buildSavedAddressCard(SavedAddress address, bool isDark) {
+    final provider = context.read<LocationProvider>();
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+
+    final isSelected = Geolocator.distanceBetween(
+          provider.latitude,
+          provider.longitude,
+          address.latitude,
+          address.longitude,
+        ) <
+        50;
+    final switchesCity = address.city.isNotEmpty &&
+        provider.city.isNotEmpty &&
+        address.city.toLowerCase() != provider.city.toLowerCase();
+
+    String? distance;
+    if (_currentLatitude != null && _currentLongitude != null) {
+      final km = Geolocator.distanceBetween(
+            _currentLatitude!,
+            _currentLongitude!,
+            address.latitude,
+            address.longitude,
+          ) /
+          1000;
+      distance = km < 10 ? '${km.toStringAsFixed(1)} km' : '${km.round()} km';
+    }
+
+    final icon = switch (address.label) {
+      SavedAddressLabel.home => Icons.home_outlined,
+      SavedAddressLabel.work => Icons.work_outline,
+      SavedAddressLabel.other => Icons.location_on_outlined,
+    };
+
     return Container(
-      padding: EdgeInsets.all(AppSizes.paddingL),
       decoration: BoxDecoration(
-        color: context.onSurfaceEmphasis,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        color: isDark ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.radius),
+        border: isSelected
+            ? Border.all(color: textPrimary, width: 1.2)
+            : Border.all(color: Colors.transparent, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
-        children: [
-          const Icon(Icons.my_location, color: Colors.white, size: 24),
-          SizedBox(width: AppSizes.spaceM),
-          Expanded(
-            child: Column(
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => Navigator.pop(context, address.toLocationResult()),
+          child: Padding(
+            padding: EdgeInsets.all(AppSizes.paddingM),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Use current location',
-                  style: context.textTheme.titleSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                if (_isLoadingLocation)
-                  Text(
-                    'Getting your location...',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                  )
-                else if (_currentFullAddress.isNotEmpty)
-                  Text(
-                    _currentFullAddress,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
-            ),
-          ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationCard(
-    BuildContext context,
-    Map<String, dynamic> location,
-    bool isDarkMode, {
-    VoidCallback? onTap,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppSizes.spaceM),
-      child: InkWell(
-        onTap: onTap ??
-            () {
-              Navigator.pop(context, {
-                'city': location['name'],
-                'area': location['area'] ?? '',
-                'latitude': location['latitude'],
-                'longitude': location['longitude'],
-              });
-            },
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        child: Container(
-          padding: EdgeInsets.all(AppSizes.paddingM),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            border: Border.all(
-              color: isDarkMode ? AppColors.borderDark : AppColors.border,
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(AppSizes.paddingS),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.surfaceDark.withValues(alpha: 0.5)
-                      : AppColors.surface.withValues(alpha: 0.8),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color:
-                          isDarkMode ? AppColors.borderDark : AppColors.border),
-                ),
-                child: Icon(
-                  Icons.location_on,
-                  color: isDarkMode
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  size: 20,
-                ),
-              ),
-              SizedBox(width: AppSizes.spaceM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      location['name'] ?? '',
-                      style: context.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    if (location['fullAddress'] != null) ...[
-                      Text(
-                        location['fullAddress'],
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
+                SizedBox(
+                  width: 36,
+                  child: Column(
+                    children: [
+                      Icon(icon, size: 20, color: textPrimary),
+                      if (distance != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          distance,
+                          textAlign: TextAlign.center,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: textSecondary,
+                          ),
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      ],
                     ],
-                    if (location['distance'] != null) ...[
-                      if (location['fullAddress'] != null)
-                        const SizedBox(height: 2),
+                  ),
+                ),
+                SizedBox(width: AppSizes.spaceS),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.navigation,
-                            size: 12,
-                            color: isDarkMode
-                                ? AppColors.primaryDark
-                                : AppColors.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            location['distance'],
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: isDarkMode
-                                  ? AppColors.primaryDark
-                                  : AppColors.primary,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              address.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: textPrimary,
+                              ),
                             ),
+                          ),
+                          if (isSelected) ...[
+                            SizedBox(width: AppSizes.spaceS),
+                            const _SelectedBadge(),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        address.fullLine,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: textSecondary,
+                        ),
+                      ),
+                      if (distance == null &&
+                          _issue != _LocationIssue.none) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          'Distance unavailable while location is off',
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: isDark
+                                ? AppColors.textHintDark
+                                : AppColors.textHint,
+                          ),
+                        ),
+                      ],
+                      if (switchesCity) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          'Switches city to ${address.city}',
+                          style: context.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: PermissionColors.accent(isDark),
+                          ),
+                        ),
+                      ],
+                      SizedBox(height: AppSizes.spaceS),
+                      Wrap(
+                        spacing: AppSizes.spaceS,
+                        runSpacing: AppSizes.spaceXS,
+                        children: [
+                          _PillButton(
+                            label: 'Edit',
+                            onTap: () => _openAddressEditor(address),
+                          ),
+                          _PillButton(
+                            label: 'Share',
+                            icon: Icons.share_outlined,
+                            onTap: () => _shareAddress(address),
+                          ),
+                          _PillButton(
+                            label: 'Delete',
+                            onTap: () => _deleteAddress(address),
                           ),
                         ],
                       ),
                     ],
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _divider(bool isDark) => Divider(
+        height: 1,
+        thickness: 1,
+        indent: AppSizes.padding,
+        endIndent: AppSizes.padding,
+        color: isDark ? AppColors.borderDark : AppColors.border,
+      );
+
+  Widget _buildCurrentLocationRow(bool isDark) {
+    final accent = PermissionColors.accent(isDark);
+    final String subtitle;
+    if (_isLoadingLocation) {
+      subtitle = 'Getting your location...';
+    } else {
+      subtitle = _currentFullAddress;
+    }
+
+    return _Row(
+      isDark: isDark,
+      onTap: _isLoadingLocation ? null : _useCurrentLocation,
+      leading: _IconTile(
+        icon: Icons.near_me_outlined,
+        color: accent,
+        background: accent.withValues(alpha: 0.1),
+      ),
+      title: 'Use current location',
+      titleColor: accent,
+      subtitle: subtitle.isEmpty ? null : subtitle,
+      trailing: _isLoadingLocation
+          ? SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildLocalityRow(Map<String, dynamic> location, bool isDark) {
+    return _Row(
+      isDark: isDark,
+      onTap: () {
+        Navigator.pop(context, {
+          'city': location['name'],
+          'area': location['area'] ?? '',
+          'latitude': location['latitude'],
+          'longitude': location['longitude'],
+        });
+      },
+      leading: Icon(
+        Icons.location_on_outlined,
+        size: 20,
+        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+      ),
+      title: location['name']?.toString() ?? '',
+      subtitle: location['distance']?.toString(),
+      showChevron: false,
+    );
+  }
+
+  Widget _buildPredictionRow(Map<String, dynamic> prediction, bool isDark) {
+    final description = prediction['description'] as String? ?? '';
+    final mainText =
+        (prediction['structured_formatting']?['main_text'] as String?) ??
+            _extractMainName(description);
+
+    return _Row(
+      isDark: isDark,
+      onTap: () => _handlePredictionTap(prediction),
+      leading: Icon(
+        Icons.location_on_outlined,
+        size: 20,
+        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+      ),
+      title: mainText,
+      subtitle: description,
+    );
+  }
+
+  Widget _buildIssueCard(bool isDark) {
+    switch (_issue) {
+      case _LocationIssue.serviceOff:
+        return _IssueCard(
+          isDark: isDark,
+          icon: Icons.near_me_outlined,
+          iconColor: const Color(0xFFD97706),
+          title: 'Device location is off',
+          message: 'Turn on GPS to use your current location',
+          primaryLabel: 'Turn on GPS',
+          onPrimary: Geolocator.openLocationSettings,
+          secondaryLabel: 'Search instead',
+          onSecondary: _searchFocusNode.requestFocus,
+        );
+      case _LocationIssue.lookupFailed:
+        return _IssueCard(
+          isDark: isDark,
+          icon: Icons.location_on_outlined,
+          iconColor: const Color(0xFFE11D48),
+          title: "Couldn't find your address",
+          message: 'GPS is on, but the lookup timed out (weak signal).',
+          primaryLabel: 'Retry',
+          onPrimary: _getCurrentLocation,
+          primaryOutlined: true,
+          secondaryLabel: 'Pin on map',
+          onSecondary: _pinOnMap,
+        );
+      case _LocationIssue.permissionDenied:
+      case _LocationIssue.permissionBlocked:
+        return _IssueCard(
+          isDark: isDark,
+          icon: Icons.shield_outlined,
+          iconColor:
+              isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+          title: 'Location permission denied',
+          message: _savedAddresses.isNotEmpty
+              ? 'You can still pick a saved address or search.'
+              : 'You can still search for your area.',
+          inlineActionLabel: 'Allow',
+          onInlineAction: _issue == _LocationIssue.permissionBlocked
+              ? _openBlockedPermissionSheet
+              : _getCurrentLocation,
+        );
+      case _LocationIssue.none:
+        return const SizedBox.shrink();
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Building blocks
+// -----------------------------------------------------------------------------
+
+class _Card extends StatelessWidget {
+  final bool isDark;
+  final Widget child;
+
+  const _Card({required this.isDark, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.radius),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    );
+  }
+}
+
+class _SelectedBadge extends StatelessWidget {
+  const _SelectedBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.success.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppSizes.radiusXS),
+      ),
+      child: Text(
+        'Selected',
+        style: context.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: AppColors.success,
+        ),
+      ),
+    );
+  }
+}
+
+class _PillButton extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final VoidCallback onTap;
+
+  const _PillButton({required this.label, this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.theme.brightness == Brightness.dark;
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.radiusS),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingM,
+          vertical: AppSizes.paddingXS + 2,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppSizes.radiusS),
+          border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.border,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 14, color: textPrimary),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              label,
+              style: context.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: textPrimary,
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: isDarkMode
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  final bool isDark;
+
+  const _SectionLabel({required this.text, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: context.textTheme.labelSmall?.copyWith(
+        letterSpacing: 0.8,
+        fontWeight: FontWeight.w600,
+        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+      ),
+    );
+  }
+}
+
+class _IconTile extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final Color background;
+
+  const _IconTile({
+    required this.icon,
+    required this.color,
+    required this.background,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(AppSizes.radiusS),
+      ),
+      child: Icon(icon, size: 18, color: color),
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback? onTap;
+  final Widget leading;
+  final String title;
+  final Color? titleColor;
+  final String? subtitle;
+  final Widget? trailing;
+  final bool showChevron;
+
+  const _Row({
+    required this.isDark,
+    required this.onTap,
+    required this.leading,
+    required this.title,
+    this.titleColor,
+    this.subtitle,
+    this.trailing,
+    this.showChevron = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSizes.padding,
+          vertical: AppSizes.paddingM,
+        ),
+        child: Row(
+          children: [
+            leading,
+            SizedBox(width: AppSizes.spaceM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: titleColor ?? textPrimary,
+                    ),
+                  ),
+                  if (subtitle != null && subtitle!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) ...[
+              SizedBox(width: AppSizes.spaceS),
+              trailing!,
+            ] else if (showChevron) ...[
+              SizedBox(width: AppSizes.spaceS),
+              Icon(Icons.chevron_right, size: 20, color: textSecondary),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A problem card with either two buttons or an inline text action (Figma 21d).
+class _IssueCard extends StatelessWidget {
+  final bool isDark;
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String message;
+  final String? primaryLabel;
+  final VoidCallback? onPrimary;
+  final bool primaryOutlined;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
+  final String? inlineActionLabel;
+  final VoidCallback? onInlineAction;
+
+  const _IssueCard({
+    required this.isDark,
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.message,
+    this.primaryLabel,
+    this.onPrimary,
+    this.primaryOutlined = false,
+    this.secondaryLabel,
+    this.onSecondary,
+    this.inlineActionLabel,
+    this.onInlineAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textPrimary =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+
+    return _Card(
+      isDark: isDark,
+      child: Padding(
+        padding: EdgeInsets.all(AppSizes.paddingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                _IconTile(
+                  icon: icon,
+                  color: iconColor,
+                  background: iconColor.withValues(alpha: 0.12),
+                ),
+                SizedBox(width: AppSizes.spaceM),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: context.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        message,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (inlineActionLabel != null)
+                  TextButton(
+                    onPressed: onInlineAction,
+                    child: Text(
+                      inlineActionLabel!,
+                      style: context.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: PermissionColors.accent(isDark),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            if (primaryLabel != null && secondaryLabel != null) ...[
+              SizedBox(height: AppSizes.spaceM),
+              Row(
+                children: [
+                  Expanded(
+                    child: primaryOutlined
+                        ? PermissionSecondaryButton(
+                            label: primaryLabel!,
+                            onPressed: onPrimary,
+                            height: 40,
+                          )
+                        : PermissionPrimaryButton(
+                            label: primaryLabel!,
+                            onPressed: onPrimary,
+                            height: 40,
+                          ),
+                  ),
+                  SizedBox(width: AppSizes.spaceS),
+                  Expanded(
+                    child: PermissionSecondaryButton(
+                      label: secondaryLabel!,
+                      onPressed: onSecondary,
+                      height: 40,
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
+          ],
         ),
       ),
     );

@@ -34,6 +34,7 @@ void main() {
       resolveLaunchAreaUseCase: mockResolveLaunchAreaUseCase,
       repository: mockRepo,
       minAnimationMs: 0, // 0 for fast deterministic tests
+      serverRetryWindow: Duration.zero, // no server retries by default
     );
   });
 
@@ -43,7 +44,7 @@ void main() {
 
   test('initial state has chairLoading phase and default locality', () {
     expect(bloc.state.phase, AppLaunchPhase.chairLoading);
-    expect(bloc.state.localityName, 'Anna Nagar');
+    expect(bloc.state.localityName, '');
   });
 
   group('Forced preview states', () {
@@ -155,6 +156,45 @@ void main() {
               s.phase == AppLaunchPhase.failure &&
               s.errorCode == "Error GL-503 · server didn't respond"),
         ]),
+      );
+    });
+
+    test('server retries until it answers, then completes', () async {
+      var calls = 0;
+      when(() => mockRepo.checkServerReachability())
+          .thenAnswer((_) async => ++calls >= 3);
+      final retryBloc = AppLaunchBloc(
+        checkLaunchStatusUseCase: mockCheckLaunchStatusUseCase,
+        resolveLaunchAreaUseCase: mockResolveLaunchAreaUseCase,
+        repository: mockRepo,
+        minAnimationMs: 0,
+        serverRetryWindow: const Duration(seconds: 5),
+        serverRetryInterval: const Duration(milliseconds: 10),
+      );
+      addTearDown(retryBloc.close);
+
+      retryBloc.add(const StartAppLaunchFlow());
+      await expectLater(
+        retryBloc.stream,
+        emitsInOrder([
+          predicate<AppLaunchState>((s) => s.phase == AppLaunchPhase.chairLoading),
+          predicate<AppLaunchState>((s) => s.phase == AppLaunchPhase.homeSkeleton),
+          predicate<AppLaunchState>((s) => s.phase == AppLaunchPhase.completed),
+        ]),
+      );
+      expect(calls, 3);
+    });
+
+    test('KeepWaitingTriggered returns to the chair loader', () async {
+      bloc.add(const StartAppLaunchFlow(forceSlowNetwork: true));
+      await expectLater(
+        bloc.stream,
+        emits(predicate<AppLaunchState>((s) => s.phase == AppLaunchPhase.slowNetwork)),
+      );
+      bloc.add(const KeepWaitingTriggered());
+      await expectLater(
+        bloc.stream,
+        emits(predicate<AppLaunchState>((s) => s.phase == AppLaunchPhase.chairLoading)),
       );
     });
 

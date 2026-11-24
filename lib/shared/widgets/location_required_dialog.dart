@@ -1,33 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/permission_bottom_sheet.dart';
 
 enum LocationRequiredDialogType {
   serviceDisabled,
   permissionDeniedForever,
 }
 
+/// Sheet asking the user to fix location in system settings.
+///
+/// - [LocationRequiredDialogType.serviceDisabled]: device GPS is off.
+/// - [LocationRequiredDialogType.permissionDeniedForever]: Figma 39
+///   "Permission — location blocked (open settings)".
+///
+/// Resolves to `true` when the user taps the settings action.
 class LocationRequiredDialog extends StatelessWidget {
   final LocationRequiredDialogType type;
   final VoidCallback onOpenSettings;
   final VoidCallback onCancel;
+  final String? cancelLabel;
 
   const LocationRequiredDialog({
     super.key,
     required this.type,
     required this.onOpenSettings,
     required this.onCancel,
+    this.cancelLabel,
   });
 
+  /// [cancelLabel] overrides the secondary action, e.g. "Keep using Anna Nagar".
   static Future<bool?> show(
     BuildContext context, {
     required LocationRequiredDialogType type,
+    String? cancelLabel,
   }) {
-    return showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
+    return PermissionBottomSheet.show<bool>(
+      context,
       builder: (ctx) => LocationRequiredDialog(
         type: type,
+        cancelLabel: cancelLabel,
         onOpenSettings: () => Navigator.of(ctx).pop(true),
         onCancel: () => Navigator.of(ctx).pop(false),
       ),
@@ -36,146 +49,127 @@ class LocationRequiredDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    if (type == LocationRequiredDialogType.serviceDisabled) {
+      return PermissionBottomSheet(
+        illustration: const MapPinIllustration(),
+        title: 'Device location is off',
+        message:
+            'Turn on GPS so we can confirm your booking with an accurate location.',
+        primaryLabel: 'Turn on GPS',
+        onPrimary: onOpenSettings,
+        secondaryLabel: cancelLabel ?? 'Not now',
+        onSecondary: onCancel,
+        secondaryOutlined: false,
+      );
+    }
 
-    final isService = type == LocationRequiredDialogType.serviceDisabled;
-    final title = isService
-        ? 'Device Location Disabled'
-        : 'Location Permission Required';
-    final message = isService
-        ? 'Device location must be enabled before allowing a booking. Please turn on location in your settings to proceed with an accurate booking.'
-        : 'Location permission is permanently denied for Gloup. Please enable location access in App Settings to proceed with your booking.';
-    final buttonText =
-        isService ? 'Open Location Settings' : 'Open App Settings';
-    final iconData =
-        isService ? Icons.location_off_rounded : Icons.location_disabled_rounded;
+    return PermissionBottomSheet(
+      title: 'Allow location in Settings',
+      message:
+          "You've blocked location for GloUp. Turn it on in 3 quick steps:",
+      extra: const _SettingsSteps(),
+      primaryLabel: 'Open settings',
+      onPrimary: onOpenSettings,
+      secondaryLabel: cancelLabel ?? 'Not now',
+      onSecondary: onCancel,
+      secondaryOutlined: false,
+    );
+  }
+}
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
+class _SettingsSteps extends StatelessWidget {
+  const _SettingsSteps();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.theme.brightness == Brightness.dark;
+    final border = isDark ? AppColors.borderDark : AppColors.border;
+
+    const steps = [
+      ['Tap ', 'Open settings', ' below'],
+      ['Go to ', 'Permissions → Location', ''],
+      ['Choose ', 'Allow only while using the app', ''],
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: border),
+        borderRadius: BorderRadius.circular(AppSizes.radiusM),
       ),
-      backgroundColor:
-          isDarkMode ? AppColors.surfaceDark : AppColors.background,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(AppSizes.paddingXL),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: AppSizes.spaceS),
-
-            // Icon section
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: (isDarkMode
-                            ? AppColors.primaryDarkTheme
-                            : AppColors.primary)
-                        .withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.primaryDarkTheme
-                        : AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    iconData,
-                    color: isDarkMode ? AppColors.black : AppColors.white,
-                    size: 30,
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: AppSizes.spaceL),
-
-            // Title
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode
-                        ? AppColors.textPrimaryDark
-                        : AppColors.textPrimary,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-
-            SizedBox(height: AppSizes.spaceS),
-
-            // Body message
-            Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDarkMode
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-
-            SizedBox(height: AppSizes.spaceL),
-
-            // Action Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onOpenSettings,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode
-                      ? AppColors.primaryDarkTheme
-                      : AppColors.primary,
-                  foregroundColor:
-                      isDarkMode ? AppColors.black : AppColors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  buttonText,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDarkMode ? AppColors.black : AppColors.white,
-                      ),
-                ),
+      child: Column(
+        children: [
+          for (var i = 0; i < steps.length; i++) ...[
+            if (i > 0)
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: border,
+                indent: AppSizes.padding,
+                endIndent: AppSizes.padding,
               ),
-            ),
-
-            SizedBox(height: AppSizes.spaceXS),
-
-            // Cancel Button
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: onCancel,
-                child: Text(
-                  'Cancel',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isDarkMode
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                      ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: AppSizes.spaceXS),
+            _SettingsStep(number: i + 1, parts: steps[i]),
           ],
-        ),
+        ],
       ),
-    ),
-  );
+    );
+  }
+}
+
+class _SettingsStep extends StatelessWidget {
+  final int number;
+  final List<String> parts;
+
+  const _SettingsStep({required this.number, required this.parts});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.theme.brightness == Brightness.dark;
+    final textColor =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
+    final accent = PermissionColors.accent(isDark);
+    final base = context.textTheme.bodyMedium?.copyWith(color: textColor);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingM,
+        vertical: AppSizes.paddingM,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 22,
+            height: 22,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$number',
+              style: context.textTheme.labelSmall?.copyWith(
+                color: accent,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          SizedBox(width: AppSizes.spaceM),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: base,
+                children: [
+                  TextSpan(text: parts[0]),
+                  TextSpan(
+                    text: parts[1],
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  TextSpan(text: parts[2]),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

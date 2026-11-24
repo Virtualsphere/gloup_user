@@ -10,7 +10,7 @@ class AppLaunchChairLoaderView extends StatelessWidget {
 
   const AppLaunchChairLoaderView({
     super.key,
-    this.locality = 'Anna Nagar',
+    this.locality = '',
   });
 
   @override
@@ -43,7 +43,9 @@ class AppLaunchChairLoaderView extends StatelessWidget {
 
               // Status Subtitle
               Text(
-                'Finding salons near $locality...',
+                locality.isEmpty
+                    ? 'Finding salons near you...'
+                    : 'Finding salons near $locality...',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: const Color(0xFF4B5563),
@@ -63,4 +65,3 @@ class AppLaunchChairLoaderView extends StatelessWidget {
     );
   }
 }
-

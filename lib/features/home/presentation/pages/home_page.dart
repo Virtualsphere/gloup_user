@@ -28,6 +28,9 @@ import 'package:tressy/features/home/presentation/widgets/services_at_49_section
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
+import 'package:tressy/core/services/firebase_notification_service.dart';
+import 'package:tressy/shared/widgets/notification_permission_sheet.dart';
+import 'package:tressy/shared/widgets/location_required_dialog.dart';
 import 'package:tressy/shared/widgets/location_permission_dialog.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
@@ -46,7 +49,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  /// GPS-off soft prompt (Figma 38) is shown at most once per app session.
+  static bool _gpsPromptShownThisSession = false;
+
+  /// Location permission is permanently denied (Figma 39 banner).
+  bool _locationBlocked = false;
+
+  /// Re-check location when the user returns from device settings.
+  bool _recheckLocationOnResume = false;
+
   int _currentCarouselIndex = 0;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
@@ -60,8 +72,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _scrollController.addListener(_onScroll);
-    _getCurrentLocation();
+    _getCurrentLocation().whenComplete(_maybeAskNotificationPermission);
     _checkPendingReviews();
   }
 
@@ -194,6 +207,55 @@ class _HomePageState extends State<HomePage> {
     setState(() => _isLoadingLocation = false);
   }
 
+  /// Opens the location picker and applies the picked location, if any.
+  Future<void> _openLocationPicker() async {
+    final locationProvider = context.read<LocationProvider>();
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LocationPage()),
+    );
+
+    // Update location if user selected one
+    if (result != null && result is Map<String, dynamic>) {
+      final pickedLat = (result['latitude'] as num).toDouble();
+      final pickedLng = (result['longitude'] as num).toDouble();
+      await locationProvider.updateLocation(
+        latitude: pickedLat,
+        longitude: pickedLng,
+        city: result['city']?.toString(),
+        area: result['area']?.toString(),
+      );
+      unawaited(
+        UserLocationSyncService.instance.reportManual(
+          lat: pickedLat,
+          lng: pickedLng,
+        ),
+      );
+
+      if (!mounted) return;
+
+      // Reload home data with new location
+      _homeBloc.add(LoadAllHomeDataEvent(
+        latitude: locationProvider.latitude,
+        longitude: locationProvider.longitude,
+      ));
+    }
+  }
+
+  /// Shows the notification soft prompt once, after the location flow.
+  Future<void> _maybeAskNotificationPermission() async {
+    if (!mounted) return;
+    if (!await FirebaseNotificationService.shouldShowPermissionPrompt()) {
+      return;
+    }
+    if (!mounted) return;
+    final allowed = await NotificationPermissionSheet.show(context);
+    await FirebaseNotificationService.markPermissionPromptShown();
+    if (allowed) {
+      await FirebaseNotificationService.requestPermission();
+    }
+  }
+
   Future<void> _getCurrentLocation() async {
     final locationProvider = context.read<LocationProvider>();
 
@@ -205,6 +267,23 @@ class _HomePageState extends State<HomePage> {
           _isLoadingLocation = false;
         });
         debugPrint('Location services are disabled');
+        if (!_gpsPromptShownThisSession && mounted) {
+          _gpsPromptShownThisSession = true;
+          bool turnOn = false;
+          bool enterManually = false;
+          await LocationPermissionDialog.show(
+            context,
+            onAllow: () => turnOn = true,
+            onDeny: () {},
+            onEnterManually: () => enterManually = true,
+          );
+          if (turnOn) {
+            _recheckLocationOnResume = true;
+            await Geolocator.openLocationSettings();
+          } else if (enterManually && mounted) {
+            await _openLocationPicker();
+          }
+        }
         return;
       }
 
@@ -217,16 +296,19 @@ class _HomePageState extends State<HomePage> {
                 false;
         if (!dialogShown) {
           bool userAllowed = false;
+          bool enterManually = false;
           if (!mounted) return;
           await LocationPermissionDialog.show(
             context,
             onAllow: () => userAllowed = true,
             onDeny: () => userAllowed = false,
+            onEnterManually: () => enterManually = true,
           );
           await LocalStorageService.setBool(
               'location_permission_dialog_shown', true);
           if (!userAllowed) {
             await _setChennaiDefault();
+            if (enterManually && mounted) await _openLocationPicker();
             return;
           }
         }
@@ -240,9 +322,19 @@ class _HomePageState extends State<HomePage> {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        await _setChennaiDefault();
+        // Keep a location the user picked manually; otherwise fall back.
+        if (LocalStorageService.getDouble('user_latitude') == null) {
+          await _setChennaiDefault();
+        } else {
+          setState(() => _isLoadingLocation = false);
+        }
+        if (mounted) setState(() => _locationBlocked = true);
         debugPrint('Location permission denied forever');
         return;
+      }
+
+      if (_locationBlocked && mounted) {
+        setState(() => _locationBlocked = false);
       }
 
       // Get current position
@@ -306,6 +398,94 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    if (_recheckLocationOnResume || _locationBlocked) {
+      _recheckLocationOnResume = false;
+      _getCurrentLocation();
+    }
+  }
+
+  Future<void> _fixBlockedLocation() async {
+    final area = context.read<LocationProvider>().area;
+    final city = context.read<LocationProvider>().city;
+    final place = area.isNotEmpty ? area : city;
+    final openSettings = await LocationRequiredDialog.show(
+      context,
+      type: LocationRequiredDialogType.permissionDeniedForever,
+      cancelLabel: place.isNotEmpty ? 'Keep using $place' : null,
+    );
+    if (openSettings == true) {
+      await Geolocator.openAppSettings();
+    }
+  }
+
+  /// "Location access is blocked" banner (Figma 39).
+  Widget _buildLocationBlockedBanner(bool isDarkMode) {
+    final provider = context.watch<LocationProvider>();
+    final place = provider.area.isNotEmpty ? provider.area : provider.city;
+    const amber = Color(0xFFB45309);
+
+    return Padding(
+      padding: EdgeInsets.only(top: AppSizes.spaceM),
+      child: Material(
+        color:
+            const Color(0xFFF59E0B).withValues(alpha: isDarkMode ? 0.18 : 0.12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          side: BorderSide(
+            color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+          ),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          onTap: _fixBlockedLocation,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSizes.paddingM,
+              vertical: AppSizes.paddingS + 2,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Location access is blocked',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: isDarkMode ? const Color(0xFFFCD34D) : amber,
+                        ),
+                      ),
+                      if (place.isNotEmpty)
+                        Text(
+                          'Distances are estimated from $place',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: isDarkMode
+                                ? AppColors.textSecondaryDark
+                                : amber.withValues(alpha: 0.85),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Fix',
+                  style: context.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: isDarkMode ? const Color(0xFFFCD34D) : amber,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onGenderChanged(String gender) {
     final locationProvider = context.read<LocationProvider>();
 
@@ -345,6 +525,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _locationProvider?.removeListener(_onLocationToastChanged);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
@@ -623,63 +804,11 @@ class _HomePageState extends State<HomePage> {
                                                 return LocationBadge(
                                                   location:
                                                       locationProvider.city,
-                                                  addressLine2:
-                                                      locationProvider.area,
-                                                  onTap: () async {
-                                                    // Navigate to location page
-                                                    final result =
-                                                        await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const LocationPage(),
-                                                      ),
-                                                    );
-
-                                                    // Update location if user selected one
-                                                    if (result != null &&
-                                                        result is Map<String,
-                                                            dynamic>) {
-                                                      final pickedLat =
-                                                          (result['latitude']
-                                                                  as num)
-                                                              .toDouble();
-                                                      final pickedLng =
-                                                          (result['longitude']
-                                                                  as num)
-                                                              .toDouble();
-                                                      await locationProvider
-                                                          .updateLocation(
-                                                        latitude: pickedLat,
-                                                        longitude: pickedLng,
-                                                        city: result['city']
-                                                            ?.toString(),
-                                                        area: result['area']
-                                                            ?.toString(),
-                                                      );
-                                                      unawaited(
-                                                        UserLocationSyncService
-                                                            .instance
-                                                            .reportManual(
-                                                          lat: pickedLat,
-                                                          lng: pickedLng,
-                                                        ),
-                                                      );
-
-                                                      if (!mounted) return;
-
-                                                      // Reload home data with new location
-                                                      _homeBloc.add(
-                                                          LoadAllHomeDataEvent(
-                                                        latitude:
-                                                            locationProvider
-                                                                .latitude,
-                                                        longitude:
-                                                            locationProvider
-                                                                .longitude,
-                                                      ));
-                                                    }
-                                                  },
+                                                  addressLine2: _locationBlocked
+                                                      ? '${locationProvider.area} (set manually)'
+                                                          .trim()
+                                                      : locationProvider.area,
+                                                  onTap: _openLocationPicker,
                                                 );
                                               },
                                             ),
@@ -687,6 +816,8 @@ class _HomePageState extends State<HomePage> {
                                       const HomeProfileAvatar(),
                                     ],
                                   ),
+                                  if (_locationBlocked)
+                                    _buildLocationBlockedBanner(isDarkMode),
                                   AppSizes.heightM,
                                   // Search bar below location
                                   SearchBarWidget(
@@ -977,7 +1108,7 @@ class _HomePageState extends State<HomePage> {
                                         isFavorite: salon.isFavorite,
                                         serviceName: salon.serviceName,
                                         servicePrice: salon.servicePrice,
-                                      dynamicServices: salon.dynamicServices,
+                                        dynamicServices: salon.dynamicServices,
                                         address: salon.displayAddress,
                                         categories: salon.categories,
                                         languageCodes: salon.languageCodes,

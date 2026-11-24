@@ -17,7 +17,7 @@ class AppLaunchStateEntity {
 
   const AppLaunchStateEntity({
     required this.phase,
-    this.localityName = 'Anna Nagar',
+    this.localityName = '',
     this.elapsedSeconds = 0,
     this.errorMessage,
     this.errorCode,
@@ -42,4 +42,3 @@ class AppLaunchStateEntity {
     );
   }
 }
-

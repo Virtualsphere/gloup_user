@@ -9,7 +9,7 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
 
   const AppLaunchHomeSkeletonView({
     super.key,
-    this.locality = 'Anna Nagar',
+    this.locality = '',
   });
 
   @override
@@ -178,7 +178,9 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
                   SizedBox(width: 8.w),
                   Flexible(
                     child: Text(
-                      'Finding salons near $locality...',
+                      locality.isEmpty
+                          ? 'Finding salons near you...'
+                          : 'Finding salons near $locality...',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: const Color(0xFF6B7280),
@@ -271,13 +273,11 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
           style: TextStyle(
             fontSize: 10.sp,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected
-                ? const Color(0xFF1A1D20)
-                : const Color(0xFF9CA3AF),
+            color:
+                isSelected ? const Color(0xFF1A1D20) : const Color(0xFF9CA3AF),
           ),
         ),
       ],
     );
   }
 }
-

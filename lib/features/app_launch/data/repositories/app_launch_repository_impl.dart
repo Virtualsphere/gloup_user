@@ -68,7 +68,8 @@ class AppLaunchRepositoryImpl implements AppLaunchRepository {
     } catch (_) {
       // Fallback gracefully on any exception
     }
-    return 'Anna Nagar';
+    // Unknown area: views fall back to "Finding salons near you...".
+    return '';
   }
 
   @override
@@ -102,4 +103,3 @@ class AppLaunchRepositoryImpl implements AppLaunchRepository {
     }
   }
 }
-
