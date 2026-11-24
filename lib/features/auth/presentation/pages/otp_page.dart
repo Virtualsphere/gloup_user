@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-import 'package:tressy/core/constants/app_colors.dart';
-import 'package:tressy/core/constants/app_images.dart';
-import 'package:tressy/core/constants/app_sizes.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/app_analytics_service.dart';
@@ -17,23 +17,22 @@ import 'package:tressy/features/auth/domain/entities/auth_entity.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_event.dart';
 import 'package:tressy/features/auth/presentation/bloc/auth_state.dart';
-import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
-import 'package:tressy/shared/widgets/primary_button.dart';
-import 'package:tressy/shared/widgets/theme_toggle_button.dart';
 
 class OtpPage extends StatelessWidget {
   final String phone;
+  final AuthBloc? authBloc;
 
   const OtpPage({
     super.key,
     required this.phone,
+    this.authBloc,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<AuthBloc>(),
+      create: (context) => authBloc ?? sl<AuthBloc>(),
       child: _OtpPageContent(
         phone: phone,
       ),
@@ -54,9 +53,9 @@ class _OtpPageContent extends StatefulWidget {
 
 class _OtpPageContentState extends State<_OtpPageContent> {
   final TextEditingController _otpController = TextEditingController();
+  final FocusNode _otpFocusNode = FocusNode();
   bool _isLoading = false;
-  bool _isResending = false;
-  int _resendCountdown = 60;
+  int _resendCountdown = 30;
   Timer? _countdownTimer;
   bool _isOtpComplete = false;
 
@@ -71,18 +70,19 @@ class _OtpPageContentState extends State<_OtpPageContent> {
   void dispose() {
     _otpController.removeListener(_onOtpChanged);
     _otpController.dispose();
+    _otpFocusNode.dispose();
     _countdownTimer?.cancel();
     super.dispose();
   }
 
   void _onOtpChanged() {
     setState(() {
-      _isOtpComplete = _otpController.text.length == 4;
+      _isOtpComplete = _otpController.text.length == 6;
     });
   }
 
   void _startCountdown() {
-    _resendCountdown = 60;
+    _resendCountdown = 30;
     _countdownTimer?.cancel();
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
@@ -97,60 +97,67 @@ class _OtpPageContentState extends State<_OtpPageContent> {
     });
   }
 
-  void _handleVerifyOtp() {
-    if (_otpController.text.length == 4) {
-      // Extract phone number without country code for API
-      final phoneNumber = widget.phone.replaceAll(RegExp(r'^\+\d+'), '');
+  String get _formattedPhone {
+    final digits = widget.phone.replaceAll(RegExp(r'\D'), '');
+    final pure = digits.length > 10 ? digits.substring(digits.length - 10) : digits;
+    if (pure.length == 10) {
+      return '+91 ${pure.substring(0, 5)} ${pure.substring(5)}';
+    }
+    return '+91 ${widget.phone}';
+  }
 
-      // Trigger BLoC event to verify OTP
-      context.read<AuthBloc>().add(VerifyOtpEvent(
-            phone: phoneNumber,
-            otp: _otpController.text,
-          ));
+  String get _cleanPhoneNumber {
+    final digits = widget.phone.replaceAll(RegExp(r'\D'), '');
+    return digits.length > 10 ? digits.substring(digits.length - 10) : digits;
+  }
+
+  void _handleVerifyOtp() {
+    if (_otpController.text.length == 6) {
+      FocusScope.of(context).unfocus();
+      context.read<AuthBloc>().add(
+            VerifyOtpEvent(
+              phone: _cleanPhoneNumber,
+              otp: _otpController.text.trim(),
+            ),
+          );
     } else {
-      CustomToast.showWarning(context, "Please enter complete OTP");
+      CustomToast.showWarning(context, "Please enter complete 6-digit OTP");
     }
   }
 
-  void _handleResendOtp() {
-    if (_resendCountdown > 0) return;
+  void _handleResendOtp({bool isWhatsApp = false}) {
+    if (_resendCountdown > 0 && !isWhatsApp) return;
 
-    // Extract phone number without country code for API
-    final phoneNumber = widget.phone.replaceAll(RegExp(r'^\+\d+'), '');
+    if (isWhatsApp) {
+      CustomToast.showSuccess(context, "Requesting code via WhatsApp...");
+    }
 
-    // Trigger BLoC event to resend OTP
-    context.read<AuthBloc>().add(SendOtpEvent(phoneNumber));
+    context.read<AuthBloc>().add(SendOtpEvent(_cleanPhoneNumber));
+    _startCountdown();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-    final screenHeight = context.screenHeight;
-    final backgroundHeight = screenHeight * 0.25;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthLoading) {
           setState(() {
             _isLoading = true;
-            _isResending = false;
           });
         } else if (state is OtpSentSuccess) {
-          // Handle resend OTP success
           setState(() {
             _isLoading = false;
-            _isResending = false;
           });
           _startCountdown();
           _otpController.clear();
           CustomToast.showSuccess(context, state.authEntity.message);
         } else if (state is OtpVerifiedSuccess) {
-          // Handle OTP verification success
           setState(() {
             _isLoading = false;
           });
 
-          // Save token and mark user as logged in
           final authEntity = state.authEntity;
           if (authEntity is VerifyOtpEntity) {
             LocalStorageService.setAccessToken(authEntity.token);
@@ -162,277 +169,378 @@ class _OtpPageContentState extends State<_OtpPageContent> {
           }
 
           CustomToast.showSuccess(context, "OTP verified successfully!");
-
-          // Navigate to home screen
           context.go(RouteNames.home);
         } else if (state is AuthFailure) {
           setState(() {
             _isLoading = false;
-            _isResending = false;
           });
           CustomToast.showError(context, state.message);
         }
       },
       child: Scaffold(
-        backgroundColor: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        body: Stack(
-          children: [
-            // Background Image
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: backgroundHeight,
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  isDarkMode
-                      ? AppColors.black.withValues(alpha: 0.5)
-                      : Colors.transparent,
-                  BlendMode.darken,
-                ),
-                child: Image.asset(
-                  AppImages.loginBg,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final availableWidth = constraints.maxWidth;
+              // Figma 18 OTP: container is 358px with 16px screen margins on 390px frame.
+              // 6 boxes with 5 gaps of 8px (40px total gap).
+              // Responsive box width computation prevents overflow on narrower viewports.
+              final computedBoxWidth =
+                  ((availableWidth - 32.w - (5 * 8.w)) / 6).clamp(44.0, 53.0);
+              final boxHeight = 56.h;
 
-            // Overlapping Card
-            Positioned(
-              top: backgroundHeight - 50,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusXL),
-                    topRight: Radius.circular(AppSizes.radiusXL),
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isDarkMode
-                          ? AppColors.black.withValues(alpha: 0.3)
-                          : AppColors.black.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(AppSizes.paddingL),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppSizes.heightXL,
-                      Text(
-                        'Verify OTP',
-                        style: context.textTheme.displaySmall?.copyWith(
-                          color: context.colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      AppSizes.heightM,
-                      Text(
-                        'Enter the 4-digit code sent to +91${widget.phone}',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: isDarkMode
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                      AppSizes.heightXXL,
-                      Pinput(
-                        controller: _otpController,
-                        length: 4,
-                        autofillHints: const [AutofillHints.oneTimeCode],
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        defaultPinTheme: PinTheme(
-                          width: (context.screenWidth -
-                                  (AppSizes.paddingL * 2) -
-                                  (AppSizes.spaceM * 3)) /
-                              4,
-                          height: 60,
-                          textStyle: context.textTheme.headlineMedium?.copyWith(
-                            color: context.colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 24,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.surfaceDark
-                                : AppColors.surface,
-                            border: Border.all(
-                              color: isDarkMode
-                                  ? AppColors.borderDark
-                                  : AppColors.border,
-                              width: 1.5,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusM),
-                          ),
-                        ),
-                        focusedPinTheme: PinTheme(
-                          width: (context.screenWidth -
-                                  (AppSizes.paddingL * 2) -
-                                  (AppSizes.spaceM * 3)) /
-                              4,
-                          height: 60,
-                          textStyle: context.textTheme.headlineMedium?.copyWith(
-                            color: context.colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 24,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.surfaceDark
-                                : AppColors.surface,
-                            border: Border.all(
-                              color: context.colorScheme.primary,
-                              width: 2,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusM),
-                          ),
-                        ),
-                        errorPinTheme: PinTheme(
-                          width: (context.screenWidth -
-                                  (AppSizes.paddingL * 2) -
-                                  (AppSizes.spaceM * 3)) /
-                              4,
-                          height: 60,
-                          textStyle: context.textTheme.headlineMedium?.copyWith(
-                            color: context.colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 24,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.surfaceDark
-                                : AppColors.surface,
-                            border: Border.all(
-                              color: AppColors.error,
-                              width: 2,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusM),
-                          ),
-                        ),
-                      ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 8.h),
 
-                      AppSizes.heightS,
+                        // Back Button Chevron (Figma: #262A30)
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go(RouteNames.login);
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 4.h,
+                              bottom: 18.h,
+                              right: 16.w,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              size: 20.w,
+                              color: const Color(0xFF262A30),
+                            ),
+                          ),
+                        ),
 
-                      _resendCountdown > 0
-                          ? Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                '$_resendCountdown Sec Remaining',
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: isDarkMode
-                                      ? AppColors.textSecondaryDark
-                                      : AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
+                        // Title: "Enter verification code" (Inter, 24px, 700 bold, line-height 30px, letterSpacing -0.4px, #262A30)
+                        Text(
+                          'Enter verification code',
+                          style: GoogleFonts.inter(
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF262A30),
+                            height: 30 / 24,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+
+                        SizedBox(height: 8.h),
+
+                        // Subtitle line: "We've sent a 6-digit code to +91 XXXXX XXXXX" + "Edit" (#2D6FA6)
+                        Row(
+                          children: [
+                            Flexible(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14.sp,
+                                    color: const Color(0xFF717784),
+                                    height: 20 / 14,
+                                  ),
+                                  children: [
+                                    const TextSpan(
+                                      text: "We've sent a 6-digit code to ",
+                                    ),
+                                    TextSpan(
+                                      text: _formattedPhone,
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFF262A30),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            )
-                          : const SizedBox.shrink(),
-
-                      AppSizes.heightXL,
-
-                      // Verify Button
-                      PrimaryButton(
-                        text: 'Verify OTP',
-                        isLoading: _isLoading,
-                        onPressed: _isOtpComplete ? _handleVerifyOtp : null,
-                      ),
-
-                      AppSizes.heightL,
-
-                      // Resend OTP Button
-                      Center(
-                        child: TextButton(
-                          onPressed: (_isResending || _resendCountdown > 0)
-                              ? null
-                              : _handleResendOtp,
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingL,
-                              vertical: AppSizes.paddingM,
                             ),
-                          ),
-                          child: _isResending
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      isDarkMode
-                                          ? AppColors.textPrimaryDark
-                                          : AppColors.textPrimary,
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  'Resend OTP',
-                                  style: context.textTheme.labelLarge?.copyWith(
-                                    color: (_resendCountdown > 0)
-                                        ? (isDarkMode
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondary)
-                                        : (isDarkMode
-                                            ? AppColors.textPrimaryDark
-                                            : AppColors.textPrimary),
+                            SizedBox(width: 6.w),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                if (context.canPop()) {
+                                    context.pop();
+                                } else {
+                                  context.go(RouteNames.login);
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 4.w,
+                                  vertical: 2.h,
+                                ),
+                                child: Text(
+                                  'Edit',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF2D6FA6),
+                                    height: 20 / 14,
                                   ),
                                 ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
 
-                      AppSizes.heightL,
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                        // Figma: 30px padding top for OTP container
+                        SizedBox(height: 30.h),
 
-            // Back Button
-            Positioned(
-              top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-              left: AppSizes.paddingM,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.surfaceDark.withValues(alpha: 0.8)
-                      : AppColors.surface.withValues(alpha: 0.8),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                        // 6-digit Pinput (358px total width, 56px height, 8px gap)
+                        Center(
+                          child: Pinput(
+                            controller: _otpController,
+                            focusNode: _otpFocusNode,
+                            length: 6,
+                            autofocus: true,
+                            autofillHints: const [AutofillHints.oneTimeCode],
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            separatorBuilder: (index) => SizedBox(width: 8.w),
+                            defaultPinTheme: PinTheme(
+                              width: computedBoxWidth,
+                              height: boxHeight,
+                              textStyle: GoogleFonts.inter(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF262A30),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: const Color(0xFFD9DDE2),
+                                  width: 1.2,
+                                ),
+                              ),
+                            ),
+                            focusedPinTheme: PinTheme(
+                              width: computedBoxWidth,
+                              height: boxHeight,
+                              textStyle: GoogleFonts.inter(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF262A30),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: const Color(0xFF262A30),
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            submittedPinTheme: PinTheme(
+                              width: computedBoxWidth,
+                              height: boxHeight,
+                              textStyle: GoogleFonts.inter(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF262A30),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: const Color(0xFFD9DDE2),
+                                  width: 1.2,
+                                ),
+                              ),
+                            ),
+                            cursor: Center(
+                              child: Container(
+                                width: 1.5,
+                                height: 22.h,
+                                color: const Color(0xFF262A30),
+                              ),
+                            ),
+                            onCompleted: (_) => _handleVerifyOtp(),
+                          ),
+                        ),
+
+                        SizedBox(height: 16.h),
+
+                        // "Waiting to auto-read the code from SMS" status pill (#F3F4F6)
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 10.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3F4F6),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 7.w,
+                                height: 7.w,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF2F8F62),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Flexible(
+                                child: Text(
+                                  'Waiting to auto-read the code from SMS',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13.sp,
+                                    color: const Color(0xFF717784),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 28.h),
+
+                        // Row 1: Didn't get the code? + Resend countdown
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                "Didn't get the code?",
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.sp,
+                                  color: const Color(0xFF717784),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            _resendCountdown > 0
+                                ? Text(
+                                    'Resend in 0:${_resendCountdown.toString().padLeft(2, '0')}',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14.sp,
+                                      color: const Color(0xFF717784),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () => _handleResendOtp(),
+                                    child: Text(
+                                      'Resend OTP',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14.sp,
+                                        color: const Color(0xFF2D6FA6),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+
+                        SizedBox(height: 14.h),
+
+                        // Row 2: Prefer another way? + Get code on WhatsApp (#2D6FA6)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Prefer another way?',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.sp,
+                                  color: const Color(0xFF717784),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _handleResendOtp(isWhatsApp: true),
+                              child: Text(
+                                'Get code on WhatsApp',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.sp,
+                                  color: const Color(0xFF2D6FA6),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        SizedBox(height: 20.h),
+
+                        // Bottom "Verify" Button (Disabled: #C9CED6, Enabled: #262A30)
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52.h,
+                          child: ElevatedButton(
+                            onPressed:
+                                (_isOtpComplete && !_isLoading) ? _handleVerifyOtp : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _isOtpComplete
+                                  ? const Color(0xFF262A30)
+                                  : const Color(0xFFC9CED6),
+                              disabledBackgroundColor: const Color(0xFFC9CED6),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? SizedBox(
+                                    width: 22.w,
+                                    height: 22.w,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2.2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    'Verify',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: bottomInset > 0 ? (bottomInset + 8.h) : 24.h,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
-                  onPressed: () => GoRouter.of(context).pop(),
                 ),
-              ),
-            ),
-
-            // Theme Toggle
-            Positioned(
-              top: MediaQuery.of(context).padding.top + AppSizes.paddingM,
-              right: AppSizes.paddingM,
-              child: const ThemeToggleButton(),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
