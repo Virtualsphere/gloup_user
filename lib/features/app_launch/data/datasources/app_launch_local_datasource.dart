@@ -14,6 +14,7 @@ class AppLaunchLocalDataSourceImpl implements AppLaunchLocalDataSource {
   @override
   Future<void> markFirstOpenCompleted() async {
     await LocalStorageService.setFirstOpenCompleted(true);
+    await LocalStorageService.setOnboardingCompleted(true);
   }
 }
 

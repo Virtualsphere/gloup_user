@@ -160,9 +160,10 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
 
             // Bottom loading status: Small spinner + text
             Padding(
-              padding: EdgeInsets.only(bottom: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
                     width: 13.w,
@@ -175,12 +176,15 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text(
-                    'Finding salons near $locality...',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: const Color(0xFF6B7280),
-                      fontWeight: FontWeight.w400,
+                  Flexible(
+                    child: Text(
+                      'Finding salons near $locality...',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF6B7280),
+                        fontWeight: FontWeight.w400,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -237,20 +241,21 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
     required bool isSelected,
   }) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (isSelected)
           Container(
-            width: 28.w,
-            height: 2.5.h,
-            margin: EdgeInsets.only(bottom: 4.h),
+            width: 24.w,
+            height: 2.h,
+            margin: EdgeInsets.only(bottom: 2.h),
             decoration: BoxDecoration(
               color: const Color(0xFF1A1D20),
               borderRadius: BorderRadius.circular(2.r),
             ),
           )
         else
-          SizedBox(height: 6.5.h),
+          SizedBox(height: 4.h),
         SvgPicture.asset(
           icon,
           width: 20.w,
@@ -260,7 +265,7 @@ class AppLaunchHomeSkeletonView extends StatelessWidget {
             BlendMode.srcIn,
           ),
         ),
-        SizedBox(height: 3.h),
+        SizedBox(height: 2.h),
         Text(
           label,
           style: TextStyle(

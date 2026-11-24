@@ -70,9 +70,9 @@ extension StringExtensions on String {
       }
 
       if (h > 0) {
-        return "${h}:${m.toString().padLeft(2, '0')} hrs";
+        return "$h:${m.toString().padLeft(2, '0')} hrs";
       } else {
-        return "${m} mins";
+        return "$m mins";
       }
     }
     return this;

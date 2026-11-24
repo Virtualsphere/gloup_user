@@ -38,6 +38,7 @@ class _AppLaunchFlowPageState extends State<AppLaunchFlowPage> {
     _bloc = sl<AppLaunchBloc>();
     _bloc.add(StartAppLaunchFlow(
       forceFirstOpen: widget.forcedPhase == AppLaunchPhase.firstOpen,
+      forceChairLoader: widget.forcedPhase == AppLaunchPhase.chairLoading,
       forceSlowNetwork: widget.forcedPhase == AppLaunchPhase.slowNetwork,
       forceFailure: widget.forcedPhase == AppLaunchPhase.failure,
       forceHomeSkeleton: widget.forcedPhase == AppLaunchPhase.homeSkeleton,
@@ -127,12 +128,6 @@ class _AppLaunchFlowPageState extends State<AppLaunchFlowPage> {
               return AppLaunchSlowNetworkView(
                 onBrowseSavedSalons: () {
                   _bloc.add(const BrowseSavedSalonsTriggered());
-                  // Brief pause on skeleton before proceeding to home
-                  Future.delayed(const Duration(milliseconds: 1200), () {
-                    if (mounted) {
-                      _proceedToMainApp();
-                    }
-                  });
                 },
                 onKeepWaiting: () {
                   _bloc.add(const KeepWaitingTriggered());

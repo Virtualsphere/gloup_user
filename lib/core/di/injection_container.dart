@@ -488,6 +488,7 @@ Future<void> initializeDependencies() async {
     () => AppLaunchRepositoryImpl(
       localDataSource: sl(),
       connectivity: sl(),
+      dioClient: sl(),
     ),
   );
   sl.registerLazySingleton<AppLaunchLocalDataSource>(

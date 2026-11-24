@@ -3,5 +3,6 @@ abstract class AppLaunchRepository {
   Future<void> markFirstOpenCompleted();
   Future<String> resolveCurrentArea();
   Future<bool> checkNetworkReachability();
+  Future<bool> checkServerReachability();
 }
 

@@ -11,14 +11,17 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
   final CheckLaunchStatusUseCase checkLaunchStatusUseCase;
   final ResolveLaunchAreaUseCase resolveLaunchAreaUseCase;
   final AppLaunchRepository repository;
+  final int minAnimationMs;
 
   Timer? _timer;
   int _seconds = 0;
+  bool _bootstrapInProgress = false;
 
   AppLaunchBloc({
     required this.checkLaunchStatusUseCase,
     required this.resolveLaunchAreaUseCase,
     required this.repository,
+    this.minAnimationMs = 1200,
   }) : super(AppLaunchState.initial()) {
     on<StartAppLaunchFlow>(_onStartAppLaunchFlow);
     on<ProceedFromFirstOpen>(_onProceedFromFirstOpen);
@@ -35,6 +38,7 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
   ) async {
     _timer?.cancel();
     _seconds = 0;
+    _bootstrapInProgress = false;
 
     // Resolve locality name
     final locality = await resolveLaunchAreaUseCase();
@@ -43,6 +47,14 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     if (event.forceFirstOpen) {
       emit(state.copyWith(
         phase: AppLaunchPhase.firstOpen,
+        localityName: locality,
+        elapsedSeconds: 0,
+      ));
+      return;
+    }
+    if (event.forceChairLoader) {
+      emit(state.copyWith(
+        phase: AppLaunchPhase.chairLoading,
         localityName: locality,
         elapsedSeconds: 0,
       ));
@@ -83,12 +95,7 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
         elapsedSeconds: 0,
       ));
     } else {
-      emit(state.copyWith(
-        phase: AppLaunchPhase.chairLoading,
-        localityName: locality,
-        elapsedSeconds: 0,
-      ));
-      _startLoadingTimer();
+      await _performLaunchBootstrap(locality, emit);
     }
   }
 
@@ -97,11 +104,88 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     Emitter<AppLaunchState> emit,
   ) async {
     await repository.markFirstOpenCompleted();
+    await _performLaunchBootstrap(state.localityName, emit);
+  }
+
+  Future<void> _performLaunchBootstrap(
+    String locality,
+    Emitter<AppLaunchState> emit,
+  ) async {
+    _bootstrapInProgress = true;
+    _seconds = 0;
     emit(state.copyWith(
       phase: AppLaunchPhase.chairLoading,
+      localityName: locality,
       elapsedSeconds: 0,
+      errorMessage: null,
+      errorCode: null,
     ));
     _startLoadingTimer();
+
+    final stopwatch = Stopwatch()..start();
+
+    // 1. Verify basic network reachability
+    final hasNetwork = await repository.checkNetworkReachability();
+    if (!hasNetwork) {
+      _timer?.cancel();
+      _bootstrapInProgress = false;
+      emit(state.copyWith(
+        phase: AppLaunchPhase.failure,
+        errorMessage:
+            'You seem to be offline. Check your mobile data or Wi-Fi and try again.',
+        errorCode: 'Error GL-001 · no internet connection',
+      ));
+      return;
+    }
+
+    // 2. Check backend server reachability
+    final serverOk = await repository.checkServerReachability();
+
+    // Enforce smooth minimum animation duration
+    final elapsedMs = stopwatch.elapsedMilliseconds;
+    if (elapsedMs < minAnimationMs) {
+      await Future.delayed(Duration(milliseconds: minAnimationMs - elapsedMs));
+    }
+
+    if (isClosed || !_bootstrapInProgress) return;
+
+    if (serverOk) {
+      _timer?.cancel();
+      _bootstrapInProgress = false;
+
+      // Brief skeleton shimmer before completing transition to main app
+      emit(state.copyWith(
+        phase: AppLaunchPhase.homeSkeleton,
+      ));
+
+      await Future.delayed(const Duration(milliseconds: 350));
+      if (isClosed) return;
+
+      emit(state.copyWith(
+        phase: AppLaunchPhase.completed,
+      ));
+    } else {
+      // If server check failed, check if network dropped
+      final networkAlive = await repository.checkNetworkReachability();
+      _timer?.cancel();
+      _bootstrapInProgress = false;
+
+      if (!networkAlive) {
+        emit(state.copyWith(
+          phase: AppLaunchPhase.failure,
+          errorMessage:
+              'Check your mobile data or Wi-Fi and try again. Nothing you booked is lost.',
+          errorCode: 'Error GL-001 · connection lost',
+        ));
+      } else {
+        emit(state.copyWith(
+          phase: AppLaunchPhase.failure,
+          errorMessage:
+              'Check your mobile data or Wi-Fi and try again. Nothing you booked is lost.',
+          errorCode: 'Error GL-503 · server didn\'t respond',
+        ));
+      }
+    }
   }
 
   void _startLoadingTimer() {
@@ -118,17 +202,20 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     Emitter<AppLaunchState> emit,
   ) {
     if (state.phase == AppLaunchPhase.completed ||
-        state.phase == AppLaunchPhase.firstOpen) {
+        state.phase == AppLaunchPhase.firstOpen ||
+        state.phase == AppLaunchPhase.failure) {
       return;
     }
 
     // After 15 seconds -> Failure
     if (event.second >= 15) {
       _timer?.cancel();
+      _bootstrapInProgress = false;
       emit(state.copyWith(
         phase: AppLaunchPhase.failure,
         elapsedSeconds: event.second,
-        errorMessage: 'Check your mobile data or Wi-Fi and try again. Nothing you booked is lost.',
+        errorMessage:
+            'Check your mobile data or Wi-Fi and try again. Nothing you booked is lost.',
         errorCode: 'Error GL-503 · server didn\'t respond',
       ));
       return;
@@ -150,32 +237,31 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     KeepWaitingTriggered event,
     Emitter<AppLaunchState> emit,
   ) {
-    // User chooses to keep waiting; stay in slowNetwork but keep timer ticking towards failure
     emit(state.copyWith(
       phase: AppLaunchPhase.slowNetwork,
     ));
   }
 
-  void _onRetryAppLaunch(
+  Future<void> _onRetryAppLaunch(
     RetryAppLaunchTriggered event,
     Emitter<AppLaunchState> emit,
-  ) {
-    _startLoadingTimer();
-    emit(state.copyWith(
-      phase: AppLaunchPhase.chairLoading,
-      elapsedSeconds: 0,
-      errorMessage: null,
-      errorCode: null,
-    ));
+  ) async {
+    await _performLaunchBootstrap(state.localityName, emit);
   }
 
-  void _onBrowseSavedSalons(
+  Future<void> _onBrowseSavedSalons(
     BrowseSavedSalonsTriggered event,
     Emitter<AppLaunchState> emit,
-  ) {
+  ) async {
     _timer?.cancel();
+    _bootstrapInProgress = false;
     emit(state.copyWith(
       phase: AppLaunchPhase.homeSkeleton,
+    ));
+    await Future.delayed(const Duration(milliseconds: 350));
+    if (isClosed) return;
+    emit(state.copyWith(
+      phase: AppLaunchPhase.completed,
     ));
   }
 
@@ -184,6 +270,7 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
     Emitter<AppLaunchState> emit,
   ) {
     _timer?.cancel();
+    _bootstrapInProgress = false;
     emit(state.copyWith(
       phase: AppLaunchPhase.completed,
     ));
@@ -192,6 +279,7 @@ class AppLaunchBloc extends Bloc<AppLaunchEvent, AppLaunchState> {
   @override
   Future<void> close() {
     _timer?.cancel();
+    _bootstrapInProgress = false;
     return super.close();
   }
 }

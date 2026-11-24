@@ -59,6 +59,7 @@ class AppLaunchSlowNetworkView extends StatelessWidget {
               // Offline ready status pill
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: 7.w,
@@ -69,12 +70,15 @@ class AppLaunchSlowNetworkView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text(
-                    'Saved salons are ready to browse offline',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: const Color(0xFF4B5563),
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      'Saved salons are ready to browse offline',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF4B5563),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

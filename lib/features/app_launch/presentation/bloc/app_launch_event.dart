@@ -9,12 +9,14 @@ abstract class AppLaunchEvent extends Equatable {
 
 class StartAppLaunchFlow extends AppLaunchEvent {
   final bool forceFirstOpen;
+  final bool forceChairLoader;
   final bool forceSlowNetwork;
   final bool forceFailure;
   final bool forceHomeSkeleton;
 
   const StartAppLaunchFlow({
     this.forceFirstOpen = false,
+    this.forceChairLoader = false,
     this.forceSlowNetwork = false,
     this.forceFailure = false,
     this.forceHomeSkeleton = false,
@@ -23,6 +25,7 @@ class StartAppLaunchFlow extends AppLaunchEvent {
   @override
   List<Object?> get props => [
         forceFirstOpen,
+        forceChairLoader,
         forceSlowNetwork,
         forceFailure,
         forceHomeSkeleton,
