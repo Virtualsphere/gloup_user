@@ -77,7 +77,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
 
   void _onOtpChanged() {
     setState(() {
-      _isOtpComplete = _otpController.text.length == 6;
+      _isOtpComplete = _otpController.text.length == 4;
     });
   }
 
@@ -112,7 +112,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
   }
 
   void _handleVerifyOtp() {
-    if (_otpController.text.length == 6) {
+    if (_otpController.text.length == 4) {
       FocusScope.of(context).unfocus();
       context.read<AuthBloc>().add(
             VerifyOtpEvent(
@@ -121,7 +121,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
             ),
           );
     } else {
-      CustomToast.showWarning(context, "Please enter complete 6-digit OTP");
+      CustomToast.showWarning(context, "Please enter complete 4-digit OTP");
     }
   }
 
@@ -183,11 +183,10 @@ class _OtpPageContentState extends State<_OtpPageContent> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final availableWidth = constraints.maxWidth;
-              // Figma 18 OTP: container is 358px with 16px screen margins on 390px frame.
-              // 6 boxes with 5 gaps of 8px (40px total gap).
-              // Responsive box width computation prevents overflow on narrower viewports.
+              // 4-digit verification code: container is 358px with 16px screen margins on 390px frame.
+              // 4 boxes with 3 gaps of 12px.
               final computedBoxWidth =
-                  ((availableWidth - 32.w - (5 * 8.w)) / 6).clamp(44.0, 53.0);
+                  ((availableWidth - 32.w - (3 * 12.w)) / 4).clamp(56.0, 70.0);
               final boxHeight = 56.h;
 
               return SingleChildScrollView(
@@ -241,7 +240,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
 
                         SizedBox(height: 8.h),
 
-                        // Subtitle line: "We've sent a 6-digit code to +91 XXXXX XXXXX" + "Edit" (#2D6FA6)
+                        // Subtitle line: "We've sent a 4-digit code to +91 XXXXX XXXXX" + "Edit" (#2D6FA6)
                         Row(
                           children: [
                             Flexible(
@@ -254,7 +253,7 @@ class _OtpPageContentState extends State<_OtpPageContent> {
                                   ),
                                   children: [
                                     const TextSpan(
-                                      text: "We've sent a 6-digit code to ",
+                                      text: "We've sent a 4-digit code to ",
                                     ),
                                     TextSpan(
                                       text: _formattedPhone,
@@ -299,19 +298,19 @@ class _OtpPageContentState extends State<_OtpPageContent> {
                         // Figma: 30px padding top for OTP container
                         SizedBox(height: 30.h),
 
-                        // 6-digit Pinput (358px total width, 56px height, 8px gap)
+                        // 4-digit Pinput
                         Center(
                           child: Pinput(
                             controller: _otpController,
                             focusNode: _otpFocusNode,
-                            length: 6,
+                            length: 4,
                             autofocus: true,
                             autofillHints: const [AutofillHints.oneTimeCode],
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                             ],
-                            separatorBuilder: (index) => SizedBox(width: 8.w),
+                            separatorBuilder: (index) => SizedBox(width: 12.w),
                             defaultPinTheme: PinTheme(
                               width: computedBoxWidth,
                               height: boxHeight,

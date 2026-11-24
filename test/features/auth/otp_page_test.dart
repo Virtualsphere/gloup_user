@@ -61,11 +61,11 @@ void main() {
       expect(verifyBtn.onPressed, isNull);
     });
 
-    testWidgets('entering 6 digits enables verify and dispatches VerifyOtpEvent',
+    testWidgets('entering 4 digits enables verify and dispatches VerifyOtpEvent',
         (tester) async {
       await pumpOtpPage(tester);
 
-      await tester.enterText(find.byType(Pinput), '123456');
+      await tester.enterText(find.byType(Pinput), '1234');
       await tester.pump();
 
       final verifyBtn = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
@@ -73,7 +73,7 @@ void main() {
 
       verify(() => authBloc.add(const VerifyOtpEvent(
             phone: '9876543221',
-            otp: '123456',
+            otp: '1234',
           ))).called(greaterThanOrEqualTo(1));
     });
 
