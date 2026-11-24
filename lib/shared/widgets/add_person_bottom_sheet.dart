@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
@@ -77,7 +78,8 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
     final int age = int.parse(ageText); // Now required, so safe to parse
 
     final phoneText = _phoneCtrl.text.trim();
-    final String phone = phoneText.isEmpty ? '' : phoneText;
+    final cleanPhone = Validators.normalizeIndianMobile(phoneText);
+    if (cleanPhone == null) return;
     final String name = _nameCtrl.text.trim();
 
     final gender = Validators.normalizeGender(_gender);
@@ -89,7 +91,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
             name: name,
             gender: gender,
             age: age,
-            phone: phone,
+            phone: cleanPhone,
           ),
         );
 
@@ -224,9 +226,9 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                     ),
                     SizedBox(height: AppSizes.space),
 
-                    // phone with +91 prefix (optional)
+                    // Phone number
                     Text(
-                      'Phone (optional)',
+                      'Phone number',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: isDarkMode
                                 ? AppColors.textSecondaryDark
@@ -256,8 +258,8 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingS,
-                              vertical: AppSizes.paddingS,
+                                horizontal: AppSizes.paddingS,
+                                vertical: AppSizes.paddingS,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withValues(alpha: 0.06),
@@ -285,7 +287,7 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                                 TextFormField(
                                   controller: _phoneCtrl,
                                   decoration: const InputDecoration(
-                                    hintText: 'Phone number',
+                                    hintText: '10-digit mobile number',
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
@@ -297,17 +299,19 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                                         height: 0,
                                         fontSize: 0), // Hide error inside
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.phone,
                                   textInputAction: TextInputAction.done,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
                                   validator: (v) {
                                     final t = (v ?? '').trim();
-                                    if (t.isEmpty) return null; // optional
-                                    final isNumeric =
-                                        RegExp(r'^[0-9]+$').hasMatch(t);
-                                    if (!isNumeric ||
-                                        t.length < 6 ||
-                                        t.length > 15) {
-                                      return 'Enter a valid phone';
+                                    if (t.isEmpty) {
+                                      return 'Phone number is required';
+                                    }
+                                    if (!Validators.isValidIndianMobile(t)) {
+                                      return 'Enter a valid 10-digit mobile number';
                                     }
                                     return null;
                                   },
@@ -324,27 +328,27 @@ class _AddPersonBottomSheetState extends State<_AddPersonBottomSheet> {
                         valueListenable: _phoneCtrl,
                         builder: (context, value, child) {
                           final t = value.text.trim();
-                          if (t.isNotEmpty) {
-                            final isNumeric = RegExp(r'^[0-9]+$').hasMatch(t);
-                            if (!isNumeric || t.length < 6 || t.length > 15) {
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    top: AppSizes.spaceXS,
-                                    left: AppSizes.paddingS),
-                                child: Text(
-                                  'Enter a valid phone',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.error,
-                                        fontSize: 12,
-                                      ),
-                                ),
-                              );
-                            }
-                          }
-                          return const SizedBox.shrink();
+                          final err = t.isEmpty
+                              ? 'Phone number is required'
+                              : (!Validators.isValidIndianMobile(t)
+                                  ? 'Enter a valid 10-digit mobile number'
+                                  : null);
+                          if (err == null) return const SizedBox.shrink();
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                top: AppSizes.spaceXS,
+                                left: AppSizes.paddingS),
+                            child: Text(
+                              err,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppColors.error,
+                                    fontSize: 12,
+                                  ),
+                            ),
+                          );
                         },
                       ),
                   ],

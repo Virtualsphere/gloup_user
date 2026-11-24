@@ -22,6 +22,8 @@ class CreateOrderRequest {
   final String customerName;
   final String customerPhone;
   final String customerEmail;
+  final double? lat;
+  final double? lng;
 
   const CreateOrderRequest({
     required this.bookingDate,
@@ -44,6 +46,8 @@ class CreateOrderRequest {
     required this.customerName,
     required this.customerPhone,
     required this.customerEmail,
+    this.lat,
+    this.lng,
   });
 
   Map<String, dynamic> toJson() {
@@ -70,6 +74,8 @@ class CreateOrderRequest {
       'customer_email': customerEmail,
     };
 
+    if (lat != null) data['lat'] = lat;
+    if (lng != null) data['lng'] = lng;
     if (guestId != null) data['guest_id'] = guestId;
     if (professionalId != null) data['professional_id'] = professionalId;
     if (couponCode != null) data['coupon_code'] = couponCode;

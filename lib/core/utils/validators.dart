@@ -36,15 +36,40 @@ class Validators {
     return null;
   }
 
-  /// Validate Indian phone number (10 digits)
+  static final RegExp _indianMobileRegex = RegExp(r'^[6-9]\d{9}$');
+
+  /// Normalizes an Indian mobile number to 10 digits starting with 6-9.
+  /// Handles prefixes like "+91", "91", leading "0", and ignores formatting.
+  /// Returns null if [value] cannot be parsed to a valid 10-digit Indian mobile.
+  static String? normalizeIndianMobile(String? value) {
+    if (value == null) return null;
+    String digits = value.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return null;
+
+    if (digits.length == 11 && digits.startsWith('0')) {
+      digits = digits.substring(1);
+    } else if (digits.length == 12 && digits.startsWith('91')) {
+      digits = digits.substring(2);
+    }
+
+    if (digits.length == 10 && _indianMobileRegex.hasMatch(digits)) {
+      return digits;
+    }
+    return null;
+  }
+
+  /// True when [value] is a valid 10-digit Indian mobile number.
+  static bool isValidIndianMobile(String? value) =>
+      normalizeIndianMobile(value) != null;
+
+  /// Validate Indian phone number (10 digits starting with 6-9)
   static String? indianPhone(String? value) {
-    if (value == null || value.isEmpty) {
+    final trimmed = (value ?? '').trim();
+    if (trimmed.isEmpty) {
       return AppStrings.validationRequired;
     }
 
-    final phoneRegex = RegExp(r'^\d{10}$');
-
-    if (!phoneRegex.hasMatch(value)) {
+    if (!isValidIndianMobile(trimmed)) {
       return 'Please enter a valid 10-digit phone number';
     }
 

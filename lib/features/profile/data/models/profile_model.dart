@@ -35,7 +35,9 @@ class ProfileModel extends ProfileEntity {
       id: json['id'] as int? ?? 0,
       firstname: (json['firstname'] as String?)?.trim() ?? '',
       lastname: (json['lastname'] as String?)?.trim() ?? '',
-      phone: json['phone'] as int? ?? 0,
+      phone: json['phone'] is int
+          ? json['phone'] as int
+          : (int.tryParse(json['phone']?.toString() ?? '') ?? 0),
       age: json['age'] as int? ?? 0,
       email: (json['email'] as String?)?.trim() ?? '',
       dateOfBirth: json['date_of_birth'] as String? ?? '',
@@ -81,6 +83,10 @@ class ProfileModel extends ProfileEntity {
       MapEntry("city", city),
       MapEntry("country", country),
     ]);
+
+    if (phone > 0) {
+      formData.fields.add(MapEntry("phone", phone.toString()));
+    }
 
     if (profilePic.isNotEmpty && File(profilePic).existsSync()) {
       formData.files.add(

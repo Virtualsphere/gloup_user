@@ -82,13 +82,14 @@ class _BookingDetailsBottomSheetState
   bool _showErrors = false;
 
   static final _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]{2,}$');
-  static final _phoneRegex = RegExp(r'^[6-9]\d{9}$');
 
   @override
   void initState() {
     super.initState();
+    final initialCleanPhone =
+        Validators.normalizeIndianMobile(widget.initialPhone);
     _nameCtrl = TextEditingController(text: widget.initialName ?? '');
-    _phoneCtrl = TextEditingController(text: widget.initialPhone ?? '');
+    _phoneCtrl = TextEditingController(text: initialCleanPhone ?? '');
     _emailCtrl = TextEditingController(text: widget.initialEmail ?? '');
     _selectedGender = Validators.normalizeGender(widget.initialGender);
   }
@@ -111,7 +112,9 @@ class _BookingDetailsBottomSheetState
   String? _validatePhone(String? value) {
     final t = (value ?? '').trim();
     if (t.isEmpty) return 'Phone number is required';
-    if (!_phoneRegex.hasMatch(t)) return 'Enter a valid 10-digit mobile number';
+    if (!Validators.isValidIndianMobile(t)) {
+      return 'Enter a valid 10-digit mobile number';
+    }
     return null;
   }
 
@@ -126,6 +129,9 @@ class _BookingDetailsBottomSheetState
     setState(() => _showErrors = true);
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    final phone = Validators.normalizeIndianMobile(_phoneCtrl.text.trim());
+    if (phone == null) return;
+
     final gender = Validators.normalizeGender(_selectedGender);
     if (gender == null) return;
 
@@ -133,7 +139,7 @@ class _BookingDetailsBottomSheetState
     Navigator.of(context).pop(
       BookingContactDetails(
         name: _nameCtrl.text.trim(),
-        phone: _phoneCtrl.text.trim(),
+        phone: phone,
         email: _emailCtrl.text.trim().toLowerCase(),
         gender: gender,
       ),

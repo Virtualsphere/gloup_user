@@ -112,13 +112,24 @@ class _ServiceTickerState extends State<ServiceTicker> {
     return _asDouble(srv['discountedPrice']) ?? _asDouble(srv['price']) ?? 0;
   }
 
+  String get _currentKey {
+    final index = _currentIndex % _services.length;
+    return '${_services[index]['name']}-$index';
+  }
+
+  /// Exact payable price: no truncation of paise, no trailing ".0".
+  String _formatPrice(double value) {
+    return value == value.truncateToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_services.isEmpty) return const SizedBox.shrink();
 
     final index = _currentIndex % _services.length;
-    final textColor =
-        widget.isOfferCard ? Colors.white : _badgeTextColor;
+    final textColor = widget.isOfferCard ? Colors.white : _badgeTextColor;
 
     return ClipRect(
       child: AnimatedSwitcher(
@@ -135,8 +146,10 @@ class _ServiceTickerState extends State<ServiceTicker> {
           );
         },
         transitionBuilder: (Widget child, Animation<double> animation) {
+          // Incoming item slides in from the right; outgoing one exits left.
+          final isIncoming = child.key == ValueKey<String>(_currentKey);
           final slide = Tween<Offset>(
-            begin: const Offset(0, 0.7),
+            begin: isIncoming ? const Offset(1, 0) : const Offset(-1, 0),
             end: Offset.zero,
           ).animate(animation);
 
@@ -176,15 +189,14 @@ class _ServiceTickerState extends State<ServiceTicker> {
             width: 3.w,
             height: 3.h,
             decoration: BoxDecoration(
-              color: widget.isOfferCard
-                  ? Colors.white
-                  : AppColors.textSecondary,
+              color:
+                  widget.isOfferCard ? Colors.white : AppColors.textSecondary,
               shape: BoxShape.circle,
             ),
           ),
         ),
         Text(
-          '₹${displayPrice.toInt()}',
+          '₹${_formatPrice(displayPrice)}',
           style: context.textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 11.sp,
