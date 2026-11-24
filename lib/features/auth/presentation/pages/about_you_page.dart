@@ -34,11 +34,13 @@ class _AboutYouPageState extends State<AboutYouPage> {
   void initState() {
     super.initState();
     _nameController.addListener(_onFieldChanged);
+    _nameFocusNode.addListener(_onFieldChanged);
   }
 
   @override
   void dispose() {
     _nameController.removeListener(_onFieldChanged);
+    _nameFocusNode.removeListener(_onFieldChanged);
     _nameController.dispose();
     _nameFocusNode.dispose();
     super.dispose();
@@ -167,7 +169,7 @@ class _AboutYouPageState extends State<AboutYouPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // Step 1 Indicator (Active)
+                                // Step 1 Indicator (Active: #262A30)
                                 Container(
                                   width: 24.w,
                                   height: 4.h,
@@ -177,7 +179,7 @@ class _AboutYouPageState extends State<AboutYouPage> {
                                   ),
                                 ),
                                 SizedBox(width: 6.w),
-                                // Step 2 Indicator (Inactive)
+                                // Step 2 Indicator (Inactive: #D9DADC)
                                 Container(
                                   width: 24.w,
                                   height: 4.h,
@@ -200,7 +202,7 @@ class _AboutYouPageState extends State<AboutYouPage> {
                       Text(
                         'STEP 1 OF 2',
                         style: GoogleFonts.inter(
-                          fontSize: 11.5.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.8,
                           color: const Color(0xFF9CA3AF),
@@ -236,59 +238,62 @@ class _AboutYouPageState extends State<AboutYouPage> {
 
                       SizedBox(height: 24.h),
 
-                      // Name Input Field with outline border
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14.r),
-                          border: Border.all(
+                      // Single clean TextFormField matching Figma with OutlineInputBorder
+                      TextFormField(
+                        controller: _nameController,
+                        focusNode: _nameFocusNode,
+                        style: GoogleFonts.inter(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF262A30),
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        decoration: InputDecoration(
+                          labelText: 'Your name',
+                          labelStyle: GoogleFonts.inter(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF717784),
+                          ),
+                          floatingLabelStyle: GoogleFonts.inter(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
                             color: _nameFocusNode.hasFocus
                                 ? const Color(0xFF262A30)
-                                : const Color(0xFFE5E7EB),
-                            width: _nameFocusNode.hasFocus ? 1.5 : 1.2,
+                                : const Color(0xFF717784),
                           ),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 8.h,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Your name',
-                              style: GoogleFonts.inter(
-                                fontSize: 11.5.sp,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF717784),
-                              ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: 'Enter your name',
+                          hintStyle: GoogleFonts.inter(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF9CA3AF),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 16.h,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                              width: 1.2,
                             ),
-                            TextField(
-                              controller: _nameController,
-                              focusNode: _nameFocusNode,
-                              style: GoogleFonts.inter(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF262A30),
-                              ),
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding: EdgeInsets.only(
-                                  top: 4.h,
-                                  bottom: 4.h,
-                                ),
-                                border: InputBorder.none,
-                                hintText: 'Enter your name',
-                                hintStyle: GoogleFonts.inter(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF9CA3AF),
-                                ),
-                              ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF262A30),
+                              width: 1.5,
                             ),
-                          ],
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                              width: 1.2,
+                            ),
+                          ),
                         ),
                       ),
 
@@ -313,9 +318,8 @@ class _AboutYouPageState extends State<AboutYouPage> {
                           Expanded(
                             child: _GenderCard(
                               title: 'Men',
-                              symbol: '♂',
+                              isMale: true,
                               imagePath: AppImages.genderMen,
-                              imageBgColor: const Color(0xFFEEF5FC),
                               isSelected: _selectedGender == 'male',
                               onTap: () {
                                 setState(() {
@@ -331,9 +335,8 @@ class _AboutYouPageState extends State<AboutYouPage> {
                           Expanded(
                             child: _GenderCard(
                               title: 'Women',
-                              symbol: '♀',
+                              isMale: false,
                               imagePath: AppImages.genderWomen,
-                              imageBgColor: const Color(0xFFF9F5F8),
                               isSelected: _selectedGender == 'female',
                               onTap: () {
                                 setState(() {
@@ -416,30 +419,35 @@ class _AboutYouPageState extends State<AboutYouPage> {
 
 class _GenderCard extends StatelessWidget {
   final String title;
-  final String symbol;
+  final bool isMale;
   final String imagePath;
-  final Color imageBgColor;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _GenderCard({
     required this.title,
-    required this.symbol,
+    required this.isMale,
     required this.imagePath,
-    required this.imageBgColor,
     required this.isSelected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Figma colors:
+    // When selected: Men has soft blue #E6EDF3 tint, Women has soft blush or same #E6EDF3 tint.
+    // When unselected: subtle soft cool gray #F4F5F7.
+    final Color topBgColor = isSelected
+        ? const Color(0xFFE6EDF3)
+        : const Color(0xFFF4F5F7);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 200.h,
-        padding: EdgeInsets.all(8.w),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18.r),
@@ -461,55 +469,58 @@ class _GenderCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Image box with tinted background
+            // Top Image container with tinted background filling upper card
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: imageBgColor,
-                  borderRadius: BorderRadius.circular(14.r),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Icon(
-                        title == 'Men'
-                            ? Icons.face_rounded
-                            : Icons.face_3_rounded,
-                        size: 48.w,
-                        color: const Color(0xFF717784),
-                      ),
-                    );
-                  },
+                color: topBgColor,
+                padding: EdgeInsets.all(12.w),
+                child: Center(
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
+                          isMale
+                              ? Icons.face_rounded
+                              : Icons.face_3_rounded,
+                          size: 48.w,
+                          color: const Color(0xFF717784),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
 
-            SizedBox(height: 10.h),
-
-            // Bottom title + check circle
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.w),
+            // Bottom row: Vector icon + Label + Selection radio
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(
+                horizontal: 12.w,
+                vertical: 14.h,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        symbol,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                          color: title == 'Women'
-                              ? const Color(0xFF2D6FA6)
-                              : const Color(0xFF262A30),
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
+                      // Vector-drawn gender symbol (avoids Android emoji font overrides)
+                      isMale
+                          ? const _MaleIcon(
+                              color: Color(0xFF262A30),
+                              size: 16,
+                            )
+                          : _FemaleIcon(
+                              color: isSelected
+                                  ? const Color(0xFF262A30)
+                                  : const Color(0xFF2D6FA6),
+                              size: 16,
+                            ),
+                      SizedBox(width: 8.w),
                       Text(
                         title,
                         style: GoogleFonts.inter(
@@ -524,8 +535,8 @@ class _GenderCard extends StatelessWidget {
                   // Selection radio/checkmark indicator
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 20.w,
-                    height: 20.w,
+                    width: 22.w,
+                    height: 22.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isSelected
@@ -541,7 +552,7 @@ class _GenderCard extends StatelessWidget {
                     child: isSelected
                         ? Icon(
                             Icons.check_rounded,
-                            size: 13.w,
+                            size: 14.w,
                             color: Colors.white,
                           )
                         : null,
@@ -549,11 +560,136 @@ class _GenderCard extends StatelessWidget {
                 ],
               ),
             ),
-
-            SizedBox(height: 4.h),
           ],
         ),
       ),
     );
   }
+}
+
+/// Custom-painted vector Male symbol (♂)
+class _MaleIcon extends StatelessWidget {
+  final Color color;
+  final double size;
+
+  const _MaleIcon({
+    this.color = const Color(0xFF262A30),
+    this.size = 16,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.w,
+      height: size.w,
+      child: CustomPaint(
+        painter: _MaleIconPainter(color: color),
+      ),
+    );
+  }
+}
+
+class _MaleIconPainter extends CustomPainter {
+  final Color color;
+
+  _MaleIconPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final w = size.width;
+    final h = size.height;
+
+    // Circle at bottom-left
+    final circleCenter = Offset(w * 0.42, h * 0.58);
+    final circleRadius = w * 0.28;
+    canvas.drawCircle(circleCenter, circleRadius, paint);
+
+    // Diagonal arrow line towards top-right (45 degrees)
+    final arrowStart = Offset(
+      circleCenter.dx + circleRadius * 0.7071,
+      circleCenter.dy - circleRadius * 0.7071,
+    );
+    final arrowEnd = Offset(w * 0.88, h * 0.12);
+    canvas.drawLine(arrowStart, arrowEnd, paint);
+
+    // Arrow heads
+    final headLen = w * 0.32;
+    canvas.drawLine(arrowEnd, Offset(arrowEnd.dx - headLen, arrowEnd.dy), paint);
+    canvas.drawLine(arrowEnd, Offset(arrowEnd.dx, arrowEnd.dy + headLen), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MaleIconPainter oldDelegate) =>
+      oldDelegate.color != color;
+}
+
+/// Custom-painted vector Female symbol (♀)
+class _FemaleIcon extends StatelessWidget {
+  final Color color;
+  final double size;
+
+  const _FemaleIcon({
+    this.color = const Color(0xFF2D6FA6),
+    this.size = 16,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.w,
+      height: size.w,
+      child: CustomPaint(
+        painter: _FemaleIconPainter(color: color),
+      ),
+    );
+  }
+}
+
+class _FemaleIconPainter extends CustomPainter {
+  final Color color;
+
+  _FemaleIconPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final w = size.width;
+    final h = size.height;
+
+    // Circle at top-center
+    final circleCenter = Offset(w * 0.5, h * 0.38);
+    final circleRadius = w * 0.28;
+    canvas.drawCircle(circleCenter, circleRadius, paint);
+
+    // Vertical stem straight down
+    final stemTop = Offset(w * 0.5, circleCenter.dy + circleRadius);
+    final stemBottom = Offset(w * 0.5, h * 0.92);
+    canvas.drawLine(stemTop, stemBottom, paint);
+
+    // Horizontal crossbar
+    final crossY = circleCenter.dy + circleRadius + (stemBottom.dy - stemTop.dy) * 0.45;
+    final armLen = w * 0.22;
+    canvas.drawLine(
+      Offset(w * 0.5 - armLen, crossY),
+      Offset(w * 0.5 + armLen, crossY),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _FemaleIconPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
