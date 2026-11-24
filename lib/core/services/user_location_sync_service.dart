@@ -26,7 +26,7 @@ class UserLocationSyncService with WidgetsBindingObserver {
   static Future<void> initialize() async {
     WidgetsBinding.instance.addObserver(instance);
     if (LocalStorageService.isLoggedIn) {
-      await instance.start();
+      unawaited(instance.start());
     }
   }
 
@@ -212,7 +212,19 @@ class UserLocationSyncService with WidgetsBindingObserver {
   Future<Position?> _readGpsIfAllowed() async {
     try {
       if (!await _hasLocationPermission()) return null;
-      return Geolocator.getCurrentPosition(
+
+      // Prefer last known position if recent (< 5 mins) to avoid blocking cold GPS fix
+      try {
+        final lastKnown = await Geolocator.getLastKnownPosition();
+        if (lastKnown != null) {
+          final age = DateTime.now().difference(lastKnown.timestamp);
+          if (age < const Duration(minutes: 5)) {
+            return lastKnown;
+          }
+        }
+      } catch (_) {}
+
+      return await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.medium,
           timeLimit: Duration(seconds: 8),
