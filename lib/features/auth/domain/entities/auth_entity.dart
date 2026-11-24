@@ -25,13 +25,21 @@ class SendOtpEntity extends AuthEntity {
 
 class VerifyOtpEntity extends AuthEntity {
   final String token;
+  final String? name;
+  final String? gender;
+  final bool isDetailsFound;
+  final bool isNewUser;
 
   const VerifyOtpEntity({
     required super.status,
     required super.message,
     required this.token,
+    this.name,
+    this.gender,
+    this.isDetailsFound = true,
+    this.isNewUser = false,
   });
 
   @override
-  List<Object?> get props => [status, message, token];
+  List<Object?> get props => [status, message, token, name, gender, isDetailsFound, isNewUser];
 }

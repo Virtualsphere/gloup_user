@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/app_analytics_service.dart';
@@ -162,14 +163,27 @@ class _OtpPageContentState extends State<_OtpPageContent> {
           if (authEntity is VerifyOtpEntity) {
             LocalStorageService.setAccessToken(authEntity.token);
             LocalStorageService.setLoggedIn(true);
+            if (authEntity.name != null && authEntity.name!.isNotEmpty) {
+              LocalStorageService.setString(Keys.userName, authEntity.name!);
+            }
+            if (authEntity.gender != null && authEntity.gender!.isNotEmpty) {
+              LocalStorageService.setString('selected_gender', authEntity.gender!);
+            }
             PresenceHeartbeatService.onUserLogin();
             UserLocationSyncService.onUserLogin();
             AttributionService.onUserLogin();
             AppAnalyticsService.instance.flush();
-          }
 
-          CustomToast.showSuccess(context, "OTP verified successfully!");
-          context.go(RouteNames.home);
+            CustomToast.showSuccess(context, "OTP verified successfully!");
+            if (!authEntity.isDetailsFound) {
+              context.go(RouteNames.aboutYou);
+            } else {
+              context.go(RouteNames.home);
+            }
+          } else {
+            CustomToast.showSuccess(context, "OTP verified successfully!");
+            context.go(RouteNames.home);
+          }
         } else if (state is AuthFailure) {
           setState(() {
             _isLoading = false;

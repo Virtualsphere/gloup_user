@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/constants/keys.dart';
 import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/core/services/app_analytics_service.dart';
 import 'package:tressy/core/services/attribution_service.dart';
 import 'package:tressy/core/services/presence_heartbeat_service.dart';
@@ -151,14 +154,26 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           if (authEntity is VerifyOtpEntity) {
             LocalStorageService.setAccessToken(authEntity.token);
             LocalStorageService.setLoggedIn(true);
+            if (authEntity.name != null && authEntity.name!.isNotEmpty) {
+              LocalStorageService.setString(Keys.userName, authEntity.name!);
+            }
+            if (authEntity.gender != null && authEntity.gender!.isNotEmpty) {
+              LocalStorageService.setString('selected_gender', authEntity.gender!);
+            }
             PresenceHeartbeatService.onUserLogin();
             UserLocationSyncService.onUserLogin();
             AttributionService.onUserLogin();
             AppAnalyticsService.instance.flush();
-          }
 
-          CustomToast.showSuccess(context, 'Login successful!');
-          Navigator.pop(context);
+            CustomToast.showSuccess(context, 'Login successful!');
+            Navigator.pop(context);
+            if (!authEntity.isDetailsFound) {
+              context.go(RouteNames.aboutYou);
+            }
+          } else {
+            CustomToast.showSuccess(context, 'Login successful!');
+            Navigator.pop(context);
+          }
         } else if (state is SocialAuthSuccess) {
           LocalStorageService.setAccessToken(state.token);
           LocalStorageService.setLoggedIn(true);

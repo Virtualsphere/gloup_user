@@ -15,6 +15,7 @@ class RouteNames {
   // Auth
   static const String login = '/login';
   static const String otp = '/otp';
+  static const String aboutYou = '/about-you';
 
   // Main App Routes (Shell Routes with Bottom Nav)
   static const String home = '/home';
