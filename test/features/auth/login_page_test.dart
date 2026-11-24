@@ -28,7 +28,7 @@ void main() {
   });
 
   Future<void> pumpLoginPage(WidgetTester tester) async {
-    setWidgetTestScreenSize(tester);
+    setWidgetTestScreenSize(tester, size: const Size(400, 950));
     await tester.pumpWidget(
       buildTestMaterialApp(
         child: LoginPage(authBloc: authBloc),
@@ -37,17 +37,33 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> tapLogin(WidgetTester tester) async {
-    await tester.ensureVisible(find.text('Login'));
-    await tester.tap(find.text('Login'));
+  Future<void> tapContinue(WidgetTester tester) async {
+    final continueFinder = find.text('Continue');
+    await tester.ensureVisible(continueFinder);
+    await tester.tap(continueFinder);
     await tester.pump();
   }
 
   group('LoginPage', () {
+    testWidgets('renders Figma elements properly', (tester) async {
+      await pumpLoginPage(tester);
+
+      expect(find.text('Skip'), findsOneWidget);
+      expect(find.text('Booked today'), findsOneWidget);
+      expect(find.text('12,480+'), findsOneWidget);
+      expect(find.text('Partner salons'), findsOneWidget);
+      expect(find.text('1,200+'), findsOneWidget);
+      expect(find.text('Look good.\nBook in seconds.'), findsOneWidget);
+      expect(find.text('Log in or sign up'), findsOneWidget);
+      expect(find.text('+91'), findsOneWidget);
+      expect(find.text('Continue'), findsOneWidget);
+      expect(find.text('Continue as guest'), findsOneWidget);
+    });
+
     testWidgets('shows required validation when phone is empty', (tester) async {
       await pumpLoginPage(tester);
 
-      await tapLogin(tester);
+      await tapContinue(tester);
 
       expect(find.text(AppStrings.validationRequired), findsOneWidget);
       verifyNever(() => authBloc.add(any()));
@@ -58,7 +74,7 @@ void main() {
       await pumpLoginPage(tester);
 
       await tester.enterText(find.byType(TextFormField), '12345');
-      await tapLogin(tester);
+      await tapContinue(tester);
 
       expect(
         find.text('Please enter a valid 10-digit phone number'),
@@ -71,7 +87,7 @@ void main() {
       await pumpLoginPage(tester);
 
       await tester.enterText(find.byType(TextFormField), '9876543210');
-      await tapLogin(tester);
+      await tapContinue(tester);
 
       expect(find.text(AppStrings.validationRequired), findsNothing);
       verify(() => authBloc.add(const SendOtpEvent('9876543210'))).called(1);
