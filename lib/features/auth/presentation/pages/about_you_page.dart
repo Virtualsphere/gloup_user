@@ -447,16 +447,9 @@ class _GenderCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 200.h,
-        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(
-            color: isSelected
-                ? const Color(0xFF262A30)
-                : const Color(0xFFE5E7EB),
-            width: isSelected ? 1.5 : 1.0,
-          ),
           boxShadow: isSelected
               ? [
                   const BoxShadow(
@@ -467,100 +460,116 @@ class _GenderCard extends StatelessWidget {
                 ]
               : null,
         ),
-        child: Column(
-          children: [
-            // Top Image container with tinted background filling upper card
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                color: topBgColor,
-                padding: EdgeInsets.all(12.w),
-                child: Center(
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          isMale
-                              ? Icons.face_rounded
-                              : Icons.face_3_rounded,
-                          size: 48.w,
-                          color: const Color(0xFF717784),
-                        ),
-                      );
-                    },
+        foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF262A30)
+                : const Color(0xFFE2E4E8),
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18.r),
+          child: Column(
+            children: [
+              // Top Image container with tinted background filling upper card
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  color: topBgColor,
+                  padding: EdgeInsets.all(12.w),
+                  child: Center(
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Icon(
+                            isMale
+                                ? Icons.face_rounded
+                                : Icons.face_3_rounded,
+                            size: 48.w,
+                            color: const Color(0xFF717784),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Bottom row: Vector icon + Label + Selection radio
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 14.h,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Vector-drawn gender symbol (avoids Android emoji font overrides)
-                      isMale
-                          ? const _MaleIcon(
-                              color: Color(0xFF262A30),
-                              size: 16,
-                            )
-                          : _FemaleIcon(
-                              color: isSelected
-                                  ? const Color(0xFF262A30)
-                                  : const Color(0xFF2D6FA6),
-                              size: 16,
-                            ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        title,
-                        style: GoogleFonts.inter(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF262A30),
+              // Bottom row: Vector icon + Label + Selection radio
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 14.h,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Vector-drawn gender symbol (avoids Android emoji font overrides)
+                        isMale
+                            ? const _MaleIcon(
+                                color: Color(0xFF262A30),
+                                size: 16,
+                              )
+                            : _FemaleIcon(
+                                color: isSelected
+                                    ? const Color(0xFF262A30)
+                                    : const Color(0xFF2D6FA6),
+                                size: 16,
+                              ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          title,
+                          style: GoogleFonts.inter(
+                            fontSize: 15.sp,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w600,
+                            color: isSelected
+                                ? const Color(0xFF262A30)
+                                : const Color(0xFF565A5D),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  // Selection radio/checkmark indicator
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 22.w,
-                    height: 22.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isSelected
-                          ? const Color(0xFF262A30)
-                          : Colors.transparent,
-                      border: Border.all(
+                    // Selection radio/checkmark indicator
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 22.w,
+                      height: 22.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         color: isSelected
                             ? const Color(0xFF262A30)
-                            : const Color(0xFFD1D5DB),
-                        width: 1.5,
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: isSelected
+                              ? const Color(0xFF262A30)
+                              : const Color(0xFFD1D5DB),
+                          width: 1.5,
+                        ),
                       ),
+                      child: isSelected
+                          ? Icon(
+                              Icons.check_rounded,
+                              size: 14.w,
+                              color: Colors.white,
+                            )
+                          : null,
                     ),
-                    child: isSelected
-                        ? Icon(
-                            Icons.check_rounded,
-                            size: 14.w,
-                            color: Colors.white,
-                          )
-                        : null,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
