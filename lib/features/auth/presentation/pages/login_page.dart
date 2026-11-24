@@ -93,7 +93,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
         backgroundColor: Colors.white,
         body: Stack(
           children: [
-            // Top half background gradient (Figma: #EEF5FC to #FCF2F3)
+            // Top half background gradient (Figma: linear-gradient(160deg, #EEF5FC 8.49%, #CFE2F3 91.51%))
             Positioned(
               top: 0,
               left: 0,
@@ -102,11 +102,12 @@ class _LoginPageContentState extends State<_LoginPageContent> {
               child: const DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+                    begin: Alignment(-0.35, -1.0),
+                    end: Alignment(0.35, 1.0),
+                    stops: [0.0849, 0.9151],
                     colors: [
                       Color(0xFFEEF5FC),
-                      Color(0xFFFCF2F3),
+                      Color(0xFFCFE2F3),
                     ],
                   ),
                 ),
