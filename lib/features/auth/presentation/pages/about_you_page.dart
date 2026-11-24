@@ -89,24 +89,32 @@ class _AboutYouPageState extends State<AboutYouPage> {
       if (mounted) {
         CustomToast.showSuccess(context, "Profile updated successfully!");
         try {
-          context.go(RouteNames.home);
+          context.push(RouteNames.locationAccess);
         } catch (_) {
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
+          try {
+            context.go(RouteNames.locationAccess);
+          } catch (_) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
           }
         }
       }
     } catch (e) {
-      // Even if network fails, cache locally and proceed to home
+      // Even if network fails, cache locally and proceed to location access
       await LocalStorageService.setString(Keys.userName, fullName);
       await LocalStorageService.setString('selected_gender', gender);
 
       if (mounted) {
         try {
-          context.go(RouteNames.home);
+          context.push(RouteNames.locationAccess);
         } catch (_) {
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
+          try {
+            context.go(RouteNames.locationAccess);
+          } catch (_) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
           }
         }
       }

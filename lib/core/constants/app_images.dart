@@ -8,6 +8,8 @@ class AppImages {
   static const loginChair = 'assets/images/png/login_chair.png';
   static const genderMen = 'assets/images/png/gender_men.png';
   static const genderWomen = 'assets/images/png/gender_women.png';
+  static const locationOnboardingMap =
+      'assets/images/png/location_onboarding_map.png';
   static const onBoardingBg01 = 'assets/images/onboarding_bg_01.png';
   static const onBoardingBg02 = 'assets/images/onboarding_bg_02.png';
   static const onBoardingBg03 = 'assets/images/onboarding_bg_03.png';

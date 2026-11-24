@@ -8,6 +8,7 @@ import 'package:tressy/features/profile/domain/entities/profile_entity.dart';
 import 'package:tressy/features/slot_booking/presentation/bloc/slot_bloc.dart';
 import 'package:tressy/features/booking_confirmation/presentation/bloc/guest_bloc.dart';
 import 'package:tressy/features/auth/presentation/pages/about_you_page.dart';
+import 'package:tressy/features/auth/presentation/pages/location_access_page.dart';
 import 'package:tressy/features/auth/presentation/pages/login_page.dart';
 import 'package:tressy/features/auth/presentation/pages/otp_page.dart';
 import 'package:tressy/features/bookings/presentation/pages/bookings_page.dart';
@@ -122,6 +123,11 @@ class AppRouter {
       path: RouteNames.aboutYou,
       name: RouteNames.aboutYou,
       builder: (context, state) => const AboutYouPage(),
+    ),
+    GoRoute(
+      path: RouteNames.locationAccess,
+      name: RouteNames.locationAccess,
+      builder: (context, state) => const LocationAccessPage(),
     ),
 
     // Main app with bottom navigation
