@@ -164,6 +164,7 @@ void main() {
         filters: FilterState.empty,
         onChanged: (f) => latest = f,
         onSortTap: () {},
+        showOffersChip: true,
       )));
       expect(find.text('24 salons around you'), findsOneWidget);
 
@@ -191,13 +192,43 @@ void main() {
         ),
         onChanged: (f) => latest = f,
         onSortTap: () {},
+        showOffersChip: true,
       )));
-      await _tapChip(tester, 'chip_nearest');
-      expect(latest?.sort, SalonSort.relevance);
       await _tapChip(tester, 'chip_rating');
       expect(latest?.minRating, isNull);
       await _tapChip(tester, 'chip_offers');
       expect(latest?.hasOffers, isFalse);
+      // Nearest is the default order, so tapping it keeps it selected.
+      await _tapChip(tester, 'chip_nearest');
+      expect(latest?.sort, SalonSort.distance);
+    });
+
+    testWidgets('Nearest is selected by default; Offers chip is hidden',
+        (tester) async {
+      Color? colorOf(String key) {
+        final box = tester.widget<Container>(find
+            .descendant(
+                of: find.byKey(Key(key)), matching: find.byType(Container))
+            .first);
+        return (box.decoration as BoxDecoration?)?.color;
+      }
+
+      await tester.pumpWidget(_wrap(SalonListHeader(
+        totalRecords: 5,
+        filters: FilterState.empty,
+        onChanged: (_) {},
+        onSortTap: () {},
+      )));
+      expect(find.byKey(const Key('chip_offers')), findsNothing);
+      expect(colorOf('chip_nearest'), isNot(colorOf('chip_rating')));
+
+      await tester.pumpWidget(_wrap(SalonListHeader(
+        totalRecords: 5,
+        filters: const FilterState(sort: SalonSort.rating),
+        onChanged: (_) {},
+        onSortTap: () {},
+      )));
+      expect(colorOf('chip_nearest'), colorOf('chip_rating'));
     });
 
     testWidgets('Filters chip only when a handler exists, with count',
@@ -230,8 +261,8 @@ void main() {
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(
-              onPressed: () async =>
-                  picked = await HomeSortSheet.show(context, SalonSort.relevance),
+              onPressed: () async => picked =
+                  await HomeSortSheet.show(context, SalonSort.relevance),
               child: const Text('open'),
             ),
           ),

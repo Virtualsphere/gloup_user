@@ -18,6 +18,10 @@ class SalonListHeader extends StatelessWidget {
   /// Hide the "N salons" heading when the page shows the count elsewhere.
   final bool showHeading;
 
+  /// Offers quick pick; Figma's Home shows only Filters, Sort, Nearest and
+  /// Rating, so it is off by default.
+  final bool showOffersChip;
+
   const SalonListHeader({
     super.key,
     required this.totalRecords,
@@ -26,6 +30,7 @@ class SalonListHeader extends StatelessWidget {
     required this.onSortTap,
     this.onFiltersTap,
     this.showHeading = true,
+    this.showOffersChip = false,
   });
 
   static const double ratingQuickPick = 4.0;
@@ -33,7 +38,10 @@ class SalonListHeader extends StatelessWidget {
   static String countLabel(int total) =>
       total == 1 ? '1 salon around you' : '$total salons around you';
 
-  bool get _nearest => filters.sort == SalonSort.distance;
+  /// Relevance already orders by distance, so Nearest reads as selected by
+  /// default (Figma) and only a different sort deselects it.
+  bool get _nearest =>
+      filters.sort == SalonSort.relevance || filters.sort == SalonSort.distance;
   bool get _topRated => filters.minRating == ratingQuickPick;
 
   @override
@@ -42,6 +50,7 @@ class SalonListHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (showHeading) ...[
+          SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: HomeDesignTokens.screenGutter.w,
@@ -52,7 +61,7 @@ class SalonListHeader extends StatelessWidget {
                   : countLabel(totalRecords!),
               key: const Key('salon_count'),
               style: GoogleFonts.inter(
-                fontSize: 16.sp,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w700,
                 color: HomeDesignTokens.textPrimary,
               ),
@@ -61,7 +70,7 @@ class SalonListHeader extends StatelessWidget {
           SizedBox(height: 10.h),
         ],
         SizedBox(
-          height: 36.h,
+          height: 32.h,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(
@@ -81,8 +90,8 @@ class SalonListHeader extends StatelessWidget {
               _Chip(
                 key: const Key('chip_sort'),
                 label: 'Sort',
-                icon: Icons.swap_vert_rounded,
-                selected: filters.sort != SalonSort.relevance && !_nearest,
+                trailingIcon: Icons.keyboard_arrow_down_rounded,
+                selected: !_nearest,
                 onTap: onSortTap,
               ),
               _Chip(
@@ -90,7 +99,7 @@ class SalonListHeader extends StatelessWidget {
                 label: 'Nearest',
                 selected: _nearest,
                 onTap: () => onChanged(filters.copyWith(
-                  sort: _nearest ? SalonSort.relevance : SalonSort.distance,
+                  sort: SalonSort.distance,
                 )),
               ),
               _Chip(
@@ -103,14 +112,15 @@ class SalonListHeader extends StatelessWidget {
                       : filters.copyWith(minRating: ratingQuickPick),
                 ),
               ),
-              _Chip(
-                key: const Key('chip_offers'),
-                label: 'Offers',
-                selected: filters.hasOffers,
-                onTap: () => onChanged(
-                  filters.copyWith(hasOffers: !filters.hasOffers),
+              if (showOffersChip)
+                _Chip(
+                  key: const Key('chip_offers'),
+                  label: 'Offers',
+                  selected: filters.hasOffers,
+                  onTap: () => onChanged(
+                    filters.copyWith(hasOffers: !filters.hasOffers),
+                  ),
                 ),
-              ),
             ]),
           ),
         ),
@@ -122,6 +132,7 @@ class SalonListHeader extends StatelessWidget {
 class _Chip extends StatelessWidget {
   final String label;
   final IconData? icon;
+  final IconData? trailingIcon;
   final bool selected;
   final VoidCallback onTap;
 
@@ -131,6 +142,7 @@ class _Chip extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.icon,
+    this.trailingIcon,
   });
 
   @override
@@ -163,11 +175,15 @@ class _Chip extends StatelessWidget {
               Text(
                 label,
                 style: GoogleFonts.inter(
-                  fontSize: 13.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   color: fg,
                 ),
               ),
+              if (trailingIcon != null) ...[
+                SizedBox(width: 2.w),
+                Icon(trailingIcon, size: 16.w, color: fg),
+              ],
             ],
           ),
         ),
