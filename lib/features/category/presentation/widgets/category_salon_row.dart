@@ -43,7 +43,8 @@ class CategoryServicePrice {
     if (best != null) return best;
 
     if (salon.servicePrice != null && (salon.serviceName ?? '').isNotEmpty) {
-      return CategoryServicePrice(salon.serviceName!, salon.servicePrice!, null);
+      return CategoryServicePrice(
+          salon.serviceName!, salon.servicePrice!, null);
     }
     return null;
   }
@@ -70,7 +71,8 @@ class CategorySalonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = salon.images.isNotEmpty ? salon.images.first : salon.salonImage;
+    final image =
+        salon.images.isNotEmpty ? salon.images.first : salon.salonImage;
     final price = CategoryServicePrice.forSalon(salon, categoryName);
     final meta = <String>[
       if (salon.reviewCount > 0) '${salon.reviewCount} reviews',
@@ -101,6 +103,7 @@ class CategorySalonRow extends StatelessWidget {
                       imageUrl: image,
                       width: 96.w,
                       height: 112.h,
+                      showErrorLabel: false,
                       logTag: 'CategorySalonRow',
                     ),
                   ),

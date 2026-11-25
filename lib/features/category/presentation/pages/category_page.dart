@@ -246,8 +246,8 @@ class _CategoryPageState extends State<CategoryPage> {
     final count = _offerCount;
     if (count == null || count <= 0) return const SizedBox.shrink();
     return Padding(
-      padding: EdgeInsets.fromLTRB(AppSizes.paddingM, AppSizes.spaceM,
-          AppSizes.paddingM, 0),
+      padding: EdgeInsets.fromLTRB(
+          AppSizes.paddingM, AppSizes.spaceM, AppSizes.paddingM, 0),
       child: GestureDetector(
         key: const Key('offers_strip'),
         onTap: () => _onFiltersChanged(
@@ -423,10 +423,8 @@ class _CategoryPageState extends State<CategoryPage> {
                           child: CategorySalonRow(
                             salon: salon,
                             categoryName: _selectedCategoryName,
-                            onTap: () =>
-                                _openSalon(salon.id, salon.salonName),
-                            onBook: () =>
-                                _openSalon(salon.id, salon.salonName),
+                            onTap: () => _openSalon(salon.id, salon.salonName),
+                            onBook: () => _openSalon(salon.id, salon.salonName),
                           ),
                         );
                       },

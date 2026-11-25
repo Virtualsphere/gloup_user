@@ -74,6 +74,7 @@ class FavoriteSalonCard extends StatelessWidget {
                               imageUrl: image,
                               width: 92.w,
                               height: 104.h,
+                              showErrorLabel: false,
                               logTag: 'FavoriteSalonCard',
                             ),
                           ),
