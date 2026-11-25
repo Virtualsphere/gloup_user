@@ -55,6 +55,8 @@ class ApiRoutes {
       '$baseUrl/user/app/v2/services/top-categories';
   static const String getStoresByCategory =
       '$baseUrl/user/app/v2/stores/by-category';
+  static const String getWelcomeOffer =
+      '$baseUrl/user/app/v2/home/welcome-offer';
 
   // Favorites Endpoints
   static const String toggleFavorite = '$baseUrl/user/app/v2/favourites';
@@ -127,6 +129,7 @@ class ApiRoutes {
     'getTopSalons': getTopSalons,
     'getTopCategories': getTopCategories,
     'getStoresByCategory': getStoresByCategory,
+    'getWelcomeOffer': getWelcomeOffer,
     // Favorites
     'toggleFavorite': toggleFavorite,
     'getFavorites': getFavorites,

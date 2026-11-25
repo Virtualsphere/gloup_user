@@ -30,6 +30,7 @@ import 'package:tressy/shared/data/repositories/salon_repository_impl.dart';
 import 'package:tressy/shared/domain/repositories/salon_repository.dart';
 import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
 import 'package:tressy/features/home/data/datasources/home_datasource.dart';
+import 'package:tressy/features/home/data/datasources/welcome_offer_datasource.dart';
 import 'package:tressy/features/home/data/datasources/service_discovery_datasource.dart';
 import 'package:tressy/features/home/data/repositories/home_repository_impl.dart';
 import 'package:tressy/features/home/domain/repositories/home_repository.dart';
@@ -233,6 +234,9 @@ Future<void> initializeDependencies() async {
   );
   sl.registerLazySingleton<ServiceDiscoveryDataSource>(
     () => ServiceDiscoveryDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<WelcomeOfferDataSource>(
+    () => WelcomeOfferDataSourceImpl(sl()),
   );
 
   // Salon Details Feature

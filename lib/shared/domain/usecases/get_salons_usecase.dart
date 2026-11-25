@@ -21,6 +21,21 @@ class GetSalonsUseCase {
       gender: params.gender,
       search: params.search,
       category: params.category,
+      filters: params.filters,
+    );
+  }
+
+  /// Like [call] but keeps the total match count for "N salons" headers.
+  Future<Either<Failure, SalonPage>> callPage(GetSalonsParams params) async {
+    return await repository.getSalonsPage(
+      latitude: params.latitude,
+      longitude: params.longitude,
+      limit: params.limit,
+      page: params.page,
+      gender: params.gender,
+      search: params.search,
+      category: params.category,
+      filters: params.filters,
     );
   }
 }
@@ -35,6 +50,9 @@ class GetSalonsParams {
   final String? search;
   final String? category;
 
+  /// Extra query params (sort, minRating, hasOffers, ...).
+  final Map<String, dynamic>? filters;
+
   GetSalonsParams({
     required this.latitude,
     required this.longitude,
@@ -43,5 +61,6 @@ class GetSalonsParams {
     this.gender,
     this.search,
     this.category,
+    this.filters,
   });
 }

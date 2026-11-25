@@ -15,5 +15,26 @@ abstract class SalonRepository {
     String? gender,
     String? search,
     String? category,
+    Map<String, dynamic>? filters,
   });
+
+  /// Same query as [getSalons] but also returns the total match count.
+  Future<Either<Failure, SalonPage>> getSalonsPage({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+    String? search,
+    String? category,
+    Map<String, dynamic>? filters,
+  });
+}
+
+/// One page of salons plus the total number of matches across all pages.
+class SalonPage {
+  final List<SalonEntity> salons;
+  final int totalRecords;
+
+  const SalonPage({required this.salons, required this.totalRecords});
 }

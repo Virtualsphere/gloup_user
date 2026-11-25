@@ -83,7 +83,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       ));
     }
 
-    final result = await getSalonsUseCase(
+    final result = await getSalonsUseCase.callPage(
       GetSalonsParams(
         latitude: event.latitude,
         longitude: event.longitude,
@@ -92,6 +92,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         page: event.page ?? (event.isLoadMore ? state.currentPage + 1 : 1),
         gender: event.gender,
         search: event.search,
+        filters: event.filters,
       ),
     );
 
@@ -101,7 +102,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         isLoadingMoreSalons: false,
         salonsError: _mapFailureToMessage(failure),
       )),
-      (salons) {
+      (pageResult) {
+        final salons = pageResult.salons;
         // For load more, append to existing list; otherwise replace
         final updatedSalons =
             event.isLoadMore ? [...state.salons, ...salons] : salons;
@@ -117,6 +119,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           clearSalonsError: true,
           currentPage: currentPage,
           hasMoreSalons: hasMore,
+          totalSalons: pageResult.totalRecords,
         ));
       },
     );

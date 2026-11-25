@@ -60,6 +60,6 @@ void main() {
     while (tester.takeException() != null) {}
 
     expect(find.byType(Shimmer), findsWidgets);
-    expect(find.byIcon(Icons.cut_outlined), findsWidgets);
+    expect(find.byKey(const Key('hero_banner_skeleton')), findsOneWidget);
   });
 }

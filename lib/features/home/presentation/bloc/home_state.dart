@@ -27,6 +27,9 @@ class HomeState extends Equatable {
   final bool hasMoreRecommended;
   final bool isLoadingMoreRecommended;
 
+  /// Total salons matching the current list filters (all pages).
+  final int? recommendedTotalRecords;
+
   const HomeState({
     this.isCarouselLoading = false,
     this.carouselBanners = const [],
@@ -44,6 +47,7 @@ class HomeState extends Equatable {
     this.recommendedTotalPages = 1,
     this.hasMoreRecommended = true,
     this.isLoadingMoreRecommended = false,
+    this.recommendedTotalRecords,
   });
 
   HomeState copyWith({
@@ -67,6 +71,7 @@ class HomeState extends Equatable {
     int? recommendedTotalPages,
     bool? hasMoreRecommended,
     bool? isLoadingMoreRecommended,
+    int? recommendedTotalRecords,
   }) {
     return HomeState(
       isCarouselLoading: isCarouselLoading ?? this.isCarouselLoading,
@@ -96,6 +101,8 @@ class HomeState extends Equatable {
       hasMoreRecommended: hasMoreRecommended ?? this.hasMoreRecommended,
       isLoadingMoreRecommended:
           isLoadingMoreRecommended ?? this.isLoadingMoreRecommended,
+      recommendedTotalRecords:
+          recommendedTotalRecords ?? this.recommendedTotalRecords,
     );
   }
 
@@ -131,5 +138,6 @@ class HomeState extends Equatable {
         recommendedTotalPages,
         hasMoreRecommended,
         isLoadingMoreRecommended,
+        recommendedTotalRecords,
       ];
 }

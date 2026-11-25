@@ -132,7 +132,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ));
     }
 
-    final result = await getSalonsUseCase(
+    final result = await getSalonsUseCase.callPage(
       GetSalonsParams(
         latitude: event.latitude,
         longitude: event.longitude,
@@ -140,6 +140,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         page: event.page ??
             (event.isLoadMore ? state.recommendedCurrentPage + 1 : 1),
         gender: event.gender,
+        filters: event.filters,
       ),
     );
 
@@ -149,7 +150,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         isLoadingMoreRecommended: false,
         recommendedSalonsError: _mapFailureToMessage(failure),
       )),
-      (salons) {
+      (pageResult) {
+        final salons = pageResult.salons;
         // For load more, append to existing list; otherwise replace
         final updatedSalons =
             event.isLoadMore ? [...state.recommendedSalons, ...salons] : salons;
@@ -168,6 +170,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           clearRecommendedSalonsError: true,
           recommendedCurrentPage: currentPage,
           hasMoreRecommended: hasMore,
+          recommendedTotalRecords: pageResult.totalRecords,
         ));
       },
     );
@@ -183,17 +186,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       latitude: event.latitude,
       longitude: event.longitude,
       limit: 10, // Set limit to 10 for home screen
+      gender: event.gender,
     ));
     add(LoadTopSalonsEvent(
       latitude: event.latitude,
       longitude: event.longitude,
       limit: 10, // Set limit to 10 for home screen
+      gender: event.gender,
     ));
     add(LoadRecommendedSalonsEvent(
       latitude: event.latitude,
       longitude: event.longitude,
       limit: 10, // Set limit to 10 for home screen
       page: 1,
+      gender: event.gender,
+      filters: event.filters,
     ));
   }
 

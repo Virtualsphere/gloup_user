@@ -24,6 +24,7 @@ abstract class SalonRemoteDataSource {
     String? gender,
     String? search,
     String? category,
+    Map<String, dynamic>? filters,
   });
 }
 
@@ -42,6 +43,7 @@ class SalonRemoteDataSourceImpl implements SalonRemoteDataSource {
     String? gender,
     String? search,
     String? category,
+    Map<String, dynamic>? filters,
   }) async {
     try {
       // Build query parameters
@@ -55,6 +57,7 @@ class SalonRemoteDataSourceImpl implements SalonRemoteDataSource {
       if (gender != null) queryParams['gender'] = gender;
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
       if (category != null) queryParams['category'] = category;
+      if (filters != null) queryParams.addAll(filters);
 
       final response = await dioClient.get(
         ApiRoutes.getAllStores,

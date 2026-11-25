@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/auth/presentation/pages/location_access_page.dart';
 
 import '../../helpers/widget_test_helpers.dart';
@@ -53,14 +56,34 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('enter manually button is present and clickable',
+    testWidgets('enter manually button opens the confirm-location step',
         (tester) async {
-      await pumpLocationAccessPage(tester);
+      setWidgetTestScreenSize(tester, size: const Size(400, 950));
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const LocationAccessPage(),
+          ),
+          GoRoute(
+            path: RouteNames.confirmLocation,
+            builder: (_, __) => const Text('confirm-location-screen'),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          builder: (_, __) => MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pump();
 
       final manualBtn = find.text('Enter location manually');
       expect(manualBtn, findsOneWidget);
       await tester.tap(manualBtn);
-      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.text('confirm-location-screen'), findsOneWidget);
     });
   });
 }

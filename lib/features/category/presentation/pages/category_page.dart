@@ -4,18 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/constants/home_design_tokens.dart';
+import 'package:tressy/core/di/injection_container.dart';
 import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
 import 'package:tressy/features/category/presentation/bloc/category_event.dart';
 import 'package:tressy/features/category/presentation/bloc/category_state.dart';
+import 'package:tressy/features/category/presentation/widgets/category_salon_row.dart';
 import 'package:tressy/features/category/presentation/widgets/category_shimmers.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
-import 'package:tressy/shared/widgets/custom_toast.dart';
+import 'package:tressy/features/home/domain/entities/filter_state.dart';
 import 'package:tressy/features/home/presentation/widgets/category_section.dart';
+import 'package:tressy/features/home/presentation/widgets/filters_sheet.dart';
+import 'package:tressy/features/home/presentation/widgets/home_sort_sheet.dart';
+import 'package:tressy/features/home/presentation/widgets/salon_list_header.dart';
+import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
+import 'package:tressy/shared/widgets/custom_toast.dart';
 
 class CategoryPage extends StatefulWidget {
   final String? categoryName;
@@ -34,15 +41,17 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  static const int _pageSize = 10;
+
   late int _selectedCategoryIndex;
   late String _selectedCategoryName;
   String? _selectedCategoryId;
-  final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  // Search debounce
-  Timer? _debounceTimer;
-  String _searchQuery = '';
+  FilterState _filters = FilterState.empty;
+
+  /// Salons in this category with an offer, for the "N salons have offers" strip.
+  int? _offerCount;
 
   // Track location changes
   double? _lastLatitude;
@@ -56,11 +65,10 @@ class _CategoryPageState extends State<CategoryPage> {
     _selectedCategoryName = widget.categoryName ?? 'Haircut';
     _selectedCategoryId = widget.categoryId;
     _scrollController.addListener(_onScroll);
-    _searchController.addListener(_onSearchChanged);
 
-    // Load initial category salons with existing location
-    // Don't fetch GPS location - use LocationProvider's current location
-    _loadInitialCategorySalons();
+    // Use LocationProvider's current location; don't fetch GPS here.
+    _resolveCategoryId();
+    _loadSalons();
   }
 
   @override
@@ -80,223 +88,208 @@ class _CategoryPageState extends State<CategoryPage> {
     if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _checkLocationChange();
+      final location = context.read<LocationProvider>();
+      if (_lastLatitude != location.latitude ||
+          _lastLongitude != location.longitude) {
+        _lastLatitude = location.latitude;
+        _lastLongitude = location.longitude;
+        _resolveCategoryId();
+        _loadSalons();
+      }
     });
   }
 
   @override
   void dispose() {
     _locationProvider?.removeListener(_onLocationProviderChanged);
-    _searchController.dispose();
     _scrollController.dispose();
-    _debounceTimer?.cancel();
     super.dispose();
   }
 
-  void _checkLocationChange() {
-    final locationProvider = context.read<LocationProvider>();
-
-    // Check if location has changed
-    if (_lastLatitude != locationProvider.latitude ||
-        _lastLongitude != locationProvider.longitude) {
-      // Update stored location
-      _lastLatitude = locationProvider.latitude;
-      _lastLongitude = locationProvider.longitude;
-
-      // Try to get category ID if not set yet
-      if (_selectedCategoryId == null) {
-        final categoryState = context.read<CategoryBloc>().state;
-        if (categoryState.categories.isNotEmpty &&
-            _selectedCategoryIndex < categoryState.categories.length) {
-          _selectedCategoryId =
-              categoryState.categories[_selectedCategoryIndex].id;
-        }
-      }
-
-      // Reload data with new location if category is selected
-      if (_selectedCategoryId != null) {
-        context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-              latitude: locationProvider.latitude,
-              longitude: locationProvider.longitude,
-              categoryId: _selectedCategoryId!,
-              limit: 10,
-              page: 1,
-              search: _searchQuery.isEmpty ? null : _searchQuery,
-            ));
-      } else {
-        debugPrint(
-            'CategoryPage: Cannot reload - _selectedCategoryId is null (categories not loaded yet)');
-      }
+  /// Falls back to the category list when Home did not pass an id.
+  void _resolveCategoryId() {
+    if (_selectedCategoryId != null) return;
+    final categories = context.read<CategoryBloc>().state.categories;
+    if (categories.isNotEmpty && _selectedCategoryIndex < categories.length) {
+      _selectedCategoryId = categories[_selectedCategoryIndex].id;
     }
   }
 
-  void _onSearchChanged() {
-    // Cancel previous timer
-    _debounceTimer?.cancel();
-
-    // Create new timer (500ms debounce)
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      final query = _searchController.text.trim();
-      if (query != _searchQuery) {
-        _searchQuery = query;
-        _performSearch(query);
-      }
-    });
+  void _loadSalons({bool loadMore = false}) {
+    final id = _selectedCategoryId;
+    if (id == null) return;
+    final location = context.read<LocationProvider>();
+    context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
+          latitude: location.latitude,
+          longitude: location.longitude,
+          categoryId: id,
+          limit: _pageSize,
+          page: loadMore ? null : 1,
+          isLoadMore: loadMore,
+          filters: _filters.toRequest(),
+        ));
+    if (!loadMore) _loadOfferCount();
   }
 
-  void _performSearch(String query) {
-    final locationProvider = context.read<LocationProvider>();
-
-    if (_selectedCategoryId != null) {
-      context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-            latitude: locationProvider.latitude,
-            longitude: locationProvider.longitude,
-            categoryId: _selectedCategoryId!,
-            limit: 10,
-            page: 1,
-            search: query.isEmpty ? null : query,
-          ));
-    }
+  /// Salons in this category that have an offer, ignoring the offers filter
+  /// itself so the strip does not flip while it is toggled.
+  Future<void> _loadOfferCount() async {
+    final id = _selectedCategoryId;
+    if (id == null) return;
+    final count = await _countSalons(
+      _filters.copyWith(hasOffers: true),
+    );
+    if (!mounted || id != _selectedCategoryId) return;
+    setState(() => _offerCount = count);
   }
 
-  void _loadInitialCategorySalons() {
-    final locationProvider = context.read<LocationProvider>();
-
-    if (_selectedCategoryId == null) {
-      // Get category ID from CategoryBloc state if not passed from Home
-      final categoryState = context.read<CategoryBloc>().state;
-      if (categoryState.categories.isNotEmpty &&
-          _selectedCategoryIndex < categoryState.categories.length) {
-        final category = categoryState.categories[_selectedCategoryIndex];
-        _selectedCategoryId = category.id;
-      }
-    }
-
-    if (_selectedCategoryId != null) {
-      // Load salons for the initial category
-      context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-            latitude: locationProvider.latitude,
-            longitude: locationProvider.longitude,
-            categoryId: _selectedCategoryId!,
-            limit: 10,
-            page: 1,
-            search: _searchQuery.isEmpty ? null : _searchQuery,
-          ));
-    }
+  /// Number of salons matching a draft filter in this category.
+  Future<int?> _countSalons(FilterState draft) async {
+    final id = _selectedCategoryId;
+    if (id == null) return null;
+    final location = context.read<LocationProvider>();
+    final result = await sl<GetSalonsUseCase>().callPage(GetSalonsParams(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      category: id,
+      limit: 1,
+      page: 1,
+      filters: draft.toRequest(),
+    ));
+    return result.fold((_) => null, (page) => page.totalRecords);
   }
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
-
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    final locationProvider = context.read<LocationProvider>();
-
-    if (maxScroll - currentScroll <= 200 && _selectedCategoryId != null) {
-      // Trigger load more with search query
-      context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-            latitude: locationProvider.latitude,
-            longitude: locationProvider.longitude,
-            categoryId: _selectedCategoryId!,
-            limit: 10,
-            search: _searchQuery.isEmpty ? null : _searchQuery,
-            isLoadMore: true,
-          ));
-    }
+    final remaining = _scrollController.position.maxScrollExtent -
+        _scrollController.position.pixels;
+    if (remaining <= 200) _loadSalons(loadMore: true);
   }
 
   void _onCategoryTap(
       String categoryName, int categoryIndex, String categoryId) {
-    final locationProvider = context.read<LocationProvider>();
-
     setState(() {
       _selectedCategoryIndex = categoryIndex;
       _selectedCategoryName = categoryName;
       _selectedCategoryId = categoryId;
+      _offerCount = null;
     });
-
-    // Load salons for selected category with search query
-    if (_selectedCategoryId != null) {
-      context.read<CategoryBloc>().add(LoadCategorySalonsEvent(
-            latitude: locationProvider.latitude,
-            longitude: locationProvider.longitude,
-            categoryId: _selectedCategoryId!,
-            limit: 10,
-            page: 1,
-            search: _searchQuery.isEmpty ? null : _searchQuery,
-          ));
-    }
+    _loadSalons();
   }
 
-  Widget _buildSearchInput(BuildContext context) {
-    final isDarkMode = context.theme.brightness == Brightness.dark;
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingM,
-        vertical: AppSizes.paddingM,
-      ),
-      decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(
-          color: isDarkMode
-              ? AppColors.primaryDark.withValues(alpha: 0.08)
-              : AppColors.primary.withValues(alpha: 0.08),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.search,
-            size: AppSizes.iconM,
-            color: isDarkMode
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
-          ),
-          SizedBox(width: AppSizes.spaceM),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search for salons, parlors, or massages...',
-                hintStyle: context.textTheme.bodyMedium?.copyWith(
-                  color:
-                      isDarkMode ? AppColors.textHintDark : AppColors.textHint,
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                filled: false,
-              ),
-              style: context.textTheme.bodyLarge,
-              onChanged: (value) {
-                // Handle search
-              },
-            ),
-          ),
-        ],
-      ),
+  void _onFiltersChanged(FilterState next) {
+    if (next == _filters) return;
+    setState(() => _filters = next);
+    _loadSalons();
+  }
+
+  Future<void> _openFilters() async {
+    final picked = await FiltersSheet.show(
+      context,
+      initial: _filters,
+      countFor: _countSalons,
+    );
+    if (picked != null) _onFiltersChanged(picked);
+  }
+
+  Future<void> _openSort() async {
+    final picked = await HomeSortSheet.show(context, _filters.sort);
+    if (picked != null) _onFiltersChanged(_filters.copyWith(sort: picked));
+  }
+
+  void _openSalon(String id, String name) {
+    GoRouter.of(context).push(
+      RouteNames.salonDetails,
+      extra: {'salonId': id, 'salonName': name},
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.theme.brightness == Brightness.dark;
-
     return _buildContent(context, isDarkMode);
+  }
+
+  Widget _buildTitle(BuildContext context, CategoryState state) {
+    final location = context.watch<LocationProvider>();
+    final area = location.area.trim().isNotEmpty
+        ? location.area.trim()
+        : location.city.trim();
+    final subtitle = [
+      if (state.totalSalons != null)
+        state.totalSalons == 1 ? '1 salon' : '${state.totalSalons} salons',
+      if (area.isNotEmpty) area,
+    ].join(' · ');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _selectedCategoryName,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (subtitle.isNotEmpty)
+          Text(
+            subtitle,
+            key: const Key('category_subtitle'),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: HomeDesignTokens.textSecondary,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildOffersStrip() {
+    final count = _offerCount;
+    if (count == null || count <= 0) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSizes.paddingM, AppSizes.spaceM,
+          AppSizes.paddingM, 0),
+      child: GestureDetector(
+        key: const Key('offers_strip'),
+        onTap: () => _onFiltersChanged(
+          _filters.copyWith(hasOffers: !_filters.hasOffers),
+        ),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingM,
+            vertical: AppSizes.paddingS + 2,
+          ),
+          decoration: BoxDecoration(
+            color: HomeDesignTokens.accentBlueBg,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.local_offer_outlined,
+                  size: 18, color: HomeDesignTokens.accentBlue),
+              SizedBox(width: AppSizes.spaceS),
+              Expanded(
+                child: Text(
+                  count == 1
+                      ? '1 salon has offers on $_selectedCategoryName today'
+                      : '$count salons have offers on $_selectedCategoryName today',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: HomeDesignTokens.accentBlue,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildContent(BuildContext context, bool isDarkMode) {
     return BlocListener<FavoritesBloc, FavoritesState>(
-      listenWhen: (previous, current) {
-        // Listen when toast counter changes
-        return current.toastCounter != previous.toastCounter;
-      },
+      listenWhen: (previous, current) =>
+          current.toastCounter != previous.toastCounter,
       listener: (context, state) {
-        // Show toast for success or failure
         if (state.status == FavoritesStatus.success) {
           CustomToast.showSuccess(context, state.message ?? 'Favorite updated');
         } else if (state.status == FavoritesStatus.failure) {
@@ -324,17 +317,23 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
             onPressed: () => GoRouter.of(context).pop(),
           ),
-          title: Text(
-            _selectedCategoryName,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          title: BlocBuilder<CategoryBloc, CategoryState>(
+            buildWhen: (a, b) => a.totalSalons != b.totalSalons,
+            builder: (context, state) => _buildTitle(context, state),
           ),
+          actions: [
+            IconButton(
+              key: const Key('category_search'),
+              icon: const Icon(Icons.search),
+              onPressed: () =>
+                  GoRouter.of(context).push(RouteNames.salonSearch),
+            ),
+          ],
         ),
         body: CustomScrollView(
           controller: _scrollController,
           slivers: [
-            // Sticky Category Section
+            // Sticky category avatar row
             SliverPersistentHeader(
               pinned: true,
               delegate: _CategorySectionDelegate(
@@ -343,83 +342,66 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
 
-            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
-
-            // Search Input
+            // Filters / Sort / quick picks
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingM,
-                ),
-                child: _buildSearchInput(context),
-              ),
-            ),
-
-            SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
-
-            // Section Title
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Salons offering $_selectedCategoryName',
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: AppSizes.spaceXS),
-                    Text(
-                      'Browse through our curated list of salons',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: context.colorScheme.onSurface
-                            .withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
+                padding: EdgeInsets.only(top: AppSizes.spaceS),
+                child: SalonListHeader(
+                  showHeading: false,
+                  totalRecords: null,
+                  filters: _filters,
+                  onChanged: _onFiltersChanged,
+                  onSortTap: _openSort,
+                  onFiltersTap: _openFilters,
                 ),
               ),
             ),
 
+            SliverToBoxAdapter(child: _buildOffersStrip()),
+
             SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceM)),
 
-            // Salon List with BlocBuilder
             BlocBuilder<CategoryBloc, CategoryState>(
               builder: (context, state) {
-                // Initial loading with shimmer
                 if (state.isSalonsLoading && state.salons.isEmpty) {
                   return CategoryShimmers.buildSliverSalonListShimmer(context,
                       count: 5);
                 }
 
-                // Error state
                 if (state.salonsError != null && state.salons.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(AppSizes.paddingXL),
-                      child: Center(
-                        child: Text(
-                          state.salonsError!,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: Colors.red,
+                      child: Column(
+                        children: [
+                          Text(
+                            state.salonsError!,
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
+                          TextButton(
+                            key: const Key('category_retry'),
+                            onPressed: _loadSalons,
+                            child: const Text('Retry'),
+                          ),
+                        ],
                       ),
                     ),
                   );
                 }
 
-                // Empty state
                 if (state.salons.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(AppSizes.paddingXL),
                       child: Center(
                         child: Text(
-                          'Select a category to view salons',
+                          _filters.activeCount > 0
+                              ? 'No salons match these filters'
+                              : 'No salons offer $_selectedCategoryName nearby',
+                          key: const Key('category_empty'),
                           style: context.textTheme.bodyMedium?.copyWith(
                             color: context.colorScheme.onSurface
                                 .withValues(alpha: 0.5),
@@ -430,7 +412,6 @@ class _CategoryPageState extends State<CategoryPage> {
                   );
                 }
 
-                // Display salons
                 return SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
                   sliver: SliverList(
@@ -439,32 +420,13 @@ class _CategoryPageState extends State<CategoryPage> {
                         final salon = state.salons[index];
                         return Padding(
                           padding: EdgeInsets.only(bottom: AppSizes.spaceM),
-                          child: SalonCard(
-                            storeId: int.tryParse(salon.id) ?? 0,
-                            salonName: salon.salonName,
-                            salonImage: salon.salonImage,
-                            images: salon.images,
-                            rating: salon.rating,
-                            reviewCount: salon.reviewCount,
-                            distance: salon.distance,
-                            isPremium: salon.isPremium,
-                            isFavorite: salon.isFavorite,
-                            serviceName: salon.serviceName,
-                            servicePrice: salon.servicePrice,
-                            dynamicServices: salon.dynamicServices,
-                            address: salon.displayAddress,
-                            categories: salon.categories,
-                            languageCodes: salon.languageCodes,
-                            isFullWidth: true,
-                            onTap: () {
-                              GoRouter.of(context).push(
-                                RouteNames.salonDetails,
-                                extra: {
-                                  'salonId': salon.id,
-                                  'salonName': salon.salonName,
-                                },
-                              );
-                            },
+                          child: CategorySalonRow(
+                            salon: salon,
+                            categoryName: _selectedCategoryName,
+                            onTap: () =>
+                                _openSalon(salon.id, salon.salonName),
+                            onBook: () =>
+                                _openSalon(salon.id, salon.salonName),
                           ),
                         );
                       },
@@ -478,67 +440,24 @@ class _CategoryPageState extends State<CategoryPage> {
             // Loading indicator for infinite scroll
             BlocBuilder<CategoryBloc, CategoryState>(
               builder: (context, state) {
-                if (state.isLoadingMoreSalons) {
-                  return SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(AppSizes.paddingL),
-                      child: Center(
-                        child: Container(
-                          padding: EdgeInsets.all(AppSizes.paddingM),
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.surfaceDark
-                                : AppColors.surface,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusCircular),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                            ),
-                          ),
-                        ),
+                if (!state.isLoadingMoreSalons) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+                return SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(AppSizes.paddingL),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
                       ),
                     ),
-                  );
-                }
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  ),
+                );
               },
             ),
 
-            // End of list message
-            BlocBuilder<CategoryBloc, CategoryState>(
-              builder: (context, state) {
-                if (!state.hasMoreSalons && state.salons.isNotEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(AppSizes.paddingL),
-                      child: Center(
-                        child: Text(
-                          'No more salons to load',
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.colorScheme.onSurface
-                                .withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
-              },
-            ),
-
-            // Bottom spacing
             SliverToBoxAdapter(child: SizedBox(height: AppSizes.spaceXXL)),
           ],
         ),

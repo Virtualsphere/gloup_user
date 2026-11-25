@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,16 +14,32 @@ import 'package:tressy/core/router/route_names.dart';
 import 'package:tressy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:tressy/features/home/presentation/bloc/home_event.dart';
 import 'package:tressy/features/home/presentation/bloc/home_state.dart';
-import 'package:tressy/features/home/presentation/widgets/category_section.dart';
-import 'package:tressy/features/home/presentation/widgets/filter_badges.dart';
+import 'package:tressy/core/di/injection_container.dart';
+import 'package:tressy/features/category/presentation/bloc/category_bloc.dart';
+import 'package:tressy/features/category/presentation/bloc/category_event.dart';
+import 'package:tressy/features/category/presentation/bloc/category_state.dart';
+import 'package:tressy/features/home/data/datasources/service_discovery_datasource.dart';
+import 'package:tressy/features/home/data/models/service_category_model.dart';
+import 'package:tressy/features/home/presentation/pages/services_at_49_page.dart';
+import 'package:tressy/features/home/presentation/widgets/home_category_grid.dart';
+import 'package:tressy/features/home/presentation/widgets/home_hero_banner.dart';
+import 'package:tressy/features/home/presentation/widgets/popular_services_rail.dart';
+import 'package:tressy/features/home/data/home_gender_store.dart';
+import 'package:tressy/features/home/domain/entities/filter_state.dart';
+import 'package:tressy/features/home/domain/entities/home_gender.dart';
+import 'package:tressy/features/home/data/datasources/welcome_offer_datasource.dart';
+import 'package:tressy/features/home/presentation/widgets/filters_sheet.dart';
+import 'package:tressy/features/home/presentation/widgets/welcome_offer_dialog.dart';
+import 'package:tressy/features/home/presentation/widgets/home_salon_card.dart';
+import 'package:tressy/shared/domain/usecases/get_salons_usecase.dart';
+import 'package:tressy/features/home/presentation/widgets/home_sort_sheet.dart';
+import 'package:tressy/features/home/presentation/widgets/salon_list_header.dart';
+import 'package:tressy/features/home/presentation/widgets/home_header.dart';
 import 'package:tressy/features/home/presentation/widgets/home_shimmers.dart';
 import 'package:tressy/features/home/presentation/widgets/home_profile_avatar.dart';
-import 'package:tressy/features/home/presentation/widgets/location_badge.dart';
-import 'package:tressy/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_event.dart';
 import 'package:tressy/features/profile/presentation/bloc/profile_state.dart';
-import 'package:tressy/features/home/presentation/widgets/services_at_49_section.dart';
 import 'package:tressy/shared/extensions/context_extensions.dart';
 import 'package:tressy/features/location/presentation/pages/location_page.dart';
 import 'package:tressy/core/utils/local_storage_service.dart';
@@ -35,7 +50,6 @@ import 'package:tressy/shared/widgets/location_permission_dialog.dart';
 import 'package:tressy/shared/widgets/salon_card.dart';
 import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
-import 'package:tressy/shared/widgets/hd_cached_network_image.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
 import 'package:tressy/core/services/review_service.dart';
@@ -59,10 +73,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   /// Re-check location when the user returns from device settings.
   bool _recheckLocationOnResume = false;
 
-  int _currentCarouselIndex = 0;
+  List<ServiceCategoryModel> _popularServiceItems = const [];
+  bool _popularServicesLoading = true;
   final ScrollController _scrollController = ScrollController();
-  bool _isCollapsed = false;
-  String? _selectedGender; // No default filter
+  HomeGender _gender = HomeGenderStore.load();
+  FilterState _filters = FilterState.empty;
   bool _isLoadingLocation = true;
   bool _profileRequested = false;
   bool _homeDataRequested = false;
@@ -74,7 +89,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _scrollController.addListener(_onScroll);
-    _getCurrentLocation().whenComplete(_maybeAskNotificationPermission);
+    _loadPopularServices();
+    _loadCategoriesIfNeeded();
+    _getCurrentLocation().whenComplete(() async {
+      await _maybeAskNotificationPermission();
+      await _maybeShowWelcomeOffer();
+    });
     _checkPendingReviews();
   }
 
@@ -107,10 +127,123 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     bloc.add(LoadAllHomeDataEvent(
       latitude: locationProvider.latitude,
       longitude: locationProvider.longitude,
+      gender: _gender.apiValue,
+      filters: _listFilters,
     ));
   }
 
   HomeBloc get _homeBloc => context.read<HomeBloc>();
+
+  /// List filters as query params. A gender picked in the Filters sheet
+  /// overrides the header tabs for the salon list.
+  Map<String, dynamic> get _listFilters => _filters.toRequest();
+
+  Future<void> _openFilters() async {
+    final picked = await FiltersSheet.show(
+      context,
+      initial: _filters,
+      countFor: _countSalons,
+    );
+    if (picked != null) _onFiltersChanged(picked);
+  }
+
+  /// Live "Show N salons" count for a draft filter (one-item page).
+  Future<int?> _countSalons(FilterState draft) async {
+    final location = context.read<LocationProvider>();
+    final result = await sl<GetSalonsUseCase>().callPage(GetSalonsParams(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      limit: 1,
+      page: 1,
+      gender: _gender.apiValue,
+      filters: draft.toRequest(),
+    ));
+    return result.fold((_) => null, (page) => page.totalRecords);
+  }
+
+  void _reloadSalonList() {
+    final location = context.read<LocationProvider>();
+    _homeBloc.add(LoadRecommendedSalonsEvent(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      limit: 10,
+      page: 1,
+      gender: _gender.apiValue,
+      filters: _listFilters,
+    ));
+  }
+
+  void _onFiltersChanged(FilterState next) {
+    if (next == _filters) return;
+    setState(() => _filters = next);
+    _reloadSalonList();
+  }
+
+  Future<void> _openSort() async {
+    final picked = await HomeSortSheet.show(context, _filters.sort);
+    if (picked != null) _onFiltersChanged(_filters.copyWith(sort: picked));
+  }
+
+  Future<void> _refresh() async {
+    final location = context.read<LocationProvider>();
+    _homeBloc.add(LoadAllHomeDataEvent(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      gender: _gender.apiValue,
+      filters: _listFilters,
+    ));
+    unawaited(_loadPopularServices());
+    // Wait for the list to settle so the spinner matches the reload.
+    await _homeBloc.stream
+        .firstWhere((s) => !s.isAnyLoading)
+        .timeout(const Duration(seconds: 10), onTimeout: () => _homeBloc.state);
+  }
+
+  /// Both genders map to a `sex` the top-categories API understands.
+  String get _servicesSex =>
+      _gender.tab == HomeGenderTab.female ? 'female' : 'male';
+
+  void _loadCategoriesIfNeeded() {
+    final bloc = context.read<CategoryBloc>();
+    if (bloc.state.categories.isEmpty &&
+        bloc.state.status != CategoryStatus.loading) {
+      bloc.add(const LoadCategoriesEvent());
+    }
+  }
+
+  Future<void> _loadPopularServices() async {
+    final sex = _servicesSex;
+    setState(() => _popularServicesLoading = true);
+    try {
+      final items =
+          await sl<ServiceDiscoveryDataSource>().getTopCategories(sex: sex);
+      // Ignore a stale response if the gender changed while loading.
+      if (!mounted || sex != _servicesSex) return;
+      setState(() => _popularServiceItems = items);
+    } catch (e) {
+      debugPrint('Error fetching popular services: $e');
+      if (mounted && sex == _servicesSex) {
+        setState(() => _popularServiceItems = const []);
+      }
+    } finally {
+      if (mounted && sex == _servicesSex) {
+        setState(() => _popularServicesLoading = false);
+      }
+    }
+  }
+
+  void _openServices({ServiceCategoryModel? category}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ServicesAt49Page(
+          initialCategory: category?.name ?? 'All',
+          categoryId: category?.id,
+          sex: _servicesSex,
+        ),
+      ),
+    );
+  }
 
   void _requestProfileIfNeeded() {
     if (!LocalStorageService.isLoggedIn) {
@@ -238,8 +371,51 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       _homeBloc.add(LoadAllHomeDataEvent(
         latitude: locationProvider.latitude,
         longitude: locationProvider.longitude,
+        gender: _gender.apiValue,
+        filters: _listFilters,
       ));
     }
+  }
+
+  /// Key of the salon list header, so "Book a salon" can scroll to it.
+  final GlobalKey _salonListKey = GlobalKey();
+
+  static const String _welcomeShownStorageKey = 'welcome_offer_shown';
+
+  /// Welcome gift pop-up (Figma 4-2): signed-in users only, once per offer
+  /// window, and never an expired offer.
+  Future<void> _maybeShowWelcomeOffer() async {
+    if (!mounted || !LocalStorageService.isLoggedIn) return;
+
+    final offer = await sl<WelcomeOfferDataSource>().fetch();
+    if (!mounted || offer == null) return;
+    if (offer.isExpired(DateTime.now())) return;
+    if (LocalStorageService.getString(_welcomeShownStorageKey) ==
+        offer.shownKey) {
+      return;
+    }
+
+    // Record first so a crash or force-quit cannot make it nag.
+    await LocalStorageService.setString(
+        _welcomeShownStorageKey, offer.shownKey);
+    if (!mounted) return;
+
+    await WelcomeOfferDialog.show(
+      context,
+      offer: offer,
+      onBookSalon: _scrollToSalonList,
+      onTerms: () => context.pushNamed(RouteNames.termsConditions),
+    );
+  }
+
+  void _scrollToSalonList() {
+    final target = _salonListKey.currentContext;
+    if (target == null) return;
+    Scrollable.ensureVisible(
+      target,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   /// Shows the notification soft prompt once, after the location flow.
@@ -389,6 +565,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       _homeBloc.add(LoadAllHomeDataEvent(
         latitude: locationProvider.latitude,
         longitude: locationProvider.longitude,
+        gender: _gender.apiValue,
+        filters: _listFilters,
       ));
     } catch (e) {
       debugPrint('Error getting location: $e');
@@ -486,15 +664,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  void _onGenderChanged(String gender) {
+  void _onGenderChanged(HomeGender gender) {
+    if (gender == _gender) return;
     final locationProvider = context.read<LocationProvider>();
 
     setState(() {
-      _selectedGender = gender;
+      _gender = gender;
     });
+    HomeGenderStore.save(gender);
+    _loadPopularServices();
 
-    // For "all" filter, don't send gender parameter (null)
-    final genderParam = (gender.toLowerCase() == 'all') ? null : gender;
+    final genderParam = gender.apiValue;
 
     // Reload popular services with new gender filter
     _homeBloc.add(LoadPopularServicesEvent(
@@ -509,7 +689,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       latitude: locationProvider.latitude,
       longitude: locationProvider.longitude,
       limit: 10, // Set limit to 10 for home screen
-      gender: genderParam, // null when "all" is selected
+      gender: genderParam,
     ));
 
     // Also reload recommended salons with new gender filter
@@ -518,8 +698,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       longitude: locationProvider.longitude,
       limit: 10,
       page: 1, // Reset to page 1 when filter changes
-      gender: genderParam, // null when "all" is selected
+      gender: genderParam,
       isLoadMore: false, // This is a fresh load, not load more
+      filters: _listFilters,
     ));
   }
 
@@ -535,41 +716,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void _onScroll() {
     if (!_scrollController.hasClients) return;
 
-    final screenHeight = context.screenHeight;
-    final carouselHeight = screenHeight * 0.35;
-
-    // Check if scrolled past the carousel
-    final isCollapsed =
-        _scrollController.offset > (carouselHeight - kToolbarHeight);
-
-    if (isCollapsed != _isCollapsed) {
-      setState(() {
-        _isCollapsed = isCollapsed;
-      });
-    }
-
     // Infinite scroll for recommended salons
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     const double scrollThreshold = 200.0; // Load more when 200px from bottom
 
     if (maxScroll - currentScroll <= scrollThreshold) {
-      // Trigger load more event
       final locationProvider = context.read<LocationProvider>();
       _homeBloc.add(LoadRecommendedSalonsEvent(
         latitude: locationProvider.latitude,
         longitude: locationProvider.longitude,
         limit: 10,
+        gender: _gender.apiValue,
         isLoadMore: true,
+        filters: _listFilters,
       ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = context.screenWidth;
-    // Base height on screen width to maintain a consistent aspect ratio across all devices
-    final carouselHeight = screenWidth * 0.85;
     final isDarkMode = context.theme.brightness == Brightness.dark;
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
@@ -590,513 +756,141 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               isDarkMode ? AppColors.backgroundDark : AppColors.background,
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              return CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  // SliverAppBar with carousel
-                  SliverAppBar(
-                    pinned: true,
-                    expandedHeight: carouselHeight,
-                    collapsedHeight: 70,
-                    toolbarHeight: 70,
-                    backgroundColor:
-                        isDarkMode ? AppColors.surfaceDark : AppColors.surface,
-                    surfaceTintColor: Colors.transparent,
-                    elevation: 0,
-                    shape: _isCollapsed
-                        ? Border(
-                            bottom: BorderSide(
-                              color: isDarkMode
-                                  ? AppColors.borderDark
-                                  : AppColors.border,
-                              width: AppSizes.borderWidthThin,
-                            ),
-                          )
-                        : null,
-                    // Show only search bar when collapsed
-                    title: _isCollapsed
-                        ? SearchBarWidget(
-                            onTap: () {
-                              GoRouter.of(context).push(
-                                RouteNames.salonSearch,
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    // Header: location, wallet, search, gender
+                    SliverToBoxAdapter(
+                      child: BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context, profileState) {
+                          final wallet = LocalStorageService.isLoggedIn
+                              ? HomeHeader.formatWallet(
+                                  switch (profileState) {
+                                    ProfileLoaded(:final profile) =>
+                                      profile.wallet,
+                                    ProfileUpdating(:final profile) =>
+                                      profile.wallet,
+                                    ProfileUpdateSuccess(:final profile) =>
+                                      profile.wallet,
+                                    ProfileUpdateFailure(:final profile) =>
+                                      profile.wallet,
+                                    _ => null,
+                                  },
+                                )
+                              : null;
+                          return Consumer<LocationProvider>(
+                            builder: (context, locationProvider, _) {
+                              final area = locationProvider.area.trim();
+                              final city = locationProvider.city.trim();
+                              return HomeHeader(
+                                title: area.isNotEmpty ? area : city,
+                                subtitle: area.isNotEmpty && city.isNotEmpty
+                                    ? (_locationBlocked
+                                        ? '$city (set manually)'
+                                        : city)
+                                    : '',
+                                isLoadingLocation: _isLoadingLocation,
+                                onLocationTap: _openLocationPicker,
+                                walletLabel: wallet,
+                                onWalletTap: () =>
+                                    context.pushNamed(RouteNames.wallet),
+                                avatar: const HomeProfileAvatar(),
+                                onSearchTap: () => GoRouter.of(context)
+                                    .push(RouteNames.salonSearch),
+                                gender: _gender,
+                                onGenderChanged: _onGenderChanged,
+                                banner: _locationBlocked
+                                    ? _buildLocationBlockedBanner(isDarkMode)
+                                    : null,
                               );
                             },
-                            onSettingsTap: () {},
-                            padding: EdgeInsets.symmetric(
-                              vertical: AppSizes.paddingS,
-                            ),
-                            showBorder: _isCollapsed ? false : true,
-                          )
-                        : null,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // Carousel with shimmer loading
-                          state.isCarouselLoading
-                              ? HomeShimmers.buildCarouselShimmer(context)
-                              : state.carouselBanners.isEmpty
-                                  ? HomeShimmers.buildCarouselShimmer(context)
-                                  : CarouselSlider(
-                                      options: CarouselOptions(
-                                        height: double.infinity,
-                                        viewportFraction: 1.0,
-                                        autoPlay: true,
-                                        autoPlayInterval:
-                                            const Duration(seconds: 3),
-                                        autoPlayAnimationDuration:
-                                            const Duration(
-                                          milliseconds: 800,
-                                        ),
-                                        autoPlayCurve: Curves.fastOutSlowIn,
-                                        onPageChanged: (index, reason) {
-                                          setState(() {
-                                            _currentCarouselIndex = index;
-                                          });
-                                        },
-                                      ),
-                                      items:
-                                          state.carouselBanners.map((banner) {
-                                        return Builder(
-                                          builder: (BuildContext context) {
-                                            return SizedBox(
-                                              width: double.infinity,
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: HdCachedNetworkImage(
-                                                      imageUrl: banner.imageUrl,
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      cacheLogicalWidth:
-                                                          screenWidth,
-                                                      cacheLogicalHeight:
-                                                          carouselHeight,
-                                                      fullResolution: true,
-                                                      errorWidget: (context,
-                                                          url, error) {
-                                                        return Container(
-                                                          color: AppColors
-                                                              .primary
-                                                              .withValues(
-                                                            alpha: 0.2,
-                                                          ),
-                                                          child: const Center(
-                                                            child: Icon(
-                                                              Icons.cut,
-                                                              size: 80,
-                                                              color: AppColors
-                                                                  .white,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                  // Positioned(
-                                                  //   top: 0,
-                                                  //   bottom: 0,
-                                                  //   left: 0,
-                                                  //   right: 0,
-                                                  //   child: Container(
-                                                  //     decoration: BoxDecoration(
-                                                  //       gradient:
-                                                  //           LinearGradient(
-                                                  //         begin: Alignment
-                                                  //             .topCenter,
-                                                  //         end: Alignment
-                                                  //             .bottomCenter,
-                                                  //         colors: [
-                                                  //           AppColors.black
-                                                  //               .withValues(
-                                                  //                   alpha:
-                                                  //                       0.85),
-                                                  //           AppColors.black
-                                                  //               .withValues(
-                                                  //                   alpha:
-                                                  //                       0.5),
-                                                  //           AppColors.transparent,
-                                                  //           AppColors.transparent,
-                                                  //           AppColors.transparent,
-
-                                                  //         ],
-                                                  //       ),
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      }).toList(),
-                                    ),
-
-                          // Location and Profile on top of carousel
-                          SafeArea(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: AppSizes.paddingM,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: AppSizes.spaceS),
-                                  // Location and profile row
-                                  Row(
-                                    children: [
-                                      _isLoadingLocation
-                                          ? Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: AppSizes.paddingM,
-                                                vertical: AppSizes.paddingS,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: isDarkMode
-                                                    ? AppColors.backgroundDark
-                                                    : AppColors.background,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                  AppSizes.radiusM,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 12,
-                                                    height: 12,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                              Color>(
-                                                        isDarkMode
-                                                            ? AppColors
-                                                                .primaryDark
-                                                            : AppColors.primary,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  Text(
-                                                    'Getting location...',
-                                                    style: context
-                                                        .textTheme.bodySmall
-                                                        ?.copyWith(
-                                                      color: isDarkMode
-                                                          ? AppColors
-                                                              .textPrimaryDark
-                                                          : AppColors
-                                                              .textPrimary,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : Consumer<LocationProvider>(
-                                              builder: (context,
-                                                  locationProvider, child) {
-                                                return LocationBadge(
-                                                  location:
-                                                      locationProvider.city,
-                                                  addressLine2: _locationBlocked
-                                                      ? '${locationProvider.area} (set manually)'
-                                                          .trim()
-                                                      : locationProvider.area,
-                                                  onTap: _openLocationPicker,
-                                                );
-                                              },
-                                            ),
-                                      const Spacer(),
-                                      const HomeProfileAvatar(),
-                                    ],
-                                  ),
-                                  if (_locationBlocked)
-                                    _buildLocationBlockedBanner(isDarkMode),
-                                  AppSizes.heightM,
-                                  // Search bar below location
-                                  SearchBarWidget(
-                                      onTap: () {
-                                        GoRouter.of(context).push(
-                                          RouteNames.salonSearch,
-                                        );
-                                      },
-                                      onSettingsTap: () {}),
-                                  Spacer(),
-                                  if (state.carouselBanners.isNotEmpty)
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: state.carouselBanners
-                                          .asMap()
-                                          .entries
-                                          .map((
-                                        entry,
-                                      ) {
-                                        return Container(
-                                          width:
-                                              _currentCarouselIndex == entry.key
-                                                  ? 24.0
-                                                  : 8.0,
-                                          height: 8.0,
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            color: _currentCarouselIndex ==
-                                                    entry.key
-                                                ? AppColors.primary
-                                                : AppColors.greyColor
-                                                    .withValues(alpha: 0.3),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  AppSizes.heightM,
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      collapseMode: CollapseMode.parallax,
-                    ),
-                  ),
-
-                  SliverToBoxAdapter(
-                    child: Container(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : AppColors.surface,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: AppSizes.paddingM),
-                            child: ServicesAt49Section(),
-                          ),
-                          AppSizes.heightM,
-                        ],
+                          );
+                        },
                       ),
                     ),
-                  ),
 
-                  // Sticky Category Section
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: _CategorySectionDelegate(
-                      onCategoryTap: (categoryName, categoryIndex, categoryId) {
-                        GoRouter.of(context).push(
-                          RouteNames.category,
-                          extra: {
-                            'categoryName': categoryName,
-                            'categoryIndex': categoryIndex,
-                            'categoryId': categoryId,
+                    // Hero banner carousel
+                    SliverToBoxAdapter(
+                      child: HomeHeroBanner(
+                        banners: state.carouselBanners,
+                        isLoading: state.isCarouselLoading,
+                      ),
+                    ),
+
+                    // "What are you looking for?" category grid
+                    SliverToBoxAdapter(
+                      child: BlocBuilder<CategoryBloc, CategoryState>(
+                        builder: (context, categoryState) => HomeCategoryGrid(
+                          categories: categoryState.categories,
+                          isLoading:
+                              categoryState.status == CategoryStatus.loading,
+                          error: categoryState.errorMessage,
+                          onRetry: () => context
+                              .read<CategoryBloc>()
+                              .add(const LoadCategoriesEvent()),
+                          onSeeAll: () => context.go(RouteNames.explore),
+                          onCategoryTap: (category, index) {
+                            GoRouter.of(context).push(
+                              RouteNames.category,
+                              extra: {
+                                'categoryName': category.label,
+                                'categoryIndex': index + 1,
+                                'categoryId': category.id,
+                              },
+                            );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
 
-                  // Filter Badges Section
-                  SliverToBoxAdapter(
-                    child: FilterBadges(
-                      initialGender: _selectedGender,
-                      onGenderSelected: _onGenderChanged,
+                    // Popular services nearby (price + struck-through MRP)
+                    SliverToBoxAdapter(
+                      child: PopularServicesRail(
+                        services: _popularServiceItems,
+                        isLoading: _popularServicesLoading,
+                        onSeeAll: _openServices,
+                        onServiceTap: (service) =>
+                            _openServices(category: service),
+                      ),
                     ),
-                  ),
 
-                  SliverToBoxAdapter(
-                    child: Container(
-                      color: isDarkMode
-                          ? AppColors.surfaceDark
-                          : AppColors.surface,
-                      child: AppSizes.heightM,
+                    SliverToBoxAdapter(child: AppSizes.heightM),
+
+                    // Popular Services Nearby Section Header
+                    SliverToBoxAdapter(
+                      child: SectionHeader(
+                        title: 'Salons Nearby',
+                        subtitle: 'Based on your location',
+                        onSeeAllTap: () {
+                          // Navigate to Explore tab
+                          context.go(RouteNames.explore);
+                        },
+                      ),
                     ),
-                  ),
 
-                  // Popular Services Nearby Section Header
-                  SliverToBoxAdapter(
-                    child: SectionHeader(
-                      title: 'Popular Services Nearby',
-                      subtitle: 'Based on your location',
-                      onSeeAllTap: () {
-                        // Navigate to Explore tab
-                        context.go(RouteNames.explore);
-                      },
-                    ),
-                  ),
+                    SliverToBoxAdapter(child: AppSizes.heightM),
 
-                  SliverToBoxAdapter(child: AppSizes.heightM),
-
-                  // Horizontal Scrollable Salon Cards - Popular Services
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: SalonCard.horizontalListExtent,
-                      child: state.isPopularServicesLoading
-                          ? HomeShimmers.buildSalonCardsShimmer(context)
-                          : state.popularServices.isEmpty
-                              ? const Center(
-                                  child: Text('No popular services found'))
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: AppSizes.paddingM),
-                                  itemCount: state.popularServices.length,
-                                  itemBuilder: (context, index) {
-                                    final salon = state.popularServices[index];
-                                    return SalonCard(
-                                      storeId: int.tryParse(salon.id) ?? 0,
-                                      salonName: salon.salonName,
-                                      salonImage: salon.salonImage,
-                                      images: salon.images,
-                                      rating: salon.rating,
-                                      reviewCount: salon.reviewCount,
-                                      distance: salon.distance,
-                                      isPremium: salon.isPremium,
-                                      isFavorite: salon.isFavorite,
-                                      serviceName: salon.serviceName,
-                                      servicePrice: salon.servicePrice,
-                                      dynamicServices: salon.dynamicServices,
-                                      address: salon.displayAddress,
-                                      categories: salon.categories,
-                                      languageCodes: salon.languageCodes,
-                                      onTap: () {
-                                        GoRouter.of(context).push(
-                                          RouteNames.salonDetails,
-                                          extra: {
-                                            'salonId': salon.id,
-                                            'salonName': salon.salonName,
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                    ),
-                  ),
-
-                  // Content spacing
-                  SliverToBoxAdapter(child: AppSizes.heightL),
-
-                  // Top Salons Section Header
-                  SliverToBoxAdapter(
-                    child: SectionHeader(
-                      title: 'Top Salons',
-                      subtitle: 'Highest rated salons in your area',
-                      onSeeAllTap: () {
-                        // Navigate to see all top salons
-                        context.go(RouteNames.explore);
-                      },
-                    ),
-                  ),
-
-                  SliverToBoxAdapter(child: AppSizes.heightS),
-                  // Horizontal Scrollable Salon Cards - Top Salons
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: SalonCard.horizontalListExtent,
-                      child: state.isTopSalonsLoading
-                          ? HomeShimmers.buildSalonCardsShimmer(context)
-                          : state.topSalons.isEmpty
-                              ? const Center(child: Text('No top salons found'))
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: AppSizes.paddingM),
-                                  itemCount: state.topSalons.length,
-                                  itemBuilder: (context, index) {
-                                    final salon = state.topSalons[index];
-                                    return SalonCard(
-                                      storeId: int.tryParse(salon.id) ?? 0,
-                                      salonName: salon.salonName,
-                                      salonImage: salon.salonImage,
-                                      images: salon.images,
-                                      rating: salon.rating,
-                                      reviewCount: salon.reviewCount,
-                                      distance: salon.distance,
-                                      isPremium: salon.isPremium,
-                                      isFavorite: salon.isFavorite,
-                                      serviceName: salon.serviceName,
-                                      servicePrice: salon.servicePrice,
-                                      dynamicServices: salon.dynamicServices,
-                                      address: salon.displayAddress,
-                                      categories: salon.categories,
-                                      languageCodes: salon.languageCodes,
-                                      onTap: () {
-                                        GoRouter.of(context).push(
-                                          RouteNames.salonDetails,
-                                          extra: {
-                                            'salonId': salon.id,
-                                            'salonName': salon.salonName,
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                    ),
-                  ),
-
-                  // Bottom spacing
-                  SliverToBoxAdapter(child: AppSizes.heightXXL),
-
-                  // Recommended for You Section Header (No category filter)
-                  SliverToBoxAdapter(
-                    child: SectionHeader(
-                      title: 'Recommended for You',
-                      subtitle: 'Based on your preferences',
-                      onSeeAllTap: () {
-                        context.go(RouteNames.explore);
-                        // Navigate to see all recommendations
-                      },
-                    ),
-                  ),
-
-                  SliverToBoxAdapter(child: AppSizes.heightS),
-
-                  // Vertical Full-Width Salon Cards with infinite scroll
-                  state.isRecommendedSalonsLoading &&
-                          state.recommendedSalons.isEmpty
-                      ? SliverPadding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: AppSizes.paddingM),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) => Padding(
-                                padding:
-                                    EdgeInsets.only(bottom: AppSizes.paddingM),
-                                child:
-                                    HomeShimmers.buildVerticalSalonCardShimmer(
-                                        context),
-                              ),
-                              childCount: 3,
-                            ),
-                          ),
-                        )
-                      : state.recommendedSalons.isEmpty
-                          ? const SliverToBoxAdapter(
-                              child: Center(
-                                  child: Text('No recommendations found')),
-                            )
-                          : SliverPadding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: AppSizes.paddingM),
-                              sliver: SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    final salon =
-                                        state.recommendedSalons[index];
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: AppSizes.paddingM),
-                                      child: SalonCard(
+                    // Horizontal Scrollable Salon Cards - Popular Services
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: SalonCard.horizontalListExtent,
+                        child: state.isPopularServicesLoading
+                            ? HomeShimmers.buildSalonCardsShimmer(context)
+                            : state.popularServices.isEmpty
+                                ? const Center(
+                                    child: Text('No popular services found'))
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: AppSizes.paddingM),
+                                    itemCount: state.popularServices.length,
+                                    itemBuilder: (context, index) {
+                                      final salon =
+                                          state.popularServices[index];
+                                      return SalonCard(
                                         storeId: int.tryParse(salon.id) ?? 0,
                                         salonName: salon.salonName,
                                         salonImage: salon.salonImage,
@@ -1112,7 +906,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         address: salon.displayAddress,
                                         categories: salon.categories,
                                         languageCodes: salon.languageCodes,
-                                        isFullWidth: true,
                                         onTap: () {
                                           GoRouter.of(context).push(
                                             RouteNames.salonDetails,
@@ -1122,71 +915,181 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                             },
                                           );
                                         },
-                                      ),
-                                    );
-                                  },
-                                  childCount: state.recommendedSalons.length,
+                                      );
+                                    },
+                                  ),
+                      ),
+                    ),
+
+                    // Content spacing
+                    SliverToBoxAdapter(child: AppSizes.heightL),
+
+                    // Top Salons Section Header
+                    SliverToBoxAdapter(
+                      child: SectionHeader(
+                        title: 'Top Salons',
+                        subtitle: 'Highest rated salons in your area',
+                        onSeeAllTap: () {
+                          // Navigate to see all top salons
+                          context.go(RouteNames.explore);
+                        },
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(child: AppSizes.heightS),
+                    // Horizontal Scrollable Salon Cards - Top Salons
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: SalonCard.horizontalListExtent,
+                        child: state.isTopSalonsLoading
+                            ? HomeShimmers.buildSalonCardsShimmer(context)
+                            : state.topSalons.isEmpty
+                                ? const Center(
+                                    child: Text('No top salons found'))
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: AppSizes.paddingM),
+                                    itemCount: state.topSalons.length,
+                                    itemBuilder: (context, index) {
+                                      final salon = state.topSalons[index];
+                                      return SalonCard(
+                                        storeId: int.tryParse(salon.id) ?? 0,
+                                        salonName: salon.salonName,
+                                        salonImage: salon.salonImage,
+                                        images: salon.images,
+                                        rating: salon.rating,
+                                        reviewCount: salon.reviewCount,
+                                        distance: salon.distance,
+                                        isPremium: salon.isPremium,
+                                        isFavorite: salon.isFavorite,
+                                        serviceName: salon.serviceName,
+                                        servicePrice: salon.servicePrice,
+                                        dynamicServices: salon.dynamicServices,
+                                        address: salon.displayAddress,
+                                        categories: salon.categories,
+                                        languageCodes: salon.languageCodes,
+                                        onTap: () {
+                                          GoRouter.of(context).push(
+                                            RouteNames.salonDetails,
+                                            extra: {
+                                              'salonId': salon.id,
+                                              'salonName': salon.salonName,
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                      ),
+                    ),
+
+                    // Bottom spacing
+                    SliverToBoxAdapter(child: AppSizes.heightXXL),
+
+                    // "N salons around you" with filter chips
+                    SliverToBoxAdapter(
+                      child: SalonListHeader(
+                        key: _salonListKey,
+                        totalRecords: state.recommendedTotalRecords,
+                        filters: _filters,
+                        onChanged: _onFiltersChanged,
+                        onSortTap: _openSort,
+                        onFiltersTap: _openFilters,
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(child: AppSizes.heightS),
+
+                    // Vertical Full-Width Salon Cards with infinite scroll
+                    state.isRecommendedSalonsLoading &&
+                            state.recommendedSalons.isEmpty
+                        ? SliverPadding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppSizes.paddingM),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) => Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: AppSizes.paddingM),
+                                  child: HomeShimmers
+                                      .buildVerticalSalonCardShimmer(context),
                                 ),
+                                childCount: 3,
                               ),
                             ),
+                          )
+                        : state.recommendedSalons.isEmpty
+                            ? SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.all(AppSizes.paddingXL),
+                                  child: Center(
+                                    child: Text(
+                                      _filters.activeCount > 0 ||
+                                              _filters.sort !=
+                                                  SalonSort.relevance
+                                          ? 'No salons match these filters'
+                                          : 'No salons found nearby',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SliverPadding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: AppSizes.paddingM),
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      final salon =
+                                          state.recommendedSalons[index];
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: AppSizes.paddingM),
+                                        child: HomeSalonCard(
+                                          salon: salon,
+                                          onTap: () {
+                                            GoRouter.of(context).push(
+                                              RouteNames.salonDetails,
+                                              extra: {
+                                                'salonId': salon.id,
+                                                'salonName': salon.salonName,
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    childCount: state.recommendedSalons.length,
+                                  ),
+                                ),
+                              ),
 
-                  // Loading indicator for infinite scroll
-                  if (state.isLoadingMoreRecommended)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(AppSizes.paddingM),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              isDarkMode
-                                  ? AppColors.primaryDark
-                                  : AppColors.primary,
+                    // Loading indicator for infinite scroll
+                    if (state.isLoadingMoreRecommended)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(AppSizes.paddingM),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isDarkMode
+                                    ? AppColors.primaryDark
+                                    : AppColors.primary,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                  // Bottom spacing
-                  SliverToBoxAdapter(child: AppSizes.heightXXL),
-                ],
+                    // Bottom spacing
+                    SliverToBoxAdapter(child: AppSizes.heightXXL),
+                  ],
+                ),
               );
             },
           ),
         ),
       ),
     );
-  }
-}
-
-/// Delegate for sticky category section
-class _CategorySectionDelegate extends SliverPersistentHeaderDelegate {
-  final Function(String categoryName, int categoryIndex, String categoryId)?
-      onCategoryTap;
-
-  _CategorySectionDelegate({this.onCategoryTap});
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return CategorySection(
-      onCategoryTap: onCategoryTap,
-      showActiveBorder: false,
-      selectedCategoryIndex: -1, // No category selected by default on home
-    );
-  }
-
-  @override
-  double get maxExtent => 110;
-
-  @override
-  double get minExtent => 110;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
   }
 }

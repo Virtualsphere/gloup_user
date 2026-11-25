@@ -35,19 +35,19 @@ void main() {
         ),
       );
 
-      expect(find.text('Device Location Disabled'), findsOneWidget);
+      expect(find.text('Device location is off'), findsOneWidget);
       expect(
-        find.textContaining('Device location must be enabled before allowing a booking'),
+        find.textContaining('Turn on GPS so we can confirm your booking'),
         findsOneWidget,
       );
-      expect(find.text('Open Location Settings'), findsOneWidget);
-      expect(find.text('Cancel'), findsOneWidget);
+      expect(find.text('Turn on GPS'), findsOneWidget);
+      expect(find.text('Not now'), findsOneWidget);
 
-      await tester.tap(find.text('Open Location Settings'));
+      await tester.tap(find.text('Turn on GPS'));
       await tester.pump();
       expect(openSettingsCalled, isTrue);
 
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.text('Not now'));
       await tester.pump();
       expect(cancelCalled, isTrue);
     });
@@ -65,14 +65,14 @@ void main() {
         ),
       );
 
-      expect(find.text('Location Permission Required'), findsOneWidget);
+      expect(find.text('Allow location in Settings'), findsOneWidget);
       expect(
-        find.textContaining('Location permission is permanently denied'),
+        find.textContaining("You've blocked location for GloUp"),
         findsOneWidget,
       );
-      expect(find.text('Open App Settings'), findsOneWidget);
+      expect(find.text('Open settings'), findsOneWidget);
 
-      await tester.tap(find.text('Open App Settings'));
+      await tester.tap(find.text('Open settings'));
       await tester.pump();
       expect(openSettingsCalled, isTrue);
     });

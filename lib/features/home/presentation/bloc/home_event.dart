@@ -61,6 +61,9 @@ class LoadRecommendedSalonsEvent extends HomeEvent {
   final String? gender;
   final bool isLoadMore; // For infinite scroll
 
+  /// Extra list filters (sort, minRating, hasOffers, ...).
+  final Map<String, dynamic>? filters;
+
   const LoadRecommendedSalonsEvent({
     required this.latitude,
     required this.longitude,
@@ -68,25 +71,32 @@ class LoadRecommendedSalonsEvent extends HomeEvent {
     this.page,
     this.gender,
     this.isLoadMore = false,
+    this.filters,
   });
 
   @override
   List<Object?> get props =>
-      [latitude, longitude, limit, page, gender, isLoadMore];
+      [latitude, longitude, limit, page, gender, isLoadMore, filters];
 }
 
 /// Event to load all home data at once
 class LoadAllHomeDataEvent extends HomeEvent {
   final double latitude;
   final double longitude;
+  final String? gender;
+
+  /// List filters applied to the recommended salons only.
+  final Map<String, dynamic>? filters;
 
   const LoadAllHomeDataEvent({
     required this.latitude,
     required this.longitude,
+    this.gender,
+    this.filters,
   });
 
   @override
-  List<Object?> get props => [latitude, longitude];
+  List<Object?> get props => [latitude, longitude, gender, filters];
 }
 
 /// Event to reset home state

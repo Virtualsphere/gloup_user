@@ -25,6 +25,9 @@ class LoadCategorySalonsEvent extends CategoryEvent {
   final String? search;
   final bool isLoadMore;
 
+  /// Extra list filters (sort, minRating, hasOffers, ...).
+  final Map<String, dynamic>? filters;
+
   const LoadCategorySalonsEvent({
     required this.latitude,
     required this.longitude,
@@ -34,6 +37,7 @@ class LoadCategorySalonsEvent extends CategoryEvent {
     this.gender,
     this.search,
     this.isLoadMore = false,
+    this.filters,
   });
 
   @override
@@ -45,6 +49,7 @@ class LoadCategorySalonsEvent extends CategoryEvent {
         page,
         gender,
         search,
-        isLoadMore
+        isLoadMore,
+        filters,
       ];
 }

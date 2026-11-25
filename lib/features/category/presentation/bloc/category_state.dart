@@ -18,6 +18,9 @@ class CategoryState extends Equatable {
   final bool hasMoreSalons;
   final bool isLoadingMoreSalons;
 
+  /// Total salons matching the current category and filters (all pages).
+  final int? totalSalons;
+
   const CategoryState({
     this.status = CategoryStatus.initial,
     this.categories = const [],
@@ -29,6 +32,7 @@ class CategoryState extends Equatable {
     this.totalPages = 1,
     this.hasMoreSalons = true,
     this.isLoadingMoreSalons = false,
+    this.totalSalons,
   });
 
   CategoryState copyWith({
@@ -44,6 +48,7 @@ class CategoryState extends Equatable {
     int? totalPages,
     bool? hasMoreSalons,
     bool? isLoadingMoreSalons,
+    int? totalSalons,
   }) {
     return CategoryState(
       status: status ?? this.status,
@@ -56,6 +61,7 @@ class CategoryState extends Equatable {
       totalPages: totalPages ?? this.totalPages,
       hasMoreSalons: hasMoreSalons ?? this.hasMoreSalons,
       isLoadingMoreSalons: isLoadingMoreSalons ?? this.isLoadingMoreSalons,
+      totalSalons: totalSalons ?? this.totalSalons,
     );
   }
 
@@ -71,5 +77,6 @@ class CategoryState extends Equatable {
         totalPages,
         hasMoreSalons,
         isLoadingMoreSalons,
+        totalSalons,
       ];
 }

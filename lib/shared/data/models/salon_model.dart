@@ -1,5 +1,6 @@
 import 'package:tressy/core/utils/image_url_resolver.dart';
 import 'package:tressy/core/utils/salon_address_formatter.dart';
+import 'package:tressy/shared/domain/entities/offer_badge.dart';
 import 'package:tressy/shared/domain/entities/salon_entity.dart';
 
 /// Shared Pagination Model
@@ -51,6 +52,7 @@ class SalonModel {
   final String? serviceName;
   final double? servicePrice;
   final List<Map<String, dynamic>>? dynamicServices;
+  final OfferBadge? offerBadge;
   final List<String> categories;
   final List<String> languageCodes;
 
@@ -69,6 +71,7 @@ class SalonModel {
     this.serviceName,
     this.servicePrice,
     this.dynamicServices,
+    this.offerBadge,
     required this.categories,
     required this.languageCodes,
   });
@@ -121,6 +124,7 @@ class SalonModel {
       dynamicServices: _parseDynamicServices(json['dynamicServices'] ??
           json['dynamic_services'] ??
           json['highlightedServices']),
+      offerBadge: OfferBadge.tryParse(json['offerBadge']),
       address: rawAddress.isNotEmpty ? rawAddress : 'Not available',
       displayAddress: displayAddress,
       categories: List<String>.from(json['categories'] ?? []),
@@ -194,6 +198,7 @@ class SalonModel {
       serviceName: serviceName,
       servicePrice: servicePrice,
       dynamicServices: dynamicServices,
+      offerBadge: offerBadge,
       categories: categories,
       languageCodes: languageCodes,
     );
@@ -213,6 +218,7 @@ class SalonModel {
       'serviceName': serviceName,
       'servicePrice': servicePrice,
       'dynamicServices': dynamicServices,
+      'offerBadge': offerBadge?.toJson(),
       'address': address,
       'displayAddress': displayAddress,
       'categories': categories,

@@ -23,9 +23,33 @@ class SalonRepositoryImpl implements SalonRepository {
     String? gender,
     String? search,
     String? category,
+    Map<String, dynamic>? filters,
   }) async {
-    final disconnected =
-        await leftIfDisconnected<List<SalonEntity>>(networkInfo);
+    final result = await getSalonsPage(
+      latitude: latitude,
+      longitude: longitude,
+      limit: limit,
+      page: page,
+      gender: gender,
+      search: search,
+      category: category,
+      filters: filters,
+    );
+    return result.map((p) => p.salons);
+  }
+
+  @override
+  Future<Either<Failure, SalonPage>> getSalonsPage({
+    required double latitude,
+    required double longitude,
+    int? limit,
+    int? page,
+    String? gender,
+    String? search,
+    String? category,
+    Map<String, dynamic>? filters,
+  }) async {
+    final disconnected = await leftIfDisconnected<SalonPage>(networkInfo);
     if (disconnected != null) return disconnected;
 
     try {
@@ -37,12 +61,13 @@ class SalonRepositoryImpl implements SalonRepository {
         gender: gender,
         search: search,
         category: category,
+        filters: filters,
       );
 
-      final entities =
-          response.salons.map((model) => model.toEntity()).toList();
-
-      return Right(entities);
+      return Right(SalonPage(
+        salons: response.salons.map((model) => model.toEntity()).toList(),
+        totalRecords: response.pagination.totalRecords,
+      ));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } on TimeoutException catch (e) {

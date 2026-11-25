@@ -5,6 +5,9 @@ class ServiceCategoryModel {
   final String name;
   final String searchCategory;
   final int discountedAmount;
+
+  /// List price (MRP); null when the API does not send it.
+  final int? amount;
   final String? imageUrl;
 
   const ServiceCategoryModel({
@@ -12,6 +15,7 @@ class ServiceCategoryModel {
     required this.name,
     required this.searchCategory,
     required this.discountedAmount,
+    this.amount,
     this.imageUrl,
   });
 
@@ -21,6 +25,7 @@ class ServiceCategoryModel {
       name: json['category_name']?.toString() ?? '',
       searchCategory: json['search_category']?.toString() ?? '',
       discountedAmount: (json['discounted_amount'] as num?)?.toInt() ?? 0,
+      amount: (json['amount'] as num?)?.toInt(),
       imageUrl: CategoryImageResolver.apiImageFromJson(json),
     );
   }
