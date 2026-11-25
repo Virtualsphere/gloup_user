@@ -73,6 +73,13 @@ void main() {
   });
 
   group('HomeSalonCard helpers', () {
+    test('compactCount abbreviates thousands', () {
+      expect(HomeSalonCard.compactCount(950), '950');
+      expect(HomeSalonCard.compactCount(2100), '2.1k');
+      expect(HomeSalonCard.compactCount(2000), '2k');
+      expect(HomeSalonCard.compactCount(12000), '12k');
+    });
+
     test('servicesLine joins up to 3 distinct names', () {
       final line = HomeSalonCard.servicesLine(_salon(services: [
         {'name': 'Haircut'},
@@ -112,7 +119,7 @@ void main() {
       expect(find.byKey(const Key('promoted_tag')), findsOneWidget);
       expect(find.text('50% OFF'), findsOneWidget);
       expect(find.text('4.5'), findsOneWidget);
-      expect(find.text('(120)'), findsOneWidget);
+      expect(find.text('120 ratings'), findsOneWidget);
       expect(find.text('Haircut'), findsOneWidget);
       expect(find.text('1.2 km · Anna Nagar'), findsOneWidget);
     });

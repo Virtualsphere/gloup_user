@@ -21,6 +21,15 @@ class HomeSalonCard extends StatelessWidget {
 
   static const int maxServicesShown = 3;
 
+  /// 950 -> "950", 2100 -> "2.1k", 12000 -> "12k".
+  static String compactCount(int n) {
+    if (n < 1000) return '$n';
+    final k = n / 1000;
+    return k >= 10 || k == k.roundToDouble()
+        ? '${k.round()}k'
+        : '${k.toStringAsFixed(1)}k';
+  }
+
   /// "Haircut · Facial · Spa" from `dynamicServices`, falling back to the
   /// single headline service. Empty when the salon lists nothing.
   static String servicesLine(SalonEntity salon) {
@@ -58,7 +67,8 @@ class HomeSalonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storeId = int.tryParse(salon.id) ?? 0;
-    final image = salon.images.isNotEmpty ? salon.images.first : salon.salonImage;
+    final image =
+        salon.images.isNotEmpty ? salon.images.first : salon.salonImage;
     final services = servicesLine(salon);
     final distance = distanceLine(salon);
 
@@ -83,6 +93,7 @@ class HomeSalonCard extends StatelessWidget {
                   child: SalonNetworkImage(
                     imageUrl: image,
                     height: 168.h,
+                    showErrorLabel: false,
                     logTag: 'HomeSalonCard',
                   ),
                 ),
@@ -163,15 +174,20 @@ class HomeSalonCard extends StatelessWidget {
                       ),
                       if (salon.reviewCount > 0) ...[
                         SizedBox(width: 8.w),
-                        _RatingPill(rating: salon.rating),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '(${salon.reviewCount})',
-                          key: const Key('rating_count'),
-                          style: GoogleFonts.inter(
-                            fontSize: 12.sp,
-                            color: HomeDesignTokens.textSecondary,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _RatingPill(rating: salon.rating),
+                            SizedBox(height: 2.h),
+                            Text(
+                              '${compactCount(salon.reviewCount)} ratings',
+                              key: const Key('rating_count'),
+                              style: GoogleFonts.inter(
+                                fontSize: 11.sp,
+                                color: HomeDesignTokens.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ],
@@ -191,15 +207,24 @@ class HomeSalonCard extends StatelessWidget {
                   ],
                   if (distance.isNotEmpty) ...[
                     SizedBox(height: 4.h),
-                    Text(
-                      distance,
-                      key: const Key('distance_line'),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        color: HomeDesignTokens.textHint,
-                      ),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on_outlined,
+                            size: 14.w, color: HomeDesignTokens.textHint),
+                        SizedBox(width: 2.w),
+                        Expanded(
+                          child: Text(
+                            distance,
+                            key: const Key('distance_line'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.sp,
+                              color: HomeDesignTokens.textHint,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ],

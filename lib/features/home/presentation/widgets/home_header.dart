@@ -345,7 +345,8 @@ class _GenderTabs extends StatelessWidget {
       height: 40.h,
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.backgroundDark : HomeDesignTokens.pageBackground,
+        color:
+            isDark ? AppColors.backgroundDark : HomeDesignTokens.pageBackground,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -367,7 +368,9 @@ class _GenderTabs extends StatelessWidget {
     final isSelected = tab == selected;
     final color = isSelected
         ? (isDark ? AppColors.textPrimaryDark : HomeDesignTokens.textPrimary)
-        : (isDark ? AppColors.textSecondaryDark : HomeDesignTokens.textSecondary);
+        : (isDark
+            ? AppColors.textSecondaryDark
+            : HomeDesignTokens.textSecondary);
 
     return Expanded(
       child: Semantics(

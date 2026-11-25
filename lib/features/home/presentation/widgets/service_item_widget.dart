@@ -48,7 +48,8 @@ class ServiceItemWidget extends StatelessWidget {
                     color: Colors.black.withValues(alpha: 0.08),
                     spreadRadius: 0,
                     blurRadius: 12,
-                    offset: const Offset(0, 6), // Focuses the shadow at the bottom
+                    offset:
+                        const Offset(0, 6), // Focuses the shadow at the bottom
                   ),
                 ],
               ),

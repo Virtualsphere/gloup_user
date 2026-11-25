@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:tressy/core/constants/app_colors.dart';
 import 'package:tressy/core/constants/app_sizes.dart';
+import 'package:tressy/core/constants/home_design_tokens.dart';
 import 'package:tressy/core/providers/location_provider.dart';
 import 'package:tressy/core/services/user_location_sync_service.dart';
 import 'package:tressy/core/router/route_names.dart';
@@ -47,8 +48,6 @@ import 'package:tressy/core/services/firebase_notification_service.dart';
 import 'package:tressy/shared/widgets/notification_permission_sheet.dart';
 import 'package:tressy/shared/widgets/location_required_dialog.dart';
 import 'package:tressy/shared/widgets/location_permission_dialog.dart';
-import 'package:tressy/shared/widgets/salon_card.dart';
-import 'package:tressy/shared/widgets/section_header.dart';
 import 'package:tressy/shared/widgets/custom_toast.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:tressy/features/favorites/presentation/bloc/favorites_state.dart';
@@ -752,8 +751,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         },
         child: Scaffold(
-          backgroundColor:
-              isDarkMode ? AppColors.backgroundDark : AppColors.background,
+          backgroundColor: isDarkMode
+              ? AppColors.backgroundDark
+              : HomeDesignTokens.pageBackground,
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               return RefreshIndicator(
@@ -858,134 +858,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
 
                     SliverToBoxAdapter(child: AppSizes.heightM),
-
-                    // Popular Services Nearby Section Header
-                    SliverToBoxAdapter(
-                      child: SectionHeader(
-                        title: 'Salons Nearby',
-                        subtitle: 'Based on your location',
-                        onSeeAllTap: () {
-                          // Navigate to Explore tab
-                          context.go(RouteNames.explore);
-                        },
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(child: AppSizes.heightM),
-
-                    // Horizontal Scrollable Salon Cards - Popular Services
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: SalonCard.horizontalListExtent,
-                        child: state.isPopularServicesLoading
-                            ? HomeShimmers.buildSalonCardsShimmer(context)
-                            : state.popularServices.isEmpty
-                                ? const Center(
-                                    child: Text('No popular services found'))
-                                : ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: AppSizes.paddingM),
-                                    itemCount: state.popularServices.length,
-                                    itemBuilder: (context, index) {
-                                      final salon =
-                                          state.popularServices[index];
-                                      return SalonCard(
-                                        storeId: int.tryParse(salon.id) ?? 0,
-                                        salonName: salon.salonName,
-                                        salonImage: salon.salonImage,
-                                        images: salon.images,
-                                        rating: salon.rating,
-                                        reviewCount: salon.reviewCount,
-                                        distance: salon.distance,
-                                        isPremium: salon.isPremium,
-                                        isFavorite: salon.isFavorite,
-                                        serviceName: salon.serviceName,
-                                        servicePrice: salon.servicePrice,
-                                        dynamicServices: salon.dynamicServices,
-                                        address: salon.displayAddress,
-                                        categories: salon.categories,
-                                        languageCodes: salon.languageCodes,
-                                        onTap: () {
-                                          GoRouter.of(context).push(
-                                            RouteNames.salonDetails,
-                                            extra: {
-                                              'salonId': salon.id,
-                                              'salonName': salon.salonName,
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                      ),
-                    ),
-
-                    // Content spacing
-                    SliverToBoxAdapter(child: AppSizes.heightL),
-
-                    // Top Salons Section Header
-                    SliverToBoxAdapter(
-                      child: SectionHeader(
-                        title: 'Top Salons',
-                        subtitle: 'Highest rated salons in your area',
-                        onSeeAllTap: () {
-                          // Navigate to see all top salons
-                          context.go(RouteNames.explore);
-                        },
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(child: AppSizes.heightS),
-                    // Horizontal Scrollable Salon Cards - Top Salons
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: SalonCard.horizontalListExtent,
-                        child: state.isTopSalonsLoading
-                            ? HomeShimmers.buildSalonCardsShimmer(context)
-                            : state.topSalons.isEmpty
-                                ? const Center(
-                                    child: Text('No top salons found'))
-                                : ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: AppSizes.paddingM),
-                                    itemCount: state.topSalons.length,
-                                    itemBuilder: (context, index) {
-                                      final salon = state.topSalons[index];
-                                      return SalonCard(
-                                        storeId: int.tryParse(salon.id) ?? 0,
-                                        salonName: salon.salonName,
-                                        salonImage: salon.salonImage,
-                                        images: salon.images,
-                                        rating: salon.rating,
-                                        reviewCount: salon.reviewCount,
-                                        distance: salon.distance,
-                                        isPremium: salon.isPremium,
-                                        isFavorite: salon.isFavorite,
-                                        serviceName: salon.serviceName,
-                                        servicePrice: salon.servicePrice,
-                                        dynamicServices: salon.dynamicServices,
-                                        address: salon.displayAddress,
-                                        categories: salon.categories,
-                                        languageCodes: salon.languageCodes,
-                                        onTap: () {
-                                          GoRouter.of(context).push(
-                                            RouteNames.salonDetails,
-                                            extra: {
-                                              'salonId': salon.id,
-                                              'salonName': salon.salonName,
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                      ),
-                    ),
-
-                    // Bottom spacing
-                    SliverToBoxAdapter(child: AppSizes.heightXXL),
 
                     // "N salons around you" with filter chips
                     SliverToBoxAdapter(

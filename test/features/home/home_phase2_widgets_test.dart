@@ -57,9 +57,8 @@ void main() {
         onSeeAll: () {},
       )));
       expect(find.text('Popular services nearby'), findsOneWidget);
-      expect(find.textContaining('from ₹199', findRichText: true),
-          findsOneWidget);
-      expect(find.textContaining('₹299', findRichText: true), findsOneWidget);
+      expect(find.text('₹199'), findsOneWidget);
+      expect(find.text('₹299'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('service_0')));
       expect(tapped?.name, 'Haircut');

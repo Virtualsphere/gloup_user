@@ -270,8 +270,7 @@ class _FiltersSheetState extends State<FiltersSheet> {
                 color: pane == _pane
                     ? HomeDesignTokens.pageBackground
                     : Colors.transparent,
-                padding:
-                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
                 child: Row(
                   children: [
                     Expanded(
@@ -279,9 +278,8 @@ class _FiltersSheetState extends State<FiltersSheet> {
                         FiltersSheet.paneLabels[pane]!,
                         style: GoogleFonts.inter(
                           fontSize: 14.sp,
-                          fontWeight: pane == _pane
-                              ? FontWeight.w700
-                              : FontWeight.w500,
+                          fontWeight:
+                              pane == _pane ? FontWeight.w700 : FontWeight.w500,
                           color: HomeDesignTokens.textPrimary,
                         ),
                       ),
@@ -414,9 +412,7 @@ class _FiltersSheetState extends State<FiltersSheet> {
         children: [
           TextButton(
             key: const Key('filters_clear'),
-            onPressed: _draft.isEmpty
-                ? null
-                : () => _update(FilterState.empty),
+            onPressed: _draft.isEmpty ? null : () => _update(FilterState.empty),
             child: Text(
               'Clear all',
               style: GoogleFonts.inter(

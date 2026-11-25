@@ -162,8 +162,7 @@ class _WelcomeOfferDialogState extends State<WelcomeOfferDialog> {
               ],
               SizedBox(height: 16.h),
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: HomeDesignTokens.border),

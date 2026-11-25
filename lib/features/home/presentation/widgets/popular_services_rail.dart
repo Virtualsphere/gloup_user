@@ -72,7 +72,7 @@ class PopularServicesRail extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 176.h,
+          height: 168.h,
           child: isLoading && services.isEmpty
               ? _skeleton()
               : ListView.separated(
@@ -100,15 +100,19 @@ class PopularServicesRail extends StatelessWidget {
     return GestureDetector(
       key: Key('service_$i'),
       onTap: () => onServiceTap(s),
-      child: SizedBox(
-        width: 132.w,
+      child: Container(
+        width: 150.w,
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: HomeDesignTokens.surface,
+          borderRadius: BorderRadius.circular(HomeDesignTokens.cardRadius.r),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(HomeDesignTokens.cardRadius.r),
+                borderRadius: BorderRadius.circular(12.r),
                 child: SizedBox(
                   width: double.infinity,
                   child: ColoredBox(
@@ -134,26 +138,31 @@ class PopularServicesRail extends StatelessWidget {
               ),
             ),
             SizedBox(height: 2.h),
-            Text.rich(
-              TextSpan(
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                key: const Key('service_price'),
                 children: [
-                  TextSpan(
-                    text: 'from ₹${s.discountedAmount}',
+                  Text(
+                    '₹${s.discountedAmount}',
                     style: GoogleFonts.inter(
-                      fontSize: 12.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w700,
                       color: HomeDesignTokens.textPrimary,
                     ),
                   ),
-                  if (mrp != null)
-                    TextSpan(
-                      text: '  ₹$mrp',
+                  if (mrp != null) ...[
+                    SizedBox(width: 6.w),
+                    Text(
+                      '₹$mrp',
                       style: GoogleFonts.inter(
                         fontSize: 11.sp,
                         color: HomeDesignTokens.textHint,
                         decoration: TextDecoration.lineThrough,
                       ),
                     ),
+                  ],
                 ],
               ),
             ),
@@ -168,11 +177,12 @@ class PopularServicesRail extends StatelessWidget {
       key: const Key('services_skeleton'),
       scrollDirection: Axis.horizontal,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: HomeDesignTokens.screenGutter.w),
+      padding:
+          EdgeInsets.symmetric(horizontal: HomeDesignTokens.screenGutter.w),
       itemCount: 3,
       separatorBuilder: (_, __) => SizedBox(width: 12.w),
       itemBuilder: (_, __) => Container(
-        width: 132.w,
+        width: 150.w,
         decoration: BoxDecoration(
           color: HomeDesignTokens.border,
           borderRadius: BorderRadius.circular(HomeDesignTokens.cardRadius.r),

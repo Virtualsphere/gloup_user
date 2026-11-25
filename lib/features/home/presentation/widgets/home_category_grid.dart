@@ -89,6 +89,7 @@ class HomeCategoryGrid extends StatelessWidget {
     return GridView.builder(
       key: const Key('category_grid'),
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: items.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -146,6 +147,7 @@ class HomeCategoryGrid extends StatelessWidget {
     return GridView.builder(
       key: const Key('category_skeleton'),
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: maxItems,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
